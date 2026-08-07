@@ -1,6 +1,6 @@
 import React from 'react';
 import { Canvas } from '@react-three/fiber';
-import { KeyboardControls, Environment } from '@react-three/drei';
+import { KeyboardControls } from '@react-three/drei';
 import { Player } from './Player';
 import { Map } from './Map';
 
@@ -12,16 +12,13 @@ export function Scene() {
         { name: 'back', keys: ['ArrowDown', 'KeyS'] },
         { name: 'left', keys: ['ArrowLeft', 'KeyA'] },
         { name: 'right', keys: ['ArrowRight', 'KeyD'] },
+        { name: 'interact', keys: ['KeyE'] },
       ]}
     >
       <Canvas shadows camera={{ position: [0, 15, 20], fov: 45 }}>
-        {/* Soft, warm daytime sky color */}
         <color attach="background" args={['#e0f2fe']} />
         
-        {/* Gentle ambient light for soft shadows */}
         <ambientLight intensity={0.5} />
-        
-        {/* Main sun directional light */}
         <directionalLight 
           position={[20, 30, 20]} 
           castShadow 
