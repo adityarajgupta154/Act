@@ -1,0 +1,20 @@
+Continuing the "Nyaya Nagri" project (map, navigation, and zones from Task 1 already exist).
+
+Build the AI Avatar Companion system — this is the child's guide throughout the game, named "Adhikar Didi/Bhaiya."
+
+1. Create a UI panel (dismissible, bottom-corner chat bubble style) that shows the avatar's dialogue as text, with a simple 2D animated placeholder avatar (a simple circular/character sprite with an idle animation loop — do not attempt a 3D avatar yet).
+
+2. Wire this panel to call the Claude API (server-side call, do not expose any API key in client code) with the following system prompt behavior — implement this exactly:
+
+   - The avatar's persona must adapt based on a selected age-band variable already stored in the progress store (default to "12-15" if not set): for 8-11 use very simple, warm, playful language; for 12-15 use a curious, friendly, slightly older-sibling tone; for 16-18 use a respectful, practical, near-adult tone.
+   - The avatar ONLY discusses topics related to the specific quest content it's given as context (do not let it go off-topic into unrelated conversation).
+   - The avatar must NEVER give medical or legal advice beyond pre-approved factual content passed into its context.
+   - The avatar must NEVER ask for or store personally identifiable information (name, address, phone, school name, exact location).
+   - CRITICAL SAFETY RULE: if the user's message contains anything resembling a real disclosure of abuse, harm, or a request for personal help (not a hypothetical quiz answer), the avatar must immediately and warmly respond by pointing to Childline 1098 and the in-app "Get Help Now" button, and gently encourage the child to talk to a trusted adult — it must NOT try to counsel, investigate, or continue probing for details.
+   - Keep responses short (2-4 sentences), since this is for children.
+
+3. Add a text input (with an optional mic button using the Web Speech API for speech-to-text, and text-to-speech playback of the avatar's replies using Web Speech API's speech synthesis).
+
+4. Add a simple "avatar appears automatically" trigger when the player enters any zone, greeting them and briefly introducing that zone's theme (use placeholder greeting text for each zone for now — real quest scripts come in later tasks).
+
+Test that the chat works end to end, respects the age-band tone, and correctly escalates on a simulated distress message like "someone is hurting me" by showing the help resources instead of trying to handle it.

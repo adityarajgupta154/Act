@@ -10,7 +10,43 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: avatar
+    description: AI Avatar Companion (Adhikar Didi/Bhaiya) chat operations
 paths:
+  /avatar/chat:
+    post:
+      operationId: avatarChat
+      tags: [avatar]
+      summary: Send a message to the AI avatar companion
+      description: >
+        Stateless chat with the child's AI guide. The server builds the
+        age-band-scoped system prompt and enforces all safety guardrails.
+        No conversation data is persisted (data minimization by design).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AvatarChatInput"
+      responses:
+        "200":
+          description: Avatar reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarChatReply"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "502":
+          description: Upstream AI error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
   /healthz:
     get:
       operationId: healthCheck
@@ -26,6 +62,58 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
+    AvatarChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 500
+        ageBand:
+          type: string
+          enum: ["8-11", "12-15", "16-18"]
+        zoneId:
+          type: string
+          description: Current zone id for topic scoping (e.g. zone1)
+        history:
+          type: array
+          maxItems: 12
+          description: Recent turns kept client-side only (never persisted)
+          items:
+            $ref: "#/components/schemas/AvatarChatTurn"
+      required:
+        - message
+        - ageBand
+    AvatarChatTurn:
+      type: object
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+          maxLength: 2000
+      required:
+        - role
+        - content
+    AvatarChatReply:
+      type: object
+      properties:
+        reply:
+          type: string
+        escalated:
+          type: boolean
+          description: True when the safety escalation path produced the reply
+      required:
+        - reply
+        - escalated
+    AvatarError:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
     HealthStatus:
       type: object
       properties:

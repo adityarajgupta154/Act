@@ -6,6 +6,7 @@ export type UIState = {
   activeZoneId: string | null;
   isTransitioning: boolean;
   fadeOpacity: number;
+  helpPulse: boolean;
 };
 
 let state: UIState = {
@@ -13,6 +14,7 @@ let state: UIState = {
   activeZoneId: null,
   isTransitioning: false,
   fadeOpacity: 0,
+  helpPulse: false,
 };
 
 const listeners = new Set<() => void>();
@@ -61,4 +63,11 @@ export function exitZone() {
       uiStore.set({ isTransitioning: false });
     }, 300);
   }, 300);
+}
+
+export function triggerHelpPulse() {
+  uiStore.set({ helpPulse: true });
+  setTimeout(() => {
+    uiStore.set({ helpPulse: false });
+  }, 3000);
 }

@@ -5,6 +5,7 @@ import { Settings, Map as MapIcon } from 'lucide-react';
 import { useUIStore, playerPosition, enterZone, exitZone } from './uiStore';
 import { getZoneStates, getZone } from '@/world/zones';
 import { progressStore } from '@/data/progressStore';
+import { AvatarWidget } from '@/avatar/AvatarWidget';
 
 function Minimap() {
   const playerRef = useRef<HTMLDivElement>(null);
@@ -169,8 +170,9 @@ export function HUD() {
         style={{ opacity: fadeOpacity }}
       />
 
-      {/* Help Button (z-50) - Always visible, never fades */}
-      <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 pointer-events-auto">
+      {/* Floating Action Controls (z-50) - Always visible, never fades */}
+      <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
+        <AvatarWidget />
         <HelpDialog />
       </div>
     </div>

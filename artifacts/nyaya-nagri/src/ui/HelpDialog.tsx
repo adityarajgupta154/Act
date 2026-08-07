@@ -1,12 +1,19 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Phone, ShieldAlert, X } from 'lucide-react';
+import { useUIStore } from './uiStore';
+import { cn } from '@/lib/utils';
 
 export function HelpDialog() {
+  const { helpPulse } = useUIStore();
+
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
         <button 
-          className="flex items-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-5 py-4 md:px-6 md:py-4 rounded-full shadow-lg transition-transform active:scale-95 duration-200 pointer-events-auto"
+          className={cn(
+            "flex items-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-5 py-4 md:px-6 md:py-4 rounded-full shadow-lg transition-transform active:scale-95 duration-200 pointer-events-auto",
+            helpPulse && "animate-pulse ring-4 ring-red-500/50"
+          )}
           aria-label="Get Help Now"
         >
           <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
