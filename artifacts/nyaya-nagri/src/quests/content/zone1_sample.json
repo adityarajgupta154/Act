@@ -1,0 +1,81 @@
+{
+  "questId": "zone1_sample_placeholder",
+  "zoneId": "zone1",
+  "ageBand": "12-15",
+  "title": "The Fair Play Park (Sample Quest)",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "You arrive at the Fair Play Park with your friend Meera. A big kid tells Meera she cannot use the swings because she is 'too small', even though it is her turn. Meera looks at you, unsure what to do.",
+      "choices": [
+        {
+          "text": "Tell Meera it is her turn and everyone gets a fair chance to play.",
+          "outcome": "correct",
+          "feedback": "Well done. Rules in the park are the same for everyone — being smaller never means fewer rights. Speaking up kindly for a friend is a strong thing to do.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Tell Meera to just walk away — it is not worth the trouble.",
+          "outcome": "incorrect",
+          "feedback": "Walking away can feel easier, but Meera's fair turn matters. When something unfair keeps happening, speaking up or asking a trusted adult for help works better than staying silent.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Wait and watch what happens next.",
+          "outcome": "neutral",
+          "feedback": "Sometimes watching first is okay, but if unfairness continues, someone needs to speak up or fetch help. Let us see what happens next.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "The big kid keeps blocking the swing. A park helper in a bright vest is standing near the gate. Meera whispers: 'Should we tell someone?'",
+      "choices": [
+        {
+          "text": "Yes — go together and tell the park helper what happened.",
+          "outcome": "correct",
+          "feedback": "Exactly right. Helpers exist to keep things safe and fair, and asking them is never 'telling tales'. Going together also makes it easier for Meera.",
+          "nextScene": ""
+        },
+        {
+          "text": "No — helpers only deal with big problems, not swings.",
+          "outcome": "incorrect",
+          "feedback": "Helpers are there for problems of every size. Nothing that feels unfair or unsafe is ever too small to ask about. Asking for help early stops bigger problems later."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "If a rule at the park applies to everyone, who gets to use the swings when it is their turn?",
+      "options": [
+        "Only the biggest kids",
+        "Every child, whatever their size",
+        "Only kids who ask the big kid first"
+      ],
+      "correctIndex": 1,
+      "explanation": "Fair rules apply to every child equally — size, age, or strength never change whose turn it is."
+    },
+    {
+      "question": "What is a good first step when something unfair keeps happening?",
+      "options": [
+        "Stay silent and hope it stops",
+        "Push the other person away",
+        "Speak up kindly or ask a trusted helper or adult"
+      ],
+      "correctIndex": 2,
+      "explanation": "Speaking up calmly or getting a trusted adult involved is the safest and strongest way to handle unfairness."
+    },
+    {
+      "question": "Is any problem 'too small' to ask a helper or trusted adult about?",
+      "options": [
+        "Yes, helpers are only for emergencies",
+        "No — if it feels unfair or unsafe, it is always okay to ask",
+        "Only if an adult saw it happen"
+      ],
+      "correctIndex": 1,
+      "explanation": "Nothing that feels unfair or unsafe is too small. Asking for help early is always okay."
+    }
+  ]
+}

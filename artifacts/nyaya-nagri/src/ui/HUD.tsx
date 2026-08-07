@@ -1,11 +1,36 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useJoystick } from './JoystickContext';
 import { HelpDialog } from './HelpDialog';
-import { Settings, Map as MapIcon } from 'lucide-react';
+import { Settings, Map as MapIcon, Award } from 'lucide-react';
 import { useUIStore, playerPosition, enterZone, exitZone } from './uiStore';
 import { getZoneStates, getZone } from '@/world/zones';
 import { progressStore } from '@/data/progressStore';
 import { AvatarWidget } from '@/avatar/AvatarWidget';
+import { resolveQuest } from '@/quests/registry';
+import { QuestPlayer } from '@/quests/QuestPlayer';
+
+function BadgeCounter() {
+  const [count, setCount] = useState(() => {
+    const b = progressStore.getState().badges;
+    return Object.values(b).filter(Boolean).length;
+  });
+
+  useEffect(() => {
+    return progressStore.subscribe(state => {
+      const b = state.badges;
+      setCount(Object.values(b).filter(Boolean).length);
+    });
+  }, []);
+
+  if (count === 0) return null;
+
+  return (
+    <div className="bg-orange-100 border border-orange-200 text-orange-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+      <Award className="w-4 h-4 fill-orange-500" />
+      <span className="font-bold text-sm">{count}</span>
+    </div>
+  );
+}
 
 function Minimap() {
   const playerRef = useRef<HTMLDivElement>(null);
@@ -99,19 +124,38 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
   const zone = getZone(zoneId);
   if (!zone) return null;
 
+  const ageBand = progressStore.getState().ageBand;
+  const quest = resolveQuest(zoneId, ageBand);
+  const [playingQuest, setPlayingQuest] = useState(false);
+
+  if (playingQuest && quest) {
+    return <QuestPlayer quest={quest} />;
+  }
+
   return (
-    <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300">
+    <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
       <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
         <MapIcon className="w-8 h-8 text-orange-500" />
       </div>
       <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zone.name}</h2>
       <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zone.theme}</p>
-      <button
-        onClick={exitZone}
-        className="bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md flex items-center gap-2 mx-auto touch-manipulation"
-      >
-        Back to Map
-      </button>
+      
+      <div className="flex flex-col gap-4 items-center">
+        {quest && (
+          <button
+            onClick={() => setPlayingQuest(true)}
+            className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md flex items-center gap-2 touch-manipulation w-full md:w-auto justify-center"
+          >
+            Start Quest: {quest.title}
+          </button>
+        )}
+        <button
+          onClick={exitZone}
+          className="bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-sm border border-sky-200 flex items-center gap-2 w-full md:w-auto justify-center touch-manipulation"
+        >
+          Back to Map
+        </button>
+      </div>
     </div>
   );
 }
@@ -127,10 +171,15 @@ export function HUD() {
         <div className="absolute inset-0 flex flex-col justify-between p-4 md:p-6 animate-in fade-in duration-300">
           {/* Top Bar */}
           <div className="flex justify-between items-start w-full z-10">
-            <div className="bg-white/90 backdrop-blur-sm px-5 py-3 md:px-6 md:py-3 rounded-2xl shadow-sm border border-orange-100 pointer-events-auto">
-              <h1 className="font-display font-bold text-xl md:text-2xl text-orange-500 tracking-wide">
-                Nyaya Nagri
-              </h1>
+            <div className="flex flex-col gap-2 pointer-events-auto">
+              <div className="bg-white/90 backdrop-blur-sm px-5 py-3 md:px-6 md:py-3 rounded-2xl shadow-sm border border-orange-100">
+                <h1 className="font-display font-bold text-xl md:text-2xl text-orange-500 tracking-wide">
+                  Nyaya Nagri
+                </h1>
+              </div>
+              <div className="self-start">
+                <BadgeCounter />
+              </div>
             </div>
             <div className="flex flex-col items-end gap-3 pointer-events-auto">
               <button 
