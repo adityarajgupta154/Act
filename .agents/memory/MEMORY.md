@@ -1,0 +1,1 @@
+- [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — user pastes Tasks 0-24 one at a time; re-read PRD §9 (+§4 if legal content) before EVERY task; hard safety rules apply forever.

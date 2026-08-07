@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Nyaya Nagri"
+description = "A gamified 3D legal-literacy platform for children in India (ages 8-18). Children explore a stylized low-poly 3D map of India, complete Rights Quests about their legal rights (POCSO, RTE, JJ Act, child labour laws, and more), guided by an AI companion, with a permanent Get Help Now safety button surfacing Childline 1098 and Cyber Crime 155260."
+version = "1.0.0"
+id = "artifacts/nyaya-nagri"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19426
+
+[services.development]
+run = "pnpm --filter @workspace/nyaya-nagri run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/nyaya-nagri", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/nyaya-nagri/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19426"
+BASE_PATH = "/"

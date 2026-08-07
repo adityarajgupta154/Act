@@ -1,0 +1,25 @@
+You are building a 3D educational game for children (ages 8-18) in India about their legal rights, using Three.js. This is Task 0 of a multi-stage build — set up ONLY the foundation in this task, nothing else.
+
+Create a new Replit project (JavaScript/HTML/CSS, Three.js via CDN or npm). Set up:
+
+1. A clean project structure:
+   /src
+     /world        (3D scene, map, environment)
+     /avatar       (AI companion logic + animation)
+     /quests       (quest engine + quest content JSON)
+     /ui           (HUD, menus, accessibility controls)
+     /i18n         (localization strings)
+     /data         (progress storage helpers)
+   /assets         (models, textures, audio placeholders)
+   index.html
+   main.js
+
+2. A basic Three.js scene: a stylized low-poly ground plane representing a simplified map of India (can be a placeholder flat terrain with region markers for now — do not build detailed geography yet), a camera with orbit/follow controls, basic lighting (ambient + directional), and a simple placeholder character (a capsule or box mesh is fine) that can move with WASD (desktop) and an on-screen virtual joystick (mobile/touch).
+
+3. A minimal HUD: title "Nyaya Nagri", a settings icon (non-functional placeholder for now), and a persistent "Get Help Now" button in a corner that currently just shows an alert with the text "Childline 1098 | Cyber Crime 155260" — this button must NEVER be removed in any future task, it is a permanent safety feature.
+
+4. Set up a simple state/progress store using Replit's built-in storage (or localStorage-equivalent in-memory JS object, since browser storage restrictions apply for embedded contexts — use an in-memory JS store with a save/load interface function so it can be swapped for real persistence later).
+
+5. Make sure the scene runs at a stable frame rate on a mid-range device — keep polygon counts low, avoid heavy post-processing.
+
+Do not add quest content, AI avatar logic, or accessibility features yet — those are separate tasks. End by confirming the scene runs, character moves, and the Get Help button works.
