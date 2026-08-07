@@ -1,0 +1,33 @@
+I'm building "Nyaya Nagri" — a gamified 3D legal-literacy platform for children's rights in India (ages 8-18) — as a Smart India Hackathon prototype. I have uploaded TWO master reference files into this Repl:
+
+1. PRD_NyayaNagri_MASTER.md — the full product spec: personas, the complete legal content matrix (POCSO, JJ Act, RTE Act, Child Labour Act, Child Marriage Act, IT Act, DPDP Act, etc.), all 7 zones (0-6), the AI companion avatar + role-play persona rules, the level/economy/avatar-builder systems, architecture, and ethical/safety rules (§9).
+2. Replit_ClaudeFable_Build_Prompts_MASTER.md — Tasks 0 through 24, the full build sequence, in strict numeric order.
+
+HOW WE WILL WORK:
+
+- I will paste ONE task prompt at a time, in order, Task 0 through Task 24. Do not skip ahead or attempt future tasks early.
+- **Before starting every single task, re-open and re-read PRD_NyayaNagri_MASTER.md — specifically §4 (legal content matrix) if the task touches any legal content, and §9 (ethical & safety considerations) always — even if you read it earlier in this session.** Do not rely on your memory of the PRD from a previous task; re-check it fresh each time so nothing drifts, gets simplified incorrectly, or invents a legal detail that isn't in §4.
+- Each task assumes everything from all previous tasks already exists and works — never rebuild, remove, or duplicate something from an earlier task unless a task explicitly tells you to extend it.
+- After each task: (a) confirm which PRD sections you referenced for this task, (b) summarize what was built and tested, (c) flag anything where the task prompt and the PRD seemed to conflict, before I move to the next prompt.
+
+UI/UX QUALITY BAR — this must NOT look like a generic hackathon prototype. Apply this design system consistently from Task 0 onward, and revisit/tighten it at every later task rather than only in the final polish task:
+
+- **Visual identity:** a warm, bright, child-friendly but premium-feeling palette (think modern edtech apps like Duolingo/Khan Academy Kids quality, not a bootstrap-default look) — pick 1 primary color, 1-2 accent colors, and a neutral scale; use them consistently everywhere, never ad-hoc colors per screen.
+- **Typography:** one rounded/friendly display font for headings + titles, one highly-legible body font; consistent type scale (don't just eyeball font sizes per screen).
+- **Spacing & layout:** use a consistent spacing scale (e.g., 4/8/16/24/32px), generous whitespace, clear visual hierarchy — no cramped or misaligned UI.
+- **Depth & feedback:** soft shadows, rounded corners, subtle hover/press states on every interactive element (buttons, level nodes, cards), smooth transitions (200-300ms ease) between screens — no jarring instant cuts except where a task explicitly asks for a hard cut (e.g., the Task 1 fade-to-black zone transition).
+- **Iconography:** consistent icon set/style throughout (don't mix icon families) for HUD, settings, level types, and authority hub entries.
+- **Motion with restraint:** micro-animations (button bounce, badge pop-in, level-complete confetti/celebration) are encouraged for delight, but must never block or slow down the "Get Help Now" button's usability — that button's tap target and response must always be instant and unmissable.
+- **Mobile-first polish:** since target users may only have phone access, touch targets must be comfortably large (44px+), text must stay legible at small sizes, and the virtual joystick/HUD must never overlap critical UI.
+- **Accessibility is part of "tagda UI," not separate from it:** high-contrast mode, dyslexia-friendly font toggle, and text-size slider (from later tasks) must look just as polished as the default theme, not like an afterthought debug mode.
+- At the end of EVERY task, before reporting back to me, do a quick self-check: "Does this new screen/component follow the same color palette, type scale, spacing, and interaction style as everything built in earlier tasks?" If not, fix it before moving on — visual consistency drift across 25 tasks is the #1 risk here.
+
+NON-NEGOTIABLE SAFETY RULES THAT APPLY TO EVERY TASK, FOREVER, WITH NO EXCEPTIONS (from PRD §9):
+1. The "Get Help Now" button (Childline 1098 / Cyber Crime 155260) must be visible and functional on every screen, from Task 0 onward.
+2. No collection of any real personally identifiable information at any point — no real names, addresses, phone numbers, school names, photos, or camera access.
+3. Every AI-driven character — the main companion avatar AND every role-play persona — must, without exception, immediately surface Childline 1098 and the Get Help screen on any real disclosure of abuse or harm, and never attempt to counsel or investigate itself.
+4. No open, unmoderated chat between children and other real users, ever. No real-money transactions anywhere, ever.
+5. Sensitive topics are always shown through implication, never graphic depiction, especially for the 8-11 age band, and every such scenario ends with a clear, empowering, help-seeking resolution.
+6. No "dynamic"/AI-generated content may ever alter legal facts, correct/incorrect answers, quiz content, or safety/helpline text.
+
+Confirm you've read both master files fully and understood this structure, then wait for me to paste Task 0.
