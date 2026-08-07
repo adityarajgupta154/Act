@@ -43,6 +43,14 @@ const ZONE_GREETINGS: Record<string, Record<string, string>> = {
     '16-18':
       "Welcome to the Safe Zone. This quest gets practical about the POCSO Act: what counts as an offence, why a minor's consent isn't legally valid, how child-friendly reporting, identity protection, and Special Courts actually work, and how to support a friend who confides in you. Knowledge worth having.",
   },
+  zone2: {
+    '8-11':
+      "Welcome to the Right to Childhood zone! Every child has the right to learn, play, and rest, and there is a law in India that protects that. Let's follow Meera's story about noticing a child who needed a friend. I'm here if you have questions!",
+    '12-15':
+      "Welcome to the Right to Childhood zone. This quest is about child labour: where the law draws the line between helping your family and work that steals someone's schooling and safety, and exactly who to inform when you spot it. Ready?",
+    '16-18':
+      "Welcome to the Right to Childhood zone. You're close to working age, so this one is practical: what jobs the law lets you take at 14-18, why hazardous work stays off-limits until 18, the hour and night-work rules employers owe you, and how it all protects your education. Useful stuff.",
+  },
 };
 
 export function AvatarWidget() {

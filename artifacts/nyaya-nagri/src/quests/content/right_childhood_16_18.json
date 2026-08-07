@@ -1,0 +1,154 @@
+{
+  "questId": "right_childhood_16_18",
+  "zoneId": "zone2",
+  "ageBand": "16-18",
+  "title": "Working Age, Protected Age",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Priya is 17 and wants a part-time job to save for college. Two offers land the same week. Her cousin knows a firecracker manufacturing unit that pays well and 'does not ask questions.' A bookstore near her house needs weekend help. Priya wonders: 'I am 17, practically an adult. Can I legally take any job I want?' What is the actual legal position?",
+      "choices": [
+        {
+          "text": "At 14 to 18 the law calls her an 'adolescent': she CAN work, but hazardous occupations are completely off-limits until she turns 18.",
+          "outcome": "correct",
+          "feedback": "Exactly. The Child and Adolescent Labour (Prohibition and Regulation) Act draws two lines: under 14, employment is prohibited altogether; from 14 to 18, work is permitted but hazardous occupations and processes are banned, and even permitted work comes with protective conditions.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "At 17 she can take any job. Only small children are protected.",
+          "outcome": "incorrect",
+          "feedback": "Not quite. The law protects adolescents aged 14 to 18 too: they may work, but hazardous occupations are prohibited until 18, and even permitted work is regulated. Being 'almost 18' does not switch those protections off early.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "No one under 18 is allowed to work at all.",
+          "outcome": "incorrect",
+          "feedback": "That overshoots. The full prohibition applies below 14. From 14 to 18 the law permits work, just not hazardous work, and with conditions on hours and timing. Knowing the precise rule matters, because it is YOUR rule for the next year.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "So what exactly counts as 'hazardous'? The Act's schedule bans adolescents from: mines, work with inflammable substances or explosives, and hazardous processes listed under the Factories Act. The Constitution stands behind this area too: Article 24 prohibits employing any child below 14 in a factory, mine, or other hazardous employment, and the child labour statute separately extends the hazardous-work ban to adolescents under 18. Now look at Priya's two offers. Which one can she legally take?",
+      "choices": [
+        {
+          "text": "The bookstore. The firecracker unit works with explosive material, which is squarely in the banned category until she turns 18.",
+          "outcome": "correct",
+          "feedback": "Right. Firecracker manufacturing means inflammable and explosive substances, prohibited for anyone under 18, no matter how good the pay is or how few questions they ask. An employer who 'does not ask questions' is usually one who knows the answers would be illegal. The bookstore is legitimate adolescent work.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "The firecracker unit. It pays better, and she is only a year from 18 anyway.",
+          "outcome": "incorrect",
+          "feedback": "The pay does not change the law or the danger. Explosives work is banned for under-18s precisely because one accident can end a future. 'Almost 18' has no legal meaning here: the protection runs until the day she turns 18. The bookstore is her legal option.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Priya takes the bookstore job. But even fully legal adolescent work comes with protective conditions built into the Act: her working hours are capped with mandatory rest breaks, she cannot be made to work between 7 p.m. and 8 a.m., she gets a weekly day off, no overtime, and she cannot be employed in two places on the same day. Three weeks in, the manager asks her to stay and close the store at 10 p.m. 'just this once.' What is the legal reality?",
+      "choices": [
+        {
+          "text": "He cannot ask that. Night work between 7 p.m. and 8 a.m. is prohibited for workers under 18, even once, even voluntarily.",
+          "outcome": "correct",
+          "feedback": "Correct. The hour and night-work limits are not perks the employer grants, they are legal duties the employer owes. Priya can decline, point to the rule, and if it becomes a pattern, that is a violation to report, not a favour to negotiate.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "It is fine if she agrees to it and gets paid extra.",
+          "outcome": "incorrect",
+          "feedback": "Her agreement does not make it legal. The protections for under-18 workers cannot be waived, by her or by the employer, because the law recognizes the power imbalance between a teenager and a boss. No night work between 7 p.m. and 8 a.m., no overtime. Full stop.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Why does the law bother with all these limits? Follow the thread: the RTE Act guarantees free and compulsory education up to age 14, and the labour law is its bodyguard for the teen years after that. Work for a 14 to 18 year old must fit AROUND education, never replace it. Priya's classmate Ravi, 16, has started night shifts at a roadside dhaba and is talking about dropping out. He thinks that if anyone finds out, HE will be the one in trouble. What should Priya tell him?",
+      "choices": [
+        {
+          "text": "The law punishes the employer, never the working adolescent. Ravi can talk to a teacher or call Childline 1098, and the system's job is to get him back on track, not to punish him.",
+          "outcome": "correct",
+          "feedback": "Exactly right. An employer who illegally employs a child or adolescent faces imprisonment and a heavy fine. The adolescent faces nothing: the law treats him as someone to protect and support back into education. Night shifts at 16 are already a violation. Childline 1098 is free and open 24 hours, and a teacher can also help route the concern to the child-protection authorities, including the Child Welfare Committee where appropriate.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Stay quiet, because reporting it would get Ravi punished and shame his family.",
+          "outcome": "incorrect",
+          "feedback": "This is the fear that keeps kids trapped, and it is legally backwards. The penalty, imprisonment and fine, falls on the EMPLOYER. Ravi is not a lawbreaker, he is the person the law protects, and the system's whole design is to support him and his family, not shame them. Telling a teacher or calling Childline 1098 starts help, not trouble.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "Priya talks to Ravi, and together they loop in a teacher they trust. The teacher contacts Childline 1098 so the concern reaches the child-protection authorities, whose role is to assess what Ravi and his family need. In this story, Ravi comes out of the night shifts and sits for his exams after all. Priya keeps her bookstore job, with legal hours and her evenings free to study. One year from now she turns 18 and every job opens up. Until then, what is the smartest way for her to think about work?",
+      "choices": [
+        {
+          "text": "Know the rules that protect her: no hazardous work until 18, capped hours, no night work, and education always comes first, because the law is built to keep her future open.",
+          "outcome": "correct",
+          "feedback": "That is exactly it. These protections are not restrictions on Priya, they are restrictions on employers, and they exist so that work funds her future instead of consuming it. And if she or anyone she knows ever gets pushed past those lines: a trusted adult, a teacher, or Childline 1098, any hour of any day."
+        },
+        {
+          "text": "Rules like these just get in the way of earning. Better to ignore them until someone objects.",
+          "outcome": "incorrect",
+          "feedback": "The rules are load-bearing. Every limit in this quest exists because, without it, employers historically pushed teenagers into danger, night work, and dropping out. The law keeps her earning AND studying. And when an employer crosses the line, the answer is Childline 1098 or a trusted teacher, not silence."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "What does the law say about work for adolescents aged 14 to 18?",
+      "options": [
+        "They cannot work at all until 18",
+        "They may work, but hazardous occupations and processes are prohibited until 18",
+        "They can do any work an adult can do"
+      ],
+      "correctIndex": 1,
+      "explanation": "The Child and Adolescent Labour (Prohibition and Regulation) Act permits adolescents (14 to 18) to work, but bans them from hazardous occupations: mines, inflammable substances or explosives, and hazardous processes."
+    },
+    {
+      "question": "Which of these jobs is PROHIBITED for a 17-year-old?",
+      "options": [
+        "Weekend help at a bookstore",
+        "Tutoring younger students",
+        "Packing work at a firecracker manufacturing unit"
+      ],
+      "correctIndex": 2,
+      "explanation": "Firecracker work involves inflammable and explosive substances, a hazardous occupation the child labour law bans for everyone under 18. (Article 24 of the Constitution separately bars children below 14 from factories, mines, and hazardous employment.)"
+    },
+    {
+      "question": "Which working condition applies to legally employed adolescents under 18?",
+      "options": [
+        "No work between 7 p.m. and 8 a.m., capped hours with rest breaks, and a weekly day off",
+        "Any hours are fine if the adolescent agrees",
+        "Night shifts are allowed with extra pay"
+      ],
+      "correctIndex": 0,
+      "explanation": "Even permitted adolescent work is regulated: capped daily hours with rest, no work between 7 p.m. and 8 a.m., a weekly holiday, no overtime, and no double employment. These protections cannot be waived by agreement."
+    },
+    {
+      "question": "An employer illegally employs a 15-year-old in hazardous work. Who does the law punish?",
+      "options": [
+        "The 15-year-old",
+        "The employer, with imprisonment and fine. The adolescent is never punished.",
+        "Both equally"
+      ],
+      "correctIndex": 1,
+      "explanation": "Penalties, imprisonment and fines, fall on the employer. The working child or adolescent is treated as someone the law protects and helps back into education, never as an offender."
+    },
+    {
+      "question": "How does child labour law connect to the right to education?",
+      "options": [
+        "It does not; they are unrelated laws",
+        "Education rights end at 14, so work can fully replace school after that",
+        "RTE guarantees schooling up to 14, and labour law protections ensure that work for 14 to 18 year olds fits around education instead of replacing it"
+      ],
+      "correctIndex": 2,
+      "explanation": "The RTE Act guarantees free, compulsory education for ages 6 to 14, and the labour law's limits on adolescent work (no hazardous jobs, capped hours, no night work) exist so education can continue through the teen years. If work is crowding out school, Childline 1098 can help."
+    }
+  ]
+}

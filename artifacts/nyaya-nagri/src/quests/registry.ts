@@ -12,11 +12,17 @@ import { validateQuest, type Quest } from './schema';
 import safeZone811 from './content/safe_zone_8_11.json';
 import safeZone1215 from './content/safe_zone_12_15.json';
 import safeZone1618 from './content/safe_zone_16_18.json';
+import rightChildhood811 from './content/right_childhood_8_11.json';
+import rightChildhood1215 from './content/right_childhood_12_15.json';
+import rightChildhood1618 from './content/right_childhood_16_18.json';
 
 const QUEST_FILES: Quest[] = [
   safeZone811 as Quest,
   safeZone1215 as Quest,
   safeZone1618 as Quest,
+  rightChildhood811 as Quest,
+  rightChildhood1215 as Quest,
+  rightChildhood1618 as Quest,
 ];
 
 /** Validate everything once at module load — content bugs fail loudly in dev. */

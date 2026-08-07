@@ -1,0 +1,116 @@
+{
+  "questId": "right_childhood_8_11",
+  "zoneId": "zone2",
+  "ageBand": "8-11",
+  "title": "Time to Play, Time to Learn",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Meet Meera. Every morning she walks to school past a busy tea stall. And every morning she sees a boy her age there, carrying heavy trays of glasses. His name is Sonu. He is always working. He never goes to school. He never plays. Today Meera stops and wonders about him. What should Meera do?",
+      "choices": [
+        {
+          "text": "Say hello kindly and ask Sonu how he is doing.",
+          "outcome": "correct",
+          "feedback": "That is a kind heart at work. Noticing another child and caring about them is the first step. Meera says hello, and Sonu smiles for the first time all morning.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Look away. It is none of her business.",
+          "outcome": "incorrect",
+          "feedback": "When we look away, nothing changes for Sonu. Caring about other children is everyone's business, even kids'. Meera decides to say a kind hello instead.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Sonu tells Meera: 'I work here all day, every day. I am always tired. I have never been inside a school.' Meera remembers something her teacher said: EVERY child in India has the right to learn, to play, and to rest. Meera thinks hard. Does 'every child' include Sonu?",
+      "choices": [
+        {
+          "text": "Yes! Every child means EVERY child, including Sonu.",
+          "outcome": "correct",
+          "feedback": "Exactly right. Learning, playing, and resting are not treats for lucky children. They are rights for ALL children. There is even a law in India that says young children must not be made to work in jobs. Childhood is for growing, not working.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "No, only children whose families send them to school.",
+          "outcome": "incorrect",
+          "feedback": "Actually, every child means EVERY child, no matter what. The law in India protects all children's time to learn, play, and rest. Sonu has these rights too, even if no one has helped him use them yet.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Meera wants to help Sonu, but she is only nine. She cannot fix this alone, and that is okay. Helping has a right way and a wrong way. What is the RIGHT way for Meera to help?",
+      "choices": [
+        {
+          "text": "Tell a trusted grown-up, like her teacher, what she saw.",
+          "outcome": "correct",
+          "feedback": "Perfect. Big problems need grown-up helpers. Meera's teacher will know what to do. And here is something amazing: there is a free phone friend for children called Childline. Any child, or any grown-up helping a child, can dial 1098, any day, any time.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "March into the tea stall and scold the owner herself.",
+          "outcome": "incorrect",
+          "feedback": "Meera's heart is in the right place, but scolding grown-ups is not safe for a child, and it will not really help Sonu. The safe, strong move is telling a trusted grown-up like her teacher, who can call helpers such as Childline 1098.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Keep it to herself so no one gets in trouble.",
+          "outcome": "incorrect",
+          "feedback": "Staying quiet keeps Sonu stuck. Telling a trusted grown-up is not about getting anyone in trouble. It is about getting Sonu the help he deserves. Helpers are there for the whole family too.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Meera tells her teacher everything. Her teacher says, 'Thank you, Meera. You did exactly the right thing.' In Meera's story, the teacher calls Childline on 1098. The child helpers can listen to Sonu and his family and find out what help they need. Later in this story, Meera sees Sonu at recess, laughing and playing kho-kho. What did we learn today?",
+      "choices": [
+        {
+          "text": "Every child has the right to learn, play, and rest, and telling a trusted grown-up can make it come true.",
+          "outcome": "correct",
+          "feedback": "Beautiful. Every child's time is for growing, learning, and playing. The law protects that, and helpers like teachers and Childline 1098 make it real. And remember: a child who has to work has done NOTHING wrong. The helpers are there to help, never to punish children."
+        },
+        {
+          "text": "Some children just have to work, and nothing can change it.",
+          "outcome": "incorrect",
+          "feedback": "Sonu's story shows that is not true! Things CAN change when caring people speak up. Every child has the right to learn, play, and rest. Telling a trusted grown-up, or calling Childline 1098, can start that change. And it is never the working child's fault."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Every child in India has the right to do which three things?",
+      "options": [
+        "Learn, play, and rest",
+        "Work, work, and work",
+        "Only play, never study"
+      ],
+      "correctIndex": 0,
+      "explanation": "Every child has the right to learn, play, and rest. There is a law in India that protects children's time to grow instead of working in jobs."
+    },
+    {
+      "question": "Meera sees a child her age working all day instead of going to school. What is the BEST thing she can do?",
+      "options": [
+        "Scold the shop owner herself",
+        "Tell a trusted grown-up, like her teacher",
+        "Pretend she did not see anything"
+      ],
+      "correctIndex": 1,
+      "explanation": "Big problems need grown-up helpers. A trusted grown-up like a teacher can call Childline 1098, the free helpline for children, open day and night."
+    },
+    {
+      "question": "If a child has to work instead of going to school, whose fault is it?",
+      "options": [
+        "The child's fault",
+        "Not the child's fault. Helpers are there to help, not to punish children.",
+        "Nobody can help anyway"
+      ],
+      "correctIndex": 1,
+      "explanation": "It is NEVER the child's fault. Helpers like teachers and Childline 1098 are there to help the child and the family, so the child can learn and play again."
+    }
+  ]
+}

@@ -1,0 +1,152 @@
+{
+  "questId": "right_childhood_12_15",
+  "zoneId": "zone2",
+  "ageBand": "12-15",
+  "title": "The Workshop Down the Lane",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Arjun's classmate Imran has not come to school in three weeks. On Sunday, Arjun spots him inside a metal workshop down the lane: sparks flying, air thick with fumes, machines louder than a train. Imran, thirteen years old, is hauling metal rods twice his size. This is clearly no place for a kid. What should Arjun do first?",
+      "choices": [
+        {
+          "text": "Wait for Imran's chai break and talk to him like a friend.",
+          "outcome": "correct",
+          "feedback": "Good call. A friend who listens learns the real story, and Imran needs a friend right now more than anything. Arjun waves him over when the machines stop.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Storm into the workshop and yell at the owner.",
+          "outcome": "incorrect",
+          "feedback": "Never do this. Confronting an adult employer is genuinely unsafe for you, and it can make things worse for the working child, who could be moved somewhere harder to find. Talk to your friend first, then bring in adults whose actual job is to handle this.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Decide it is not his problem and keep walking.",
+          "outcome": "incorrect",
+          "feedback": "If Arjun walks away, Imran stays invisible. Child labour survives on people looking away. Arjun does not have to fix it himself, but he can be the person who notices.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Imran tells him everything. Ten-hour days. The owner 'keeps his wages safe' so Imran never actually sees the money. He is exhausted and coughs from the fumes. Then Imran shrugs: 'It is fine, yaar. I am helping my family. You help in your dad's shop on Sundays too. Same thing, right?' Is it the same thing?",
+      "choices": [
+        {
+          "text": "No. Helping your own family a little, outside school time, in safe work is completely different from full-time dangerous work that replaces school.",
+          "outcome": "correct",
+          "feedback": "Exactly. Arjun stacks boxes in his father's shop for an hour after homework: safe tasks, his own family, and school always comes first. Imran is doing long, dangerous shifts for an employer, with no school at all. The law itself draws this line, as you are about to see.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Yes, work is work. Both are helping their families.",
+          "outcome": "incorrect",
+          "feedback": "It is not the same, and the difference matters. Light help in your own family's safe work, outside school hours, is allowed. Ten-hour shifts around sparks and fumes, instead of school, for a boss who withholds wages: that is exploitation, and the law prohibits it.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Not sure. What does the law actually say?",
+          "outcome": "neutral",
+          "feedback": "Great question to ask. Let us look at exactly what the law says.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Here is the law. The Child and Adolescent Labour (Prohibition and Regulation) Act says: children under 14 cannot be employed in ANY occupation. Full stop. The one narrow exception: helping your OWN family after school hours or in vacations, in safe, non-hazardous work, without harming your education. This workshop may well be dangerous too, but notice: Imran is 13, so employment there is prohibited IN ANY EVENT. Separately, the law also bans 14 to 18 year olds from a schedule of hazardous occupations and processes. How does the law see Imran's situation?",
+      "choices": [
+        {
+          "text": "He is under 14 and employed by an outside workshop, and the work has replaced school entirely. That is prohibited, full stop.",
+          "outcome": "correct",
+          "feedback": "Right. Because Imran is under 14, the employment is prohibited regardless of how dangerous the workshop is. And every child aged 6 to 14 has the right to free and compulsory education under the RTE Act, so work that swallows school collides with that right too.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Nothing is wrong, since his family agreed to it.",
+          "outcome": "incorrect",
+          "feedback": "A family's consent cannot make illegal work legal. The workshop is not Imran's family enterprise, he is under 14, and the work is dangerous and has replaced school. The law exists precisely to protect children even when the adults around them are desperate or misled.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Arjun now knows Imran needs real help. Monday morning, he thinks about what to do. Who are the RIGHT people to inform about a child trapped in dangerous work?",
+      "choices": [
+        {
+          "text": "Tell a trusted teacher, or call Childline 1098. They can help route the concern to the child-protection authorities, including the Child Welfare Committee (CWC) where appropriate.",
+          "outcome": "correct",
+          "feedback": "Exactly the right channels. A teacher knows how to escalate safely, and Childline 1098 is free and open 24 hours. They can help route the concern to the child-protection authorities, including the Child Welfare Committee (CWC) where appropriate, who assess what support the child and family need. Those authorities have the legal role that kids and bystanders do not.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Post the workshop's photo and location on social media to shame the owner.",
+          "outcome": "incorrect",
+          "feedback": "Tempting, but risky and often harmful. Public posts can tip off the employer, endanger Imran, and spread his name and face in public in ways that can hurt him. Real help goes through the right channels: a trusted teacher, Childline 1098, and the child-protection authorities.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Gather friends and confront the workshop owner as a group.",
+          "outcome": "incorrect",
+          "feedback": "No. A group of kids confronting an adult employer is dangerous, and it is not your job to be the enforcement. Your power move is information: tell a trusted teacher or call Childline 1098, and let the child-protection authorities do what they exist to do.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "Arjun tells their class teacher, who calls Childline 1098 the same day, and the concern reaches the child-protection authorities, including the Child Welfare Committee. Here is the part worth remembering: Imran is NOT in any trouble. The law treats a rescued working child as a child who needs care and protection, never as a wrongdoer, and any penalty is the employer's to face. The authorities look at what Imran and his family need so that school becomes possible again. In this story, Imran is eventually back in class, sitting next to Arjun. One last thing to hold onto:",
+      "choices": [
+        {
+          "text": "The child is never the one at fault or in trouble. The system exists to protect working children, not punish them.",
+          "outcome": "correct",
+          "feedback": "That is the heart of it. And one more thing: if any part of Imran's story feels like your own life, or the life of someone you know, that is not your fault and you are not alone. Childline 1098 is for you too, free, any hour, any day."
+        },
+        {
+          "text": "Imran should have just kept working so his family had money.",
+          "outcome": "incorrect",
+          "feedback": "The law sees it differently, and so should we. Childhood education is what breaks the cycle for the whole family, which is why the system is meant to support the family too instead of leaving it stranded. And remember: a child in this situation has done nothing wrong. Childline 1098 exists exactly for this."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "For children under what age does the Child and Adolescent Labour (Prohibition and Regulation) Act generally prohibit employment, subject to its narrow family-enterprise exception?",
+      "options": ["Below 12", "Below 14", "Below 18"],
+      "correctIndex": 1,
+      "explanation": "Children under 14 cannot be employed in any occupation. The only exception is safe help in your OWN family's work, outside school hours, without harming your education."
+    },
+    {
+      "question": "Which of these is allowed under the law?",
+      "options": [
+        "A 13-year-old doing shifts at a metal workshop",
+        "A 13-year-old skipping school to work full days at a shop",
+        "A 13-year-old helping in the family's shop for a while after school, with safe tasks"
+      ],
+      "correctIndex": 2,
+      "explanation": "Light, safe help in your own family's work outside school hours is allowed. Employment, hazardous work, and anything that replaces school are prohibited for children under 14."
+    },
+    {
+      "question": "You discover a child working in dangerous conditions. Who should you inform?",
+      "options": [
+        "Confront the employer yourself",
+        "A trusted teacher, or Childline 1098, who can help involve the child-protection authorities such as the CWC",
+        "Post the location on social media"
+      ],
+      "correctIndex": 1,
+      "explanation": "Never confront an employer or go public. Tell a trusted teacher or call Childline 1098, free and 24/7. They can help route the concern to child-protection authorities such as the Child Welfare Committee (CWC); what happens next depends on the case."
+    },
+    {
+      "question": "What happens to a child who is rescued from illegal child labour?",
+      "options": [
+        "The child is punished for working",
+        "The child is treated as needing care and protection, and is meant to be supported back into school",
+        "Nothing changes for the child"
+      ],
+      "correctIndex": 1,
+      "explanation": "The law treats rescued working children as children in need of care and protection, never as wrongdoers. The penalty falls on the employer, and the child-protection system's role is to support the child's return to school."
+    }
+  ]
+}
