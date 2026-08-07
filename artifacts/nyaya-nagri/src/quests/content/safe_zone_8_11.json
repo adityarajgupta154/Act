@@ -1,0 +1,112 @@
+{
+  "questId": "safe_zone_8_11",
+  "zoneId": "zone1",
+  "ageBand": "8-11",
+  "title": "My Body Is Mine",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Meet Anu. Today at school, Teacher Meena shares the Body Safety Rule: 'Your body belongs to YOU and no one else. Safe touches feel good and happy, like a high-five from a friend or a hug you asked for. If any touch makes you feel scared, funny, or mixed-up inside, you are allowed to say NO, loud and clear.' Anu wonders: what does this rule really mean?",
+      "choices": [
+        {
+          "text": "My body belongs to me, so I can say NO to any touch that feels wrong, even to a grown-up.",
+          "outcome": "correct",
+          "feedback": "Yes! That is exactly right. There is a special law in India that protects every child's body. You never have to be polite about a touch that feels wrong. Saying NO is always allowed, even to a grown-up.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "I have to let bigger people do whatever they say.",
+          "outcome": "incorrect",
+          "feedback": "No, and this is very important: no one, however big, is allowed to touch you in a way that feels wrong. Your body belongs to YOU, and the law protects that. You can always say NO.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Teacher Meena tells a story. A child in the story gets a touch that feels mixed-up and wrong inside. Then the person whispers: 'This is our little secret. Do not tell anyone.' The child's tummy feels tight and worried. Teacher Meena asks the class: what should the child in the story do?",
+      "choices": [
+        {
+          "text": "Tell the secret to a trusted grown-up, like a parent or a teacher.",
+          "outcome": "correct",
+          "feedback": "Yes! A secret that makes you feel bad or worried inside is a secret you should ALWAYS tell. Telling is not tattling. It is brave, and it keeps children safe.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Keep the secret, because the child promised.",
+          "outcome": "incorrect",
+          "feedback": "No promise can make a bad secret okay. Secrets about touching must always be told to a trusted grown-up. The child will NOT be in trouble for telling. Not ever.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Pretend it never happened.",
+          "outcome": "incorrect",
+          "feedback": "Pretending does not make the worried feeling go away. The safe thing is to tell a trusted grown-up, who can make the bad thing stop.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "The child in the story decides to tell. But tell WHO? Teacher Meena asks: who counts as a trusted grown-up?",
+      "choices": [
+        {
+          "text": "Someone the child knows well and feels safe with, like Amma, Papa, or a teacher.",
+          "outcome": "correct",
+          "feedback": "Perfect. A trusted grown-up is someone you know well and feel safe with. And here is a superpower to remember: if a child ever cannot find one, there is a free phone friend called Childline. Just dial 1098, any day, any time.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "A stranger from the internet.",
+          "outcome": "incorrect",
+          "feedback": "People online can pretend to be anyone. For help, always go to a grown-up you know in real life, or call Childline on 1098. It is a free helpline just for children, open day and night.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "In the story, the child tells Amma everything. Amma gives a big, wanted hug and says: 'Thank you for telling me. You did nothing wrong. It is NEVER a child's fault. I will keep you safe now.' The child feels light and happy again. The whole class smiles. What did we learn?",
+      "choices": [
+        {
+          "text": "The child was brave to tell, and it was never the child's fault.",
+          "outcome": "correct",
+          "feedback": "Exactly right. When something wrong happens to a child, the fault belongs to the person who did it. NEVER the child. Telling a trusted grown-up, or calling Childline 1098, is always the right thing to do."
+        },
+        {
+          "text": "The child should have kept the secret.",
+          "outcome": "incorrect",
+          "feedback": "No. Telling was exactly right. Bad secrets must always be told. The child did nothing wrong, and neither would you. Grown-ups who love you, and helpers like Childline 1098, are there to keep you safe."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Who does your body belong to?",
+      "options": ["My teacher", "ME!", "Anyone bigger than me"],
+      "correctIndex": 1,
+      "explanation": "Your body belongs to YOU. A special law in India called POCSO protects every child's body from wrong touch."
+    },
+    {
+      "question": "A secret makes you feel scared or mixed-up inside. What should you do?",
+      "options": [
+        "Keep it forever",
+        "Tell a trusted grown-up, like a parent or teacher",
+        "Just forget about it"
+      ],
+      "correctIndex": 1,
+      "explanation": "Bad secrets must always be told. A trusted grown-up can help, and Childline 1098 is a free phone friend for any child, any time."
+    },
+    {
+      "question": "If someone touches a child in a wrong way, whose fault is it?",
+      "options": [
+        "The child's fault",
+        "No one's fault",
+        "The person who did it. NEVER the child."
+      ],
+      "correctIndex": 2,
+      "explanation": "It is NEVER the child's fault. The law is on the child's side, always, and telling a trusted grown-up is always right."
+    }
+  ]
+}

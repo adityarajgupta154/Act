@@ -1,17 +1,23 @@
 /**
- * Nyaya Nagri — Quest registry (Task 3)
+ * Nyaya Nagri — Quest registry (Task 3, real Zone 1 content from Task 4)
  *
- * Maps zone + age band to a quest content file. Real quests (Task 4+) get
- * added to QUEST_FILES; the resolver prefers an exact age-band match and
- * falls back to any quest for the zone so a zone is playable even before
- * all three band variants exist.
+ * Maps zone + age band to a quest content file. The resolver prefers an
+ * exact age-band match and falls back to any quest for the zone so a zone
+ * stays playable if a band variant is ever missing. Zone 1 now has all
+ * three bands (real POCSO content); zones 2-5 get content in later tasks.
  */
 
 import type { AgeBand } from '@/data/progressStore';
 import { validateQuest, type Quest } from './schema';
-import zone1Sample from './content/zone1_sample.json';
+import safeZone811 from './content/safe_zone_8_11.json';
+import safeZone1215 from './content/safe_zone_12_15.json';
+import safeZone1618 from './content/safe_zone_16_18.json';
 
-const QUEST_FILES: Quest[] = [zone1Sample as Quest];
+const QUEST_FILES: Quest[] = [
+  safeZone811 as Quest,
+  safeZone1215 as Quest,
+  safeZone1618 as Quest,
+];
 
 /** Validate everything once at module load — content bugs fail loudly in dev. */
 const QUESTS: Quest[] = QUEST_FILES.map(validateQuest);

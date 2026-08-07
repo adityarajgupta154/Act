@@ -1,0 +1,150 @@
+{
+  "questId": "safe_zone_12_15",
+  "zoneId": "zone1",
+  "ageBand": "12-15",
+  "title": "Signals and Boundaries",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Your classmate Riya looks uneasy. An older family friend insists on hugs every time he visits, even after she pulls away. 'Maybe I'm overreacting?' she asks you.",
+      "choices": [
+        {
+          "text": "You're not overreacting. Your body, your rules. You can say no to ANY touch, even from someone familiar.",
+          "outcome": "correct",
+          "feedback": "Right. Consent applies to everyone, including family friends. Boundaries are a right, not rudeness, and the POCSO Act protects everyone under 18 from unwanted contact, whoever it comes from.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "He's a family friend. She should just put up with it.",
+          "outcome": "incorrect",
+          "feedback": "Familiarity never cancels consent. Much of the harm children face comes from people they already know, which is exactly why the law says no one, however close, may cross a child's boundaries.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Tell her to quietly avoid him.",
+          "outcome": "neutral",
+          "feedback": "Avoiding can be a short-term shield, but boundaries deserve words too. Riya can say no clearly and tell a parent or trusted adult how the behaviour makes her feel. She has every right to.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Later, your friend Arjun (14) shows you his chats. An online 'friend' he has never met, who claims to be 15, showers him with compliments, sends free game credits, and says: 'Don't tell your parents about us. They wouldn't understand our friendship.' What do you see?",
+      "choices": [
+        {
+          "text": "Flattery, gifts, and 'keep us secret' from someone he's never met. Those are grooming red flags.",
+          "outcome": "correct",
+          "feedback": "Sharp eyes. People who target children online often build trust with gifts and compliments, then isolate the child with secrecy. Spotting the pattern early is the best protection there is.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Sounds like a really generous friend.",
+          "outcome": "incorrect",
+          "feedback": "Real friends don't demand secrecy from your family. Gifts plus flattery plus secrecy from a stranger is a manipulation pattern called grooming, and the law treats luring a child this way as a serious offence.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "A week later, the 'friend' pushes harder: 'Send me a private photo. Everyone does it. If you're really my friend, prove it.' Arjun feels trapped. What should he do?",
+      "choices": [
+        {
+          "text": "Refuse, stop replying, keep the chats as proof, and tell a trusted adult right away.",
+          "outcome": "correct",
+          "feedback": "Exactly. Arjun did nothing wrong by chatting; the wrong is entirely the other person's. Saving the messages helps adults act. Asking anyone under 18 for such photos is a crime under POCSO, full stop.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Send one photo so he doesn't lose the friendship.",
+          "outcome": "incorrect",
+          "feedback": "A 'friendship' that demands photos as proof is a trap, not a friendship. Once sent, a photo can never be taken back. The safe move is to refuse and tell a trusted adult. Arjun will not be blamed for someone else's crime.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Just block him and never mention it to anyone.",
+          "outcome": "neutral",
+          "feedback": "Blocking stops the messages, but telling a trusted adult matters too. It protects Arjun AND other kids this person may be targeting. Childline 1098 can also guide the next steps, free of charge, any day, any time.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "You and Arjun talk it through. He asks quietly: 'Is any of this my fault? Is there even a law about things like this?'",
+      "choices": [
+        {
+          "text": "The POCSO Act protects everyone under 18, online and offline. The fault is one hundred percent the groomer's.",
+          "outcome": "correct",
+          "feedback": "Correct. The POCSO Act, 2012 covers sexual harassment and exploitation of anyone under 18, including through the internet. A child is never at fault for an adult's crime. That is the whole point of the law.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "He shouldn't have chatted online at all, so it's partly his fault.",
+          "outcome": "incorrect",
+          "feedback": "No. Making friends online is normal; exploiting a child is a crime. The responsibility sits entirely with the person who crossed the line, and the law is explicit about that.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "Arjun tells his older sister everything. Together they block and report the account, and call Childline 1098 to ask what to do next. The counsellor tells him: 'You did the right thing. This was never your fault.' Arjun finally breathes easy, and you realise he came to you first because you knew the signals.",
+      "choices": [
+        {
+          "text": "Speaking up turned a scary secret into a solved problem.",
+          "outcome": "correct",
+          "feedback": "That is the whole lesson. Clear boundaries, red-flag radar, and one trusted adult, or a free call to Childline 1098, is the combination that keeps you and your friends safe."
+        },
+        {
+          "text": "Arjun got lucky. Usually telling adults just makes things worse.",
+          "outcome": "incorrect",
+          "feedback": "Telling a trusted adult or Childline 1098 is exactly how children get protected. Reporting is designed to help the child, never to punish them. Staying silent is what keeps the problem alive."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "What does consent mean?",
+      "options": [
+        "Saying yes because you feel pressured",
+        "A free, clear yes, and you can change your mind or say no anytime",
+        "Something only adults need to think about"
+      ],
+      "correctIndex": 1,
+      "explanation": "Consent is a freely given yes. Pressure, tricks, or fear cancel it, and you always have the right to say no to unwanted touch, whoever is asking."
+    },
+    {
+      "question": "Which of these is a grooming red flag?",
+      "options": [
+        "A classmate asking about homework",
+        "An online stranger sending gifts and saying 'keep our chats secret'",
+        "A friend sharing a funny video"
+      ],
+      "correctIndex": 1,
+      "explanation": "Gifts, heavy flattery, and demands for secrecy from someone you've never met are classic grooming moves, designed to cut you off from the people who protect you."
+    },
+    {
+      "question": "Who does the POCSO Act protect?",
+      "options": [
+        "Only children under 12",
+        "Everyone under 18, including from online harassment",
+        "Only girls"
+      ],
+      "correctIndex": 1,
+      "explanation": "POCSO protects every person under 18, of every gender, from sexual abuse, harassment, and exploitation, both offline and online."
+    },
+    {
+      "question": "Someone online pressures you for private photos. What's the best response?",
+      "options": [
+        "Send one to keep the peace",
+        "Refuse, save the evidence, and tell a trusted adult or call Childline 1098",
+        "Keep arguing with them in the chat"
+      ],
+      "correctIndex": 1,
+      "explanation": "Refusing and telling is the safe play. Demanding such photos from a minor is a crime, and the child who reports it is protected by law, never punished."
+    }
+  ]
+}

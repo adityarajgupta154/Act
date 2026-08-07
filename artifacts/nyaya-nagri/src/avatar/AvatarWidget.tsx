@@ -32,6 +32,19 @@ function AvatarFace({ speaking }: { speaking: boolean }) {
 // --- Main Chat Widget ---
 type Message = { role: 'user' | 'assistant'; content: string; escalated?: boolean };
 
+// Hard-coded, age-band-specific zone greetings (PRD §9.8: never AI-generated).
+// Tone per Task 2 rules: 8-11 playful/simple, 12-15 older-sibling, 16-18 practical.
+const ZONE_GREETINGS: Record<string, Record<string, string>> = {
+  zone1: {
+    '8-11':
+      "Welcome to the Safe Zone! Here we learn one BIG rule: your body belongs to YOU. Let's play a story about saying no, telling a trusted grown-up, and staying safe. I'm right here if you have questions!",
+    '12-15':
+      "Welcome to the Safe Zone. This quest covers real stuff: consent, personal boundaries, and how to spot manipulation online before it traps you or a friend. There's a law on your side here called POCSO. Ready when you are.",
+    '16-18':
+      "Welcome to the Safe Zone. This quest gets practical about the POCSO Act: what counts as an offence, why a minor's consent isn't legally valid, how child-friendly reporting, identity protection, and Special Courts actually work, and how to support a friend who confides in you. Knowledge worth having.",
+  },
+};
+
 export function AvatarWidget() {
   const { activeZoneId } = useUIStore();
   const [isOpen, setIsOpen] = useState(false);
@@ -75,7 +88,9 @@ export function AvatarWidget() {
       const zone = getZone(activeZoneId);
       if (zone) {
         setIsOpen(true);
-        const greeting = `Welcome to ${zone.name}! Here we'll learn about: ${zone.theme}.`;
+        const greeting =
+          ZONE_GREETINGS[activeZoneId]?.[progressStore.getState().ageBand] ??
+          `Welcome to ${zone.name}! Here we'll learn about: ${zone.theme}.`;
         appendAssistantMessage(greeting);
       }
     }

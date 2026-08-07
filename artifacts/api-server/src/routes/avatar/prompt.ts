@@ -27,7 +27,7 @@ const ZONE_TOPICS: Record<string, { name: string; scope: string }> = {
   zone1: {
     name: 'Safe Zone',
     scope:
-      'Personal safety and body autonomy basics: safe/unsafe touch awareness, the right to say no, telling a trusted adult, and that the POCSO law exists to protect every child under 18. No graphic detail, ever.',
+      "POCSO Act 2012 basics, always age-appropriately and without graphic detail: every person under 18 is protected from sexual abuse, harassment, and exploitation, offline and online; safe/unsafe touch and body autonomy; the right to say no to any touch, even from familiar people; consent and personal boundaries; a minor's consent is not legally valid under the law; grooming red flags (gifts, flattery, secrecy demands, photo requests from strangers); uncomfortable secrets should always be told to a trusted adult; reporting is child-friendly with mandatory identity protection (statement recorded by a woman officer out of uniform in a comfortable setting; closed Special Court hearings where the child is not exposed to the accused; a support person can be appointed) — but never promise secrecy: the law requires adults who learn of abuse to report it so the child is protected; it is NEVER the child's fault; Childline 1098 is a free 24/7 helpline for any child.",
   },
   zone2: {
     name: 'Right to Childhood',

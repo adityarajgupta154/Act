@@ -1,0 +1,153 @@
+{
+  "questId": "safe_zone_16_18",
+  "zoneId": "zone1",
+  "ageBand": "16-18",
+  "title": "Know the Shield",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Your civics club is running a 'Know the Shield' session on the POCSO Act, 2012. First question on the board: what does POCSO actually cover?",
+      "choices": [
+        {
+          "text": "Sexual assault, harassment (including stalking, remarks, showing explicit material), exploitation, and online solicitation — for every person under 18, all genders.",
+          "outcome": "correct",
+          "feedback": "Right. POCSO is gender-neutral and applies to everyone below 18. It covers physical offences AND non-contact ones like harassment, showing explicit material, and soliciting a minor online.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Only physical assault, and only for young children.",
+          "outcome": "incorrect",
+          "feedback": "POCSO is far wider than that: it includes non-contact offences like harassment and online solicitation, protects everyone up to 18, and applies to all genders. Knowing its full reach is what makes the shield useful.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "A senior describes a situation 'a friend' is in: she is 17, and a 24-year-old tells her, 'You agreed to everything, so legally it's fine.' Is he right?",
+      "choices": [
+        {
+          "text": "No. Under POCSO, a minor's consent has no legal validity. The adult is committing an offence regardless of any 'agreement'.",
+          "outcome": "correct",
+          "feedback": "Correct. Below 18, consent is not a defence in law. The entire legal responsibility falls on the adult; the 17-year-old is treated as a protected person, never a wrongdoer. Anyone who tells you otherwise is protecting themselves, not you.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "If she said yes, the law can't do anything.",
+          "outcome": "incorrect",
+          "feedback": "That is exactly the myth POCSO removes. The law says a person under 18 cannot give legally valid consent, so the adult remains fully liable whatever was 'agreed'. This protects minors from exactly this kind of pressure.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "The friend is terrified of reporting: 'Everyone at school will know. The police will grill her in public. It will become a nightmare.' What does the law actually say?",
+      "choices": [
+        {
+          "text": "Reporting under POCSO is child-friendly by law: the child's identity is protected, and the statement is recorded by a woman police officer, not in uniform, at the child's home or a place the child chooses.",
+          "outcome": "correct",
+          "feedback": "Yes. POCSO makes identity protection mandatory — publicly revealing a child victim's identity is itself an offence. The statement is recorded by a woman police officer, out of uniform, at a place where the child feels comfortable. One honest thing to know: the law also requires adults who learn of such an offence to report it, so that protection actually reaches the child — it is a child-protecting system, not a secret-keeping one. Childline 1098 can walk anyone through the process, free, 24/7.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "She's right. Reporting always makes everything worse.",
+          "outcome": "incorrect",
+          "feedback": "POCSO was written precisely to prevent that nightmare: identity protection is a legal requirement (revealing it is punishable), and statements are taken by a woman officer, out of uniform, in a setting the child is comfortable in. Fear of the process is what silence feeds on — the real process is built around the child's dignity and safety.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "'And if it goes to court?' the senior asks. What does a POCSO court actually look like?",
+      "choices": [
+        {
+          "text": "A Special Court with child-friendly procedures: closed (in-camera) hearings, measures so the child is not exposed to the accused (like screens or a video link), child-appropriate questioning controlled by the court, and a support person can be appointed to stay with the child.",
+          "outcome": "correct",
+          "feedback": "Exactly. POCSO Special Courts are required to keep the trial non-intimidating: proceedings are closed, the law requires measures so the child is not exposed to the accused while testifying, the court keeps questioning child-appropriate and can stop aggressive cross-examination, and the POCSO Rules allow a support person to be appointed for the child. The design goal is zero re-traumatisation.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "A regular open courtroom where the child is cross-examined face to face by the accused's lawyer.",
+          "outcome": "incorrect",
+          "feedback": "No. POCSO Special Courts sit in-camera, and the law requires measures (like screens or video links) so the child is not exposed to the accused while testifying, with questioning kept child-appropriate by the court. The child does not have to face the accused directly.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "That evening, a friend messages YOU: 'Can I tell you something? Something happened to me. Please don't freak out.' This is real now. How do you respond?",
+      "choices": [
+        {
+          "text": "Listen calmly, believe them, don't interrogate or investigate, and help them reach a trusted adult or Childline 1098.",
+          "outcome": "correct",
+          "feedback": "This is exactly how to be a good ally: listen, believe, connect. Never play detective and never confront the person yourself. Childline 1098 is free and open 24/7, and it knows the child-friendly path forward. Your friend chose you because you feel safe — help them reach the people with real power to protect them, and they will not have to face this alone."
+        },
+        {
+          "text": "Demand every detail so you can verify the story, then confront the person yourself.",
+          "outcome": "incorrect",
+          "feedback": "Interrogating a friend re-traumatises them, and confronting the person can destroy evidence and put people at risk. Your role is support, not investigation — that is what the trained system (Childline 1098, CWC, police) exists for."
+        },
+        {
+          "text": "Promise to keep it one hundred percent secret, forever.",
+          "outcome": "incorrect",
+          "feedback": "A promise of total secrecy traps you both. Be honest instead: 'I'm with you, and I'll help you tell someone who can actually protect you.' Real support means connecting them to help, like Childline 1098 or a trusted adult, not sealing the problem shut."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Who does the POCSO Act protect?",
+      "options": [
+        "Only girls under 16",
+        "Every person under 18, of all genders",
+        "Only children who file an FIR themselves"
+      ],
+      "correctIndex": 1,
+      "explanation": "POCSO is universal below 18 and gender-neutral. Adults who learn of an offence are legally bound to report it — the burden never rests on the child alone."
+    },
+    {
+      "question": "A 17-year-old 'agreed', so no offence occurred. True or false?",
+      "options": [
+        "True — consent settles it",
+        "False — a minor's consent has no legal validity; the adult is fully liable",
+        "True, but only if the parents approve"
+      ],
+      "correctIndex": 1,
+      "explanation": "Below 18, consent is not a legal defence. The law places the entire responsibility on the adult, always."
+    },
+    {
+      "question": "Reporting under POCSO is…",
+      "options": [
+        "Public — the child's identity can be published",
+        "Child-friendly — the child's identity is protected by law, and the statement is recorded in a comfortable setting",
+        "Only possible through a hired lawyer"
+      ],
+      "correctIndex": 1,
+      "explanation": "Publicly disclosing a child victim's identity is itself punishable, and statements are recorded by a woman officer, out of uniform, at a place of the child's choice. Adults who learn of an offence are required by law to report it so protection actually reaches the child. Childline 1098 can guide anyone through it."
+    },
+    {
+      "question": "In a POCSO Special Court…",
+      "options": [
+        "The child is cross-examined face to face with the accused",
+        "Hearings are closed, and the law requires measures so the child is not exposed to the accused while testifying",
+        "Trials are held publicly at the child's school"
+      ],
+      "correctIndex": 1,
+      "explanation": "Special Courts run in-camera, use measures like screens or video links so the child does not face the accused, and keep questioning child-appropriate. A support person can also be appointed to stay with the child. The trial is designed not to re-traumatise."
+    },
+    {
+      "question": "A friend discloses abuse to you. What is the best response?",
+      "options": [
+        "Investigate and confront the abuser yourself",
+        "Listen, believe them, and help them reach Childline 1098 or a trusted adult",
+        "Promise total secrecy and change the subject"
+      ],
+      "correctIndex": 1,
+      "explanation": "Listen, believe, connect — that is the ally's role. Childline 1098 is free and available 24/7; investigation belongs to trained authorities, never to friends."
+    }
+  ]
+}

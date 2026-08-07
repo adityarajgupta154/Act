@@ -1,0 +1,21 @@
+Continuing the "Nyaya Nagri" project (Quest Engine from Task 3 already exists and works).
+
+Write and wire up the REAL quest content for Zone 1: "Safe Zone," based on the POCSO Act, 2012 (protection of children under 18 from sexual abuse, harassment, and exploitation; child-friendly reporting).
+
+Create THREE separate quest JSON files (one per age band, following the schema from Task 3):
+
+1. "safe_zone_8_11.json" — Age 8-11: Teach "good touch / bad touch" concept, the idea that a child's body belongs to them, that secrets that make them uncomfortable should always be told to a trusted adult, and that it is never the child's fault. Use a gentle, non-graphic, metaphor-based scenario (e.g., a character who learns it's okay to say "no" and tell someone). Keep language extremely simple. 3-4 scenes, 3 quiz questions.
+
+2. "safe_zone_12_15.json" — Age 12-15: Cover consent, personal boundaries, safe vs unsafe online interactions, and the basics of what POCSO protects against, in age-appropriate non-graphic language. Include a scenario about recognizing manipulation/grooming red flags (online or offline) and choosing to tell a trusted adult or use Childline 1098. 4-5 scenes, 4-5 quiz questions.
+
+3. "safe_zone_16_18.json" — Age 16-18: Cover POCSO's legal framework at a practical level — what counts as an offense, that a minor's "consent" is not legally valid, that reporting is confidential and child-friendly, what a POCSO court process looks like at a high level, and how to support a friend who discloses abuse (listen, don't investigate, help them reach Childline 1098 or a trusted adult). 5 scenes, 5 quiz questions.
+
+IMPORTANT CONTENT RULES for all three:
+- No graphic or explicit descriptions of abuse — imply, don't depict.
+- Every scenario must end with a clear, positive, empowering resolution (the character seeks help and is supported).
+- Every quest must explicitly mention Childline 1098 as a resource at least once.
+- Feedback text for choices should explain WHY an answer is right/wrong in simple terms, referencing the underlying right being protected.
+
+Wire these three files into Zone 1 so the correct one loads based on the player's selected age band. Update the AI avatar's zone-entry greeting for Zone 1 to reflect this real content (also age-band specific, matching the tone rules from Task 2).
+
+Test that all three age-band versions play correctly and that quiz scores are recorded.

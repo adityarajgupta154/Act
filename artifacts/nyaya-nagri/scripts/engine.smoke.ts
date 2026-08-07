@@ -1,7 +1,8 @@
 /**
- * Quest Engine smoke test (run with: pnpm dlx tsx scripts/engine.smoke.ts)
- * Walks a full session through the state machine and asserts the
- * progress-store side effects (scores, zone unlock, badge).
+ * Quest Engine + content smoke test (run: pnpm dlx tsx scripts/engine.smoke.ts)
+ * Content-agnostic: walks EVERY registered zone1 quest (all three age bands)
+ * through the full state machine and asserts scores, unlock, and badge, plus
+ * the Task 4 content rules (Childline 1098 present, no emojis).
  */
 import { resolveQuest } from '../src/quests/registry';
 import {
@@ -13,7 +14,7 @@ import {
   getCurrentScene,
   finalizeQuest,
 } from '../src/quests/engine';
-import { progressStore } from '../src/data/progressStore';
+import { progressStore, type AgeBand } from '../src/data/progressStore';
 import { isZoneUnlocked } from '../src/world/zones';
 
 function assert(cond: boolean, msg: string) {
@@ -21,52 +22,64 @@ function assert(cond: boolean, msg: string) {
   console.log(`ok - ${msg}`);
 }
 
-const quest = resolveQuest('zone1', '8-11'); // no 8-11 file → fallback
-assert(!!quest, 'resolveQuest falls back to any zone1 quest');
-assert(resolveQuest('zone3', '12-15') === null, 'zone without content returns null');
+const BANDS: AgeBand[] = ['8-11', '12-15', '16-18'];
+const seenQuestIds = new Set<string>();
 
-let s = startQuest(quest!);
-assert(s.phase === 'pre-quiz', 'starts in pre-quiz');
+for (const band of BANDS) {
+  const quest = resolveQuest('zone1', band);
+  assert(!!quest && quest.ageBand === band, `zone1/${band} resolves to exact-band quest`);
+  seenQuestIds.add(quest!.questId);
 
-// Pre-quiz: answer all wrong (indices chosen wrong on purpose), silently.
-s = answerQuizQuestion(s, 0); // q1 correct=1 → wrong
-assert(s.lastQuizFeedback === null, 'pre-quiz never reveals correctness');
-s = answerQuizQuestion(s, 0); // q2 correct=2 → wrong
-s = answerQuizQuestion(s, 0); // q3 correct=1 → wrong
-assert(s.phase === 'scenes' && s.currentSceneId === 'scene1', 'pre-quiz done -> scene1');
+  // Content rules (Task 4): 1098 mentioned, no emoji, non-empty feedback.
+  const text = JSON.stringify(quest);
+  assert(text.includes('1098'), `${quest!.questId} mentions Childline 1098`);
+  assert(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(text), `${quest!.questId} has no emojis`);
 
-// Scene 1: pick incorrect choice, check feedback, advance.
-s = chooseSceneOption(s, 1);
-assert(s.pendingFeedback?.outcome === 'incorrect', 'scene1 feedback outcome recorded');
-s = acknowledgeSceneFeedback(s);
-assert(s.currentSceneId === 'scene2', 'branch followed to scene2');
+  let s = startQuest(quest!);
+  assert(s.phase === 'pre-quiz', `${quest!.questId} starts in pre-quiz`);
 
-// Scene 2: correct choice with empty nextScene -> post-quiz.
-s = chooseSceneOption(s, 0);
-assert(s.pendingFeedback?.outcome === 'correct', 'scene2 feedback outcome recorded');
-s = acknowledgeSceneFeedback(s);
-assert(s.phase === 'post-quiz' && s.quizIndex === 0, 'scenes done -> post-quiz');
-assert(getCurrentScene(s) === null, 'no active scene in post-quiz');
+  // Pre-quiz: always pick option 0, silently.
+  for (let i = 0; i < quest!.quizQuestions.length; i++) {
+    s = answerQuizQuestion(s, 0);
+    assert(s.lastQuizFeedback === null, `${quest!.questId} pre-quiz q${i + 1} stays silent`);
+  }
+  assert(s.phase === 'scenes', `${quest!.questId} pre-quiz done -> scenes`);
 
-// Post-quiz: all correct, with feedback each time.
-for (const correct of [1, 2, 1]) {
-  s = answerQuizQuestion(s, correct);
-  assert(s.lastQuizFeedback?.correct === true, `post-quiz q${s.quizIndex + 1} feedback shown`);
-  s = acknowledgeQuizFeedback(s);
+  // Scenes: always pick the correct choice, follow branches to the end.
+  let steps = 0;
+  while (s.phase === 'scenes' && steps++ < 25) {
+    const scene = getCurrentScene(s);
+    assert(!!scene, `${quest!.questId} active scene exists`);
+    const idx = scene!.choices.findIndex((c) => c.outcome === 'correct');
+    assert(idx >= 0, `${quest!.questId}/${scene!.sceneId} has a correct choice`);
+    s = chooseSceneOption(s, idx);
+    assert(s.pendingFeedback?.outcome === 'correct', `${quest!.questId}/${scene!.sceneId} feedback shown`);
+    s = acknowledgeSceneFeedback(s);
+  }
+  assert(s.phase === 'post-quiz', `${quest!.questId} scenes terminate -> post-quiz (${steps} scenes)`);
+
+  // Post-quiz: answer everything correctly.
+  for (const q of quest!.quizQuestions) {
+    s = answerQuizQuestion(s, q.correctIndex);
+    assert(s.lastQuizFeedback?.correct === true, `${quest!.questId} post-quiz feedback correct`);
+    s = acknowledgeQuizFeedback(s);
+  }
+  assert(s.phase === 'complete', `${quest!.questId} post-quiz done -> complete`);
+
+  const result = finalizeQuest(s);
+  assert(
+    result.postScore === result.total && result.total === quest!.quizQuestions.length,
+    `${quest!.questId} post score ${result.postScore}/${result.total}`,
+  );
+  const state = progressStore.getState();
+  assert(state.quizScores[quest!.questId]?.post === result.total, `${quest!.questId} score stored`);
 }
-assert(s.phase === 'complete', 'post-quiz done -> complete');
 
-// Finalize: scores + unlock + badge.
-assert(isZoneUnlocked('zone2') === false, 'zone2 locked before completion');
-const result = finalizeQuest(s);
-assert(result.preScore === 0 && result.postScore === 3 && result.total === 3, 'pre=0 post=3');
+assert(seenQuestIds.size === 3, 'three distinct quests for zone1 (one per band)');
+assert(resolveQuest('zone2', '12-15') === null, 'zone2 has no content yet');
+assert(progressStore.getState().completedZones['zone1'] === true, 'zone1 complete');
+assert(progressStore.getState().badges['zone1_star'] === true, 'badge awarded');
+assert(isZoneUnlocked('zone2'), 'zone2 unlocked');
+assert(!isZoneUnlocked('zone3'), 'zone3 still locked');
 
-const state = progressStore.getState();
-assert(state.quizScores['zone1_sample_placeholder']?.pre === 0, 'pre score stored');
-assert(state.quizScores['zone1_sample_placeholder']?.post === 3, 'post score stored');
-assert(state.completedZones['zone1'] === true, 'zone1 marked complete');
-assert(state.badges['zone1_star'] === true, 'badge awarded');
-assert(isZoneUnlocked('zone2') === true, 'zone2 unlocked after completion');
-assert(isZoneUnlocked('zone3') === false, 'zone3 still locked');
-
-console.log('\nAll engine smoke tests passed.');
+console.log('\nAll engine + content smoke tests passed.');
