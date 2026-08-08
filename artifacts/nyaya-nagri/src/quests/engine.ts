@@ -14,7 +14,7 @@
  */
 
 import { progressStore } from '@/data/progressStore';
-import type { Quest, QuestLevel, ChoiceOutcome } from './schema';
+import { isActivityKind, type Quest, type QuestLevel, type ChoiceOutcome } from './schema';
 import { getRecap, type RecapItem } from './recaps';
 import {
   advanceStreak,
@@ -23,7 +23,14 @@ import {
   todayString,
 } from '@/economy/economy';
 
-export type QuestPhase = 'pre-quiz' | 'scenes' | 'post-quiz' | 'recap' | 'complete';
+export type QuestPhase =
+  | 'pre-quiz'
+  | 'scenes'
+  | 'post-quiz'
+  | 'recap'
+  | 'complete'
+  /** Task 18: a self-contained activity level (memory/hidden/sorting/scenario). */
+  | 'activity';
 
 /**
  * Adaptive difficulty (Task 9): a pre-quiz score strictly below this share
@@ -74,6 +81,13 @@ export interface QuestSession {
    * session NEVER writes scores/progress — see finalizeLevel().
    */
   practice: boolean;
+  /**
+   * Task 18: result of an activity level, set by completeActivity(). Null
+   * until the activity finishes. Scores are gentle by design (PRD §9.6):
+   * memory/hidden are completion-based (score === total), sorting counts
+   * first-try correct placements, scenario is 1/0 for the single decision.
+   */
+  activityResult: { score: number; total: number } | null;
 }
 
 export function startQuest(quest: Quest): QuestSession {
@@ -92,6 +106,7 @@ export function startQuest(quest: Quest): QuestSession {
     choiceLog: [],
     levelIndex: null,
     practice: false,
+    activityResult: null,
   };
 }
 
@@ -113,6 +128,8 @@ export function getSessionLevel(session: QuestSession): QuestLevel | null {
  * - practice: replay of a completed level — the pre-quiz is skipped for
  *   story levels (the baseline is already recorded and must never be
  *   re-measured or overwritten).
+ * - Task 18: activity levels (memory/hidden/sorting/scenario) go straight
+ *   to the 'activity' phase — they never touch the pre-quiz baseline.
  */
 export function startLevel(
   quest: Quest,
@@ -130,6 +147,9 @@ export function startLevel(
       phase: 'post-quiz',
       preAnswers: opts.priorPreAnswers ?? [],
     };
+  }
+  if (isActivityKind(level.kind)) {
+    return { ...base, phase: 'activity' };
   }
   const isFirstPlayOfStory = level.kind === 'story' && !practice;
   return isFirstPlayOfStory
@@ -358,6 +378,45 @@ export function finalizeQuest(session: QuestSession): QuestResult {
   };
 }
 
+/**
+ * Task 18: how many scoreable units an activity level has. The engine
+ * derives the total from the level's own content — the UI can never
+ * inflate it.
+ */
+export function activityTotal(level: QuestLevel): number {
+  switch (level.kind) {
+    case 'memory':
+      return level.memory?.pairs.length ?? 0;
+    case 'hidden':
+      return level.hidden?.cues.length ?? 0;
+    case 'sorting':
+      return level.sorting?.cards.length ?? 0;
+    case 'scenario':
+      return 1;
+    default:
+      return 0;
+  }
+}
+
+/**
+ * Task 18: finish an activity level. Pure transition — the score is
+ * clamped to [0, total] with total derived from content, and the session
+ * moves to 'complete' so the existing finalizeLevel() flow (the single
+ * write path) takes over.
+ */
+export function completeActivity(session: QuestSession, score: number): QuestSession {
+  if (session.phase !== 'activity') return session;
+  const level = getSessionLevel(session);
+  if (!level || !isActivityKind(level.kind)) return session;
+  const total = activityTotal(level);
+  const clamped = Math.max(0, Math.min(total, Math.floor(score)));
+  return {
+    ...session,
+    phase: 'complete',
+    activityResult: { score: Number.isFinite(clamped) ? clamped : 0, total },
+  };
+}
+
 /** Storage key for a level's progress/replay entries: "zone1:level2". */
 export function levelKey(zoneId: string, levelId: string): string {
   return `${zoneId}:${levelId}`;
@@ -383,6 +442,8 @@ export interface LevelResult {
   postScore: number | null;
   total: number;
   badgeId: string | null;
+  /** Task 18: activity result, present for activity-level sessions. */
+  activityScore: { score: number; total: number } | null;
 }
 
 /**
@@ -427,6 +488,7 @@ export function finalizeLevel(session: QuestSession): LevelResult {
       postScore,
       total: quest.quizQuestions.length,
       badgeId: null,
+      activityScore: session.activityResult,
       xpAwarded: 0,
       coinsAwarded: 0,
       newTitles: [],
@@ -449,6 +511,16 @@ export function finalizeLevel(session: QuestSession): LevelResult {
     patch.quizScores = {
       ...state.quizScores,
       [quest.questId]: { pre: preScore, post: existing?.post ?? null },
+    };
+  }
+
+  // Task 18: first recorded completion of an activity level stores its
+  // gentle score alongside the level flag. Practice replays never reach
+  // this path, so recorded activity scores are written exactly once.
+  if (isActivityKind(level.kind) && session.activityResult) {
+    patch.activityScores = {
+      ...state.activityScores,
+      [key]: { ...session.activityResult },
     };
   }
 
@@ -498,6 +570,7 @@ export function finalizeLevel(session: QuestSession): LevelResult {
     postScore,
     total: quest.quizQuestions.length,
     badgeId,
+    activityScore: session.activityResult,
     xpAwarded: award.xp,
     coinsAwarded: award.coins,
     newTitles,

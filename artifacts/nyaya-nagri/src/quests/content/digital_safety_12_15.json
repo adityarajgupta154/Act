@@ -156,6 +156,45 @@
       "entryScene": "scene3"
     },
     {
+      "levelId": "level_sorting",
+      "kind": "sorting",
+      "sorting": {
+        "intro": "Ritu's story showed how fast things move online. Read each situation and choose where it belongs: is it safe, should you tell a trusted adult, or is it an emergency?",
+        "cards": [
+          {
+            "text": "A classmate you know in real life sends you a funny meme about yesterday's cricket match.",
+            "bucket": "safe",
+            "feedback": "Friendly jokes between real friends that target no one are a normal, safe part of being online."
+          },
+          {
+            "text": "Your school friend asks to team up in an online game you both play.",
+            "bucket": "safe",
+            "feedback": "Playing with people you know in real life is a safe way to enjoy games. The ones to watch for are strangers who ask for secrets or photos."
+          },
+          {
+            "text": "An unknown account keeps sending you compliments and free game credits, and says 'keep our chats secret'.",
+            "bucket": "tell",
+            "feedback": "Flattery, gifts, and secrecy demands are grooming warning signs. Stop replying, block the account, and tell a trusted adult right away."
+          },
+          {
+            "text": "A fake account keeps posting edited photos of one classmate, and half the class laughs along.",
+            "bucket": "tell",
+            "feedback": "That is cyberbullying. Do not join or forward, save screenshots as a record, report and block the account, and tell a trusted adult."
+          },
+          {
+            "text": "Someone threatens to share a friend's private photo unless they send more.",
+            "bucket": "emergency",
+            "feedback": "This is blackmail, and it is a crime. It is never the child's fault. Tell a trusted adult immediately and report it on the Cyber Crime Helpline 155260. Childline 1098 is always there for any child too."
+          },
+          {
+            "text": "An online stranger says they know your school and will come there unless you keep talking to them.",
+            "bucket": "emergency",
+            "feedback": "A threat like this needs grown-up help right now. Tell a trusted adult immediately and call Childline 1098. Threats are never something to handle alone."
+          }
+        ]
+      }
+    },
+    {
       "levelId": "level3",
       "kind": "quiz"
     }

@@ -71,16 +71,120 @@ export interface QuizQuestion {
  * Task 15: kinds of levels inside a zone. 'story' and 'decision' levels
  * group existing scenes; the single 'quiz' level is the checkpoint that
  * completes the zone (post-quiz + adaptive recap).
+ *
+ * Task 18 (PRD §7.4 mini-game variety pack): four ACTIVITY kinds join the
+ * union — 'memory' (flip-and-match), 'hidden' (hidden-object scene, 8-11
+ * band ONLY), 'sorting' (sort scenario cards into buckets), and 'scenario'
+ * (single-screen one-decision). The task brief calls this field
+ * "levelType"; Task 15 already named the discriminator `kind`, so the new
+ * types extend `kind` rather than adding a second, duplicate field.
+ * Activity content is static, hand-written data reformatted from the
+ * Tasks 4-8 zone corpora — never new legal claims, never AI-generated
+ * (PRD §9.8).
  */
-export type LevelKind = 'story' | 'decision' | 'quiz';
+export type LevelKind =
+  | 'story'
+  | 'decision'
+  | 'quiz'
+  | 'memory'
+  | 'hidden'
+  | 'sorting'
+  | 'scenario';
+
+export const ACTIVITY_LEVEL_KINDS = ['memory', 'hidden', 'sorting', 'scenario'] as const;
+export type ActivityLevelKind = (typeof ACTIVITY_LEVEL_KINDS)[number];
+
+export function isActivityKind(kind: LevelKind): kind is ActivityLevelKind {
+  return (ACTIVITY_LEVEL_KINDS as readonly string[]).includes(kind);
+}
+
+/** One flip-and-match pair: a right/law name and its short meaning. */
+export interface MemoryPair {
+  term: string;
+  match: string;
+}
+
+export interface MemoryLevelContent {
+  intro: string;
+  /** 4-6 pairs, all reformatted from the quest's existing content. */
+  pairs: MemoryPair[];
+}
+
+/**
+ * Hidden-object scenes are hand-drawn SVG components keyed by sceneKey —
+ * static art in the established style, validated against this list so
+ * content can never reference a scene that does not exist.
+ */
+export const HIDDEN_SCENE_KEYS = ['market_street'] as const;
+export type HiddenSceneKey = (typeof HIDDEN_SCENE_KEYS)[number];
+
+/**
+ * A tappable "something is not right here" cue. Coordinates are percent
+ * positions (0-100 of scene width/height) with a percent radius — geometry
+ * is language-independent and checked by translation parity.
+ */
+export interface HiddenObjectCue {
+  cueId: string;
+  label: string;
+  explanation: string;
+  x: number;
+  y: number;
+  r: number;
+}
+
+export interface HiddenObjectLevelContent {
+  intro: string;
+  sceneKey: HiddenSceneKey;
+  /** 3-4 gentle, non-graphic cues (Task 4 trauma-sensitivity rules). */
+  cues: HiddenObjectCue[];
+}
+
+/**
+ * Sorting buckets are FIXED ids. Their display labels (including the
+ * canonical "Emergency — Call Childline 1098" wording) are hard-coded in
+ * the i18n bundles, NOT in content JSON — helpline text stays hard-coded
+ * exactly like everywhere else in the app (PRD §9.8).
+ */
+export const SORT_BUCKET_IDS = ['safe', 'tell', 'emergency'] as const;
+export type SortBucketId = (typeof SORT_BUCKET_IDS)[number];
+
+export interface SortingCard {
+  text: string;
+  bucket: SortBucketId;
+  feedback: string;
+}
+
+export interface SortingLevelContent {
+  intro: string;
+  /** 5-8 cards; every bucket must be used at least once. */
+  cards: SortingCard[];
+}
+
+export interface ScenarioOption {
+  text: string;
+  outcome: ChoiceOutcome;
+  feedback: string;
+}
+
+/** Single-screen, one-decision version of the branching format. */
+export interface ScenarioLevelContent {
+  prompt: string;
+  /** 2-4 options with exactly one correct answer; immediate feedback. */
+  options: ScenarioOption[];
+}
 
 export interface QuestLevel {
   levelId: string;
   kind: LevelKind;
-  /** Scenes belonging to this level (absent/empty for the quiz level). */
+  /** Scenes belonging to this level (story/decision kinds only). */
   sceneIds?: string[];
-  /** Scene the level starts at (absent for the quiz level). */
+  /** Scene the level starts at (story/decision kinds only). */
   entryScene?: string;
+  /** Task 18 activity payloads — exactly the one matching `kind`. */
+  memory?: MemoryLevelContent;
+  hidden?: HiddenObjectLevelContent;
+  sorting?: SortingLevelContent;
+  scenario?: ScenarioLevelContent;
 }
 
 export interface Quest {
@@ -166,17 +270,130 @@ export function validateQuest(q: Quest): Quest {
   return q;
 }
 
+const NONEMPTY = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
+
+/**
+ * Task 18: validate an activity level's content payload. Exactly the
+ * payload matching `kind` must be present; scene fields must be absent.
+ */
+function validateActivityLevel(q: Quest, level: QuestLevel): void {
+  const ctx = `Quest ${q.questId} levels/${level.levelId}`;
+  if (level.sceneIds || level.entryScene) {
+    throw new Error(`${ctx}: activity levels must not carry sceneIds/entryScene`);
+  }
+  const payloads = {
+    memory: level.memory,
+    hidden: level.hidden,
+    sorting: level.sorting,
+    scenario: level.scenario,
+  } as const;
+  for (const [key, value] of Object.entries(payloads)) {
+    if (key === level.kind) {
+      if (!value) throw new Error(`${ctx}: missing "${key}" content for kind "${level.kind}"`);
+    } else if (value) {
+      throw new Error(`${ctx}: unexpected "${key}" content on a "${level.kind}" level`);
+    }
+  }
+
+  if (level.kind === 'memory') {
+    const m = level.memory!;
+    if (!NONEMPTY(m.intro)) throw new Error(`${ctx}: memory intro missing`);
+    if (!Array.isArray(m.pairs) || m.pairs.length < 4 || m.pairs.length > 6) {
+      throw new Error(`${ctx}: memory needs 4-6 pairs`);
+    }
+    if (m.pairs.some((p) => !NONEMPTY(p.term) || !NONEMPTY(p.match))) {
+      throw new Error(`${ctx}: memory pair with empty term/match`);
+    }
+    if (new Set(m.pairs.map((p) => p.term)).size !== m.pairs.length) {
+      throw new Error(`${ctx}: duplicate memory terms`);
+    }
+    if (new Set(m.pairs.map((p) => p.match)).size !== m.pairs.length) {
+      throw new Error(`${ctx}: duplicate memory matches`);
+    }
+  }
+
+  if (level.kind === 'hidden') {
+    // PRD §7.4 / Task 18 brief: the hidden-object type exists for the 8-11
+    // band ONLY — the inverse of the Task 17 persona restriction.
+    if (q.ageBand !== '8-11') {
+      throw new Error(`${ctx}: hidden-object levels are allowed in 8-11 quests only`);
+    }
+    const h = level.hidden!;
+    if (!NONEMPTY(h.intro)) throw new Error(`${ctx}: hidden intro missing`);
+    if (!(HIDDEN_SCENE_KEYS as readonly string[]).includes(h.sceneKey)) {
+      throw new Error(`${ctx}: unknown hidden sceneKey "${h.sceneKey}"`);
+    }
+    if (!Array.isArray(h.cues) || h.cues.length < 3 || h.cues.length > 4) {
+      throw new Error(`${ctx}: hidden needs 3-4 cues`);
+    }
+    if (new Set(h.cues.map((c) => c.cueId)).size !== h.cues.length) {
+      throw new Error(`${ctx}: duplicate hidden cueIds`);
+    }
+    for (const c of h.cues) {
+      if (!NONEMPTY(c.cueId) || !NONEMPTY(c.label) || !NONEMPTY(c.explanation)) {
+        throw new Error(`${ctx}: hidden cue with empty id/label/explanation`);
+      }
+      const inRange = (n: number, lo: number, hi: number) =>
+        typeof n === 'number' && Number.isFinite(n) && n >= lo && n <= hi;
+      if (!inRange(c.x, 0, 100) || !inRange(c.y, 0, 100) || !inRange(c.r, 2, 20)) {
+        throw new Error(`${ctx}: hidden cue "${c.cueId}" geometry out of range`);
+      }
+    }
+  }
+
+  if (level.kind === 'sorting') {
+    const s = level.sorting!;
+    if (!NONEMPTY(s.intro)) throw new Error(`${ctx}: sorting intro missing`);
+    if (!Array.isArray(s.cards) || s.cards.length < 5 || s.cards.length > 8) {
+      throw new Error(`${ctx}: sorting needs 5-8 cards`);
+    }
+    for (const card of s.cards) {
+      if (!NONEMPTY(card.text) || !NONEMPTY(card.feedback)) {
+        throw new Error(`${ctx}: sorting card with empty text/feedback`);
+      }
+      if (!(SORT_BUCKET_IDS as readonly string[]).includes(card.bucket)) {
+        throw new Error(`${ctx}: sorting card with unknown bucket "${card.bucket}"`);
+      }
+    }
+    for (const bucket of SORT_BUCKET_IDS) {
+      if (!s.cards.some((c) => c.bucket === bucket)) {
+        throw new Error(`${ctx}: sorting bucket "${bucket}" has no cards`);
+      }
+    }
+  }
+
+  if (level.kind === 'scenario') {
+    const sc = level.scenario!;
+    if (!NONEMPTY(sc.prompt)) throw new Error(`${ctx}: scenario prompt missing`);
+    if (!Array.isArray(sc.options) || sc.options.length < 2 || sc.options.length > 4) {
+      throw new Error(`${ctx}: scenario needs 2-4 options`);
+    }
+    if (sc.options.some((o) => !NONEMPTY(o.text) || !NONEMPTY(o.feedback))) {
+      throw new Error(`${ctx}: scenario option with empty text/feedback`);
+    }
+    if (sc.options.filter((o) => o.outcome === 'correct').length !== 1) {
+      throw new Error(`${ctx}: scenario must have exactly one correct option`);
+    }
+  }
+}
+
 /**
  * Task 15: prove the levels are a SAFE regrouping of the existing scenes —
  * they must partition every scene exactly once, start where the quest
  * starts, and never allow a path to jump backwards or skip a level. This
  * guarantees playing the levels in order shows the exact same content, in
  * the exact same order, as the original single-quest flow.
+ *
+ * Task 18: activity levels (memory/hidden/sorting/scenario) are additive —
+ * they carry their own static content, consume NO scenes, and are ignored
+ * by the scene-partition rules below. The quiz stays the single, final
+ * checkpoint, and level 1 stays a story level so the silent pre-quiz
+ * baseline is still measured before any content is seen.
  */
 export function validateLevels(q: Quest): void {
   const ctx = `Quest ${q.questId} levels`;
-  if (!Array.isArray(q.levels) || q.levels.length < 3 || q.levels.length > 4) {
-    throw new Error(`${ctx}: must have 3-4 levels`);
+  if (!Array.isArray(q.levels) || q.levels.length < 3 || q.levels.length > 5) {
+    throw new Error(`${ctx}: must have 3-5 levels`);
   }
   const last = q.levels[q.levels.length - 1];
   if (last.kind !== 'quiz' || q.levels.filter((l) => l.kind === 'quiz').length !== 1) {
@@ -184,12 +401,22 @@ export function validateLevels(q: Quest): void {
   }
   const ids = new Set(q.levels.map((l) => l.levelId));
   if (ids.size !== q.levels.length) throw new Error(`${ctx}: duplicate levelIds`);
+  if (q.levels[0].kind !== 'story') {
+    throw new Error(`${ctx}: level 1 must be a story level (pre-quiz baseline first)`);
+  }
 
-  const sceneLevels = q.levels.slice(0, -1);
+  for (const level of q.levels) {
+    if (isActivityKind(level.kind)) {
+      validateActivityLevel(q, level);
+    } else if (level.memory || level.hidden || level.sorting || level.scenario) {
+      throw new Error(`${ctx}/${level.levelId}: activity content on a "${level.kind}" level`);
+    }
+  }
+
+  const sceneLevels = q.levels.filter((l) => l.kind === 'story' || l.kind === 'decision');
   const questSceneIds = new Set(q.scenes.map((s) => s.sceneId));
   const seen = new Set<string>();
   for (const level of sceneLevels) {
-    if (level.kind === 'quiz') throw new Error(`${ctx}: quiz level not last`);
     if (!level.sceneIds?.length || !level.entryScene) {
       throw new Error(`${ctx}/${level.levelId}: scene level needs sceneIds + entryScene`);
     }
@@ -294,9 +521,30 @@ export function validateTranslationParity(source: Quest, translated: Quest): Que
       throw new Error(`${ctx}: quiz #${qIdx} correctIndex differs`);
     }
   });
-  // Task 15: level structure must be IDENTICAL across languages — level
-  // progress is language-independent, exactly like quest progress.
-  if (JSON.stringify(translated.levels) !== JSON.stringify(source.levels)) {
+  // Task 15/18: level STRUCTURE must be identical across languages — same
+  // levelId/kind sequence, same scene grouping, and for activity levels the
+  // same shape (pair/cue/card/option counts, cue ids + geometry, card
+  // buckets, option outcomes, sceneKey). Display text may be translated,
+  // so this compares a text-free projection instead of raw JSON equality.
+  const structure = (levels: QuestLevel[]) =>
+    JSON.stringify(
+      levels.map((l) => ({
+        levelId: l.levelId,
+        kind: l.kind,
+        sceneIds: l.sceneIds ?? null,
+        entryScene: l.entryScene ?? null,
+        memoryPairs: l.memory ? l.memory.pairs.length : null,
+        hidden: l.hidden
+          ? {
+              sceneKey: l.hidden.sceneKey,
+              cues: l.hidden.cues.map((c) => ({ cueId: c.cueId, x: c.x, y: c.y, r: c.r })),
+            }
+          : null,
+        sortingBuckets: l.sorting ? l.sorting.cards.map((c) => c.bucket) : null,
+        scenarioOutcomes: l.scenario ? l.scenario.options.map((o) => o.outcome) : null,
+      })),
+    );
+  if (structure(translated.levels) !== structure(source.levels)) {
     throw new Error(`${ctx}: levels structure differs from source`);
   }
   return translated;

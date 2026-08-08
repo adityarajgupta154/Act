@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { getZone, isZoneUnlocked } from '@/world/zones';
+import type { LevelKind } from '@/quests/schema';
 
 export type UIState = {
   nearbyZoneId: string | null;
@@ -28,7 +29,7 @@ export type UIState = {
    * the AI companion can greet level entry (like it greets zone entry).
    * Null while on the Level-Select screen or outside a zone.
    */
-  activeLevel: { zoneId: string; levelIndex: number; kind: 'story' | 'decision' | 'quiz' } | null;
+  activeLevel: { zoneId: string; levelIndex: number; kind: LevelKind } | null;
 };
 
 let state: UIState = {
@@ -82,7 +83,7 @@ export function enterZone(zoneId: string) {
   }, 300);
 }
 
-export function enterLevel(zoneId: string, levelIndex: number, kind: 'story' | 'decision' | 'quiz') {
+export function enterLevel(zoneId: string, levelIndex: number, kind: LevelKind) {
   uiStore.set({ activeLevel: { zoneId, levelIndex, kind } });
 }
 

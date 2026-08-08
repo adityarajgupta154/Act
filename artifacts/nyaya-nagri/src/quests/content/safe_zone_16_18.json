@@ -171,6 +171,30 @@
       "entryScene": "scene3"
     },
     {
+      "levelId": "level_scenario",
+      "kind": "scenario",
+      "scenario": {
+        "prompt": "Your 16-year-old cousin tells you her new private tutor insists on 'special sessions' alone after class, keeps steering the talk to personal topics that make her uncomfortable, and has told her twice: 'What happens in tuition stays between us.' She asks you what to do. What do you tell her?",
+        "options": [
+          {
+            "text": "Trust the discomfort. A 'keep it secret' demand from an adult is a serious red flag. Stop being alone with him, tell a parent or trusted adult now, and remember Childline 1098 is there 24/7. POCSO covers harassment, not just physical acts.",
+            "outcome": "correct",
+            "feedback": "Right on every count. Secrecy demands are how harm hides, and POCSO covers non-contact offences like harassment too, so she does not have to wait for something 'worse' before speaking up. Reporting is child-friendly by law: her identity stays protected and her statement is recorded in a setting she chooses. She is the protected person here, never the one in trouble."
+          },
+          {
+            "text": "Tell her not to risk her exam results. She can just put up with it until the course ends.",
+            "outcome": "incorrect",
+            "feedback": "Endurance is not a safety plan. The law does not ask a 17-year-old to 'put up with' an adult's secrecy demands and uncomfortable behaviour. POCSO covers harassment, and telling a parent, a trusted adult, or Childline 1098 brings child-friendly protection now, not after the course."
+          },
+          {
+            "text": "Tell her to secretly record the tutor for a few weeks, so she has solid proof before telling anyone.",
+            "outcome": "incorrect",
+            "feedback": "Her safety comes first, not evidence collection. Playing detective means weeks more alone with an adult who is already crossing lines, and investigation belongs to the trained system, not to her. Tell a parent or trusted adult now, or call Childline 1098. Reporting starts protection immediately, and no 'solid proof' is ever required from the child."
+          }
+        ]
+      }
+    },
+    {
       "levelId": "level3",
       "kind": "quiz"
     }

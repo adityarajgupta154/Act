@@ -133,6 +133,40 @@
       "entryScene": "scene3"
     },
     {
+      "levelId": "level_hidden",
+      "kind": "hidden",
+      "hidden": {
+        "intro": "Meera is walking to school through the market street. Most children are heading to school with their bags. But three things in this picture are not right for a child. Can you find and tap all three?",
+        "sceneKey": "market_street",
+        "cues": [
+          {
+            "cueId": "tea_tray",
+            "label": "A boy working with a heavy tea tray",
+            "explanation": "That is Sonu, carrying heavy trays all day instead of learning and playing. Children are meant to be in school at this time. It is not his fault at all. A trusted grown-up, or Childline 1098, can bring help for him and his family.",
+            "x": 22,
+            "y": 69,
+            "r": 9
+          },
+          {
+            "cueId": "heavy_sack",
+            "label": "A little girl lifting a big, heavy sack",
+            "explanation": "That sack is bigger than she is! Heavy work like this is not for children. Every child has the right to learn, play, and rest. If you see this, tell a trusted grown-up. They can call Childline 1098 for help.",
+            "x": 52,
+            "y": 70,
+            "r": 9
+          },
+          {
+            "cueId": "tools_workshop",
+            "label": "A child repairing cycles with heavy tools",
+            "explanation": "Fixing cycles all day is a grown-up's job, not a child's. The law protects children's time to grow, learn, and play. Telling a trusted grown-up, like your teacher, can start the change, just like Meera did.",
+            "x": 82,
+            "y": 72,
+            "r": 9
+          }
+        ]
+      }
+    },
+    {
       "levelId": "level3",
       "kind": "quiz"
     }

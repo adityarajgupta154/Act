@@ -66,6 +66,7 @@ async function main() {
     startLevel, answerQuizQuestion, acknowledgeQuizFeedback,
     chooseSceneOption, acknowledgeSceneFeedback, getCurrentScene, finalizeLevel,
     getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback, levelKey,
+    completeActivity, activityTotal,
   } = await import('../src/quests/engine');
   type QuestSession = import('../src/quests/engine').QuestSession;
   const { resolveQuest } = await import('../src/quests/registry');
@@ -142,10 +143,15 @@ async function main() {
       completedZones: { zone1: true },
     };
     const earned = earnedTotals(zone1Done);
+    // Task 18: the reconciliation CEILING for a completed zone includes the
+    // zone's wired activity level (zone1 = scenario) for every band —
+    // progress keys are band-blind and the clamp is a maximum.
     assert(
-      earned.xp === LEVEL_XP.story + LEVEL_XP.decision + LEVEL_XP.quiz + ZONE_COMPLETE_BONUS.xp &&
-        earned.coins === LEVEL_COINS.story + LEVEL_COINS.decision + LEVEL_COINS.quiz + ZONE_COMPLETE_BONUS.coins,
-      'earnedTotals matches one full zone',
+      earned.xp ===
+        LEVEL_XP.story + LEVEL_XP.decision + LEVEL_XP.scenario + LEVEL_XP.quiz + ZONE_COMPLETE_BONUS.xp &&
+        earned.coins ===
+          LEVEL_COINS.story + LEVEL_COINS.decision + LEVEL_COINS.scenario + LEVEL_COINS.quiz + ZONE_COMPLETE_BONUS.coins,
+      'earnedTotals for a full zone includes its wired activity level',
     );
     // Pre-Task-15 saves: zone complete but NO level entries — fully credited.
     const legacy = earnedTotals({ levelProgress: {}, completedZones: { zone1: true } });
@@ -171,7 +177,7 @@ async function main() {
     // Owned items the earnings cannot cover are cleared entirely.
     const fake = reconcileEconomy(
       { xp: 0, coins: 0, ownedAccessories: ['cape', 'crown'] },
-      zone1Done, // earned 75 coins < 140 spend
+      zone1Done, // earned coins (87 with the activity allowance) < 140 spend
     );
     assert(fake.ownedAccessories.length === 0, 'unaffordable forged ownership is cleared');
     assert(fake.titles.zone1_guardian === true && fake.titles.first_level === true,
@@ -234,24 +240,29 @@ async function main() {
     return s;
   };
   const wrongIndex = (q: Quest, i: number) => (q.quizQuestions[i].correctIndex === 0 ? 1 : 0);
+  // Task 18: plays EVERY level generically — some 12-15 quests now carry an
+  // extra activity level between the decision and the quiz.
   const completeZone = (zoneId: string) => {
     const quest = resolveQuest(zoneId, '12-15', 'en')!;
-    let s = startLevel(quest, 0);
-    s = answerAll(s, (i) => wrongIndex(quest, i)); // baseline 0
-    s = playScenes(s);
-    const r1 = finalizeLevel(s);
-    s = startLevel(quest, 1);
-    s = playScenes(s);
-    const r2 = finalizeLevel(s);
-    s = startLevel(quest, 2, { priorPreAnswers: getPriorPreAnswers(quest.questId) });
-    s = answerAll(s, (i) => quest.quizQuestions[i].correctIndex);
-    while (s.phase === 'recap') {
-      const item = getActiveRecap(s)!;
-      s = answerRecapQuestion(s, item.correctIndex);
-      s = acknowledgeRecapFeedback(s);
-    }
-    const r3 = finalizeLevel(s);
-    return { quest, r1, r2, r3 };
+    const results = quest.levels.map((level, li) => {
+      let s = startLevel(
+        quest, li,
+        level.kind === 'quiz' ? { priorPreAnswers: getPriorPreAnswers(quest.questId) } : undefined,
+      );
+      if (s.phase === 'pre-quiz') s = answerAll(s, (i) => wrongIndex(quest, i)); // baseline 0
+      if (s.phase === 'scenes') s = playScenes(s);
+      if (s.phase === 'activity') s = completeActivity(s, activityTotal(level));
+      if (s.phase === 'post-quiz') {
+        s = answerAll(s, (i) => quest.quizQuestions[i].correctIndex);
+        while (s.phase === 'recap') {
+          const item = getActiveRecap(s)!;
+          s = answerRecapQuestion(s, item.correctIndex);
+          s = acknowledgeRecapFeedback(s);
+        }
+      }
+      return finalizeLevel(s);
+    });
+    return { quest, r1: results[0], r2: results[1], r3: results[results.length - 1], results };
   };
 
   // ---------- 4. Awards land ONLY via the engine's recorded path ----------
@@ -358,14 +369,25 @@ async function main() {
       'all titles earned after finishing every zone (incl. all_zones_champion)',
     );
     assert(TITLE_IDS.every((id) => s.titles[id] === true), 'every title persisted by the engine');
-    assert(s.xp === 5 * ZONE_TOTAL_XP, 'full-game XP total');
+    // Task 18: a full 12-15 EN run also plays zone3's memory and zone5's
+    // sorting levels (zone1 scenario is 16-18, zone2 hidden is 8-11).
+    const FULL_XP = 5 * ZONE_TOTAL_XP + LEVEL_XP.memory + LEVEL_XP.sorting;
+    const FULL_COINS = 5 * ZONE_TOTAL_COINS + LEVEL_COINS.memory + LEVEL_COINS.sorting;
+    assert(s.xp === FULL_XP, 'full-game XP total (incl. Task 18 activity levels)');
     const spent = getShopItem('bow')!.price;
-    assert(s.coins === 5 * ZONE_TOTAL_COINS - spent, 'full-game Coins total (minus the bow)');
+    assert(s.coins === FULL_COINS - spent, 'full-game Coins total (minus the bow)');
     const cataloguePrice = SHOP_ITEMS.reduce((sum, i) => sum + i.price, 0);
     assert(5 * ZONE_TOTAL_COINS >= cataloguePrice,
       'normal play earns enough Coins for the ENTIRE catalogue (no real-money pressure)');
-    assert(rankForXp(s.xp) === 1 + Math.floor((5 * ZONE_TOTAL_XP) / XP_PER_RANK), 'final Player Rank derived');
+    assert(rankForXp(s.xp) === 1 + Math.floor(FULL_XP / XP_PER_RANK), 'final Player Rank derived');
     assert(levelKey('zone1', 'level1') in s.levelProgress, 'level progress map intact');
+    assert(
+      s.activityScores[levelKey('zone3', 'level_memory')]?.total ===
+        activityTotal(resolveQuest('zone3', '12-15', 'en')!.levels[2]) &&
+        s.activityScores[levelKey('zone5', 'level_sorting')]?.total ===
+          activityTotal(resolveQuest('zone5', '12-15', 'en')!.levels[2]),
+      'activity scores recorded for the two 12-15 activity levels',
+    );
   }
 
   // ---------- 8. Leaderboard: cohort-only, pseudonymous, opt-in OFF ----------

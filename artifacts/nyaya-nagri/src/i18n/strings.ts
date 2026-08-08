@@ -13,6 +13,7 @@
  */
 import type { Language } from '@/data/settingsStore';
 import { useSettings } from '@/data/settingsStore';
+import type { LevelKind, SortBucketId } from '@/quests/schema';
 
 export interface ZoneStrings {
   name: string;
@@ -30,10 +31,10 @@ export interface UIStrings {
   startQuest: (questTitle: string) => string;
   backToMap: string;
 
-  // Level select (Task 15)
+  // Level select (Task 15; Task 18 adds the four activity kinds)
   chooseLevel: string;
   levelN: (n: number) => string;
-  levelKindNames: Record<'story' | 'decision' | 'quiz', string>;
+  levelKindNames: Record<LevelKind, string>;
   completePreviousLevel: string;
   startLevelLabel: string;
   practiceReplay: string;
@@ -65,6 +66,23 @@ export interface UIStrings {
   recapTryAgainIntro: string;
   readAloud: string;
   stopReading: string;
+
+  // Task 18 activity levels. The sorting bucket labels live HERE, not in
+  // content JSON — the emergency label carries the canonical Childline 1098
+  // wording, and helpline text stays hard-coded in code (PRD §9.8). All
+  // feedback is gentle by design (§9.6): no guilt, no failure states.
+  memoryPairsFound: (found: number, total: number) => string;
+  memoryMatchFound: string;
+  memoryNotAMatch: string;
+  hiddenFoundXofY: (found: number, total: number) => string;
+  hiddenKeepLooking: string;
+  hiddenAllFound: string;
+  sortingBucketNames: Record<SortBucketId, string>;
+  sortingCardXofY: (current: number, total: number) => string;
+  sortingRightPlace: string;
+  sortingBelongsIn: (bucketName: string) => string;
+  whereDoesThisGo: string;
+  activityFinish: string;
 
   // Progress dashboard
   progressTitle: string;
@@ -295,6 +313,10 @@ const EN: UIStrings = {
     story: 'The Story Begins',
     decision: 'Your Choices',
     quiz: 'Quiz Checkpoint',
+    memory: 'Memory Match',
+    hidden: 'Find the Clues',
+    sorting: 'Sort It Out',
+    scenario: 'Quick Decision',
   },
   completePreviousLevel: 'Finish the earlier level to unlock this one.',
   startLevelLabel: 'Start',
@@ -346,6 +368,23 @@ const EN: UIStrings = {
   recapTryAgainIntro: 'Good try! Here is the idea one more time:',
   readAloud: 'Read aloud',
   stopReading: 'Stop reading',
+
+  memoryPairsFound: (found, total) => `Pairs found: ${found} of ${total}`,
+  memoryMatchFound: 'It is a match!',
+  memoryNotAMatch: 'Not a match — flip again and keep looking.',
+  hiddenFoundXofY: (found, total) => `Found ${found} of ${total}`,
+  hiddenKeepLooking: 'Nothing wrong there — keep looking.',
+  hiddenAllFound: 'You spotted them all. Well done for looking so closely.',
+  sortingBucketNames: {
+    safe: 'Safe',
+    tell: 'Tell a Trusted Adult',
+    emergency: 'Emergency — Call Childline 1098',
+  },
+  sortingCardXofY: (current, total) => `Card ${current} of ${total}`,
+  sortingRightPlace: 'Right place!',
+  sortingBelongsIn: (bucketName) => `Good thinking — this one belongs in: ${bucketName}`,
+  whereDoesThisGo: 'Where does this belong?',
+  activityFinish: 'Finish',
 
   progressTitle: 'My Progress',
   closeProgress: 'Close progress',
@@ -622,6 +661,10 @@ const HI: UIStrings = {
     story: 'कहानी शुरू होती है',
     decision: 'तुम्हारे फ़ैसले',
     quiz: 'क्विज़ चेकपॉइंट',
+    memory: 'मेमोरी मिलान',
+    hidden: 'सुराग ढूँढो',
+    sorting: 'सही जगह चुनो',
+    scenario: 'झटपट फ़ैसला',
   },
   completePreviousLevel: 'इसे खोलने के लिए पहले वाला लेवल पूरा करो।',
   startLevelLabel: 'शुरू करो',
@@ -673,6 +716,23 @@ const HI: UIStrings = {
   recapTryAgainIntro: 'अच्छी कोशिश! वही बात एक बार फिर:',
   readAloud: 'पढ़कर सुनाओ',
   stopReading: 'पढ़ना रोको',
+
+  memoryPairsFound: (found, total) => `जोड़ियाँ मिलीं: ${total} में से ${found}`,
+  memoryMatchFound: 'जोड़ी मिल गई!',
+  memoryNotAMatch: 'जोड़ी नहीं बनी — फिर पलटो और ढूँढते रहो।',
+  hiddenFoundXofY: (found, total) => `${total} में से ${found} मिले`,
+  hiddenKeepLooking: 'वहाँ सब ठीक है — और ढूँढो।',
+  hiddenAllFound: 'तुमने सब ढूँढ लिए। इतने ध्यान से देखने के लिए शाबाश।',
+  sortingBucketNames: {
+    safe: 'सुरक्षित',
+    tell: 'किसी भरोसेमंद बड़े को बताओ',
+    emergency: 'इमरजेंसी — चाइल्डलाइन 1098 पर कॉल करो',
+  },
+  sortingCardXofY: (current, total) => `कार्ड ${current} (कुल ${total})`,
+  sortingRightPlace: 'सही जगह!',
+  sortingBelongsIn: (bucketName) => `अच्छा सोचा — यह असल में यहाँ जाता है: ${bucketName}`,
+  whereDoesThisGo: 'यह कहाँ जाएगा?',
+  activityFinish: 'पूरा करो',
 
   progressTitle: 'मेरी प्रगति',
   closeProgress: 'प्रगति बंद करो',

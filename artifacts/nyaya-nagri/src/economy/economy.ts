@@ -29,6 +29,12 @@ export const LEVEL_XP: Record<LevelKind, number> = {
   story: 30,
   decision: 40,
   quiz: 60,
+  // Task 18 activity levels — additive extras, worth a bit less than the
+  // quiz checkpoint so the zone's weight stays on the learning loop.
+  memory: 35,
+  hidden: 35,
+  sorting: 35,
+  scenario: 35,
 };
 
 /** Coins per level kind, first-time completion only. */
@@ -36,6 +42,10 @@ export const LEVEL_COINS: Record<LevelKind, number> = {
   story: 10,
   decision: 15,
   quiz: 25,
+  memory: 12,
+  hidden: 12,
+  sorting: 12,
+  scenario: 12,
 };
 
 /** One-time bonus when the final quiz level completes its whole zone. */
@@ -58,7 +68,11 @@ export function awardForLevel(kind: LevelKind, zoneCompleted: boolean): LevelAwa
 // Player Rank (derived from total XP — never stored, so it can't drift)
 // ---------------------------------------------------------------------------
 
-/** XP needed per rank step. Full game (5 zones) totals 900 XP => Rank 7. */
+/**
+ * XP needed per rank step. The base levels of all 5 zones total 900 XP
+ * (=> Rank 7); Task 18 activity levels add 35 XP each on top (one or two
+ * per age band, depending on which zones carry an activity for that band).
+ */
 export const XP_PER_RANK = 150;
 
 export function rankForXp(xp: number): number {
@@ -228,30 +242,50 @@ export function newlyUnlockedTitles(
 // ---------------------------------------------------------------------------
 
 const ZONE_IDS = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'] as const;
-const LEVEL_KIND_BY_ID: Record<string, LevelKind> = {
+const BASE_LEVEL_KIND_BY_ID: Record<string, LevelKind> = {
   level1: 'story',
   level2: 'decision',
   level3: 'quiz',
 };
 
 /**
+ * Task 18: activity levels wired into specific zones. Only ONE age band per
+ * zone actually carries the extra level, but progress keys are band-blind,
+ * so the reconciliation ceiling includes them for every band. The clamp is
+ * a MAXIMUM — bands whose quest lacks the extra level simply never earn it,
+ * and honest saves stay untouched. This slight over-allowance is deliberate
+ * and safer than under-crediting an honest completion.
+ */
+const EXTRA_LEVEL_KIND_BY_ZONE: Record<string, Record<string, LevelKind>> = {
+  zone1: { level_scenario: 'scenario' },
+  zone2: { level_hidden: 'hidden' },
+  zone3: { level_memory: 'memory' },
+  zone5: { level_sorting: 'sorting' },
+};
+
+function levelKindsForZone(zone: string): Record<string, LevelKind> {
+  return { ...BASE_LEVEL_KIND_BY_ID, ...(EXTRA_LEVEL_KIND_BY_ZONE[zone] ?? {}) };
+}
+
+/**
  * Maximum XP/Coins honestly earnable from the recorded progress.
- * A completed zone credits all 3 levels + the bonus (this also keeps
+ * A completed zone credits all its levels + the bonus (this also keeps
  * pre-Task-15 saves — zone complete, no level entries — fully credited).
  */
 export function earnedTotals(progress: ProgressMilestones): LevelAward {
   let xp = 0;
   let coins = 0;
   for (const zone of ZONE_IDS) {
+    const kindsById = levelKindsForZone(zone);
     if (progress.completedZones[zone] === true) {
-      for (const kind of Object.values(LEVEL_KIND_BY_ID)) {
+      for (const kind of Object.values(kindsById)) {
         xp += LEVEL_XP[kind];
         coins += LEVEL_COINS[kind];
       }
       xp += ZONE_COMPLETE_BONUS.xp;
       coins += ZONE_COMPLETE_BONUS.coins;
     } else {
-      for (const [levelId, kind] of Object.entries(LEVEL_KIND_BY_ID)) {
+      for (const [levelId, kind] of Object.entries(kindsById)) {
         if (progress.levelProgress[`${zone}:${levelId}`] === true) {
           xp += LEVEL_XP[kind];
           coins += LEVEL_COINS[kind];

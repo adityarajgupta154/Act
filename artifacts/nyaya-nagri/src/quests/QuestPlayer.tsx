@@ -3,10 +3,15 @@ import {
   QuestSession, startLevel, answerQuizQuestion, acknowledgeQuizFeedback,
   chooseSceneOption, acknowledgeSceneFeedback, finalizeLevel, getCurrentScene,
   getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback,
+  getSessionLevel, completeActivity,
   type LevelResult,
 } from './engine';
 import { getPriorPreAnswers } from './levels';
 import type { Quest, ChoiceOutcome } from './schema';
+import { MemoryLevel } from './activities/MemoryLevel';
+import { HiddenObjectLevel } from './activities/HiddenObjectLevel';
+import { SortingLevel } from './activities/SortingLevel';
+import { ScenarioLevel } from './activities/ScenarioLevel';
 import { exitZone, openHelp } from '@/ui/uiStore';
 import { isSafetyReminderZone } from '@/ui/safetyReminder';
 import { cn } from '@/lib/utils';
@@ -102,6 +107,15 @@ export function QuestPlayer({
       } else if (item) {
         parts.push(item.summary, item.question, ...item.options);
       }
+    } else if (session.phase === 'activity') {
+      // Task 18: narrate the activity's own intro/prompt once on entry.
+      // In-activity feedback is narrated by the activity components via
+      // narrate() below (their internal state is not visible here).
+      const level = getSessionLevel(session);
+      if (level?.memory) parts.push(level.memory.intro);
+      else if (level?.hidden) parts.push(level.hidden.intro);
+      else if (level?.sorting) parts.push(level.sorting.intro);
+      else if (level?.scenario) parts.push(level.scenario.prompt);
     } else if (session.phase === 'complete' && finalResult) {
       if (finalResult.kind === 'quiz') {
         parts.push(finalResult.recorded ? t.questComplete : t.practiceComplete);
@@ -118,6 +132,12 @@ export function QuestPlayer({
 
   // Stop any narration when the quest player unmounts (leave / back to map).
   useEffect(() => () => stopSpeaking(), []);
+
+  // Task 18: narration hook handed to activity components for their inner
+  // feedback moments — same settings gate and quest language as above.
+  const narrate = (parts: string[]) => {
+    if (settings.narration && parts.length > 0) speak(parts, questLang);
+  };
 
   // Leaving mid-level (or after a non-final level) goes back one layer —
   // to the zone's Level-Select screen, not all the way to the map.
@@ -230,6 +250,15 @@ export function QuestPlayer({
             {t.youGotXofY(finalResult.postScore, finalResult.total)}
           </h3>
         )}
+
+        {/* Task 18: X-of-Y only where it is meaningful (sorting/scenario).
+            Memory and hidden-object are completion-based by gentle design. */}
+        {finalResult.activityScore &&
+          (finalResult.kind === 'sorting' || finalResult.kind === 'scenario') && (
+            <h3 className="text-2xl font-bold text-orange-500 mb-4">
+              {t.youGotXofY(finalResult.activityScore.score, finalResult.activityScore.total)}
+            </h3>
+          )}
 
         {/* Task 16: rewards on first-time completions only (never practice) */}
         {finalResult.xpAwarded > 0 && (
@@ -408,6 +437,43 @@ export function QuestPlayer({
                 {t.continueLabel} <ArrowRight className="w-5 h-5" />
               </button>
             </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Task 18: activity levels (memory / hidden / sorting / scenario) — one
+  // self-contained interactive screen; completion routes through the same
+  // completeActivity -> phase 'complete' -> finalizeLevel single write path.
+  if (session.phase === 'activity') {
+    const level = getSessionLevel(session);
+    if (!level) return null;
+    const finish = (score: number) => setSession(completeActivity(session, score));
+
+    return (
+      <div className="bg-white p-6 md:p-10 rounded-3xl shadow-xl max-w-3xl w-full border border-slate-100 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto flex flex-col max-h-[85vh]">
+        <div className="flex justify-between items-center mb-6 shrink-0 border-b border-slate-100 pb-4">
+          <h2 className="font-display font-bold text-2xl text-slate-800">
+            {t.levelKindNames[level.kind]}
+          </h2>
+          <button onClick={handleLeave} className="text-slate-400 hover:text-slate-600 font-medium px-4 py-2 bg-slate-100 rounded-full transition-colors text-sm">
+            {t.leaveQuest}
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto min-h-0">
+          {level.memory && (
+            <MemoryLevel content={level.memory} t={t} narrate={narrate} onComplete={finish} />
+          )}
+          {level.hidden && (
+            <HiddenObjectLevel content={level.hidden} t={t} narrate={narrate} onComplete={finish} />
+          )}
+          {level.sorting && (
+            <SortingLevel content={level.sorting} t={t} narrate={narrate} onComplete={finish} />
+          )}
+          {level.scenario && (
+            <ScenarioLevel content={level.scenario} t={t} narrate={narrate} onComplete={finish} />
           )}
         </div>
       </div>

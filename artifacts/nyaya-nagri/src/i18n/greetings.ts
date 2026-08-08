@@ -9,6 +9,7 @@
  */
 import type { Language } from '@/data/settingsStore';
 import type { AgeBand } from '@/data/progressStore';
+import type { LevelKind } from '@/quests/schema';
 
 type GreetingMap = Record<string, Record<AgeBand, string>>;
 
@@ -117,7 +118,7 @@ export function getZoneGreeting(
  * level number interpolated — the same strings work for every zone and age
  * band, so no band/character mismatch is possible. Western numerals only.
  */
-type LevelGreetingKind = 'story' | 'decision' | 'quiz';
+type LevelGreetingKind = LevelKind;
 
 const LEVEL_GREETINGS: Record<
   Language,
@@ -130,6 +131,14 @@ const LEVEL_GREETINGS: Record<
       `Level ${n} of ${zoneName}: now the big choices are yours. Take your time — every choice teaches something.`,
     quiz: (n, zoneName) =>
       `Level ${n} of ${zoneName}: the quiz checkpoint. Show what you have learned — you can do this.`,
+    memory: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: Memory Match. Flip the cards and match each right with what it means. Take your time — there is no hurry here.`,
+    hidden: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: Find the Clues. Look closely at the picture and tap what is not right for a child. You have sharp eyes.`,
+    sorting: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: Sort It Out. Put each situation where it belongs — you know more than you think.`,
+    scenario: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: Quick Decision. One moment, one choice — trust what you have learned.`,
   },
   hi: {
     story: (n, zoneName) =>
@@ -138,6 +147,14 @@ const LEVEL_GREETINGS: Record<
       `${zoneName} का लेवल ${n}: अब बड़े फ़ैसले तुम्हारे हाथ में हैं। आराम से सोचो — हर फ़ैसला कुछ सिखाता है।`,
     quiz: (n, zoneName) =>
       `${zoneName} का लेवल ${n}: क्विज़ चेकपॉइंट। दिखाओ तुमने क्या सीखा — तुम यह कर सकते हो।`,
+    memory: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: मेमोरी मिलान। कार्ड पलटो और हर अधिकार को उसके मतलब से मिलाओ। आराम से खेलो — यहाँ कोई जल्दी नहीं है।`,
+    hidden: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: सुराग ढूँढो। तस्वीर को ध्यान से देखो और जो किसी बच्चे के लिए ठीक नहीं है उसे टैप करो। तुम्हारी नज़र तेज़ है।`,
+    sorting: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: सही जगह चुनो। हर स्थिति को उसकी सही जगह पर रखो — तुम जितना सोचते हो उससे ज़्यादा जानते हो।`,
+    scenario: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: झटपट फ़ैसला। एक पल, एक फ़ैसला — जो सीखा है उस पर भरोसा रखो।`,
   },
 };
 

@@ -39,6 +39,14 @@ backing.set(
     levelProgress: { 'zone1:level1': 'yes', 'zone9:levelX': true },
     replayCounts: { bad: -2, alsoBad: 'many', ok: 3 },
     preAnswersByQuest: { junk: [1, 'x'], ok: [0, 2, 1] },
+    // Task 18: junk activity scores — only well-formed pairs may survive.
+    activityScores: {
+      overTotal: { score: 5, total: 2 },
+      negative: { score: -1, total: 3 },
+      hugeTotal: { score: 1, total: 99 },
+      fraction: { score: 1.5, total: 3 },
+      ok: { score: 2, total: 3 },
+    },
   }),
 );
 
@@ -57,7 +65,7 @@ async function main() {
     startLevel, startQuest, answerQuizQuestion, acknowledgeQuizFeedback,
     chooseSceneOption, acknowledgeSceneFeedback, getCurrentScene, finalizeLevel,
     getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback,
-    levelKey,
+    levelKey, completeActivity, activityTotal,
   } = await import('../src/quests/engine');
   type QuestSession = import('../src/quests/engine').QuestSession;
   const { getLevelStatuses, isLevelUnlocked, getPriorPreAnswers, getReplayCount } =
@@ -65,7 +73,7 @@ async function main() {
   const { isZoneUnlocked } = await import('../src/world/zones');
   const { getStrings } = await import('../src/i18n/strings');
   const { getLevelGreeting } = await import('../src/i18n/greetings');
-  const { validateLevels } = await import('../src/quests/schema');
+  const { validateLevels, validateTranslationParity } = await import('../src/quests/schema');
   type Quest = import('../src/quests/schema').Quest;
 
   // ---------- 0. Load-time sanitization of the seeded junk save ----------
@@ -83,16 +91,29 @@ async function main() {
       JSON.stringify(s.preAnswersByQuest) === JSON.stringify({ ok: [0, 2, 1] }),
       'load drops non-integer-array preAnswersByQuest entries',
     );
+    assert(
+      JSON.stringify(s.activityScores) === JSON.stringify({ ok: { score: 2, total: 3 } }),
+      'load drops malformed activityScores entries (over-total/negative/huge/fractional)',
+    );
   }
 
   const resetProgress = () =>
     progressStore.update({
       completedZones: {}, badges: {}, quizScores: {},
       levelProgress: {}, replayCounts: {}, preAnswersByQuest: {},
+      activityScores: {},
     });
   resetProgress();
 
-  // ---------- 1. Every quest (EN + HI) has a valid 3-level structure ----------
+  // ---------- 1. Every quest (EN + HI) has a valid level structure ----------
+  // Task 18: four quests carry ONE extra activity level between the decision
+  // and the quiz; every other quest keeps the classic 3-level shape.
+  const ACTIVITY_BY_QUEST: Record<string, { levelId: string; kind: string }> = {
+    school_rights_12_15: { levelId: 'level_memory', kind: 'memory' },
+    right_childhood_8_11: { levelId: 'level_hidden', kind: 'hidden' },
+    digital_safety_12_15: { levelId: 'level_sorting', kind: 'sorting' },
+    safe_zone_16_18: { levelId: 'level_scenario', kind: 'scenario' },
+  };
   const BANDS = ['8-11', '12-15', '16-18'] as const;
   const ZONES_SEQ = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
   let checked = 0;
@@ -102,24 +123,32 @@ async function main() {
         const q = resolveQuest(zoneId, band, lang)!;
         assert(!!q, `${zoneId}/${band}/${lang} resolves`);
         validateLevels(q); // throws on any structural violation
-        assert(q.levels.length === 3, `${q.questId}/${lang} has 3 levels`);
+        const extra = ACTIVITY_BY_QUEST[q.questId];
+        const wantKinds = extra
+          ? ['story', 'decision', extra.kind, 'quiz']
+          : ['story', 'decision', 'quiz'];
         assert(
-          q.levels[0].kind === 'story' && q.levels[1].kind === 'decision' && q.levels[2].kind === 'quiz',
-          `${q.questId}/${lang} level kinds are story/decision/quiz`,
+          JSON.stringify(q.levels.map((l) => l.kind)) === JSON.stringify(wantKinds),
+          `${q.questId}/${lang} level kinds are ${wantKinds.join('/')}`,
         );
+        if (extra) {
+          assert(q.levels[2].levelId === extra.levelId,
+            `${q.questId}/${lang} activity level id is ${extra.levelId}`);
+        }
         checked++;
       }
     }
   }
   assert(checked === 30, 'all 30 quest files (15 EN + 15 HI) level-checked');
 
-  // HI level structure identical to EN (parity also enforced at registry load).
+  // HI level STRUCTURE identical to EN (text differs; full structural parity
+  // — pair counts, cue geometry, bucket/outcome sequences — is enforced by
+  // validateTranslationParity at registry load and re-checked in section 5c).
   for (const q of getAllQuests()) {
     const hi = resolveQuest(q.zoneId, q.ageBand, 'hi')!;
-    assert(
-      JSON.stringify(hi.levels) === JSON.stringify(q.levels),
-      `${q.questId} HI levels identical to EN`,
-    );
+    const shape = (x: Quest) =>
+      JSON.stringify(x.levels.map((l) => [l.levelId, l.kind, l.sceneIds ?? null, l.entryScene ?? null]));
+    assert(shape(hi) === shape(q), `${q.questId} HI level structure identical to EN`);
   }
 
   // ---------- helpers to drive sessions ----------
@@ -156,11 +185,15 @@ async function main() {
     assert(isZoneUnlocked(zoneId), `${zoneId} unlocked when its turn comes`);
     if (next) assert(!isZoneUnlocked(next), `${next} locked before ${zoneId} done`);
 
+    const nLevels = quest.levels.length; // 3, or 4 where an activity level is wired
     assert(
-      JSON.stringify(getLevelStatuses(quest)) === JSON.stringify(['unlocked', 'locked', 'locked']),
-      `${zoneId}: initial statuses unlocked/locked/locked`,
+      JSON.stringify(getLevelStatuses(quest)) ===
+        JSON.stringify(['unlocked', ...Array(nLevels - 1).fill('locked')]),
+      `${zoneId}: initial statuses = first unlocked, all later levels locked`,
     );
-    assert(!isLevelUnlocked(quest, 1) && !isLevelUnlocked(quest, 2), `${zoneId}: L2+L3 locked`);
+    for (let li = 1; li < nLevels; li++) {
+      assert(!isLevelUnlocked(quest, li), `${zoneId}: L${li + 1} locked initially`);
+    }
 
     // --- Level 1 (story): silent pre-quiz FIRST, then only L1 scenes ---
     let s = startLevel(quest, 0);
@@ -187,8 +220,9 @@ async function main() {
 
     // --- Level 2 (decision): remaining scenes only ---
     assert(
-      JSON.stringify(getLevelStatuses(quest)) === JSON.stringify(['completed', 'unlocked', 'locked']),
-      `${zoneId}: L2 unlocked after L1, L3 still locked`,
+      JSON.stringify(getLevelStatuses(quest)) ===
+        JSON.stringify(['completed', 'unlocked', ...Array(nLevels - 2).fill('locked')]),
+      `${zoneId}: L2 unlocked after L1, later levels still locked`,
     );
     s = startLevel(quest, 1);
     assert(s.phase === 'scenes' && s.currentSceneId === quest.levels[1].entryScene,
@@ -210,8 +244,23 @@ async function main() {
       `${zoneId} still not complete after L2`);
     if (next) assert(!isZoneUnlocked(next), `${next} STILL locked before the quiz level`);
 
-    // --- Level 3 (quiz): post-quiz + adaptive recap, completes the zone ---
-    s = startLevel(quest, 2, { priorPreAnswers: getPriorPreAnswers(quest.questId) });
+    // --- Task 18: any activity level between the decision and the quiz ---
+    for (let li = 2; li < nLevels - 1; li++) {
+      const lvl = quest.levels[li];
+      s = startLevel(quest, li);
+      assert(s.phase === 'activity', `${zoneId}/L${li + 1} (${lvl.kind}) starts in the activity phase`);
+      s = completeActivity(s, activityTotal(lvl));
+      assert(s.phase === 'complete', `${zoneId}/L${li + 1} completes via completeActivity`);
+      r = finalizeLevel(s);
+      assert(r.recorded && !r.zoneCompleted, `${zoneId}/L${li + 1} recorded, zone STILL not complete`);
+      const rec = progressStore.getState().activityScores[levelKey(zoneId, lvl.levelId)];
+      assert(rec?.score === activityTotal(lvl) && rec?.total === activityTotal(lvl),
+        `${zoneId}/L${li + 1} activity score recorded`);
+      if (next) assert(!isZoneUnlocked(next), `${next} still locked before the quiz level`);
+    }
+
+    // --- Final level (quiz): post-quiz + adaptive recap, completes the zone ---
+    s = startLevel(quest, nLevels - 1, { priorPreAnswers: getPriorPreAnswers(quest.questId) });
     assert(s.phase === 'post-quiz', `${zoneId}/L3 is the quiz checkpoint`);
     s = answerAll(s, (i) => quest.quizQuestions[i].correctIndex); // all correct
     // Baseline was 0 (< half) -> the recap must trigger, exactly as before.
@@ -233,7 +282,7 @@ async function main() {
     assert(st3.completedZones[zoneId] === true, `${zoneId} complete after final level`);
     if (next) assert(isZoneUnlocked(next), `${next} unlocks ONLY now (Task 1 rules intact)`);
     assert(
-      JSON.stringify(getLevelStatuses(quest)) === JSON.stringify(['completed', 'completed', 'completed']),
+      JSON.stringify(getLevelStatuses(quest)) === JSON.stringify(Array(nLevels).fill('completed')),
       `${zoneId}: all levels completed`,
     );
   }
@@ -278,6 +327,104 @@ async function main() {
       'stored pre-quiz baseline UNCHANGED by all replays');
     assert(getReplayCount(quest, 2) === 1 && getReplayCount(quest, 1) === 1,
       'each replay tracked under its own level key');
+  }
+
+  // ---------- 3b. Task 18: activity engine flow, clamping, single write path ----------
+  {
+    resetProgress();
+    const quest = resolveQuest('zone3', '12-15', 'en')!;
+    const lvl = quest.levels[2];
+    assert(lvl.kind === 'memory' && lvl.levelId === 'level_memory',
+      'zone3/12-15 carries the memory level at index 2');
+    const total = activityTotal(lvl);
+    assert(total === lvl.memory!.pairs.length && total >= 4 && total <= 6,
+      'activityTotal derives the memory total from content');
+
+    // Practice first: full flow, ZERO writes.
+    let s = startLevel(quest, 2, { practice: true });
+    assert(s.phase === 'activity', 'activity level starts in the activity phase (practice too)');
+    let r = finalizeLevel(completeActivity(s, 2));
+    assert(!r.recorded && r.activityScore?.score === 2 && r.activityScore?.total === total,
+      'practice activity returns its score but is NOT recorded');
+    assert(Object.keys(progressStore.getState().activityScores).length === 0 &&
+      Object.keys(progressStore.getState().levelProgress).length === 0,
+      'practice activity writes NOTHING (scores, progress)');
+
+    // Clamping: UI can never inflate or corrupt the score.
+    s = startLevel(quest, 2);
+    assert(completeActivity(s, 999).activityResult!.score === total, 'score clamps down to total');
+    assert(completeActivity(s, -5).activityResult!.score === 0, 'negative score clamps to 0');
+    assert(completeActivity(s, 2.9).activityResult!.score === 2, 'fractional score floors to an int');
+    const done = completeActivity(s, total);
+    assert(completeActivity(done, 1) === done, 'completeActivity is a no-op outside the activity phase');
+
+    // First recorded completion writes score + progress via finalizeLevel only.
+    r = finalizeLevel(completeActivity(s, total - 1));
+    assert(r.recorded && r.activityScore?.score === total - 1 && r.xpAwarded > 0,
+      'recorded activity completion pays XP and reports the score');
+    const key = levelKey('zone3', 'level_memory');
+    const st = progressStore.getState();
+    assert(st.activityScores[key]?.score === total - 1 && st.activityScores[key]?.total === total,
+      'activityScores written under the level key');
+    assert(st.levelProgress[key] === true, 'activity level progress stored');
+
+    // Replays (practice or not) never overwrite the recorded score.
+    r = finalizeLevel(completeActivity(startLevel(quest, 2, { practice: true }), total));
+    assert(!r.recorded, 'activity replay not recorded');
+    r = finalizeLevel(completeActivity(startLevel(quest, 2), total));
+    assert(!r.recorded, 'non-practice replay of a completed activity treated as practice');
+    assert(progressStore.getState().activityScores[key]?.score === total - 1,
+      'recorded activity score UNCHANGED by replays');
+    resetProgress();
+  }
+
+  // ---------- 3c. Task 18: content validation rejects unsafe/malformed shapes ----------
+  {
+    const clone = (q: Quest): Quest => JSON.parse(JSON.stringify(q));
+    const memQ = resolveQuest('zone3', '12-15', 'en')!;
+    const hidQ = resolveQuest('zone2', '8-11', 'en')!;
+    const sortQ = resolveQuest('zone5', '12-15', 'en')!;
+    const scenQ = resolveQuest('zone1', '16-18', 'en')!;
+    const rejects = (q: Quest, msg: string) => {
+      let threw = false;
+      try { validateLevels(q); } catch { threw = true; }
+      assert(threw, msg);
+    };
+
+    let t = clone(hidQ);
+    (t as { ageBand: string }).ageBand = '12-15';
+    rejects(t, 'hidden-object level rejected outside the 8-11 band');
+
+    t = clone(hidQ);
+    (t.levels[2].hidden as { sceneKey: string }).sceneKey = 'ghost_scene';
+    rejects(t, 'unknown hidden sceneKey rejected');
+
+    t = clone(memQ);
+    t.levels[2].memory!.pairs[1].term = t.levels[2].memory!.pairs[0].term;
+    rejects(t, 'duplicate memory terms rejected');
+
+    t = clone(sortQ);
+    for (const c of t.levels[2].sorting!.cards) if (c.bucket === 'emergency') c.bucket = 'tell';
+    rejects(t, 'sorting content that skips a bucket rejected');
+
+    t = clone(scenQ);
+    t.levels[2].scenario!.options[1].outcome = 'correct';
+    rejects(t, 'scenario with two correct options rejected');
+
+    t = clone(memQ);
+    t.levels[2].sceneIds = ['scene1'];
+    t.levels[2].entryScene = 'scene1';
+    rejects(t, 'activity level carrying sceneIds rejected');
+
+    // Parity: HI must mirror EN structure exactly (bucket order included).
+    const sortHi = resolveQuest('zone5', '12-15', 'hi')!;
+    validateTranslationParity(sortQ, sortHi); // the real twins must pass
+    assert(true, 'translation parity accepts the real HI sorting twin');
+    const th = clone(sortHi);
+    th.levels[2].sorting!.cards[0].bucket = 'tell';
+    let threwP = false;
+    try { validateTranslationParity(sortQ, th); } catch { threwP = true; }
+    assert(threwP, 'translation parity rejects a bucket-sequence mismatch');
   }
 
   // ---------- 4. Pre-Task-15 saves: completed zone => all levels complete ----------
@@ -337,12 +484,25 @@ async function main() {
         t.chooseLevel, t.levelN(2), t.completePreviousLevel, t.startLevelLabel,
         t.practiceReplay, t.practiceNote, t.levelCompletedTag, t.levelComplete,
         t.practiceComplete, t.nextLevelUnlocked('X'), t.backToLevels,
-        t.levelKindNames.story, t.levelKindNames.decision, t.levelKindNames.quiz,
+        ...Object.values(t.levelKindNames),
+        // Task 18 activity strings
+        t.memoryPairsFound(2, 6), t.memoryMatchFound, t.memoryNotAMatch,
+        t.hiddenFoundXofY(1, 3), t.hiddenKeepLooking, t.hiddenAllFound,
+        ...Object.values(t.sortingBucketNames),
+        t.sortingCardXofY(1, 6), t.sortingRightPlace,
+        t.sortingBelongsIn(t.sortingBucketNames.tell), t.whereDoesThisGo,
+        t.activityFinish,
       ];
       assert(all.every((x) => typeof x === 'string' && x.trim().length > 0),
-        `${lang}: all 14 level strings present`);
-      assert(all.every((x) => !EMOJI.test(x)), `${lang}: level strings emoji-free`);
-      for (const kind of ['story', 'decision', 'quiz'] as const) {
+        `${lang}: all level + activity strings present`);
+      assert(all.every((x) => !EMOJI.test(x)), `${lang}: level + activity strings emoji-free`);
+      assert(all.every((x) => !DEVANAGARI_DIGITS.test(x)),
+        `${lang}: level + activity strings use Western numerals`);
+      assert(Object.keys(t.levelKindNames).length === 7,
+        `${lang}: all 7 level kinds have display names`);
+      assert(t.sortingBucketNames.emergency.includes('1098'),
+        `${lang}: emergency bucket carries the canonical Childline 1098 wording`);
+      for (const kind of ['story', 'decision', 'quiz', 'memory', 'hidden', 'sorting', 'scenario'] as const) {
         const g = getLevelGreeting(2, kind, t.zones.zone1.name, lang);
         assert(g.length > 0 && !EMOJI.test(g), `${lang}/${kind} level greeting exists, emoji-free`);
         assert(g.includes('2'), `${lang}/${kind} greeting carries the level number`);

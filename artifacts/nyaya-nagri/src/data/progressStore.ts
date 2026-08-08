@@ -65,6 +65,13 @@ export interface ProgressState {
    */
   preAnswersByQuest: Record<string, number[]>;
   /**
+   * Task 18: recorded activity-level results, keyed "zoneId:levelId" like
+   * levelProgress. Written exactly once by finalizeLevel() on the first
+   * recorded completion — practice replays never touch it. Scores are
+   * gentle by design (memory/hidden are completion-based).
+   */
+  activityScores: Record<string, { score: number; total: number }>;
+  /**
    * Task 16 economy (PRD §7.3) — ADDITIVE to badges/stars, never replaces
    * them. XP/Coins are earned in-game only; no real-money path exists.
    */
@@ -104,6 +111,7 @@ function defaultState(): ProgressState {
     levelProgress: {},
     replayCounts: {},
     preAnswersByQuest: {},
+    activityScores: {},
     xp: 0,
     coins: 0,
     ownedAccessories: [],
@@ -133,6 +141,21 @@ const isCount = (v: unknown): v is number =>
   typeof v === 'number' && Number.isFinite(v) && v >= 0;
 const isAnswerList = (v: unknown): v is number[] =>
   Array.isArray(v) && v.every((n) => typeof n === 'number' && Number.isInteger(n));
+/** Task 18: a stored activity score must be a sane {score, total} pair. */
+const isScorePair = (v: unknown): v is { score: number; total: number } => {
+  if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
+  const p = v as { score?: unknown; total?: unknown };
+  return (
+    typeof p.score === 'number' &&
+    typeof p.total === 'number' &&
+    Number.isInteger(p.score) &&
+    Number.isInteger(p.total) &&
+    p.total > 0 &&
+    p.total <= 50 &&
+    p.score >= 0 &&
+    p.score <= p.total
+  );
+};
 
 /** Persistence adapter interface — swap the in-memory adapter for a real one later. */
 export interface StorageAdapter {
@@ -221,6 +244,7 @@ class LocalStorageAdapter implements StorageAdapter {
         completedZones,
         replayCounts: sanitizeRecord(parsed.replayCounts, isCount),
         preAnswersByQuest: sanitizeRecord(parsed.preAnswersByQuest, isAnswerList),
+        activityScores: sanitizeRecord(parsed.activityScores, isScorePair),
         xp: economy.xp,
         coins: economy.coins,
         ownedAccessories: economy.ownedAccessories,

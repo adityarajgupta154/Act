@@ -168,6 +168,39 @@
       "entryScene": "scene3"
     },
     {
+      "levelId": "level_memory",
+      "kind": "memory",
+      "memory": {
+        "intro": "Before the final quiz, let's lock in the key words from Sana's story. Flip the cards and match each right with what it means.",
+        "pairs": [
+          {
+            "term": "Free elementary education",
+            "match": "Up to Class 8, government schools charge no fees and give free textbooks and uniforms."
+          },
+          {
+            "term": "25 percent quota",
+            "match": "Entry-level seats in eligible private unaided schools kept free for children from disadvantaged groups."
+          },
+          {
+            "term": "No expulsion before Class 8",
+            "match": "One failed test cannot take a child's seat away before elementary school is complete."
+          },
+          {
+            "term": "Mental harassment ban",
+            "match": "Humiliating a student is prohibited conduct in elementary school, just like physical punishment."
+          },
+          {
+            "term": "School Management Committee",
+            "match": "A committee with parents on it that can hear school complaints."
+          },
+          {
+            "term": "Childline 1098",
+            "match": "The free helpline for any child, open day and night."
+          }
+        ]
+      }
+    },
+    {
       "levelId": "level3",
       "kind": "quiz"
     }

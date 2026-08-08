@@ -8,12 +8,27 @@
  * Practice/Replay (which never touches recorded scores).
  */
 import React from 'react';
-import type { Quest } from './schema';
+import type { Quest, LevelKind } from './schema';
 import { getLevelStatuses, type LevelStatus } from './levels';
 import { useStrings } from '@/i18n/strings';
 import { exitZone } from '@/ui/uiStore';
 import { cn } from '@/lib/utils';
-import { Lock, Star, Play, RotateCcw, Map as MapIcon } from 'lucide-react';
+import {
+  Lock, Star, Play, RotateCcw, Map as MapIcon,
+  BookOpen, Split, Award, Layers, Search, Inbox, Zap,
+  type LucideIcon,
+} from 'lucide-react';
+
+/** Task 18: a small icon per level TYPE, next to the kind name. */
+const KIND_ICONS: Record<LevelKind, LucideIcon> = {
+  story: BookOpen,
+  decision: Split,
+  quiz: Award,
+  memory: Layers,
+  hidden: Search,
+  sorting: Inbox,
+  scenario: Zap,
+};
 
 const NODE_STYLES: Record<LevelStatus, string> = {
   completed: 'bg-gradient-to-tr from-green-400 to-emerald-300 border-white text-white',
@@ -78,8 +93,21 @@ export function LevelSelect({
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className={cn('font-bold text-lg', status === 'locked' ? 'text-slate-400' : 'text-slate-800')}>
-                    {t.levelN(i + 1)}: {t.levelKindNames[level.kind]}
+                  <p
+                    className={cn(
+                      'font-bold text-lg flex items-center gap-2',
+                      status === 'locked' ? 'text-slate-400' : 'text-slate-800',
+                    )}
+                  >
+                    {React.createElement(KIND_ICONS[level.kind], {
+                      className: cn(
+                        'w-5 h-5 shrink-0',
+                        status === 'locked' ? 'text-slate-300' : 'text-orange-500',
+                      ),
+                    })}
+                    <span className="min-w-0">
+                      {t.levelN(i + 1)}: {t.levelKindNames[level.kind]}
+                    </span>
                   </p>
                   {status === 'completed' && (
                     <span className="inline-block text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full uppercase tracking-wide">
