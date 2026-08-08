@@ -5,9 +5,10 @@ import {
   getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback
 } from './engine';
 import type { Quest, ChoiceOutcome } from './schema';
-import { exitZone } from '@/ui/uiStore';
+import { exitZone, openHelp } from '@/ui/uiStore';
+import { isSafetyReminderZone } from '@/ui/safetyReminder';
 import { cn } from '@/lib/utils';
-import { CheckCircle2, XCircle, ArrowRight, Star, Lightbulb } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, Star, Lightbulb, ShieldCheck } from 'lucide-react';
 import { ZONES } from '@/world/zones';
 import { getStrings } from '@/i18n/strings';
 import { useSettings } from '@/data/settingsStore';
@@ -120,6 +121,26 @@ export function QuestPlayer({ quest: questProp }: { quest: Quest }) {
           <p className="text-lg text-slate-600 font-medium mb-8 bg-sky-50 py-3 px-6 rounded-xl inline-block border border-sky-100">
             {t.unlockedNext(nextZoneName)}
           </p>
+        )}
+
+        {/* Task 12: brief, non-alarming support-services reminder after
+            safety-themed quests (zones 1/4/5) — builds calm, repeated
+            familiarity with the Get Help screen (PRD §9.1). Opens the SAME
+            centrally-controlled screen as the always-visible button. */}
+        {isSafetyReminderZone(quest.zoneId) && (
+          <div className="bg-sky-50 border border-sky-100 rounded-2xl p-5 mb-8 text-left max-w-md mx-auto">
+            <p className="font-bold text-sky-700 mb-1 flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 shrink-0" />
+              {t.safetyReminderTitle}
+            </p>
+            <p className="text-slate-600 font-medium mb-3">{t.safetyReminderBody}</p>
+            <button
+              onClick={openHelp}
+              className="bg-white border border-sky-200 text-sky-700 hover:bg-sky-100 active:bg-sky-200 px-5 py-2.5 rounded-full font-bold text-sm transition-colors active:scale-95 touch-manipulation"
+            >
+              {t.seeHelpOptions}
+            </button>
+          </div>
         )}
 
         <button

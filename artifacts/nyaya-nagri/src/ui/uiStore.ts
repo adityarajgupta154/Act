@@ -13,6 +13,12 @@ export type UIState = {
   settingsOpen: boolean;
   /** Community screen overlay (Task 11). */
   communityOpen: boolean;
+  /**
+   * Get Help Now screen (Task 12). Controlled centrally so ANY surface can
+   * open the SAME screen: the always-visible button, quest-end safety
+   * reminder cards, and the avatar's distress escalation path (PRD §9.1).
+   */
+  helpOpen: boolean;
 };
 
 let state: UIState = {
@@ -24,6 +30,7 @@ let state: UIState = {
   progressOpen: false,
   settingsOpen: false,
   communityOpen: false,
+  helpOpen: false,
 };
 
 const listeners = new Set<() => void>();
@@ -96,6 +103,14 @@ export function openCommunity() {
 
 export function closeCommunity() {
   uiStore.set({ communityOpen: false });
+}
+
+export function openHelp() {
+  uiStore.set({ helpOpen: true });
+}
+
+export function closeHelp() {
+  uiStore.set({ helpOpen: false });
 }
 
 export function triggerHelpPulse() {

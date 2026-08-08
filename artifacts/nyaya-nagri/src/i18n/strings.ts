@@ -138,6 +138,19 @@ export interface UIStrings {
   expertIntro: string;
   expertDisclaimer: string;
   ageLabel: (band: string) => string;
+
+  // Get Help screen (Task 12) — helpline digits stay identical everywhere
+  callNow: string;
+  whatHappensWhenYouCall: string;
+  helpBullets: string[];
+  cyberCrimeNote: string;
+  openCyberPortal: string;
+  pocsoEbox: string;
+  pocsoEboxNote: string;
+  openNcpcrSite: string;
+  safetyReminderTitle: string;
+  safetyReminderBody: string;
+  seeHelpOptions: string;
 }
 
 const EN: UIStrings = {
@@ -287,6 +300,26 @@ const EN: UIStrings = {
   expertDisclaimer:
     'This is general information for learning, not legal advice for a specific situation. Every situation is different — talk to a trusted adult, and remember Childline 1098 is always there.',
   ageLabel: (band) => `Age ${band}`,
+
+  callNow: 'Tap to call',
+  whatHappensWhenYouCall: 'What happens when you call?',
+  helpBullets: [
+    'It is free and open every day, at any time.',
+    'A trained, kind adult picks up and listens.',
+    'You share only what you feel ready to share.',
+    'They connect you to the right helpers — and you can call for a friend too.',
+  ],
+  cyberCrimeNote:
+    'For online bullying, threats, or anything scary on the internet.',
+  openCyberPortal: 'Report online: cybercrime.gov.in',
+  pocsoEbox: 'POCSO e-Box',
+  pocsoEboxNote:
+    'A safe online complaint box for children, run by NCPCR. Find the e-Box on the NCPCR website.',
+  openNcpcrSite: 'Open ncpcr.gov.in',
+  safetyReminderTitle: 'Good to remember',
+  safetyReminderBody:
+    'If anything in real life ever feels like this story, you are not alone — kind helpers are one tap away.',
+  seeHelpOptions: 'See help options',
 };
 
 const HI: UIStrings = {
@@ -436,6 +469,26 @@ const HI: UIStrings = {
   expertDisclaimer:
     'यह सीखने के लिए सामान्य जानकारी है, किसी खास स्थिति के लिए कानूनी सलाह नहीं। हर स्थिति अलग होती है — किसी भरोसेमंद बड़े से बात करो, और याद रखो, चाइल्डलाइन 1098 हमेशा साथ है।',
   ageLabel: (band) => `उम्र ${band}`,
+
+  callNow: 'कॉल करने के लिए टैप करो',
+  whatHappensWhenYouCall: 'कॉल करने पर क्या होता है?',
+  helpBullets: [
+    'यह मुफ़्त है और हर दिन, हर समय खुला है।',
+    'एक प्रशिक्षित, अच्छा बड़ा फ़ोन उठाता है और तुम्हारी बात सुनता है।',
+    'जितना बताने का मन हो, बस उतना ही बताओ।',
+    'वे तुम्हें सही मददगारों से जोड़ते हैं — और तुम किसी दोस्त के लिए भी कॉल कर सकते हो।',
+  ],
+  cyberCrimeNote:
+    'ऑनलाइन बुलिंग, धमकियों या इंटरनेट पर किसी भी डरावनी चीज़ के लिए।',
+  openCyberPortal: 'ऑनलाइन रिपोर्ट करो: cybercrime.gov.in',
+  pocsoEbox: 'पॉक्सो (POCSO) e-Box',
+  pocsoEboxNote:
+    'बच्चों के लिए एक सुरक्षित ऑनलाइन शिकायत बॉक्स, जिसे एनसीपीसीआर (NCPCR) चलाता है। e-Box एनसीपीसीआर की वेबसाइट पर मिलेगा।',
+  openNcpcrSite: 'ncpcr.gov.in खोलो',
+  safetyReminderTitle: 'याद रखने वाली बात',
+  safetyReminderBody:
+    'अगर असल ज़िंदगी में कभी कुछ इस कहानी जैसा लगे, तो तुम अकेले नहीं हो — मददगार बस एक टैप दूर हैं।',
+  seeHelpOptions: 'मदद के रास्ते देखो',
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAvatarChat } from '@workspace/api-client-react';
 import { progressStore } from '@/data/progressStore';
-import { useUIStore, triggerHelpPulse } from '@/ui/uiStore';
+import { useUIStore, triggerHelpPulse, openHelp } from '@/ui/uiStore';
 import { getZone } from '@/world/zones';
 import { settingsStore } from '@/data/settingsStore';
 import { getStrings, useStrings } from '@/i18n/strings';
@@ -168,7 +168,12 @@ export function AvatarWidget() {
       appendAssistantMessage(res.reply, res.escalated);
       
       if (res.escalated) {
+        // Task 12: in a real distress moment the resources must be ONE tap
+        // away — open the actual Get Help screen (same one as the button),
+        // not just describe it in text (PRD §9.1). The canonical escalation
+        // reply still appears in the chat underneath.
         triggerHelpPulse();
+        openHelp();
       }
     } catch (error) {
       appendAssistantMessage(getStrings(settingsStore.getState().language).guideResting);
