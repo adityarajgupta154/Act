@@ -1,7 +1,7 @@
 /**
  * Nyaya Nagri — Zone registry & lock rules (Task 1)
  *
- * Single source of truth for the 6 Rights Quest zones and their unlock
+ * Single source of truth for the 7 Rights Quest zones and their unlock
  * sequence. Zone themes trace back to PRD §4.1/§4.2 (legal content matrix);
  * Zone 0 "Know Yourself" (PRD M13) is the constitutional foundation zone
  * that plays before all topic zones.
@@ -66,6 +66,13 @@ export const ZONES: ZoneDef[] = [
     name: 'Digital Safety',
     theme: 'Staying safe and kind online (cyberbullying / online safety)',
     position: [24, -10],
+  },
+  {
+    id: 'zone6',
+    order: 7,
+    name: 'Family & Community Shield',
+    theme: 'Every home should feel safe — the law shields children at home and in the community (child marriage prevention / family safety)',
+    position: [0, 26],
   },
 ];
 

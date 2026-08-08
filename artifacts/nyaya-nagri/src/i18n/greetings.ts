@@ -62,6 +62,14 @@ const GREETINGS_EN: GreetingMap = {
     '16-18':
       "Welcome to the Digital Safety zone. This one is about digital consent and the law: why forwarding someone's private image can be an offence, how the rules protect everyone under 18, and the practical playbook for harassment and sextortion — records, platform grievance tools, the National Cyber Crime Reporting Portal, and 155260. Knowledge worth having.",
   },
+  zone6: {
+    '8-11':
+      "Welcome to the Family & Community Shield zone — the last stop on your journey! This one is about something every child deserves: a home that feels safe and warm, like a nest. We'll meet Golu, learn what to do when home feels stormy, and meet the kind helpers whose whole job is keeping children safe. And remember — Childline 1098 is always there. I'm right here if you have questions!",
+    '12-15':
+      "Welcome to the Family & Community Shield zone. This final quest covers real things: the Prohibition of Child Marriage Act — why the law says not before 18 for girls and 21 for boys — the right to say no and get help, and what to do when home doesn't feel safe. You'll also meet the real authorities built to protect children. Childline 1098 is with you all the way. Ready?",
+    '16-18':
+      "Welcome to the Family & Community Shield zone — the final zone. Here it gets practical: the Prohibition of Child Marriage Act, 2006 (minimum ages 18 and 21), how a child marriage can be legally challenged and annulled with free legal aid, and how to stand by a friend whose home is not safe — without playing detective. You'll also meet the full roster of child-protection authorities. Knowledge that protects real people.",
+  },
 };
 
 const GREETINGS_HI: GreetingMap = {
@@ -113,6 +121,14 @@ const GREETINGS_HI: GreetingMap = {
     '16-18':
       'डिजिटल सुरक्षा ज़ोन में स्वागत है। यह क्वेस्ट डिजिटल सहमति और कानून के बारे में है: किसी की निजी तस्वीर आगे भेजना अपराध क्यों हो सकता है, नियम 18 से कम उम्र के हर व्यक्ति की रक्षा कैसे करते हैं, और परेशान करने या धमकाने पर व्यावहारिक तरीका — रिकॉर्ड रखना, प्लेटफ़ॉर्म के शिकायत टूल, राष्ट्रीय साइबर अपराध रिपोर्टिंग पोर्टल, और 155260। यह जानकारी काम की है।',
   },
+  zone6: {
+    '8-11':
+      'परिवार और समुदाय की ढाल ज़ोन में स्वागत है — तुम्हारे सफ़र का आख़िरी पड़ाव! यह ज़ोन उस चीज़ के बारे में है जो हर बच्चे का हक़ है: एक ऐसा घर जो घोंसले जैसा सुरक्षित और गर्म लगे। हम गोलू से मिलेंगे, सीखेंगे कि घर में तूफ़ान जैसा लगे तो क्या करना है, और उन प्यारे मददगारों से मिलेंगे जिनका पूरा काम ही बच्चों को सुरक्षित रखना है। और याद रखो — चाइल्डलाइन 1098 हमेशा साथ है। सवाल हों तो मैं यहीं हूँ!',
+    '12-15':
+      'परिवार और समुदाय की ढाल ज़ोन में स्वागत है। इस आख़िरी क्वेस्ट में असली बातें हैं: बाल विवाह रोकथाम कानून — कानून क्यों कहता है कि लड़कियों के लिए 18 और लड़कों के लिए 21 से पहले शादी नहीं — ना कहने और मदद पाने का हक़, और घर सुरक्षित न लगे तो क्या करना है। साथ ही तुम बच्चों की रक्षा के लिए बनी असली संस्थाओं से मिलोगे। चाइल्डलाइन 1098 हर कदम पर साथ है। तैयार हो?',
+    '16-18':
+      'परिवार और समुदाय की ढाल ज़ोन में स्वागत है — आख़िरी ज़ोन। यहाँ बात व्यावहारिक है: बाल विवाह रोकथाम अधिनियम 2006 (न्यूनतम उम्र 18 और 21), बाल विवाह को कानूनी रूप से चुनौती देकर मुफ़्त कानूनी मदद से रद्द कैसे कराया जा सकता है, और जिस दोस्त का घर सुरक्षित नहीं है उसका साथ कैसे दिया जाए — जासूस बने बिना। तुम बाल सुरक्षा संस्थाओं की पूरी टीम से भी मिलोगे। यह जानकारी असल ज़िंदगी में काम आती है।',
+  },
 };
 
 const GREETINGS: Record<Language, GreetingMap> = {
@@ -155,6 +171,8 @@ const LEVEL_GREETINGS: Record<
       `Level ${n} of ${zoneName}: Sort It Out. Put each situation where it belongs — you know more than you think.`,
     scenario: (n, zoneName) =>
       `Level ${n} of ${zoneName}: Quick Decision. One moment, one choice — trust what you have learned.`,
+    authorities: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: Meet the Authorities. Tap each card to meet a real helper for children — the law put every one of them on your side.`,
   },
   hi: {
     story: (n, zoneName) =>
@@ -171,6 +189,8 @@ const LEVEL_GREETINGS: Record<
       `${zoneName} का लेवल ${n}: सही जगह चुनो। हर स्थिति को उसकी सही जगह पर रखो — तुम जितना सोचते हो उससे ज़्यादा जानते हो।`,
     scenario: (n, zoneName) =>
       `${zoneName} का लेवल ${n}: झटपट फ़ैसला। एक पल, एक फ़ैसला — जो सीखा है उस पर भरोसा रखो।`,
+    authorities: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: मददगारों से मिलो। हर कार्ड टैप करो और बच्चों के असली मददगारों से मिलो — कानून ने इनमें से हर एक को तुम्हारी तरफ़ खड़ा किया है।`,
   },
 };
 

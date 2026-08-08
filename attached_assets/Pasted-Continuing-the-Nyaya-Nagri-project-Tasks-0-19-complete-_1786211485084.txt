@@ -1,0 +1,14 @@
+Continuing the "Nyaya Nagri" project (Tasks 0-19 complete, all existing zones 0-5 working).
+
+Add a NEW zone using the same established patterns (map, levels, quest JSON, content rules).
+
+Build Zone 6: "Family & Community Shield," covering two topics referenced in the legal content matrix but never given dedicated content: the Prohibition of Child Marriage Act, 2006, and general age-appropriate awareness of unsafe/abusive home situations (domestic violence context) — plus a consolidated "Meet the Authorities" hub.
+
+Create THREE age-band quest JSON files:
+1. Age 8-11: Very gentle — focus on "every home should feel safe," and that if home ever doesn't feel safe, it is never the child's fault and there are people (Childline 1098, trusted adults) who help. No mention of marriage-age legal detail at this age; keep it about home-safety awareness only.
+2. Age 12-15: Introduce the Child Marriage Act basics (marriage below 18 for girls/21 for boys is against the law and children have a right to say no/seek help) and expand the home-safety awareness with a light branching scenario about recognizing when to seek outside help.
+3. Age 16-18: Cover the Child Marriage Act more practically (legal minimum ages, that a forced/early marriage can be legally challenged, annulment and legal aid exist), plus a realistic-but-non-graphic scenario about supporting a friend in an unsafe home situation (listen, don't investigate, help them reach CWC/Childline).
+
+Also build a "Meet the Authorities" interactive hub within this zone (not a separate menu) letting the player tap through NCPCR/SCPCR, CWC, JJB, SJPU, and DCPU with a one-line explainer each of what they do — reuse this to replace/enhance any existing static explainer screen for this content if one already exists from earlier tasks.
+
+Follow the exact same non-graphic, empowering-resolution, Childline-1098-mention content rules as Task 4. Add avatar greetings, wire into the zone-lock sequence as the final zone, test end to end for all three age bands.

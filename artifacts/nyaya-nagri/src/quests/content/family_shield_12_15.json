@@ -1,0 +1,190 @@
+{
+  "questId": "family_shield_12_15",
+  "zoneId": "zone6",
+  "ageBand": "12-15",
+  "title": "Not Yet Eighteen",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "At your cousin Sana's house during the holidays, you overhear the grown-ups talking in the courtyard. 'Sana turns 16 soon,' an uncle says. 'A good family has asked. Why wait? Let's fix the wedding within the year.' Sana is in Class 10. She wants to be a physiotherapist. You wonder — can a 16-year-old even be married?",
+      "choices": [
+        {
+          "text": "No. The Prohibition of Child Marriage Act says marriage before 18 for girls and 21 for boys is against the law.",
+          "outcome": "correct",
+          "feedback": "Right. The Prohibition of Child Marriage Act, 2006 sets these minimum ages: 18 for girls and 21 for boys. Below that, it is a child marriage — and the law exists to stop it, so every child can finish growing, learning, and choosing their own future.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Yes — if the parents and the family agree, it is allowed.",
+          "outcome": "incorrect",
+          "feedback": "No. Parents agreeing does not make it legal. The Prohibition of Child Marriage Act, 2006 says marriage before 18 for girls and 21 for boys is against the law, no matter who agrees. The law protects a child's right to grow up first.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "That evening, Sana whispers to you: 'I don't want this. I want to finish school. But when I said no, everyone went quiet, and Amma looked hurt. Maybe I have no choice.' Her voice shakes a little.",
+      "choices": [
+        {
+          "text": "Tell her: 'You DO have a choice. The law is on your side — you have the right to say no and to ask for help.'",
+          "outcome": "correct",
+          "feedback": "Exactly. The law is Sana's shield. A child cannot be forced into marriage — she has the right to refuse and to seek help, and the law holds the adults who arrange a child marriage responsible. Never the child.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Tell her: 'It's a family decision. Children can't question these things.'",
+          "outcome": "incorrect",
+          "feedback": "Family matters — but the law is clear: marriage before 18 is illegal, and Sana has every right to say no. The law holds the adults who arrange child marriages responsible, never the child. Sana questioning this is not disrespect; it is her right.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "The next morning, Sana grips your hand: 'Promise me you'll tell NO ONE. Not your parents, not any teacher. Promise!' You understand she is scared. But this is not a small secret — her safety and her whole future are at stake. What do you do?",
+      "choices": [
+        {
+          "text": "Say gently: 'This is too big for just the two of us. Let's call Childline 1098 together — they know how to help without making things worse.'",
+          "outcome": "correct",
+          "feedback": "This is real friendship: staying beside her AND reaching people who know what to do. Childline 1098 is free, confidential, and trained for exactly this.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Promise to keep it completely secret — a promise is a promise.",
+          "outcome": "incorrect",
+          "feedback": "Loyalty matters — but watch what silence does next. When someone's safety or whole future is at risk, keeping the secret is not protecting them.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "A week passes. You kept the promise. Sana stops coming to the park. Her school bag stays home more days than not. One evening she messages: 'They fixed the date.' Your stomach sinks — the secret did not protect her at all. Some things are simply too big to carry alone.",
+      "choices": [
+        {
+          "text": "Tell Sana: 'I can't watch this happen. Let's call Childline 1098 together — it's free, and they help without making things worse.'",
+          "outcome": "correct",
+          "feedback": "Yes — and it is not too late. When a friend's future is at risk, bringing in trained helpers is loyalty of the truest kind.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Stay silent — it's too late to do anything now.",
+          "outcome": "incorrect",
+          "feedback": "It is NEVER too late. Even after a date is fixed, a child marriage can be stopped. Childline 1098 and the Child Welfare Committee step in at exactly times like this.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "You and Sana call Childline 1098. A calm voice listens to everything, then connects with the Child Welfare Committee (CWC) — the district's team for protecting children. Kind counsellors visit Sana's family and explain what the law says and why it protects her. The wedding plan is set aside. Months later, Sana waves her Class 10 marksheet at you, grinning: 'Physiotherapist first. Everything else — my choice, when I'm ready.'",
+      "choices": [
+        {
+          "text": "Speaking up gave Sana her future back.",
+          "outcome": "correct",
+          "feedback": "Exactly. The law, Childline 1098, and one brave phone call kept Sana in school and in charge of her own life. That is what these protections are FOR."
+        },
+        {
+          "text": "Sana just got lucky — usually nothing can be done about child marriage.",
+          "outcome": "incorrect",
+          "feedback": "It was not luck. The Prohibition of Child Marriage Act, Childline 1098, and the CWC exist in every district of India exactly so this CAN be done — for any child, anywhere."
+        }
+      ]
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": ["scene1", "scene2"],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": ["scene3", "scene4", "scene5"],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level_authorities",
+      "kind": "authorities",
+      "authorities": {
+        "intro": "Behind Sana's happy ending stood a whole team of real institutions. Tap each card to meet the protectors every child in India has — knowing they exist is half the shield.",
+        "authorities": [
+          {
+            "authorityId": "ncpcr_scpcr",
+            "name": "National & State Commissions for Protection of Child Rights (NCPCR & SCPCR)",
+            "role": "Watchdog commissions at the national and state level — they monitor children's rights and take complaints when those rights are violated."
+          },
+          {
+            "authorityId": "cwc",
+            "name": "Child Welfare Committee (CWC)",
+            "role": "Every district's authority for children who need care and protection — it can step in, arrange a safe place, and work with the family."
+          },
+          {
+            "authorityId": "jjb",
+            "name": "Juvenile Justice Board (JJB)",
+            "role": "A special board for children in conflict with the law — child-friendly, focused on reform and a fresh start, not adult-style punishment."
+          },
+          {
+            "authorityId": "sjpu",
+            "name": "Special Juvenile Police Unit (SJPU)",
+            "role": "Specially trained police officers in every district who handle matters involving children — gently, and in plain clothes where possible."
+          },
+          {
+            "authorityId": "dcpu",
+            "name": "District Child Protection Unit (DCPU)",
+            "role": "The district's coordination hub for child safety — it links families to schemes, counsellors, and every other protector on this list."
+          }
+        ]
+      }
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Under the Prohibition of Child Marriage Act, 2006, what are the minimum ages for marriage?",
+      "options": [
+        "18 for girls and 21 for boys",
+        "16 for girls and 18 for boys",
+        "There is no minimum age if parents agree"
+      ],
+      "correctIndex": 0,
+      "explanation": "The law sets 18 for girls and 21 for boys. Below those ages it is a child marriage — illegal no matter who agrees — because every child has the right to finish growing and learning first."
+    },
+    {
+      "question": "If a child is being pressured into marriage, what does the law say about their choice?",
+      "options": [
+        "They must obey the family",
+        "They have the right to say no and to seek help",
+        "They can only object after the wedding"
+      ],
+      "correctIndex": 1,
+      "explanation": "A child has the full right to refuse and to reach out — to Childline 1098, a trusted teacher, or the Child Welfare Committee. The law stands with the child, before and after."
+    },
+    {
+      "question": "When should a 'family secret' be shared with a trusted adult or helper?",
+      "options": [
+        "Never — secrets must always be kept",
+        "When someone's safety or future is at risk",
+        "Only if the family gives permission"
+      ],
+      "correctIndex": 1,
+      "explanation": "Small secrets are fine to keep. But when a secret puts someone's safety, health, or future at risk, sharing it with a trusted adult or Childline 1098 is protection — not betrayal."
+    },
+    {
+      "question": "Who does the law hold responsible when a child marriage is arranged?",
+      "options": [
+        "The child who gets married",
+        "The adults who arrange or perform it",
+        "Nobody at all"
+      ],
+      "correctIndex": 1,
+      "explanation": "The Prohibition of Child Marriage Act punishes the adults who arrange, promote, or perform a child marriage. The child is never treated as the wrongdoer — the law is their shield, not their judge."
+    }
+  ]
+}

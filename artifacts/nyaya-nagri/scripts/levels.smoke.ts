@@ -107,15 +107,19 @@ async function main() {
 
   // ---------- 1. Every quest (EN + HI) has a valid level structure ----------
   // Task 18: four quests carry ONE extra activity level between the decision
-  // and the quiz; every other quest keeps the classic 3-level shape.
+  // and the quiz; Task 20 adds the zone6 "Meet the Authorities" hub to all
+  // three family_shield quests. Every other quest keeps the 3-level shape.
   const ACTIVITY_BY_QUEST: Record<string, { levelId: string; kind: string }> = {
     school_rights_12_15: { levelId: 'level_memory', kind: 'memory' },
     right_childhood_8_11: { levelId: 'level_hidden', kind: 'hidden' },
     digital_safety_12_15: { levelId: 'level_sorting', kind: 'sorting' },
     safe_zone_16_18: { levelId: 'level_scenario', kind: 'scenario' },
+    family_shield_8_11: { levelId: 'level_authorities', kind: 'authorities' },
+    family_shield_12_15: { levelId: 'level_authorities', kind: 'authorities' },
+    family_shield_16_18: { levelId: 'level_authorities', kind: 'authorities' },
   };
   const BANDS = ['8-11', '12-15', '16-18'] as const;
-  const ZONES_SEQ = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
+  const ZONES_SEQ = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5', 'zone6'];
   let checked = 0;
   for (const zoneId of ZONES_SEQ) {
     for (const band of BANDS) {
@@ -139,7 +143,7 @@ async function main() {
       }
     }
   }
-  assert(checked === 36, 'all 36 quest files (18 EN + 18 HI) level-checked');
+  assert(checked === 42, 'all 42 quest files (21 EN + 21 HI) level-checked');
 
   // HI level STRUCTURE identical to EN (text differs; full structural parity
   // — pair counts, cue geometry, bucket/outcome sequences — is enforced by
@@ -512,8 +516,8 @@ async function main() {
       assert(all.every((x) => !EMOJI.test(x)), `${lang}: level + activity strings emoji-free`);
       assert(all.every((x) => !DEVANAGARI_DIGITS.test(x)),
         `${lang}: level + activity strings use Western numerals`);
-      assert(Object.keys(t.levelKindNames).length === 7,
-        `${lang}: all 7 level kinds have display names`);
+      assert(Object.keys(t.levelKindNames).length === 8,
+        `${lang}: all 8 level kinds have display names`);
       assert(t.sortingBucketNames.emergency.includes('1098'),
         `${lang}: emergency bucket carries the canonical Childline 1098 wording`);
       for (const kind of ['story', 'decision', 'quiz', 'memory', 'hidden', 'sorting', 'scenario'] as const) {

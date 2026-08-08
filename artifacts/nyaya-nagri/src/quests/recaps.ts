@@ -841,6 +841,115 @@ export const RECAPS: Record<string, RecapItem[]> = {
         'Correct. Messages, usernames, links: yes. That material: never. Note the location and report.',
     },
   ],
+
+  // ---------------------------------------------------------- zone6: 8-11
+  family_shield_8_11: [
+    {
+      summary:
+        'When grown-ups fight or home feels scary, it is never, ever the child\'s fault. Children do not cause grown-up storms — and every child has the right to feel safe at home.',
+      question: 'Home feels stormy. Who is to blame?',
+      options: ['Not the child — never', 'The child'],
+      correctIndex: 0,
+      explanation:
+        'Exactly. The storms are never your fault. And helpers can always make things calmer.',
+    },
+    {
+      summary:
+        'Fun secrets — like surprise gifts — are fine to keep. But a secret that makes you scared or sad inside is too heavy to carry alone. That kind should be told to a trusted adult.',
+      question: 'Which secret should you share with a trusted adult?',
+      options: ['One that makes you feel scared inside', 'A surprise birthday gift'],
+      correctIndex: 0,
+      explanation:
+        'Yes! Scary secrets go to trusted adults — a teacher, a parent, or Childline 1098. That is brave, not tattling.',
+    },
+    {
+      summary:
+        'Childline 1098 is a free phone number for every child in India. It works day and night, and the kind people there know how to help children.',
+      question: 'What is Childline 1098?',
+      options: ['A free helpline any child can call, any time', 'A number only grown-ups can use'],
+      correctIndex: 0,
+      explanation:
+        'Right! 1098 is free, always open, and made just for children. One call reaches real helpers.',
+    },
+  ],
+
+  // ---------------------------------------------------------- zone6: 12-15
+  family_shield_12_15: [
+    {
+      summary:
+        'The Prohibition of Child Marriage Act, 2006 sets the minimum ages for marriage: 18 for girls and 21 for boys. Below that, it is a child marriage — against the law even if the family agrees.',
+      question: 'Before which ages does the law say marriage cannot happen?',
+      options: ['18 for girls, 21 for boys', '16 for girls, 18 for boys'],
+      correctIndex: 0,
+      explanation:
+        'Correct. 18 and 21 — so every young person gets to grow, study, and choose their own future first.',
+    },
+    {
+      summary:
+        'No child can be forced into marriage. A child being pressured has the right to say no and to ask for help — from Childline 1098, a teacher, or the Child Welfare Committee.',
+      question: 'A child being pressured to marry can...',
+      options: ['Say no and seek help', 'Do nothing at all'],
+      correctIndex: 0,
+      explanation:
+        'Yes. The right to refuse plus real helpers — that is the shield the law gives every child.',
+    },
+    {
+      summary:
+        'Some secrets are too big to keep. When a secret puts someone\'s safety or future at risk, telling a trusted adult or Childline 1098 is protection — not betrayal.',
+      question: 'A friend\'s safety is at risk. Keeping their secret is...',
+      options: ['Not protecting them — get trusted help', 'The only loyal choice'],
+      correctIndex: 0,
+      explanation:
+        'Exactly. Real loyalty connects a friend to help. 1098 knows how to help without making things worse.',
+    },
+    {
+      summary:
+        'In a child marriage, the law punishes the adults who arrange or perform it. The child is never treated as the wrongdoer.',
+      question: 'Who can be punished for a child marriage?',
+      options: ['The adults who arranged it', 'The child who was married'],
+      correctIndex: 0,
+      explanation: 'Right. The law is the child\'s shield, never their judge.',
+    },
+  ],
+
+  // ---------------------------------------------------------- zone6: 16-18
+  family_shield_16_18: [
+    {
+      summary:
+        'Under the PCMA, 2006, the minimum marriage ages are 18 for girls and 21 for boys. Below these, it is a child marriage and the adults involved commit an offence.',
+      question: 'The PCMA minimum ages are...',
+      options: ['18 for girls and 21 for boys', '18 for everyone'],
+      correctIndex: 0,
+      explanation: 'Correct — 18 and 21. Knowing the exact line makes the law usable.',
+    },
+    {
+      summary:
+        'A person married as a child can ask a court to annul that marriage after turning adult, within a set time window. District Legal Services Authorities give free legal aid for this.',
+      question: 'What can someone married as a child do later?',
+      options: ['Petition a court to annul it, with free legal aid', 'Nothing — it is final'],
+      correctIndex: 0,
+      explanation:
+        'Yes. The law offers a way out: a court petition, free legal help — and in the gravest cases the marriage is void from the start.',
+    },
+    {
+      summary:
+        'When a friend says home is not safe: listen, believe them, and never interrogate or investigate. Help them reach Childline 1098 or the CWC at their own pace.',
+      question: 'A friend discloses an unsafe home. You should...',
+      options: ['Listen, believe, connect them to 1098 or the CWC', 'Demand every detail first'],
+      correctIndex: 0,
+      explanation:
+        'Exactly. Support is listening plus a bridge to trained help — investigation belongs to professionals.',
+    },
+    {
+      summary:
+        'The JJ Act, 2015 calls a young person in an unsafe home a \'child in need of care and protection\'. That phrase unlocks the CWC, DCPU, counselling, and a safe place if needed.',
+      question: 'In law, a young person whose home is unsafe is...',
+      options: ['A child in need of care and protection', 'A troublemaker'],
+      correctIndex: 0,
+      explanation:
+        'Right. The law\'s own words open the whole support system — an unsafe home is never a private shame.',
+    },
+  ],
 };
 
 /**

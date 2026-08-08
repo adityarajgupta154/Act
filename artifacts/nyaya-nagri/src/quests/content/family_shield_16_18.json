@@ -1,0 +1,190 @@
+{
+  "questId": "family_shield_16_18",
+  "zoneId": "zone6",
+  "ageBand": "16-18",
+  "title": "The Shield at Home",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Legal-awareness week at school. Advocate Kavita di is taking the session on the Prohibition of Child Marriage Act, 2006. 'Three things everyone your age should know,' she says. 'One — the minimum ages: 18 for girls, 21 for boys. Two — a person who was married as a child can go to court and have that marriage annulled — cancelled — and free legal aid exists for exactly this. Three — the adults who arrange or conduct a child marriage face punishment. The child never does.' She looks around the room: 'So — if a marriage happened when someone was 16, is it simply their fate?'",
+      "choices": [
+        {
+          "text": "No. The law lets the young person challenge it — they can ask a court to annul the marriage, with free legal aid.",
+          "outcome": "correct",
+          "feedback": "Right. Under the PCMA, a child marriage is voidable at the option of the person who was the child — they can petition a court to annul it within a set time after turning adult. District Legal Services Authorities provide free legal aid for this. And in the gravest situations, such as trafficking, such marriages are void from the start.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Yes. Once a marriage has happened, nothing can legally be done about it.",
+          "outcome": "incorrect",
+          "feedback": "Not true — and this myth traps people. The PCMA makes a child marriage voidable at the option of the child party: a court can annul it, free legal aid is available for the petition, and the adults who arranged it can be punished. The law offers a way out, not a life sentence.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "'Can it be stopped BEFORE it happens?' someone asks. Kavita di nods. 'Absolutely — and that is the better path. Courts can issue orders to stop a planned child marriage. Every district has Child Marriage Prohibition Officers, a Child Welfare Committee, and Childline 1098 — any of them can act on one phone call. And anyone may report a planned child marriage. You don't need to be a relative, and you can stay anonymous.'",
+      "choices": [
+        {
+          "text": "So one early call — to 1098 or the authorities — can stop a child marriage before it starts.",
+          "outcome": "correct",
+          "feedback": "Exactly. Prevention is the law's first choice: court stop-orders, Prohibition Officers, the CWC, and Childline 1098 exist so a wedding never becomes a court case. Early information is what makes the system work.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Reporting is pointless — these things can't really be stopped.",
+          "outcome": "incorrect",
+          "feedback": "They are stopped, regularly. Courts issue stop-orders, Prohibition Officers and CWCs intervene, and 1098 calls set it all in motion. The system's weakest point is silence — one early report is often all it takes.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Late that night, your friend Naaz messages: 'Can I tell you something? Things at home are... bad. I don't feel safe there anymore. PROMISE you won't tell anyone or do anything. I just needed one person to know.' You can read the fear between the lines. What is the right way to be her friend right now?",
+      "choices": [
+        {
+          "text": "Reply: 'I'm here, I believe you, and you set the pace. I won't go behind your back — but I won't pretend this is something we can fix alone.'",
+          "outcome": "correct",
+          "feedback": "This is the gold standard: listen, believe, don't press for details, don't play investigator — and be honest that real help may need real helpers. She keeps control; you stay trustworthy.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Reply: 'WHAT happened?? Tell me everything right now — I need every detail before I can help you.'",
+          "outcome": "incorrect",
+          "feedback": "Demanding details forces her to re-live the hurt and treats a friend like a case file. Your job is to listen and support — investigation belongs to trained professionals. Let her share only what she chooses, when she chooses.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Over the next days, Naaz shares a little more — nothing forced, just what she chooses. You tell her what you learned in the session: in law, a young person whose home is not safe is a 'child in need of care and protection' — the Juvenile Justice Act's own words — and the Child Welfare Committee (CWC) exists precisely for this, with the District Child Protection Unit and counsellors behind it. 'You wouldn't be reporting your family,' you say. 'You'd be asking for support. Childline 1098 can walk you through every option first — free and confidential.' She is quiet for a long moment. Then: 'Would you sit with me while I call?'",
+      "choices": [
+        {
+          "text": "Say: 'Of course. Your call, your words, your pace — I'll just be right there.'",
+          "outcome": "correct",
+          "feedback": "Perfect. Sitting beside her while SHE makes the call keeps her in charge and keeps you in the right role: support, not spokesperson. This is exactly how a friend helps a disclosure move toward real safety.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Say: 'Actually, let me call and explain everything for you — it'll be easier that way.'",
+          "outcome": "incorrect",
+          "feedback": "Kindly meant — but it takes her voice away. The counsellors need to hear HER, at her pace, and she has the right to control her own story. Offer presence, not replacement.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "Naaz calls Childline 1098 with you beside her. The counsellor listens without rushing, explains her options, and connects the family with the District Child Protection Unit. Counselling begins; the CWC keeps a gentle watch. Nothing dramatic — just steady, trained adults doing exactly what the law built them to do. A month later, Naaz texts: 'Slept properly this week. Thank you for not trying to be a hero. Thank you for being a friend.'",
+      "choices": [
+        {
+          "text": "Being a shield means connecting someone to help — not carrying it all alone.",
+          "outcome": "correct",
+          "feedback": "That is the whole lesson. You listened, believed, stayed honest, and helped her reach the system built for this. The strongest shield a friend can offer is a bridge to real protection."
+        },
+        {
+          "text": "You should have investigated the family yourself first.",
+          "outcome": "incorrect",
+          "feedback": "Playing detective risks her safety, your safety, and the truth itself. Disclosure needs support; investigation needs professionals — the SJPU, the CWC, and counsellors are trained and legally empowered for it. Friends connect; systems protect."
+        }
+      ]
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": ["scene1", "scene2"],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": ["scene3", "scene4", "scene5"],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level_authorities",
+      "kind": "authorities",
+      "authorities": {
+        "intro": "The session ends with what Kavita di calls 'the architecture of childhood protection'. Tap each card — these are the real, legally constituted bodies standing behind every young person in India.",
+        "authorities": [
+          {
+            "authorityId": "ncpcr_scpcr",
+            "name": "National & State Commissions for Protection of Child Rights (NCPCR & SCPCR)",
+            "role": "Statutory watchdogs under the CPCR Act, 2005 — they monitor children's rights, inquire into violations, and oversee how laws like POCSO and the RTE Act are working."
+          },
+          {
+            "authorityId": "cwc",
+            "name": "Child Welfare Committee (CWC)",
+            "role": "The district authority under the JJ Act, 2015 for children in need of care and protection — it can arrange shelter, support, and family counselling."
+          },
+          {
+            "authorityId": "jjb",
+            "name": "Juvenile Justice Board (JJB)",
+            "role": "The JJ Act body that hears cases of children in conflict with the law — a magistrate plus social-work members, oriented to reform and reintegration, not adult punishment."
+          },
+          {
+            "authorityId": "sjpu",
+            "name": "Special Juvenile Police Unit (SJPU)",
+            "role": "The child-specialist unit in every district's police — trained officers who handle every matter involving a child, from receiving reports onward."
+          },
+          {
+            "authorityId": "dcpu",
+            "name": "District Child Protection Unit (DCPU)",
+            "role": "The district's implementation arm for child protection — it runs support schemes and coordinates the CWC, SJPU, counsellors, and civil society."
+          }
+        ]
+      }
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "What are the minimum legal ages for marriage under the Prohibition of Child Marriage Act, 2006?",
+      "options": [
+        "18 for girls and 21 for boys",
+        "18 for everyone",
+        "21 for everyone"
+      ],
+      "correctIndex": 0,
+      "explanation": "The PCMA sets 18 for girls and 21 for boys. A marriage below these ages is a child marriage, and the adults who arrange or perform it commit an offence — the child never does."
+    },
+    {
+      "question": "A 19-year-old realises she was married off at 16. What does the law offer her?",
+      "options": [
+        "Nothing — the marriage is final",
+        "She can petition a court to annul the marriage, with free legal aid",
+        "She can only complain to family elders"
+      ],
+      "correctIndex": 1,
+      "explanation": "A child marriage is voidable at the option of the party who was a child: she can petition for annulment within the legal time window after turning adult, and District Legal Services Authorities provide free legal aid. In the gravest cases, such as trafficking, the marriage is void outright."
+    },
+    {
+      "question": "A friend discloses that home is not safe. The right first response is to:",
+      "options": [
+        "Demand full details so you can investigate yourself",
+        "Listen, believe them, and help them reach Childline 1098 or the CWC at their own pace",
+        "Promise absolute secrecy, forever"
+      ],
+      "correctIndex": 1,
+      "explanation": "Support means listening without interrogating, believing without conditions, and building a bridge to trained help — 1098, the CWC, a counsellor. Investigation is a professional's job, and absolute secrecy can trap a friend inside the harm."
+    },
+    {
+      "question": "In law, a young person living in an unsafe home is:",
+      "options": [
+        "A troublemaker",
+        "A 'child in need of care and protection' under the JJ Act — the CWC exists to help them",
+        "Outside the law's protection until they turn 18"
+      ],
+      "correctIndex": 1,
+      "explanation": "The Juvenile Justice Act, 2015 names them a child in need of care and protection. That phrase unlocks the whole support system — CWC, DCPU, counselling, a safe place if needed — because an unsafe home is the law's business, never a private shame."
+    }
+  ]
+}

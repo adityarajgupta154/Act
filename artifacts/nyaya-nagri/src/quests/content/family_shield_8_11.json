@@ -1,0 +1,162 @@
+{
+  "questId": "family_shield_8_11",
+  "zoneId": "zone6",
+  "ageBand": "8-11",
+  "title": "Every Home a Nest",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Above Meena Ma'am's classroom window, two sparrows have built a little nest. All week, the class watches them line it with soft feathers. 'Every chick deserves a nest that keeps it warm and safe,' Meena Ma'am smiles. 'And every child deserves a home that feels the same way — safe, warm, and full of care. That is not just a nice wish. It is every child's right.'",
+      "choices": [
+        {
+          "text": "A safe home means a place where you feel loved and not afraid.",
+          "outcome": "correct",
+          "feedback": "Exactly right. Safe is a feeling — being cared for, listened to, and never scared of the people around you. Every child has the right to feel this way at home.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "A safe home means a big house with lots of toys.",
+          "outcome": "incorrect",
+          "feedback": "Not quite. A home can be big or small, simple or fancy — what makes it SAFE is the feeling inside: love, care, and no fear. That feeling is every child's right.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "At lunch, your friend Golu sits alone, quiet as a cloud. 'Home has been full of storms lately,' he whispers. 'Loud, scary fights almost every night. I hide in my room. Maybe... maybe it happens because of me.' His eyes stare down at his shoes.",
+      "choices": [
+        {
+          "text": "Tell Golu: 'It is NOT your fault. When home feels scary, children are never to blame.'",
+          "outcome": "correct",
+          "feedback": "Yes — this is the most important thing Golu needs to hear. When grown-ups fight or home feels frightening, it is never, ever the child's fault.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Tell Golu: 'Grown-up fights are none of your business. Just ignore it.'",
+          "outcome": "incorrect",
+          "feedback": "Golu cannot just ignore feeling scared — and he should not have to. Every child has the right to feel safe at home, and it is never the child's fault when home feels stormy.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Golu grabs your sleeve. 'Please don't tell anyone,' he says. 'It's a family secret.' You remember something Meena Ma'am taught: some secrets are small and fun — like a surprise gift. But a secret that makes you feel scared or sad inside is too heavy for a child to carry alone.",
+      "choices": [
+        {
+          "text": "Say: 'A secret that scares you should be shared with a trusted adult — like Meena Ma'am. Or we can call Childline 1098 together — it's free, and they help children.'",
+          "outcome": "correct",
+          "feedback": "Perfect. Scary secrets are exactly the kind to share with a trusted adult. And Childline 1098 is a free phone friend for any child in India — day or night.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Say: 'Okay, I promise to keep it secret forever.'",
+          "outcome": "incorrect",
+          "feedback": "A caring friend wants to help — but this secret is too heavy to keep. Sharing it with a trusted adult, or calling Childline 1098 for free, is how children get real help. That is not tattling; it is brave.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "The next day, you and Golu talk to Meena Ma'am together. She listens with kind eyes and says, 'Thank you for telling me, Golu. You are very brave, and none of this is your fault.' Soon, kind helpers whose whole job is keeping children safe talk gently with Golu's family. The storms at home grow quieter. Weeks later, Golu points up at the sparrows' nest and grins: 'My nest feels warm again.'",
+      "choices": [
+        {
+          "text": "Every child deserves a safe, warm nest — and helpers are always there.",
+          "outcome": "correct",
+          "feedback": "That is the biggest lesson in all of Nyaya Nagri: you are never alone. Trusted adults and Childline 1098 are always ready to help a child feel safe again."
+        },
+        {
+          "text": "Golu should have kept the secret to himself.",
+          "outcome": "incorrect",
+          "feedback": "Look how much better things became BECAUSE Golu spoke up! Telling a trusted adult is how the storms grew quieter. Speaking up when you feel unsafe is always the right choice."
+        }
+      ]
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": ["scene1", "scene2"],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": ["scene3", "scene4"],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level_authorities",
+      "kind": "authorities",
+      "authorities": {
+        "intro": "Nyaya Nagri has a whole team of real helpers whose only job is keeping children safe. Tap each card to meet them — you don't have to remember every name. Just remember: helpers exist, and one free call to Childline 1098 can reach them all!",
+        "authorities": [
+          {
+            "authorityId": "ncpcr_scpcr",
+            "name": "Children's Rights Commissions (NCPCR & SCPCR)",
+            "role": "Watchful guardians for the whole country and for each state — they check that children's rights are respected everywhere."
+          },
+          {
+            "authorityId": "cwc",
+            "name": "Child Welfare Committee (CWC)",
+            "role": "A kind team in every district that steps in when a child needs care, protection, or a safe place to stay."
+          },
+          {
+            "authorityId": "jjb",
+            "name": "Juvenile Justice Board (JJB)",
+            "role": "A child-friendly board that listens when children get into trouble with the law — it helps them learn and start fresh."
+          },
+          {
+            "authorityId": "sjpu",
+            "name": "Special Juvenile Police Unit (SJPU)",
+            "role": "Police officers specially trained to help children gently and kindly, so nothing feels scary."
+          },
+          {
+            "authorityId": "dcpu",
+            "name": "District Child Protection Unit (DCPU)",
+            "role": "The district's child-safety team — it connects children and families to counsellors, schemes, and all the other helpers."
+          }
+        ]
+      }
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "If home ever feels scary because grown-ups are fighting, whose fault is it?",
+      "options": [
+        "Never the child's fault",
+        "The child's fault for being noisy",
+        "Nobody should ever talk about it"
+      ],
+      "correctIndex": 0,
+      "explanation": "It is NEVER the child's fault when home feels stormy. Every child has the right to feel safe at home — and telling a trusted adult can help the storms grow quieter."
+    },
+    {
+      "question": "What should you do with a secret that makes you feel scared or sad inside?",
+      "options": [
+        "Keep it forever, because a secret is a secret",
+        "Share it with a trusted adult, like a teacher",
+        "Try your best to forget about it"
+      ],
+      "correctIndex": 1,
+      "explanation": "Scary secrets are too heavy for a child to carry alone. A trusted adult — a teacher, a parent, a school counsellor — can help. Sharing is brave, not tattling."
+    },
+    {
+      "question": "Which free number can any child in India call, any time, to talk to a helper?",
+      "options": [
+        "Childline 1098",
+        "The number printed on a toy box",
+        "There is no such number"
+      ],
+      "correctIndex": 0,
+      "explanation": "Childline 1098 is free, works day and night, and the kind people there know how to help children — with big problems and small ones."
+    }
+  ]
+}

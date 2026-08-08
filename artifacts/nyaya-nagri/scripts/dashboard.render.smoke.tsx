@@ -63,15 +63,15 @@ const noop = () => {};
 const childHtml = renderToStaticMarkup(
   <ProgressPanel progress={sample} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
 );
-assert(childHtml.includes('completed 3 out of 6 Rights Quests'), 'child view shows friendly quest count');
+assert(childHtml.includes('completed 3 out of 7 Rights Quests'), 'child view shows friendly quest count');
 assert(childHtml.includes('3 star badges earned'), 'child view shows badge count');
 assert(childHtml.includes('Safe Zone') && childHtml.includes('Digital Safety'), 'child view lists zones');
 assert(childHtml.includes('Locked for now'), 'child view marks locked zones');
 // Legacy pre-Zone-0 save (zone1-3 complete, zone0 never played): completed
-// zones show Complete (never locked), zone0 + zone4 are open, only zone5 is
-// locked — the migration rule from zones.ts applied to the dashboard too.
-assert((childHtml.match(/Locked for now/g) ?? []).length === 1,
-  'legacy save: exactly one locked zone (zone5) — completed zones stay open');
+// zones show Complete (never locked), zone0 + zone4 are open, only zone5 and
+// zone6 are locked — the migration rule from zones.ts applied here too.
+assert((childHtml.match(/Locked for now/g) ?? []).length === 2,
+  'legacy save: exactly two locked zones (zone5, zone6) — completed zones stay open');
 assert(!childHtml.includes('%'), 'child view contains NO percentages');
 assert(!/[0-9]\s*\/\s*[0-9]/.test(childHtml), 'child view contains no raw score fractions');
 assert(!childHtml.includes(sample.sessionId), 'child view does not surface the session id');
@@ -98,7 +98,7 @@ const fresh: ProgressState = { ...sample, completedZones: {}, badges: {}, quizSc
 const freshChild = renderToStaticMarkup(
   <ProgressPanel progress={fresh} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
 );
-assert(freshChild.includes('completed 0 out of 6'), 'fresh child view renders zero state');
+assert(freshChild.includes('completed 0 out of 7'), 'fresh child view renders zero state');
 assert(freshChild.includes('adventure is just beginning'), 'fresh child view is encouraging');
 const freshTeacher = renderToStaticMarkup(
   <ProgressPanel progress={fresh} teacherView={true} onToggleTeacherView={noop} onClose={noop} />,

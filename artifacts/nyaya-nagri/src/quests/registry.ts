@@ -3,7 +3,7 @@
  * Hindi translations added in Task 10)
  *
  * Maps zone + age band (+ language) to a quest content file. All 6 zones x
- * 3 age bands (18 quests) exist in English and Hindi. The resolver requires
+ * 3 age bands (21 quests) exist in English and Hindi. The resolver requires
  * an exact zone + band match — the temporary any-band fallback from the
  * content build-out has been removed so a band can never silently receive
  * another band's quest. Hindi falls back to English only if a translation
@@ -31,6 +31,9 @@ import justiceSystem1618 from './content/justice_system_16_18.json';
 import digitalSafety811 from './content/digital_safety_8_11.json';
 import digitalSafety1215 from './content/digital_safety_12_15.json';
 import digitalSafety1618 from './content/digital_safety_16_18.json';
+import familyShield811 from './content/family_shield_8_11.json';
+import familyShield1215 from './content/family_shield_12_15.json';
+import familyShield1618 from './content/family_shield_16_18.json';
 import knowYourself811Hi from './content/hi/know_yourself_8_11.json';
 import knowYourself1215Hi from './content/hi/know_yourself_12_15.json';
 import knowYourself1618Hi from './content/hi/know_yourself_16_18.json';
@@ -49,6 +52,9 @@ import justiceSystem1618Hi from './content/hi/justice_system_16_18.json';
 import digitalSafety811Hi from './content/hi/digital_safety_8_11.json';
 import digitalSafety1215Hi from './content/hi/digital_safety_12_15.json';
 import digitalSafety1618Hi from './content/hi/digital_safety_16_18.json';
+import familyShield811Hi from './content/hi/family_shield_8_11.json';
+import familyShield1215Hi from './content/hi/family_shield_12_15.json';
+import familyShield1618Hi from './content/hi/family_shield_16_18.json';
 
 const QUEST_FILES: Quest[] = [
   knowYourself811 as Quest,
@@ -69,6 +75,9 @@ const QUEST_FILES: Quest[] = [
   digitalSafety811 as Quest,
   digitalSafety1215 as Quest,
   digitalSafety1618 as Quest,
+  familyShield811 as Quest,
+  familyShield1215 as Quest,
+  familyShield1618 as Quest,
 ];
 
 const QUEST_FILES_HI: Quest[] = [
@@ -90,6 +99,9 @@ const QUEST_FILES_HI: Quest[] = [
   digitalSafety811Hi as Quest,
   digitalSafety1215Hi as Quest,
   digitalSafety1618Hi as Quest,
+  familyShield811Hi as Quest,
+  familyShield1215Hi as Quest,
+  familyShield1618Hi as Quest,
 ];
 
 /** Validate everything once at module load — content bugs fail loudly in dev. */

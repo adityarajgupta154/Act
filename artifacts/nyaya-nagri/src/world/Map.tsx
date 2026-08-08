@@ -176,6 +176,47 @@ function MarkerZone5({ position, unlocked }: { position: [number, number]; unloc
   );
 }
 
+// Zone 6 — Family & Community Shield: a large shield with a heart at its
+// centre on a warm pedestal (family safety = protection wrapped around care).
+function MarkerZone6({ position, unlocked }: { position: [number, number]; unlocked: boolean }) {
+  return (
+    <group position={[position[0], 0, position[1]]}>
+      <mesh position={[0, 0.6, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[2.2, 2.6, 1.2, 24]} />
+        <meshStandardMaterial color={getColor("#99f6e4", unlocked)} />
+      </mesh>
+      {/* Shield body; the rotated cube below reads as the shield's point */}
+      <mesh position={[0, 3.4, 0]} castShadow receiveShadow>
+        <boxGeometry args={[2.8, 2.6, 0.5]} />
+        <meshStandardMaterial color={getColor("#0d9488", unlocked)} />
+      </mesh>
+      <mesh position={[0, 1.9, 0]} rotation={[0, 0, Math.PI / 4]} castShadow receiveShadow>
+        <boxGeometry args={[2.0, 2.0, 0.5]} />
+        <meshStandardMaterial color={getColor("#0d9488", unlocked)} />
+      </mesh>
+      <mesh position={[0, 4.85, 0]} castShadow receiveShadow>
+        <boxGeometry args={[3.0, 0.4, 0.55]} />
+        <meshStandardMaterial color={getColor("#f0fdfa", unlocked)} />
+      </mesh>
+      {/* Heart at the shield's centre: two spheres + one rotated cube */}
+      <mesh position={[-0.34, 3.55, 0.3]} castShadow>
+        <sphereGeometry args={[0.42, 16, 16]} />
+        <meshStandardMaterial color={getColor("#fb7185", unlocked)} />
+      </mesh>
+      <mesh position={[0.34, 3.55, 0.3]} castShadow>
+        <sphereGeometry args={[0.42, 16, 16]} />
+        <meshStandardMaterial color={getColor("#fb7185", unlocked)} />
+      </mesh>
+      <mesh position={[0, 3.1, 0.3]} rotation={[0, 0, Math.PI / 4]} castShadow>
+        <boxGeometry args={[0.62, 0.62, 0.5]} />
+        <meshStandardMaterial color={getColor("#fb7185", unlocked)} />
+      </mesh>
+      <ActiveRing unlocked={unlocked} />
+      {!unlocked && <LockIcon position={[0, 8, 0]} />}
+    </group>
+  );
+}
+
 export function Map() {
   const states = useZoneStatesLive();
 
@@ -197,6 +238,7 @@ export function Map() {
           case 'zone3': return <MarkerZone3 key={zone.id} {...props} />;
           case 'zone4': return <MarkerZone4 key={zone.id} {...props} />;
           case 'zone5': return <MarkerZone5 key={zone.id} {...props} />;
+          case 'zone6': return <MarkerZone6 key={zone.id} {...props} />;
           default: return null;
         }
       })}

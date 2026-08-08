@@ -391,6 +391,8 @@ export function activityTotal(level: QuestLevel): number {
       return level.hidden?.cues.length ?? 0;
     case 'sorting':
       return level.sorting?.cards.length ?? 0;
+    case 'authorities':
+      return level.authorities?.authorities.length ?? 0;
     case 'scenario':
       return 1;
     default:

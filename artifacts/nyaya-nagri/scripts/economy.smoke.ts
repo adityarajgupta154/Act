@@ -153,6 +153,17 @@ async function main() {
           LEVEL_COINS.story + LEVEL_COINS.decision + LEVEL_COINS.scenario + LEVEL_COINS.quiz + ZONE_COMPLETE_BONUS.coins,
       'earnedTotals for a full zone includes its wired activity level',
     );
+    // Task 20: zone6 carries the authorities hub — a completed zone6 must
+    // credit the authorities award in the reconciliation ceiling, or honest
+    // rewards would be clamped away on the next saved-progress reload.
+    const zone6Done = earnedTotals({ levelProgress: {}, completedZones: { zone6: true } });
+    assert(
+      zone6Done.xp ===
+        LEVEL_XP.story + LEVEL_XP.decision + LEVEL_XP.authorities + LEVEL_XP.quiz + ZONE_COMPLETE_BONUS.xp &&
+        zone6Done.coins ===
+          LEVEL_COINS.story + LEVEL_COINS.decision + LEVEL_COINS.authorities + LEVEL_COINS.quiz + ZONE_COMPLETE_BONUS.coins,
+      'earnedTotals for completed zone6 includes the authorities award',
+    );
     // Pre-Task-15 saves: zone complete but NO level entries — fully credited.
     const legacy = earnedTotals({ levelProgress: {}, completedZones: { zone1: true } });
     assert(legacy.xp === earned.xp && legacy.coins === earned.coins,
@@ -360,7 +371,7 @@ async function main() {
   }
 
   // ---------- 7. Full game: titles, champion, catalogue affordability ----------
-  for (const z of ['zone0', 'zone2', 'zone3', 'zone4', 'zone5']) completeZone(z);
+  for (const z of ['zone0', 'zone2', 'zone3', 'zone4', 'zone5', 'zone6']) completeZone(z);
   {
     const s = progressStore.getState();
     const earned = computeUnlockedTitles(s);
@@ -369,15 +380,16 @@ async function main() {
       'all titles earned after finishing every zone (incl. all_zones_champion)',
     );
     assert(TITLE_IDS.every((id) => s.titles[id] === true), 'every title persisted by the engine');
-    // Task 18: a full 12-15 EN run also plays zone3's memory and zone5's
-    // sorting levels (zone1 scenario is 16-18, zone2 hidden is 8-11).
-    const FULL_XP = 6 * ZONE_TOTAL_XP + LEVEL_XP.memory + LEVEL_XP.sorting;
-    const FULL_COINS = 6 * ZONE_TOTAL_COINS + LEVEL_COINS.memory + LEVEL_COINS.sorting;
+    // Task 18/20: a full 12-15 EN run also plays zone3's memory, zone5's
+    // sorting and zone6's authorities levels (zone1 scenario is 16-18,
+    // zone2 hidden is 8-11; the zone6 hub exists for every band).
+    const FULL_XP = 7 * ZONE_TOTAL_XP + LEVEL_XP.memory + LEVEL_XP.sorting + LEVEL_XP.authorities;
+    const FULL_COINS = 7 * ZONE_TOTAL_COINS + LEVEL_COINS.memory + LEVEL_COINS.sorting + LEVEL_COINS.authorities;
     assert(s.xp === FULL_XP, 'full-game XP total (incl. Task 18 activity levels)');
     const spent = getShopItem('bow')!.price;
     assert(s.coins === FULL_COINS - spent, 'full-game Coins total (minus the bow)');
     const cataloguePrice = SHOP_ITEMS.reduce((sum, i) => sum + i.price, 0);
-    assert(6 * ZONE_TOTAL_COINS >= cataloguePrice,
+    assert(7 * ZONE_TOTAL_COINS >= cataloguePrice,
       'normal play earns enough Coins for the ENTIRE catalogue (no real-money pressure)');
     assert(rankForXp(s.xp) === 1 + Math.floor(FULL_XP / XP_PER_RANK), 'final Player Rank derived');
     assert(levelKey('zone1', 'level1') in s.levelProgress, 'level progress map intact');
@@ -401,7 +413,7 @@ async function main() {
     for (const e of DEMO_COHORT) {
       assert(/^[A-Za-z]+[A-Za-z]*_\d{2}$/.test(e.handle),
         `demo handle "${e.handle}" is a pseudonymous game-style handle`);
-      assert(Number.isInteger(e.xp) && e.xp >= 0 && e.xp <= 6 * ZONE_TOTAL_XP,
+      assert(Number.isInteger(e.xp) && e.xp >= 0 && e.xp <= 7 * ZONE_TOTAL_XP,
         `demo xp for "${e.handle}" is in the real economy range`);
     }
   }

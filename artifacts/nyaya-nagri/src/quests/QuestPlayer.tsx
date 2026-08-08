@@ -12,6 +12,7 @@ import { MemoryLevel } from './activities/MemoryLevel';
 import { HiddenObjectLevel } from './activities/HiddenObjectLevel';
 import { SortingLevel } from './activities/SortingLevel';
 import { ScenarioLevel } from './activities/ScenarioLevel';
+import { AuthoritiesLevel } from './activities/AuthoritiesLevel';
 import { exitZone, openHelp } from '@/ui/uiStore';
 import { isSafetyReminderZone } from '@/ui/safetyReminder';
 import { cn } from '@/lib/utils';
@@ -116,6 +117,7 @@ export function QuestPlayer({
       else if (level?.hidden) parts.push(level.hidden.intro);
       else if (level?.sorting) parts.push(level.sorting.intro);
       else if (level?.scenario) parts.push(level.scenario.prompt);
+      else if (level?.authorities) parts.push(level.authorities.intro);
     } else if (session.phase === 'complete' && finalResult) {
       if (finalResult.kind === 'quiz') {
         parts.push(finalResult.recorded ? t.questComplete : t.practiceComplete);
@@ -474,6 +476,9 @@ export function QuestPlayer({
           )}
           {level.scenario && (
             <ScenarioLevel content={level.scenario} t={t} narrate={narrate} onComplete={finish} />
+          )}
+          {level.authorities && (
+            <AuthoritiesLevel content={level.authorities} t={t} narrate={narrate} onComplete={finish} />
           )}
         </div>
       </div>

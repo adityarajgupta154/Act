@@ -105,8 +105,8 @@ assert(
 // --- Quest-end safety reminder -------------------------------------------------
 assert(
   JSON.stringify([...SAFETY_REMINDER_ZONES]) ===
-    JSON.stringify(['zone1', 'zone4', 'zone5']),
-  'safety reminder zones are exactly zone1, zone4, zone5',
+    JSON.stringify(['zone1', 'zone4', 'zone5', 'zone6']),
+  'safety reminder zones are exactly zone1, zone4, zone5, zone6',
 );
 assert(
   isSafetyReminderZone('zone1') &&

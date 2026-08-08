@@ -15,7 +15,7 @@ import { exitZone } from '@/ui/uiStore';
 import { cn } from '@/lib/utils';
 import {
   Lock, Star, Play, RotateCcw, Map as MapIcon,
-  BookOpen, Split, Award, Layers, Search, Inbox, Zap,
+  BookOpen, Split, Award, Layers, Search, Inbox, Zap, Landmark,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -28,6 +28,7 @@ const KIND_ICONS: Record<LevelKind, LucideIcon> = {
   hidden: Search,
   sorting: Inbox,
   scenario: Zap,
+  authorities: Landmark,
 };
 
 const NODE_STYLES: Record<LevelStatus, string> = {

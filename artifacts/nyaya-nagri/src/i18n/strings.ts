@@ -83,6 +83,9 @@ export interface UIStrings {
   sortingBelongsIn: (bucketName: string) => string;
   whereDoesThisGo: string;
   activityFinish: string;
+  /** Task 20 "Meet the Authorities" hub. Helpline text hard-coded here (PRD §9.8). */
+  authoritiesTapHint: string;
+  authoritiesRememberLine: string;
 
   // Progress dashboard
   progressTitle: string;
@@ -317,6 +320,7 @@ const EN: UIStrings = {
     hidden: 'Find the Clues',
     sorting: 'Sort It Out',
     scenario: 'Quick Decision',
+    authorities: 'Meet the Authorities',
   },
   completePreviousLevel: 'Finish the earlier level to unlock this one.',
   startLevelLabel: 'Start',
@@ -352,6 +356,10 @@ const EN: UIStrings = {
     zone5: {
       name: 'Digital Safety',
       theme: 'Staying safe and kind online (cyberbullying / online safety)',
+    },
+    zone6: {
+      name: 'Family & Community Shield',
+      theme: 'Every home should feel safe — the law shields children at home and in the community (child marriage prevention / family safety)',
     },
   },
 
@@ -389,6 +397,9 @@ const EN: UIStrings = {
   sortingBelongsIn: (bucketName) => `Good thinking — this one belongs in: ${bucketName}`,
   whereDoesThisGo: 'Where does this belong?',
   activityFinish: 'Finish',
+  authoritiesTapHint: 'Tap each card to meet a helper.',
+  authoritiesRememberLine:
+    'You never have to remember all these names. One easy call — Childline 1098 — can reach the right helper for you.',
 
   progressTitle: 'My Progress',
   closeProgress: 'Close progress',
@@ -530,7 +541,7 @@ const EN: UIStrings = {
   chooseLanguage: 'Choose your language',
   howItWorksTitle: 'How it works',
   howItWorksPoints: [
-    'Walk around the city and visit 6 zones — each one is about rights that protect you.',
+    'Walk around the city and visit 7 zones — each one is about rights that protect you.',
     'Play story quests, make your own choices, and answer fun quizzes to earn badges.',
     'Your friendly guide can answer questions any time.',
     'The red Get Help Now button is always on screen — it shows real helplines like Childline 1098.',
@@ -632,6 +643,7 @@ const EN: UIStrings = {
     zone3_scholar: 'School Rights Scholar',
     zone4_explorer: 'Justice Explorer',
     zone5_defender: 'Digital Defender',
+    zone6_shield_bearer: 'Shield Bearer',
     all_zones_champion: 'Nyaya Nagri Champion',
   },
 
@@ -670,6 +682,7 @@ const HI: UIStrings = {
     hidden: 'सुराग ढूँढो',
     sorting: 'सही जगह चुनो',
     scenario: 'झटपट फ़ैसला',
+    authorities: 'मददगारों से मिलो',
   },
   completePreviousLevel: 'इसे खोलने के लिए पहले वाला लेवल पूरा करो।',
   startLevelLabel: 'शुरू करो',
@@ -705,6 +718,10 @@ const HI: UIStrings = {
     zone5: {
       name: 'डिजिटल सुरक्षा',
       theme: 'ऑनलाइन सुरक्षित रहना और अच्छा व्यवहार (साइबरबुलिंग / ऑनलाइन सुरक्षा)',
+    },
+    zone6: {
+      name: 'परिवार और समुदाय की ढाल',
+      theme: 'हर घर सुरक्षित महसूस होना चाहिए — क़ानून घर और समुदाय में बच्चों की ढाल है (बाल विवाह रोकथाम / पारिवारिक सुरक्षा)',
     },
   },
 
@@ -742,6 +759,9 @@ const HI: UIStrings = {
   sortingBelongsIn: (bucketName) => `अच्छा सोचा — यह असल में यहाँ जाता है: ${bucketName}`,
   whereDoesThisGo: 'यह कहाँ जाएगा?',
   activityFinish: 'पूरा करो',
+  authoritiesTapHint: 'हर कार्ड पर टैप करके एक मददगार से मिलो।',
+  authoritiesRememberLine:
+    'तुम्हें ये सारे नाम याद रखने की ज़रूरत नहीं है। एक आसान कॉल — चाइल्डलाइन 1098 — तुम्हें सही मददगार तक पहुँचा सकती है।',
 
   progressTitle: 'मेरी प्रगति',
   closeProgress: 'प्रगति बंद करो',
@@ -883,7 +903,7 @@ const HI: UIStrings = {
   chooseLanguage: 'अपनी भाषा चुनो',
   howItWorksTitle: 'यह कैसे काम करता है',
   howItWorksPoints: [
-    'शहर में घूमो और 6 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
+    'शहर में घूमो और 7 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
     'कहानी वाले क्वेस्ट खेलो, अपने फ़ैसले खुद लो, और मज़ेदार क्विज़ से बैज जीतो।',
     'तुम्हारा दोस्ताना गाइड कभी भी सवालों के जवाब दे सकता है।',
     'लाल "अभी मदद लो" बटन हमेशा स्क्रीन पर रहता है — इसमें चाइल्डलाइन 1098 जैसी असली हेल्पलाइन हैं।',
@@ -985,6 +1005,7 @@ const HI: UIStrings = {
     zone3_scholar: 'स्कूल अधिकार ज्ञानी',
     zone4_explorer: 'न्याय खोजी',
     zone5_defender: 'डिजिटल रक्षक',
+    zone6_shield_bearer: 'ढाल वीर',
     all_zones_champion: 'न्याय नगरी चैंपियन',
   },
 

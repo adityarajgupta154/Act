@@ -72,10 +72,12 @@ export interface QuizQuestion {
  * group existing scenes; the single 'quiz' level is the checkpoint that
  * completes the zone (post-quiz + adaptive recap).
  *
- * Task 18 (PRD §7.4 mini-game variety pack): four ACTIVITY kinds join the
+ * Task 18 (PRD §7.4 mini-game variety pack): ACTIVITY kinds join the
  * union — 'memory' (flip-and-match), 'hidden' (hidden-object scene, 8-11
  * band ONLY), 'sorting' (sort scenario cards into buckets), and 'scenario'
- * (single-screen one-decision). The task brief calls this field
+ * (single-screen one-decision). Task 20 adds 'authorities' — the Zone 6
+ * "Meet the Authorities" tap-through hub of child-protection bodies
+ * (PRD §4.2 CPCR Act row + §4.3 directory). The task brief calls this field
  * "levelType"; Task 15 already named the discriminator `kind`, so the new
  * types extend `kind` rather than adding a second, duplicate field.
  * Activity content is static, hand-written data reformatted from the
@@ -89,9 +91,16 @@ export type LevelKind =
   | 'memory'
   | 'hidden'
   | 'sorting'
-  | 'scenario';
+  | 'scenario'
+  | 'authorities';
 
-export const ACTIVITY_LEVEL_KINDS = ['memory', 'hidden', 'sorting', 'scenario'] as const;
+export const ACTIVITY_LEVEL_KINDS = [
+  'memory',
+  'hidden',
+  'sorting',
+  'scenario',
+  'authorities',
+] as const;
 export type ActivityLevelKind = (typeof ACTIVITY_LEVEL_KINDS)[number];
 
 export function isActivityKind(kind: LevelKind): kind is ActivityLevelKind {
@@ -173,6 +182,33 @@ export interface ScenarioLevelContent {
   options: ScenarioOption[];
 }
 
+/**
+ * Task 20: one tappable card in the "Meet the Authorities" hub (Zone 6).
+ * `authorityId` is a language-independent stable id (checked by translation
+ * parity); `name` uses the app-wide convention of full name + acronym on
+ * first mention, e.g. "Child Welfare Committee (CWC)"; `role` is the
+ * one-line explainer of what this body does for children.
+ */
+export interface AuthorityCard {
+  authorityId: string;
+  name: string;
+  role: string;
+}
+
+/**
+ * Tap-through hub of real child-protection bodies (PRD §4.2 CPCR Act row,
+ * §4.3 directory). Completion-based by gentle design — viewing every card
+ * completes the level. The "Childline 1098 first" reminder line is
+ * hard-coded in the i18n bundles, NOT in content JSON — helpline text stays
+ * hard-coded exactly like everywhere else (PRD §9.8), mirroring how the
+ * sorting buckets keep their canonical labels out of content.
+ */
+export interface AuthoritiesLevelContent {
+  intro: string;
+  /** 4-6 cards, one per authority/body. */
+  authorities: AuthorityCard[];
+}
+
 export interface QuestLevel {
   levelId: string;
   kind: LevelKind;
@@ -180,16 +216,17 @@ export interface QuestLevel {
   sceneIds?: string[];
   /** Scene the level starts at (story/decision kinds only). */
   entryScene?: string;
-  /** Task 18 activity payloads — exactly the one matching `kind`. */
+  /** Task 18/20 activity payloads — exactly the one matching `kind`. */
   memory?: MemoryLevelContent;
   hidden?: HiddenObjectLevelContent;
   sorting?: SortingLevelContent;
   scenario?: ScenarioLevelContent;
+  authorities?: AuthoritiesLevelContent;
 }
 
 export interface Quest {
   questId: string;
-  /** Which zone this quest belongs to (zone1..zone5). */
+  /** Which zone this quest belongs to (zone0..zone6). */
   zoneId: string;
   ageBand: AgeBand;
   /**
@@ -286,6 +323,7 @@ function validateActivityLevel(q: Quest, level: QuestLevel): void {
     hidden: level.hidden,
     sorting: level.sorting,
     scenario: level.scenario,
+    authorities: level.authorities,
   } as const;
   for (const [key, value] of Object.entries(payloads)) {
     if (key === level.kind) {
@@ -375,6 +413,22 @@ function validateActivityLevel(q: Quest, level: QuestLevel): void {
       throw new Error(`${ctx}: scenario must have exactly one correct option`);
     }
   }
+
+  if (level.kind === 'authorities') {
+    const a = level.authorities!;
+    if (!NONEMPTY(a.intro)) throw new Error(`${ctx}: authorities intro missing`);
+    if (!Array.isArray(a.authorities) || a.authorities.length < 4 || a.authorities.length > 6) {
+      throw new Error(`${ctx}: authorities hub needs 4-6 entries`);
+    }
+    if (new Set(a.authorities.map((c) => c.authorityId)).size !== a.authorities.length) {
+      throw new Error(`${ctx}: duplicate authorityIds`);
+    }
+    for (const card of a.authorities) {
+      if (!NONEMPTY(card.authorityId) || !NONEMPTY(card.name) || !NONEMPTY(card.role)) {
+        throw new Error(`${ctx}: authority card with empty id/name/role`);
+      }
+    }
+  }
 }
 
 /**
@@ -408,7 +462,7 @@ export function validateLevels(q: Quest): void {
   for (const level of q.levels) {
     if (isActivityKind(level.kind)) {
       validateActivityLevel(q, level);
-    } else if (level.memory || level.hidden || level.sorting || level.scenario) {
+    } else if (level.memory || level.hidden || level.sorting || level.scenario || level.authorities) {
       throw new Error(`${ctx}/${level.levelId}: activity content on a "${level.kind}" level`);
     }
   }
@@ -542,6 +596,7 @@ export function validateTranslationParity(source: Quest, translated: Quest): Que
           : null,
         sortingBuckets: l.sorting ? l.sorting.cards.map((c) => c.bucket) : null,
         scenarioOutcomes: l.scenario ? l.scenario.options.map((o) => o.outcome) : null,
+        authorityIds: l.authorities ? l.authorities.authorities.map((a) => a.authorityId) : null,
       })),
     );
   if (structure(translated.levels) !== structure(source.levels)) {

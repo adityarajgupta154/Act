@@ -35,6 +35,8 @@ export const LEVEL_XP: Record<LevelKind, number> = {
   hidden: 35,
   sorting: 35,
   scenario: 35,
+  // Task 20: zone6 "Meet the Authorities" hub — same weight as other extras.
+  authorities: 35,
 };
 
 /** Coins per level kind, first-time completion only. */
@@ -46,6 +48,7 @@ export const LEVEL_COINS: Record<LevelKind, number> = {
   hidden: 12,
   sorting: 12,
   scenario: 12,
+  authorities: 12,
 };
 
 /** One-time bonus when the final quiz level completes its whole zone. */
@@ -69,9 +72,9 @@ export function awardForLevel(kind: LevelKind, zoneCompleted: boolean): LevelAwa
 // ---------------------------------------------------------------------------
 
 /**
- * XP needed per rank step. The base levels of all 6 zones total 1080 XP
- * (=> Rank 8); Task 18 activity levels add 35 XP each on top (one or two
- * per age band, depending on which zones carry an activity for that band).
+ * XP needed per rank step. The base levels of all 7 zones total 1260 XP
+ * (=> Rank 9); activity levels add 35 XP each on top (one to three per age
+ * band, depending on which zones carry an activity for that band).
  */
 export const XP_PER_RANK = 150;
 
@@ -155,7 +158,7 @@ export interface ShopItem {
   price: number;
 }
 
-/** Full catalogue. Prices are reachable from normal play (base zones yield 450 Coins; catalogue totals 210). */
+/** Full catalogue. Prices are reachable from normal play (base zones yield 525 Coins; catalogue totals 210). */
 export const SHOP_ITEMS: readonly ShopItem[] = [
   { id: 'bow', price: 30 },
   { id: 'medal', price: 40 },
@@ -185,6 +188,7 @@ export type TitleId =
   | 'zone3_scholar'
   | 'zone4_explorer'
   | 'zone5_defender'
+  | 'zone6_shield_bearer'
   | 'all_zones_champion';
 
 export const TITLE_IDS: readonly TitleId[] = [
@@ -195,10 +199,11 @@ export const TITLE_IDS: readonly TitleId[] = [
   'zone3_scholar',
   'zone4_explorer',
   'zone5_defender',
+  'zone6_shield_bearer',
   'all_zones_champion',
 ];
 
-const ALL_ZONES = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
+const ALL_ZONES = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5', 'zone6'];
 
 /** The slice of progress that milestones and earnings derive from. */
 export type ProgressMilestones = Pick<ProgressState, 'levelProgress' | 'completedZones'>;
@@ -214,6 +219,7 @@ const TITLE_RULES: Record<TitleId, (s: ProgressMilestones) => boolean> = {
   zone3_scholar: (s) => !!s.completedZones.zone3,
   zone4_explorer: (s) => !!s.completedZones.zone4,
   zone5_defender: (s) => !!s.completedZones.zone5,
+  zone6_shield_bearer: (s) => !!s.completedZones.zone6,
   all_zones_champion: (s) => ALL_ZONES.every((z) => !!s.completedZones[z]),
 };
 
@@ -244,7 +250,7 @@ export function newlyUnlockedTitles(
 // still need a server-authoritative design — this local data is advisory.)
 // ---------------------------------------------------------------------------
 
-const ZONE_IDS = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5'] as const;
+const ZONE_IDS = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5', 'zone6'] as const;
 const BASE_LEVEL_KIND_BY_ID: Record<string, LevelKind> = {
   level1: 'story',
   level2: 'decision',
@@ -264,6 +270,7 @@ const EXTRA_LEVEL_KIND_BY_ZONE: Record<string, Record<string, LevelKind>> = {
   zone2: { level_hidden: 'hidden' },
   zone3: { level_memory: 'memory' },
   zone5: { level_sorting: 'sorting' },
+  zone6: { level_authorities: 'authorities' },
 };
 
 function levelKindsForZone(zone: string): Record<string, LevelKind> {
