@@ -110,3 +110,42 @@ export function getZoneGreeting(
 ): string | null {
   return GREETINGS[language][zoneId]?.[ageBand] ?? null;
 }
+
+/**
+ * Task 15: short level-entry greetings. Hard-coded, hand-written templates
+ * (never AI-generated, PRD §9.8) with only the localized zone name and the
+ * level number interpolated — the same strings work for every zone and age
+ * band, so no band/character mismatch is possible. Western numerals only.
+ */
+type LevelGreetingKind = 'story' | 'decision' | 'quiz';
+
+const LEVEL_GREETINGS: Record<
+  Language,
+  Record<LevelGreetingKind, (n: number, zoneName: string) => string>
+> = {
+  en: {
+    story: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: the story begins. Read carefully — soon the choices will be yours. I am here if you have questions.`,
+    decision: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: now the big choices are yours. Take your time — every choice teaches something.`,
+    quiz: (n, zoneName) =>
+      `Level ${n} of ${zoneName}: the quiz checkpoint. Show what you have learned — you can do this.`,
+  },
+  hi: {
+    story: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: कहानी शुरू होती है। ध्यान से पढ़ो — आगे फ़ैसले तुम्हें लेने हैं। कोई सवाल हो तो मैं यहीं हूँ।`,
+    decision: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: अब बड़े फ़ैसले तुम्हारे हाथ में हैं। आराम से सोचो — हर फ़ैसला कुछ सिखाता है।`,
+    quiz: (n, zoneName) =>
+      `${zoneName} का लेवल ${n}: क्विज़ चेकपॉइंट। दिखाओ तुमने क्या सीखा — तुम यह कर सकते हो।`,
+  },
+};
+
+export function getLevelGreeting(
+  levelNumber: number,
+  kind: LevelGreetingKind,
+  zoneName: string,
+  language: Language,
+): string {
+  return LEVEL_GREETINGS[language][kind](levelNumber, zoneName);
+}

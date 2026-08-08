@@ -106,5 +106,29 @@
       "correctIndex": 0,
       "explanation": "That weird feeling is a helper. Stop, do not reply, and tell a trusted grown-up, who can help with the block and report buttons. Childline 1098 is free for any child, day and night."
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

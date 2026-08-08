@@ -150,5 +150,30 @@
       "correctIndex": 2,
       "explanation": "The RTE Act guarantees free, compulsory education for ages 6 to 14, and the labour law's limits on adolescent work (no hazardous jobs, capped hours, no night work) exist so education can continue through the teen years. If work is crowding out school, Childline 1098 can help."
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

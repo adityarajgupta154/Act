@@ -84,7 +84,11 @@
   "quizQuestions": [
     {
       "question": "Who does your body belong to?",
-      "options": ["My teacher", "ME!", "Anyone bigger than me"],
+      "options": [
+        "My teacher",
+        "ME!",
+        "Anyone bigger than me"
+      ],
       "correctIndex": 1,
       "explanation": "Your body belongs to YOU. A special law in India called POCSO protects every child's body from wrong touch."
     },
@@ -107,6 +111,30 @@
       ],
       "correctIndex": 2,
       "explanation": "It is NEVER the child's fault. The law is on the child's side, always, and telling a trusted grown-up is always right."
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
     }
   ]
 }

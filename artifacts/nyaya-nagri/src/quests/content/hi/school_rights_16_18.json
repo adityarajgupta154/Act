@@ -151,5 +151,30 @@
       "correctIndex": 2,
       "explanation": "शिकायत की सीढ़ी स्कूल से ज़िला शिक्षा अधिकारियों और फिर बाल अधिकार आयोगों (NCPCR/SCPCR) तक जाती है। चाइल्डलाइन 1098, 18 से कम उम्र के हर बच्चे के लिए मुफ़्त है, दिन-रात।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

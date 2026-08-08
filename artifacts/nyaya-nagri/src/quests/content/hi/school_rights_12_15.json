@@ -147,5 +147,30 @@
       "correctIndex": 1,
       "explanation": "6 से 14 साल के बच्चों के लिए सरकारी स्कूल कोई फ़ीस नहीं लेते और मुफ़्त किताबें व यूनिफ़ॉर्म देते हैं, ताकि पैसा प्रारंभिक शिक्षा की राह में कभी दीवार न बने।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

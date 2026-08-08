@@ -85,7 +85,11 @@
   "quizQuestions": [
     {
       "question": "तुम्हारा शरीर किसका है?",
-      "options": ["मेरी टीचर का", "मेरा!", "जो भी मुझसे बड़ा हो उसका"],
+      "options": [
+        "मेरी टीचर का",
+        "मेरा!",
+        "जो भी मुझसे बड़ा हो उसका"
+      ],
       "correctIndex": 1,
       "explanation": "तुम्हारा शरीर सिर्फ़ तुम्हारा है। भारत में पॉक्सो (POCSO) नाम का एक खास कानून हर बच्चे के शरीर को गलत स्पर्श से बचाता है।"
     },
@@ -108,6 +112,30 @@
       ],
       "correctIndex": 2,
       "explanation": "यह कभी भी बच्चे की गलती नहीं होती। कानून हमेशा बच्चे के साथ है, और किसी भरोसेमंद बड़े को बताना हमेशा सही है।"
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
     }
   ]
 }

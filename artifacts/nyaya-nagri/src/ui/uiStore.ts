@@ -21,6 +21,12 @@ export type UIState = {
   helpOpen: boolean;
   /** Player avatar editor overlay, opened from Settings (Task 14). */
   avatarEditOpen: boolean;
+  /**
+   * Task 15: the level currently being played inside the active zone, so
+   * the AI companion can greet level entry (like it greets zone entry).
+   * Null while on the Level-Select screen or outside a zone.
+   */
+  activeLevel: { zoneId: string; levelIndex: number; kind: 'story' | 'decision' | 'quiz' } | null;
 };
 
 let state: UIState = {
@@ -34,6 +40,7 @@ let state: UIState = {
   communityOpen: false,
   helpOpen: false,
   avatarEditOpen: false,
+  activeLevel: null,
 };
 
 const listeners = new Set<() => void>();
@@ -72,9 +79,17 @@ export function enterZone(zoneId: string) {
   }, 300);
 }
 
+export function enterLevel(zoneId: string, levelIndex: number, kind: 'story' | 'decision' | 'quiz') {
+  uiStore.set({ activeLevel: { zoneId, levelIndex, kind } });
+}
+
+export function clearLevel() {
+  uiStore.set({ activeLevel: null });
+}
+
 export function exitZone() {
   if (state.isTransitioning) return;
-  uiStore.set({ isTransitioning: true, fadeOpacity: 1 });
+  uiStore.set({ isTransitioning: true, fadeOpacity: 1, activeLevel: null });
   
   setTimeout(() => {
     uiStore.set({ activeZoneId: null, fadeOpacity: 0 });
@@ -122,6 +137,13 @@ export function openAvatarEdit() {
 
 export function closeAvatarEdit() {
   uiStore.set({ avatarEditOpen: false });
+}
+
+// DEV-ONLY test seam: the e2e browser cannot render WebGL, so it cannot
+// walk the 3D world to a zone gate. Expose zone entry for tests. Stripped
+// from production builds (import.meta.env.DEV is false there).
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+  (window as unknown as Record<string, unknown>).__nnDebug = { enterZone, exitZone };
 }
 
 export function triggerHelpPulse() {

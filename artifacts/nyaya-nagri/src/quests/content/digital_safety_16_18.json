@@ -144,5 +144,30 @@
       "correctIndex": 2,
       "explanation": "Records of harassment mean usernames, links, and screenshots of abusive messages. Sexually explicit material involving anyone under 18 is covered by Section 67B, which can make collecting or transmitting it an offence, so never keep or send it; note the location and report through the proper channels."
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

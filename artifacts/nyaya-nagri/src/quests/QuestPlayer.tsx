@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  QuestSession, startQuest, answerQuizQuestion, acknowledgeQuizFeedback,
-  chooseSceneOption, acknowledgeSceneFeedback, finalizeQuest, getCurrentScene,
-  getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback
+  QuestSession, startLevel, answerQuizQuestion, acknowledgeQuizFeedback,
+  chooseSceneOption, acknowledgeSceneFeedback, finalizeLevel, getCurrentScene,
+  getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback,
+  type LevelResult,
 } from './engine';
+import { getPriorPreAnswers } from './levels';
 import type { Quest, ChoiceOutcome } from './schema';
 import { exitZone, openHelp } from '@/ui/uiStore';
 import { isSafetyReminderZone } from '@/ui/safetyReminder';
 import { cn } from '@/lib/utils';
-import { CheckCircle2, XCircle, ArrowRight, Star, Lightbulb, ShieldCheck } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, Star, Lightbulb, ShieldCheck, RotateCcw } from 'lucide-react';
 import { ZONES } from '@/world/zones';
 import { getStrings } from '@/i18n/strings';
 import { useSettings } from '@/data/settingsStore';
@@ -22,10 +24,28 @@ function FeedbackColor(outcome: ChoiceOutcome) {
   }
 }
 
-export function QuestPlayer({ quest: questProp }: { quest: Quest }) {
-  const [session, setSession] = useState<QuestSession>(() => startQuest(questProp));
+export function QuestPlayer({
+  quest: questProp,
+  levelIndex,
+  practice = false,
+  onExit,
+}: {
+  quest: Quest;
+  /** Task 15: the level of quest.levels this player session runs. */
+  levelIndex: number;
+  /** Practice/Replay of a completed level — recorded scores are untouched. */
+  practice?: boolean;
+  /** Back to the Level-Select screen (leave mid-level or after a level). */
+  onExit: () => void;
+}) {
+  const [session, setSession] = useState<QuestSession>(() =>
+    startLevel(questProp, levelIndex, {
+      practice,
+      priorPreAnswers: getPriorPreAnswers(questProp.questId),
+    }),
+  );
   const finalizationRef = useRef<boolean>(false);
-  const [finalResult, setFinalResult] = useState<{ postScore: number, total: number, badgeId: string } | null>(null);
+  const [finalResult, setFinalResult] = useState<LevelResult | null>(null);
   const settings = useSettings();
 
   // Task 10: a running quest stays in ONE language — everything reads from
@@ -40,7 +60,7 @@ export function QuestPlayer({ quest: questProp }: { quest: Quest }) {
   useEffect(() => {
     if (session.phase === 'complete' && !finalizationRef.current) {
       finalizationRef.current = true;
-      const result = finalizeQuest(session);
+      const result = finalizeLevel(session);
       setFinalResult(result);
     }
   }, [session]);
@@ -82,7 +102,14 @@ export function QuestPlayer({ quest: questProp }: { quest: Quest }) {
         parts.push(item.summary, item.question, ...item.options);
       }
     } else if (session.phase === 'complete' && finalResult) {
-      parts.push(t.questComplete, t.youGotXofY(finalResult.postScore, finalResult.total));
+      if (finalResult.kind === 'quiz') {
+        parts.push(finalResult.recorded ? t.questComplete : t.practiceComplete);
+        if (finalResult.postScore !== null) {
+          parts.push(t.youGotXofY(finalResult.postScore, finalResult.total));
+        }
+      } else {
+        parts.push(finalResult.recorded ? t.levelComplete : t.practiceComplete);
+      }
     }
     if (parts.length > 0) speak(parts, questLang);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -91,63 +118,123 @@ export function QuestPlayer({ quest: questProp }: { quest: Quest }) {
   // Stop any narration when the quest player unmounts (leave / back to map).
   useEffect(() => () => stopSpeaking(), []);
 
+  // Leaving mid-level (or after a non-final level) goes back one layer —
+  // to the zone's Level-Select screen, not all the way to the map.
   const handleLeave = () => {
+    stopSpeaking();
+    onExit();
+  };
+
+  const handleLeaveZone = () => {
     stopSpeaking();
     exitZone();
   };
 
+  // Task 12 support-services reminder, reused by both quiz-level end
+  // screens (recorded and practice) for zones 1/4/5 (PRD §9.1).
+  const safetyReminder = isSafetyReminderZone(quest.zoneId) && (
+    <div className="bg-sky-50 border border-sky-100 rounded-2xl p-5 mb-8 text-left max-w-md mx-auto">
+      <p className="font-bold text-sky-700 mb-1 flex items-center gap-2">
+        <ShieldCheck className="w-5 h-5 shrink-0" />
+        {t.safetyReminderTitle}
+      </p>
+      <p className="text-slate-600 font-medium mb-3">{t.safetyReminderBody}</p>
+      <button
+        onClick={openHelp}
+        className="bg-white border border-sky-200 text-sky-700 hover:bg-sky-100 active:bg-sky-200 px-5 py-2.5 rounded-full font-bold text-sm transition-colors active:scale-95 touch-manipulation"
+      >
+        {t.seeHelpOptions}
+      </button>
+    </div>
+  );
+
   if (session.phase === 'complete') {
     if (!finalResult) return null; // waiting for effect
-    const nextZone = ZONES.find(z => z.order === ZONES.find(x => x.id === quest.zoneId)!.order + 1);
-    const nextZoneName = nextZone ? (t.zones[nextZone.id]?.name ?? nextZone.name) : null;
+    const isQuizLevel = finalResult.kind === 'quiz';
+
+    // FINAL level first completed: the zone-complete celebration (star,
+    // badge, next-zone unlock) — exactly the Task 1-14 behavior.
+    if (isQuizLevel && finalResult.recorded) {
+      const nextZone = ZONES.find(z => z.order === ZONES.find(x => x.id === quest.zoneId)!.order + 1);
+      const nextZoneName = nextZone ? (t.zones[nextZone.id]?.name ?? nextZone.name) : null;
+
+      return (
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
+          <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-2">{t.questComplete}</h2>
+          <p className="text-xl text-slate-600 mb-8 font-medium">{quest.title}</p>
+
+          <div className="relative mx-auto w-32 h-32 mb-8">
+            <div className="absolute inset-0 bg-orange-400 rounded-full animate-ping opacity-20"></div>
+            <div className="relative w-full h-full bg-gradient-to-tr from-orange-400 to-amber-300 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10 transform transition-transform hover:scale-110">
+              <Star className="w-16 h-16 text-white fill-white" />
+            </div>
+          </div>
+
+          <h3 className="text-2xl font-bold text-orange-500 mb-4">
+            {t.youGotXofY(finalResult.postScore ?? 0, finalResult.total)}
+          </h3>
+
+          {nextZoneName && (
+            <p className="text-lg text-slate-600 font-medium mb-8 bg-sky-50 py-3 px-6 rounded-xl inline-block border border-sky-100">
+              {t.unlockedNext(nextZoneName)}
+            </p>
+          )}
+
+          {safetyReminder}
+
+          <button
+            onClick={handleLeaveZone}
+            className="bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md flex items-center gap-2 mx-auto touch-manipulation"
+          >
+            {t.backToMap}
+          </button>
+        </div>
+      );
+    }
+
+    // Non-final level completed, or a Practice/Replay of any level.
+    const nextLevel = quest.levels[levelIndex + 1];
+    const showNextUnlock = finalResult.recorded && nextLevel;
+    const title = finalResult.recorded ? t.levelComplete : t.practiceComplete;
 
     return (
       <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
-        <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-2">{t.questComplete}</h2>
-        <p className="text-xl text-slate-600 mb-8 font-medium">{quest.title}</p>
+        <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-2">{title}</h2>
+        <p className="text-xl text-slate-600 mb-8 font-medium">
+          {t.levelN(levelIndex + 1)}: {t.levelKindNames[finalResult.kind]}
+        </p>
 
-        <div className="relative mx-auto w-32 h-32 mb-8">
-          <div className="absolute inset-0 bg-orange-400 rounded-full animate-ping opacity-20"></div>
-          <div className="relative w-full h-full bg-gradient-to-tr from-orange-400 to-amber-300 rounded-full flex items-center justify-center shadow-lg border-4 border-white z-10 transform transition-transform hover:scale-110">
-            <Star className="w-16 h-16 text-white fill-white" />
-          </div>
+        <div className="mx-auto w-24 h-24 mb-8 bg-gradient-to-tr from-green-400 to-emerald-300 rounded-full flex items-center justify-center shadow-lg border-4 border-white">
+          {finalResult.recorded ? (
+            <CheckCircle2 className="w-12 h-12 text-white" />
+          ) : (
+            <RotateCcw className="w-12 h-12 text-white" />
+          )}
         </div>
 
-        <h3 className="text-2xl font-bold text-orange-500 mb-4">
-          {t.youGotXofY(finalResult.postScore, finalResult.total)}
-        </h3>
+        {isQuizLevel && finalResult.postScore !== null && (
+          <h3 className="text-2xl font-bold text-orange-500 mb-4">
+            {t.youGotXofY(finalResult.postScore, finalResult.total)}
+          </h3>
+        )}
 
-        {nextZoneName && (
+        {!finalResult.recorded && (
+          <p className="text-base text-slate-500 font-medium mb-6">{t.practiceNote}</p>
+        )}
+
+        {showNextUnlock && (
           <p className="text-lg text-slate-600 font-medium mb-8 bg-sky-50 py-3 px-6 rounded-xl inline-block border border-sky-100">
-            {t.unlockedNext(nextZoneName)}
+            {t.nextLevelUnlocked(`${t.levelN(levelIndex + 2)}: ${t.levelKindNames[nextLevel.kind]}`)}
           </p>
         )}
 
-        {/* Task 12: brief, non-alarming support-services reminder after
-            safety-themed quests (zones 1/4/5) — builds calm, repeated
-            familiarity with the Get Help screen (PRD §9.1). Opens the SAME
-            centrally-controlled screen as the always-visible button. */}
-        {isSafetyReminderZone(quest.zoneId) && (
-          <div className="bg-sky-50 border border-sky-100 rounded-2xl p-5 mb-8 text-left max-w-md mx-auto">
-            <p className="font-bold text-sky-700 mb-1 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 shrink-0" />
-              {t.safetyReminderTitle}
-            </p>
-            <p className="text-slate-600 font-medium mb-3">{t.safetyReminderBody}</p>
-            <button
-              onClick={openHelp}
-              className="bg-white border border-sky-200 text-sky-700 hover:bg-sky-100 active:bg-sky-200 px-5 py-2.5 rounded-full font-bold text-sm transition-colors active:scale-95 touch-manipulation"
-            >
-              {t.seeHelpOptions}
-            </button>
-          </div>
-        )}
+        {isQuizLevel && safetyReminder}
 
         <button
           onClick={handleLeave}
           className="bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md flex items-center gap-2 mx-auto touch-manipulation"
         >
-          {t.backToMap}
+          {t.backToLevels}
         </button>
       </div>
     );

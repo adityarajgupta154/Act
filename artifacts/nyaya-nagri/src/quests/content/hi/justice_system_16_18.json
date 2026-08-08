@@ -150,5 +150,30 @@
       "correctIndex": 2,
       "explanation": "ट्रांसफ़र का रास्ता 16 और 17 साल वालों के सबसे गंभीर आरोपों के लिए एक सीमित, मामला-दर-मामला अपवाद है, बोर्ड के प्रारंभिक आकलन के बाद। तब भी, अपराध के समय 18 से कम उम्र वाले किसी भी व्यक्ति के लिए मौत की सज़ा और रिहाई की संभावना के बिना उम्रकैद पूरी तरह वर्जित हैं।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

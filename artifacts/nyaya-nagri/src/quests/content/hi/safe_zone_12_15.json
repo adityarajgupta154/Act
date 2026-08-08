@@ -147,5 +147,30 @@
       "correctIndex": 1,
       "explanation": "मना करना और बताना ही सुरक्षित चाल है। किसी नाबालिग से ऐसी फ़ोटो माँगना अपराध है, और रिपोर्ट करने वाले बच्चे को कानून सुरक्षा देता है, सज़ा कभी नहीं।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

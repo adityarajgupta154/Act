@@ -113,5 +113,29 @@
       "correctIndex": 1,
       "explanation": "यह कभी भी बच्चे की गलती नहीं होती। टीचर और चाइल्डलाइन 1098 जैसे मददगार बच्चे और परिवार की मदद के लिए हैं, ताकि बच्चा फिर से सीख और खेल सके।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

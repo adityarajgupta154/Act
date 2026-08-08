@@ -135,5 +135,30 @@
       "correctIndex": 2,
       "explanation": "ऑनलाइन अपराध साइबर क्राइम हेल्पलाइन 155260 और राष्ट्रीय साइबर अपराध रिपोर्टिंग पोर्टल पर रिपोर्ट किए जा सकते हैं। किसी भी बच्चे के लिए चाइल्डलाइन 1098 मुफ़्त और दिन-रात उपलब्ध है, और ऐप के रिपोर्ट और ब्लॉक टूल और एक भरोसेमंद बड़ा मिलकर टूलकिट पूरी करते हैं।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

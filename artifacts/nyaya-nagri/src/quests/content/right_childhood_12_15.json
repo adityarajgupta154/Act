@@ -114,7 +114,11 @@
   "quizQuestions": [
     {
       "question": "For children under what age does the Child and Adolescent Labour (Prohibition and Regulation) Act generally prohibit employment, subject to its narrow family-enterprise exception?",
-      "options": ["Below 12", "Below 14", "Below 18"],
+      "options": [
+        "Below 12",
+        "Below 14",
+        "Below 18"
+      ],
       "correctIndex": 1,
       "explanation": "Children under 14 cannot be employed in any occupation. The only exception is safe help in your OWN family's work, outside school hours, without harming your education."
     },
@@ -147,6 +151,31 @@
       ],
       "correctIndex": 1,
       "explanation": "The law treats rescued working children as children in need of care and protection, never as wrongdoers. The penalty falls on the employer, and the child-protection system's role is to support the child's return to school."
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
     }
   ]
 }

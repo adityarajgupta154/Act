@@ -32,6 +32,24 @@ export interface ProgressState {
   badges: Record<string, boolean>;
   /** Quiz scores keyed by quest id: { pre, post } for literacy-delta analytics. */
   quizScores: Record<string, { pre: number | null; post: number | null }>;
+  /**
+   * Task 15: completed levels, keyed "zoneId:levelId" (e.g. "zone1:level2").
+   * Language- and band-independent, like completedZones. A zone flagged in
+   * completedZones counts as ALL its levels complete (pre-Task-15 saves).
+   */
+  levelProgress: Record<string, boolean>;
+  /**
+   * Task 15: Practice/Replay attempt counts, keyed "zoneId:levelId".
+   * Kept SEPARATE from quizScores on purpose — replays never touch the
+   * recorded pre/post analytics scores (Task 9).
+   */
+  replayCounts: Record<string, number>;
+  /**
+   * Task 15: silent pre-quiz answer indices per quest id, recorded when
+   * Level 1 finishes so the final quiz level (a separate session) can build
+   * the same adaptive recap as before. Answer indices only — no PII.
+   */
+  preAnswersByQuest: Record<string, number[]>;
   /** Pseudonymous session id — never a real name or any PII. */
   sessionId: string;
   /** Arbitrary key-value slot for future tasks (settings, avatar config, etc.). */
@@ -51,10 +69,32 @@ function defaultState(): ProgressState {
     completedZones: {},
     badges: {},
     quizScores: {},
+    levelProgress: {},
+    replayCounts: {},
+    preAnswersByQuest: {},
     sessionId: generateSessionId(),
     extras: {},
   };
 }
+
+/** Keep only entries of the expected primitive shape (load-time hygiene). */
+function sanitizeRecord<T>(
+  value: unknown,
+  isValid: (v: unknown) => v is T,
+): Record<string, T> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) return {};
+  const out: Record<string, T> = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    if (isValid(v)) out[k] = v;
+  }
+  return out;
+}
+
+const isBool = (v: unknown): v is boolean => typeof v === 'boolean';
+const isCount = (v: unknown): v is number =>
+  typeof v === 'number' && Number.isFinite(v) && v >= 0;
+const isAnswerList = (v: unknown): v is number[] =>
+  Array.isArray(v) && v.every((n) => typeof n === 'number' && Number.isInteger(n));
 
 /** Persistence adapter interface — swap the in-memory adapter for a real one later. */
 export interface StorageAdapter {
@@ -108,7 +148,16 @@ class LocalStorageAdapter implements StorageAdapter {
       // The avatar is re-validated on every load: a malformed/edited saved
       // config must degrade to null (no avatar) instead of crashing the
       // renderer with unknown ids (Task 14).
-      return { ...defaultState(), ...parsed, avatar: sanitizeAvatar(parsed.avatar) };
+      return {
+        ...defaultState(),
+        ...parsed,
+        avatar: sanitizeAvatar(parsed.avatar),
+        // Task 15 maps re-validated on load, same ingress rule as the avatar:
+        // malformed entries are dropped, never allowed to reach the UI.
+        levelProgress: sanitizeRecord(parsed.levelProgress, isBool),
+        replayCounts: sanitizeRecord(parsed.replayCounts, isCount),
+        preAnswersByQuest: sanitizeRecord(parsed.preAnswersByQuest, isAnswerList),
+      };
     } catch {
       return null;
     }
@@ -188,11 +237,11 @@ class ProgressStore {
 
   // -- Convenience helpers for future tasks --
 
-  markZoneComplete(zoneId: string): void {
-    this.update({
-      completedZones: { ...this.state.completedZones, [zoneId]: true },
-    });
-  }
+  // NOTE (Task 15 review): the old markZoneComplete(zoneId) helper was
+  // REMOVED — it was an unrestricted write path that could mark a zone
+  // complete without passing the final quiz level. Zone completion is now
+  // written ONLY by the quest engine's finalization (engine.finalizeLevel /
+  // finalizeQuest), which enforce the level and scoring rules.
 
   isZoneComplete(zoneId: string): boolean {
     return !!this.state.completedZones[zoneId];

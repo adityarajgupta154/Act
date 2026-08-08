@@ -40,6 +40,22 @@ export interface QuizQuestion {
   explanation: string;
 }
 
+/**
+ * Task 15: kinds of levels inside a zone. 'story' and 'decision' levels
+ * group existing scenes; the single 'quiz' level is the checkpoint that
+ * completes the zone (post-quiz + adaptive recap).
+ */
+export type LevelKind = 'story' | 'decision' | 'quiz';
+
+export interface QuestLevel {
+  levelId: string;
+  kind: LevelKind;
+  /** Scenes belonging to this level (absent/empty for the quiz level). */
+  sceneIds?: string[];
+  /** Scene the level starts at (absent for the quiz level). */
+  entryScene?: string;
+}
+
 export interface Quest {
   questId: string;
   /** Which zone this quest belongs to (zone1..zone5). */
@@ -55,6 +71,12 @@ export interface Quest {
   scenes: QuestScene[];
   /** 3-5 questions; used for BOTH the silent pre-quiz and the scored post-quiz. */
   quizQuestions: QuizQuestion[];
+  /**
+   * Task 15: ordered levels inside the zone. Structural metadata ONLY —
+   * levels group the scenes written in Tasks 4-8; they never change
+   * narration, choice correctness, or quiz content (PRD §9.8).
+   */
+  levels: QuestLevel[];
 }
 
 /**
@@ -90,7 +112,79 @@ export function validateQuest(q: Quest): Quest {
       throw new Error(`Quest ${q.questId}: quiz #${i} correctIndex out of range`);
     }
   }
+  validateLevels(q);
   return q;
+}
+
+/**
+ * Task 15: prove the levels are a SAFE regrouping of the existing scenes —
+ * they must partition every scene exactly once, start where the quest
+ * starts, and never allow a path to jump backwards or skip a level. This
+ * guarantees playing the levels in order shows the exact same content, in
+ * the exact same order, as the original single-quest flow.
+ */
+export function validateLevels(q: Quest): void {
+  const ctx = `Quest ${q.questId} levels`;
+  if (!Array.isArray(q.levels) || q.levels.length < 3 || q.levels.length > 4) {
+    throw new Error(`${ctx}: must have 3-4 levels`);
+  }
+  const last = q.levels[q.levels.length - 1];
+  if (last.kind !== 'quiz' || q.levels.filter((l) => l.kind === 'quiz').length !== 1) {
+    throw new Error(`${ctx}: exactly one quiz level, and it must be last`);
+  }
+  const ids = new Set(q.levels.map((l) => l.levelId));
+  if (ids.size !== q.levels.length) throw new Error(`${ctx}: duplicate levelIds`);
+
+  const sceneLevels = q.levels.slice(0, -1);
+  const questSceneIds = new Set(q.scenes.map((s) => s.sceneId));
+  const seen = new Set<string>();
+  for (const level of sceneLevels) {
+    if (level.kind === 'quiz') throw new Error(`${ctx}: quiz level not last`);
+    if (!level.sceneIds?.length || !level.entryScene) {
+      throw new Error(`${ctx}/${level.levelId}: scene level needs sceneIds + entryScene`);
+    }
+    if (!level.sceneIds.includes(level.entryScene)) {
+      throw new Error(`${ctx}/${level.levelId}: entryScene not in its own sceneIds`);
+    }
+    for (const id of level.sceneIds) {
+      // Membership check: a declared id that does not exist in the quest
+      // could otherwise mask an omitted real scene while passing the
+      // size check below — the partition must be an EXACT set match.
+      if (!questSceneIds.has(id)) {
+        throw new Error(`${ctx}/${level.levelId}: scene "${id}" does not exist in the quest`);
+      }
+      if (seen.has(id)) throw new Error(`${ctx}: scene "${id}" in more than one level`);
+      seen.add(id);
+    }
+  }
+  if (seen.size !== q.scenes.length) {
+    throw new Error(`${ctx}: levels must cover every scene exactly once`);
+  }
+  if (sceneLevels[0].entryScene !== q.scenes[0].sceneId) {
+    throw new Error(`${ctx}: level 1 must start at the quest's first scene`);
+  }
+  // Links may only stay inside a level or jump to the NEXT level's entry.
+  sceneLevels.forEach((level, li) => {
+    const inLevel = new Set(level.sceneIds);
+    const nextEntry = sceneLevels[li + 1]?.entryScene ?? null;
+    for (const scene of q.scenes.filter((s) => inLevel.has(s.sceneId))) {
+      for (const c of scene.choices) {
+        if (!c.nextScene) {
+          if (li !== sceneLevels.length - 1) {
+            throw new Error(
+              `${ctx}/${level.levelId}/${scene.sceneId}: dead-ends before the last scene level`,
+            );
+          }
+          continue;
+        }
+        if (!inLevel.has(c.nextScene) && c.nextScene !== nextEntry) {
+          throw new Error(
+            `${ctx}/${level.levelId}/${scene.sceneId}: link to "${c.nextScene}" escapes the level`,
+          );
+        }
+      }
+    }
+  });
 }
 
 /**
@@ -141,5 +235,10 @@ export function validateTranslationParity(source: Quest, translated: Quest): Que
       throw new Error(`${ctx}: quiz #${qIdx} correctIndex differs`);
     }
   });
+  // Task 15: level structure must be IDENTICAL across languages — level
+  // progress is language-independent, exactly like quest progress.
+  if (JSON.stringify(translated.levels) !== JSON.stringify(source.levels)) {
+    throw new Error(`${ctx}: levels structure differs from source`);
+  }
   return translated;
 }

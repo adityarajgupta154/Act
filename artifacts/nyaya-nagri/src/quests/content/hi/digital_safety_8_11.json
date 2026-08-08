@@ -107,5 +107,29 @@
       "correctIndex": 0,
       "explanation": "वह अजीब एहसास एक मददगार है। रुको, जवाब मत दो, और किसी भरोसेमंद बड़े को बताओ, जो ब्लॉक और रिपोर्ट बटनों में मदद कर सकता है। चाइल्डलाइन 1098 हर बच्चे के लिए मुफ़्त है, दिन-रात।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

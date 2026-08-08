@@ -113,5 +113,29 @@
       "correctIndex": 1,
       "explanation": "भरोसेमंद बड़े से बाँटी गई चिंताएँ छोटी हो जाती हैं। और चाइल्डलाइन 1098 हर बच्चे के लिए मुफ़्त हेल्पलाइन है, दिन-रात खुली।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

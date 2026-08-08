@@ -140,5 +140,30 @@
       "correctIndex": 2,
       "explanation": "कानून की सीढ़ी है सबसे पहले परिवार, सहारे के साथ। उसके बाद फ़ॉस्टर केयर, गोद लेना और स्पॉन्सरशिप आते हैं, और संस्था में देखभाल आखिरी सहारा होनी चाहिए, कभी अपने आप चुना रास्ता नहीं।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

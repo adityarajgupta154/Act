@@ -149,5 +149,30 @@
       "correctIndex": 2,
       "explanation": "The transfer route is a narrow, case-by-case exception for the gravest alleged offences by 16- and 17-year-olds, after a preliminary assessment by the Board. Even then, the death penalty and life without the possibility of release are absolutely barred for anyone under 18 at the time of the offence."
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

@@ -78,7 +78,11 @@
   "quizQuestions": [
     {
       "question": "A child is lost or all alone with no one to care for them. Which free number can anyone call for help?",
-      "options": ["1098, the Childline number for children", "A random shop's number", "There is no such number"],
+      "options": [
+        "1098, the Childline number for children",
+        "A random shop's number",
+        "There is no such number"
+      ],
       "correctIndex": 0,
       "explanation": "Childline 1098 is a free helpline just for children. It works day and night, and anyone, a child or a grown-up, can call it to ask for help for a child."
     },
@@ -101,6 +105,30 @@
       ],
       "correctIndex": 1,
       "explanation": "The Child Welfare Committee is a group of kind grown-ups in each district whose job is keeping children safe, listening to them, and helping them find their family or a loving home."
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
     }
   ]
 }

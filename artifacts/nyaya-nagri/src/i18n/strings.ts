@@ -30,6 +30,20 @@ export interface UIStrings {
   startQuest: (questTitle: string) => string;
   backToMap: string;
 
+  // Level select (Task 15)
+  chooseLevel: string;
+  levelN: (n: number) => string;
+  levelKindNames: Record<'story' | 'decision' | 'quiz', string>;
+  completePreviousLevel: string;
+  startLevelLabel: string;
+  practiceReplay: string;
+  practiceNote: string;
+  levelCompletedTag: string;
+  levelComplete: string;
+  practiceComplete: string;
+  nextLevelUnlocked: (levelName: string) => string;
+  backToLevels: string;
+
   // Zones (names + one-line themes)
   zones: Record<string, ZoneStrings>;
 
@@ -207,6 +221,23 @@ const EN: UIStrings = {
   completeFirst: (zoneName) => `Complete "${zoneName}" first`,
   startQuest: (questTitle) => `Start Quest: ${questTitle}`,
   backToMap: 'Back to Map',
+
+  chooseLevel: 'Choose a Level',
+  levelN: (n) => `Level ${n}`,
+  levelKindNames: {
+    story: 'The Story Begins',
+    decision: 'Your Choices',
+    quiz: 'Quiz Checkpoint',
+  },
+  completePreviousLevel: 'Finish the earlier level to unlock this one.',
+  startLevelLabel: 'Start',
+  practiceReplay: 'Practice Again',
+  practiceNote: 'Practice mode — your recorded score stays the same.',
+  levelCompletedTag: 'Completed',
+  levelComplete: 'Level Complete!',
+  practiceComplete: 'Practice Complete!',
+  nextLevelUnlocked: (levelName) => `Unlocked: ${levelName}`,
+  backToLevels: 'Back to Levels',
 
   zones: {
     zone1: {
@@ -433,6 +464,23 @@ const HI: UIStrings = {
   completeFirst: (zoneName) => `पहले "${zoneName}" पूरा करो`,
   startQuest: (questTitle) => `क्वेस्ट शुरू करो: ${questTitle}`,
   backToMap: 'नक्शे पर वापस',
+
+  chooseLevel: 'एक लेवल चुनो',
+  levelN: (n) => `लेवल ${n}`,
+  levelKindNames: {
+    story: 'कहानी शुरू होती है',
+    decision: 'तुम्हारे फ़ैसले',
+    quiz: 'क्विज़ चेकपॉइंट',
+  },
+  completePreviousLevel: 'इसे खोलने के लिए पहले वाला लेवल पूरा करो।',
+  startLevelLabel: 'शुरू करो',
+  practiceReplay: 'फिर से अभ्यास करो',
+  practiceNote: 'अभ्यास मोड — तुम्हारा दर्ज स्कोर वैसा ही रहेगा।',
+  levelCompletedTag: 'पूरा हुआ',
+  levelComplete: 'लेवल पूरा हुआ!',
+  practiceComplete: 'अभ्यास पूरा हुआ!',
+  nextLevelUnlocked: (levelName) => `खुल गया: ${levelName}`,
+  backToLevels: 'लेवल सूची पर वापस',
 
   zones: {
     zone1: {

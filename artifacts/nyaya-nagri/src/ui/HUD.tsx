@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useJoystick } from './JoystickContext';
 import { HelpDialog } from './HelpDialog';
 import { Settings, Map as MapIcon, Award, Star, Users } from 'lucide-react';
-import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity } from './uiStore';
+import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, enterLevel, clearLevel } from './uiStore';
 import { ProgressOverlay } from './ProgressScreen';
 import { SettingsPanel } from './SettingsPanel';
 import { CommunityOverlay } from './CommunityScreen';
@@ -17,6 +17,7 @@ import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
 import { sanitizeAvatar } from '@/player/avatarConfig';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
+import { LevelSelect } from '@/quests/LevelSelect';
 
 /** Task 13: has the onboarding (intro, age band, guardian consent) run? */
 function useOnboarded(): boolean {
@@ -159,48 +160,69 @@ function ProximityPrompt() {
 }
 
 function ZoneInterior({ zoneId }: { zoneId: string }) {
-  const [playingQuest, setPlayingQuest] = useState(false);
+  // Task 15: which level is being played (null = Level-Select screen).
+  const [playing, setPlaying] = useState<{ levelIndex: number; practice: boolean } | null>(null);
   const { language } = useSettings();
   const t = useStrings();
+
+  // Leaving the zone in ANY way clears the level-entry signal.
+  useEffect(() => () => clearLevel(), []);
 
   const zone = getZone(zoneId);
   if (!zone) return null;
 
   const ageBand = progressStore.getState().ageBand;
   // The quest is resolved in the CURRENT app language; once started, the
-  // session keeps that language for the whole quest (see QuestPlayer).
+  // session keeps that language for the whole level (see QuestPlayer).
   const quest = resolveQuest(zoneId, ageBand, language);
   const zoneStrings = t.zones[zoneId];
 
-  if (playingQuest && quest) {
-    return <QuestPlayer quest={quest} />;
+  if (playing && quest) {
+    return (
+      <QuestPlayer
+        key={`${quest.questId}:${playing.levelIndex}:${playing.practice}`}
+        quest={quest}
+        levelIndex={playing.levelIndex}
+        practice={playing.practice}
+        onExit={() => {
+          clearLevel();
+          setPlaying(null);
+        }}
+      />
+    );
   }
 
-  return (
-    <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
-      <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-        <MapIcon className="w-8 h-8 text-orange-500" />
-      </div>
-      <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zoneStrings?.name ?? zone.name}</h2>
-      <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zoneStrings?.theme ?? zone.theme}</p>
-      
-      <div className="flex flex-col gap-4 items-center">
-        {quest && (
-          <button
-            onClick={() => setPlayingQuest(true)}
-            className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md flex items-center gap-2 touch-manipulation w-full md:w-auto justify-center"
-          >
-            {t.startQuest(quest.title)}
-          </button>
-        )}
+  if (!quest) {
+    // No content registered for this zone yet — plain card with exit.
+    return (
+      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
+        <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+          <MapIcon className="w-8 h-8 text-orange-500" />
+        </div>
+        <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zoneStrings?.name ?? zone.name}</h2>
+        <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zoneStrings?.theme ?? zone.theme}</p>
         <button
           onClick={exitZone}
-          className="bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-sm border border-sky-200 flex items-center gap-2 w-full md:w-auto justify-center touch-manipulation"
+          className="bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-sm border border-sky-200 mx-auto touch-manipulation"
         >
           {t.backToMap}
         </button>
       </div>
-    </div>
+    );
+  }
+
+  return (
+    <LevelSelect
+      quest={quest}
+      zoneName={zoneStrings?.name ?? zone.name}
+      zoneTheme={zoneStrings?.theme ?? zone.theme}
+      onStart={(levelIndex, practice) => {
+        // Signal the AI companion BEFORE mounting the player, so the
+        // level greeting appears as the level opens (Task 15).
+        enterLevel(zoneId, levelIndex, quest.levels[levelIndex].kind);
+        setPlaying({ levelIndex, practice });
+      }}
+    />
   );
 }
 

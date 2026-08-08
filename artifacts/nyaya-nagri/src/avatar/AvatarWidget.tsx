@@ -5,7 +5,7 @@ import { useUIStore, triggerHelpPulse, openHelp } from '@/ui/uiStore';
 import { getZone } from '@/world/zones';
 import { settingsStore } from '@/data/settingsStore';
 import { getStrings, useStrings } from '@/i18n/strings';
-import { getZoneGreeting } from '@/i18n/greetings';
+import { getZoneGreeting, getLevelGreeting } from '@/i18n/greetings';
 import { Mic, MicOff, Send, X, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -44,7 +44,7 @@ type Message = { role: 'user' | 'assistant'; content: string; escalated?: boolea
 // AI-generated). Task 10 moved them (EN + hand-written HI) to i18n/greetings.
 
 export function AvatarWidget() {
-  const { activeZoneId } = useUIStore();
+  const { activeZoneId, activeLevel } = useUIStore();
   const t = useStrings();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => [
@@ -99,6 +99,27 @@ export function AvatarWidget() {
     }
     prevZoneRef.current = activeZoneId;
   }, [activeZoneId]);
+
+  // Task 15: greet LEVEL entry too — a short, hard-coded, level-specific
+  // line (never AI-generated). Quieter than zone entry: the message is
+  // appended without force-opening the chat panel, so starting a level is
+  // never interrupted mid-flow.
+  const prevLevelRef = useRef<string | null>(null);
+  useEffect(() => {
+    const key = activeLevel ? `${activeLevel.zoneId}:${activeLevel.levelIndex}` : null;
+    if (activeLevel && key !== prevLevelRef.current) {
+      const zone = getZone(activeLevel.zoneId);
+      if (zone) {
+        const lang = settingsStore.getState().language;
+        const bundle = getStrings(lang);
+        const zoneName = bundle.zones[activeLevel.zoneId]?.name ?? zone.name;
+        appendAssistantMessage(
+          getLevelGreeting(activeLevel.levelIndex + 1, activeLevel.kind, zoneName, lang),
+        );
+      }
+    }
+    prevLevelRef.current = key;
+  }, [activeLevel]);
 
   useEffect(() => {
     if (isOpen) {

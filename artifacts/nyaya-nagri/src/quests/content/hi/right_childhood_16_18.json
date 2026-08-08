@@ -151,5 +151,30 @@
       "correctIndex": 2,
       "explanation": "आरटीई कानून 6 से 14 साल के लिए मुफ़्त, अनिवार्य शिक्षा की गारंटी देता है, और किशोर-काम पर श्रम कानून की सीमाएँ (खतरनाक काम नहीं, सीमित घंटे, रात का काम नहीं) इसलिए हैं ताकि किशोर सालों में भी पढ़ाई चलती रहे। अगर काम पढ़ाई को धकेल रहा हो, तो चाइल्डलाइन 1098 मदद कर सकती है।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

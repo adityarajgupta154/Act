@@ -150,5 +150,30 @@
       "correctIndex": 1,
       "explanation": "सुनो, भरोसा करो, जोड़ो — साथी की यही भूमिका है। चाइल्डलाइन 1098 मुफ़्त है और 24/7 उपलब्ध है; जाँच का काम प्रशिक्षित अधिकारियों का है, दोस्तों का कभी नहीं।"
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }

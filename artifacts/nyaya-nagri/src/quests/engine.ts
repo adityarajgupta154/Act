@@ -14,7 +14,7 @@
  */
 
 import { progressStore } from '@/data/progressStore';
-import type { Quest, ChoiceOutcome } from './schema';
+import type { Quest, QuestLevel, ChoiceOutcome } from './schema';
 import { getRecap, type RecapItem } from './recaps';
 
 export type QuestPhase = 'pre-quiz' | 'scenes' | 'post-quiz' | 'recap' | 'complete';
@@ -58,6 +58,16 @@ export interface QuestSession {
   /** Feedback awaiting acknowledgement for the last scene choice. */
   pendingFeedback: SceneFeedback | null;
   choiceLog: Array<{ sceneId: string; choiceIndex: number; outcome: ChoiceOutcome }>;
+  /**
+   * Task 15: which level of quest.levels this session is scoped to.
+   * Null = classic full-quest session (Tasks 3-14 behavior, unchanged).
+   */
+  levelIndex: number | null;
+  /**
+   * Task 15: Practice/Replay of an already-completed level. A practice
+   * session NEVER writes scores/progress — see finalizeLevel().
+   */
+  practice: boolean;
 }
 
 export function startQuest(quest: Quest): QuestSession {
@@ -74,7 +84,51 @@ export function startQuest(quest: Quest): QuestSession {
     currentSceneId: null,
     pendingFeedback: null,
     choiceLog: [],
+    levelIndex: null,
+    practice: false,
   };
+}
+
+/** The QuestLevel a session is scoped to (null for full-quest sessions). */
+export function getSessionLevel(session: QuestSession): QuestLevel | null {
+  return session.levelIndex === null
+    ? null
+    : session.quest.levels[session.levelIndex] ?? null;
+}
+
+/**
+ * Task 15: start a single LEVEL of a quest.
+ * - Level 1 (story) begins with the silent pre-quiz (the literacy baseline
+ *   must still be measured BEFORE any content is seen), then its scenes.
+ * - Decision levels are scenes only, starting at the level's entry scene.
+ * - The quiz level is the checkpoint: post-quiz + adaptive recap. It gets
+ *   the pre-quiz answers recorded when Level 1 finished (priorPreAnswers)
+ *   so the recap logic behaves exactly as in the classic flow.
+ * - practice: replay of a completed level — the pre-quiz is skipped for
+ *   story levels (the baseline is already recorded and must never be
+ *   re-measured or overwritten).
+ */
+export function startLevel(
+  quest: Quest,
+  levelIndex: number,
+  opts: { practice?: boolean; priorPreAnswers?: number[] } = {},
+): QuestSession {
+  const level = quest.levels[levelIndex];
+  if (!level) throw new Error(`Quest ${quest.questId}: no level #${levelIndex}`);
+  const practice = opts.practice ?? false;
+  const base: QuestSession = { ...startQuest(quest), levelIndex, practice };
+
+  if (level.kind === 'quiz') {
+    return {
+      ...base,
+      phase: 'post-quiz',
+      preAnswers: opts.priorPreAnswers ?? [],
+    };
+  }
+  const isFirstPlayOfStory = level.kind === 'story' && !practice;
+  return isFirstPlayOfStory
+    ? base // pre-quiz first, scenes follow (entry scene set on transition)
+    : { ...base, phase: 'scenes', currentSceneId: level.entryScene ?? null };
 }
 
 export function scoreAnswers(quest: Quest, answers: number[]): number {
@@ -102,13 +156,17 @@ export function answerQuizQuestion(
     // Silent: record only, never reveal correctness (that is the point of
     // the baseline measurement).
     const preAnswers = [...session.preAnswers, optionIndex];
+    // Level sessions start their scenes at the level's entry scene;
+    // full-quest sessions start at the first scene (unchanged).
+    const entryScene =
+      getSessionLevel(session)?.entryScene ?? quest.scenes[0].sceneId;
     return isLast
       ? {
           ...session,
           preAnswers,
           phase: 'scenes',
           quizIndex: 0,
-          currentSceneId: quest.scenes[0].sceneId,
+          currentSceneId: entryScene,
         }
       : { ...session, preAnswers, quizIndex: quizIndex + 1 };
   }
@@ -225,21 +283,33 @@ export function chooseSceneOption(
   };
 }
 
-/** Acknowledge scene feedback → next scene, or post-quiz when scenes end. */
+/**
+ * Acknowledge scene feedback → next scene, or the phase after the scenes.
+ * Full-quest sessions continue to the post-quiz (unchanged). Level
+ * sessions COMPLETE when the story crosses the level border — the next
+ * scene belongs to the next level and is never shown early.
+ */
 export function acknowledgeSceneFeedback(session: QuestSession): QuestSession {
   if (session.phase !== 'scenes' || !session.pendingFeedback) return session;
   const next = session.pendingFeedback.nextSceneId;
   const nextExists = next && session.quest.scenes.some((s) => s.sceneId === next);
+  const level = getSessionLevel(session);
+  const staysInLevel = !level || (next && level.sceneIds?.includes(next));
 
-  return nextExists
-    ? { ...session, pendingFeedback: null, currentSceneId: next }
-    : {
-        ...session,
-        pendingFeedback: null,
-        currentSceneId: null,
-        phase: 'post-quiz',
-        quizIndex: 0,
-      };
+  if (nextExists && staysInLevel) {
+    return { ...session, pendingFeedback: null, currentSceneId: next! };
+  }
+  if (level) {
+    // Scene levels end here — the quiz only lives in the quiz level.
+    return { ...session, pendingFeedback: null, currentSceneId: null, phase: 'complete' };
+  }
+  return {
+    ...session,
+    pendingFeedback: null,
+    currentSceneId: null,
+    phase: 'post-quiz',
+    quizIndex: 0,
+  };
 }
 
 export interface QuestResult {
@@ -276,6 +346,119 @@ export function finalizeQuest(session: QuestSession): QuestResult {
     questId: quest.questId,
     zoneId: quest.zoneId,
     preScore,
+    postScore,
+    total: quest.quizQuestions.length,
+    badgeId,
+  };
+}
+
+/** Storage key for a level's progress/replay entries: "zone1:level2". */
+export function levelKey(zoneId: string, levelId: string): string {
+  return `${zoneId}:${levelId}`;
+}
+
+export interface LevelResult {
+  questId: string;
+  zoneId: string;
+  levelId: string;
+  levelIndex: number;
+  kind: QuestLevel['kind'];
+  /** False for Practice/Replay — nothing was written to recorded progress. */
+  recorded: boolean;
+  /** True only when this finalization completed the whole zone. */
+  zoneCompleted: boolean;
+  /** Post-quiz score, present for quiz-level sessions (shown even in practice). */
+  postScore: number | null;
+  total: number;
+  badgeId: string | null;
+}
+
+/**
+ * Task 15: the ONLY side-effectful step for level sessions.
+ * - First completion of a level marks it complete; the QUIZ (final) level
+ *   additionally records the post score, awards the zone badge, and marks
+ *   the zone complete — which is what unlocks the next zone via Task 1's
+ *   untouched lock rules. Story-level completion stores the silent
+ *   pre-quiz baseline (score + answer indices for the adaptive recap).
+ * - Practice/Replay (or re-finalizing an already-completed level) NEVER
+ *   overwrites recorded scores/progress — it only bumps the separate
+ *   replayCounts (Task 9 analytics stay pristine).
+ */
+export function finalizeLevel(session: QuestSession): LevelResult {
+  const { quest } = session;
+  const level = getSessionLevel(session);
+  if (!level || session.levelIndex === null) {
+    throw new Error('finalizeLevel called on a non-level session');
+  }
+  const key = levelKey(quest.zoneId, level.levelId);
+  const state = progressStore.getState();
+  const alreadyComplete =
+    !!state.levelProgress[key] || !!state.completedZones[quest.zoneId];
+  const isQuizLevel = level.kind === 'quiz';
+  const postScore = isQuizLevel ? scoreAnswers(quest, session.postAnswers) : null;
+
+  if (session.practice || alreadyComplete) {
+    progressStore.update({
+      replayCounts: { ...state.replayCounts, [key]: (state.replayCounts[key] ?? 0) + 1 },
+    });
+    return {
+      questId: quest.questId,
+      zoneId: quest.zoneId,
+      levelId: level.levelId,
+      levelIndex: session.levelIndex,
+      kind: level.kind,
+      recorded: false,
+      zoneCompleted: false,
+      postScore,
+      total: quest.quizQuestions.length,
+      badgeId: null,
+    };
+  }
+
+  const existing = state.quizScores[quest.questId];
+  const patch: Parameters<typeof progressStore.update>[0] = {
+    levelProgress: { ...state.levelProgress, [key]: true },
+  };
+
+  if (level.kind === 'story') {
+    // Baseline measured before any content — stored for the quiz level's
+    // adaptive recap and the Task 9 literacy-delta analytics.
+    const preScore = scoreAnswers(quest, session.preAnswers);
+    patch.preAnswersByQuest = {
+      ...state.preAnswersByQuest,
+      [quest.questId]: [...session.preAnswers],
+    };
+    patch.quizScores = {
+      ...state.quizScores,
+      [quest.questId]: { pre: preScore, post: existing?.post ?? null },
+    };
+  }
+
+  let zoneCompleted = false;
+  let badgeId: string | null = null;
+  if (isQuizLevel) {
+    // The quiz level is validated to be LAST — passing it completes the
+    // zone (Task 1 lock rules unlock the next zone off completedZones).
+    const preScore = existing?.pre ?? scoreAnswers(quest, session.preAnswers);
+    badgeId = `${quest.zoneId}_star`;
+    zoneCompleted = true;
+    patch.quizScores = {
+      ...state.quizScores,
+      [quest.questId]: { pre: preScore, post: postScore },
+    };
+    patch.badges = { ...state.badges, [badgeId]: true };
+    patch.completedZones = { ...state.completedZones, [quest.zoneId]: true };
+  }
+
+  progressStore.update(patch);
+  return {
+    questId: quest.questId,
+    zoneId: quest.zoneId,
+    levelId: level.levelId,
+    levelIndex: session.levelIndex,
+    kind: level.kind,
+    recorded: true,
+    zoneCompleted,
     postScore,
     total: quest.quizQuestions.length,
     badgeId,

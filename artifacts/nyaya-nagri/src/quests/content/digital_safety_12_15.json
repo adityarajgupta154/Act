@@ -134,5 +134,30 @@
       "correctIndex": 2,
       "explanation": "Online crime can be reported to the Cyber Crime Helpline 155260 and the National Cyber Crime Reporting Portal. For any child, Childline 1098 is free and available day and night, and in-app report and block tools plus a trusted adult complete the toolkit."
     }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4",
+        "scene5"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
   ]
 }
