@@ -12,6 +12,9 @@ import { useSettings } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
 import { AvatarWidget } from '@/avatar/AvatarWidget';
 import { OnboardingFlow } from '@/onboarding/OnboardingFlow';
+import { PlayerAvatar } from '@/player/PlayerAvatar';
+import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
+import { sanitizeAvatar } from '@/player/avatarConfig';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
 
@@ -20,6 +23,13 @@ function useOnboarded(): boolean {
   const [onboarded, setOnboarded] = useState(() => progressStore.getState().onboarded);
   useEffect(() => progressStore.subscribe((s) => setOnboarded(s.onboarded)), []);
   return onboarded;
+}
+
+/** Task 14: the child's cosmetic player avatar (null until built). */
+function usePlayerAvatarConfig() {
+  const [avatar, setAvatar] = useState(() => sanitizeAvatar(progressStore.getState().avatar));
+  useEffect(() => progressStore.subscribe((s) => setAvatar(sanitizeAvatar(s.avatar))), []);
+  return avatar;
 }
 
 function BadgeCounter() {
@@ -47,6 +57,7 @@ function BadgeCounter() {
 
 function Minimap() {
   const playerRef = useRef<HTMLDivElement>(null);
+  const avatar = usePlayerAvatarConfig();
   const [states, setStates] = useState(getZoneStates());
   
   useEffect(() => {
@@ -82,10 +93,20 @@ function Minimap() {
           />
         );
       })}
+      {/* Player marker — the child's own avatar face when built (Task 14,
+          cosmetic only); falls back to the original dot. */}
       <div
         ref={playerRef}
-        className="absolute w-4 h-4 -ml-2 -mt-2 bg-sky-500 rounded-full border-2 border-white shadow-sm z-10 transition-transform duration-75"
-      />
+        className="absolute -ml-2.5 -mt-2.5 z-10 transition-transform duration-75"
+      >
+        {avatar ? (
+          <div className="w-5 h-5 rounded-full bg-white border-2 border-sky-500 shadow-sm overflow-hidden flex items-center justify-center">
+            <PlayerAvatar config={avatar} size={16} variant="face" />
+          </div>
+        ) : (
+          <div className="w-4 h-4 bg-sky-500 rounded-full border-2 border-white shadow-sm" />
+        )}
+      </div>
     </div>
   );
 }
@@ -187,6 +208,7 @@ export function HUD() {
   const { activeZoneId, fadeOpacity } = useUIStore();
   const t = useStrings();
   const onboarded = useOnboarded();
+  const playerAvatar = usePlayerAvatarConfig();
 
   return (
     <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
@@ -202,6 +224,17 @@ export function HUD() {
                   {t.appTitle}
                 </h1>
               </div>
+              {/* Player avatar chip (Task 14) — cosmetic identity corner icon */}
+              {playerAvatar && (
+                <div className="self-start flex items-center gap-2 bg-white/90 backdrop-blur-sm pl-1.5 pr-3.5 py-1.5 rounded-full shadow-sm border border-sky-100">
+                  <div className="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 overflow-hidden flex items-center justify-center">
+                    <PlayerAvatar config={playerAvatar} size={26} variant="face" />
+                  </div>
+                  <span className="font-display font-bold text-sm text-slate-700">
+                    {playerAvatar.nickname}
+                  </span>
+                </div>
+              )}
               <div className="self-start">
                 <BadgeCounter />
               </div>
@@ -258,6 +291,10 @@ export function HUD() {
 
       {/* Settings panel overlay (z-30, Task 10) — Help button (z-50) stays on top */}
       <SettingsPanel />
+
+      {/* Edit Avatar overlay (z-30, Task 14) — rendered after SettingsPanel
+          so it paints above it when opened from Settings */}
+      <AvatarEditOverlay />
 
       {/* Community screen overlay (z-30, Task 11) — static, moderated-by-design;
           Get Help Now button (z-50) stays on top */}

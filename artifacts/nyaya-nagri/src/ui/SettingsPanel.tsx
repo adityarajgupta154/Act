@@ -6,8 +6,8 @@
  * PII). Rendered as an overlay wired to the HUD settings button.
  */
 import React, { useEffect } from 'react';
-import { X, Languages, Volume2, Type, Contrast, ALargeSmall, Music } from 'lucide-react';
-import { useUIStore, closeSettings } from './uiStore';
+import { X, Languages, Volume2, Type, Contrast, ALargeSmall, Music, UserRound } from 'lucide-react';
+import { useUIStore, closeSettings, openAvatarEdit } from './uiStore';
 import { useSettings, settingsStore, type TextSize, type Language } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
 import { narrationSupported, speak, stopSpeaking } from '@/a11y/narrator';
@@ -234,6 +234,15 @@ export function SettingsPanel() {
             ))}
           </div>
         </div>
+
+        {/* Edit Avatar (Task 14, PRD §7.2 "editable later from Settings") */}
+        <button
+          onClick={openAvatarEdit}
+          className="mt-6 w-full bg-white border-2 border-sky-200 text-sky-600 hover:bg-sky-50 px-8 py-3.5 rounded-full font-bold text-lg transition-colors active:scale-95 shadow-sm touch-manipulation flex items-center justify-center gap-2"
+        >
+          <UserRound className="w-5 h-5" />
+          {t.editAvatar}
+        </button>
 
         <button
           onClick={closeSettings}

@@ -19,6 +19,8 @@ export type UIState = {
    * reminder cards, and the avatar's distress escalation path (PRD §9.1).
    */
   helpOpen: boolean;
+  /** Player avatar editor overlay, opened from Settings (Task 14). */
+  avatarEditOpen: boolean;
 };
 
 let state: UIState = {
@@ -31,6 +33,7 @@ let state: UIState = {
   settingsOpen: false,
   communityOpen: false,
   helpOpen: false,
+  avatarEditOpen: false,
 };
 
 const listeners = new Set<() => void>();
@@ -111,6 +114,14 @@ export function openHelp() {
 
 export function closeHelp() {
   uiStore.set({ helpOpen: false });
+}
+
+export function openAvatarEdit() {
+  uiStore.set({ avatarEditOpen: true });
+}
+
+export function closeAvatarEdit() {
+  uiStore.set({ avatarEditOpen: false });
 }
 
 export function triggerHelpPulse() {

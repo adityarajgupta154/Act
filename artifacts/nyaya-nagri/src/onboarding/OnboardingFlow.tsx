@@ -33,12 +33,15 @@ import { progressStore, type AgeBand } from '@/data/progressStore';
 import { settingsStore, useSettings, type Language } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
+import { AvatarBuilder } from '@/player/AvatarBuilder';
+import { createDefaultAvatar, type PlayerAvatarConfig } from '@/player/avatarConfig';
 
-const STEP_COUNT = 4;
+const STEP_COUNT = 5;
 
 export function OnboardingFlow() {
   const [step, setStep] = useState(0);
   const [band, setBand] = useState<AgeBand | null>(null);
+  const [avatar, setAvatar] = useState<PlayerAvatarConfig>(() => createDefaultAvatar());
   const [consented, setConsented] = useState(false);
   const settings = useSettings();
   const t = useStrings();
@@ -59,9 +62,11 @@ export function OnboardingFlow() {
   const setLanguage = (language: Language) => settingsStore.update({ language });
 
   const start = () => {
-    if (!band || !consented) return;
-    // Order matters: record consent first, THEN flush settings — device
-    // persistence (progress AND settings) begins only at this moment.
+    if (!band || !consented || !avatar.nickname.trim()) return;
+    // Avatar goes into the store first (in-memory pre-consent), then
+    // consent is recorded and settings flushed — device persistence
+    // (progress AND settings) begins only at that moment.
+    progressStore.update({ avatar: { ...avatar, nickname: avatar.nickname.trim() } });
     progressStore.completeOnboarding(band);
     settingsStore.flush();
   };
@@ -189,8 +194,23 @@ export function OnboardingFlow() {
           </div>
         )}
 
-        {/* Step 3 — Guardian consent (DPDP-aware, zero PII, checkbox only) */}
+        {/* Step 3 — Player avatar builder (Task 14, PRD §7.2): cartoon
+            assets only, game nickname only (never a real name) */}
         {step === 3 && (
+          <div className="animate-in fade-in duration-300">
+            <h2 className="font-display font-bold text-2xl md:text-3xl text-slate-800 mb-1 text-center">
+              {t.buildAvatarTitle}
+            </h2>
+            <p className="text-slate-500 font-medium text-center mb-5">{t.buildAvatarHint}</p>
+            <div className="mb-6">
+              <AvatarBuilder value={avatar} onChange={setAvatar} />
+            </div>
+          </div>
+        )}
+
+        {/* Step 4 — Guardian consent (DPDP-aware, no PII collected: the
+            only free text anywhere is the game nickname above) */}
+        {step === 4 && (
           <div className="animate-in fade-in duration-300">
             <div className="mx-auto bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
               <ShieldCheck className="w-8 h-8 text-green-600" />
@@ -245,7 +265,7 @@ export function OnboardingFlow() {
           {step < STEP_COUNT - 1 ? (
             <button
               onClick={() => setStep(step + 1)}
-              disabled={step === 2 && !band}
+              disabled={(step === 2 && !band) || (step === 3 && !avatar.nickname.trim())}
               className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 active:bg-orange-700 disabled:bg-slate-200 disabled:text-slate-400 text-white px-7 py-3 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md touch-manipulation"
             >
               {t.next}

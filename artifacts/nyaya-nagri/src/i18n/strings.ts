@@ -177,6 +177,25 @@ export interface UIStrings {
   // Ambient audio setting (Task 13)
   ambientLabel: string;
   ambientHint: string;
+
+  // Player avatar builder (Task 14) — cartoon assets only, nickname never a real name
+  buildAvatarTitle: string;
+  buildAvatarHint: string;
+  baseLookLabel: string;
+  baseLookNames: string[];
+  skinToneLabel: string;
+  hairLabel: string;
+  hairStyleNames: string[];
+  outfitLabel: string;
+  outfitNames: string[];
+  accessoriesLabel: string;
+  accessoryNames: string[];
+  pickNickname: string;
+  nicknameHint: string;
+  nicknamePlaceholder: string;
+  editAvatar: string;
+  saveChanges: string;
+  cancel: string;
 }
 
 const EN: UIStrings = {
@@ -370,10 +389,11 @@ const EN: UIStrings = {
   storedPoints: [
     'The age group and language you choose, and your settings.',
     'Your quest progress, quiz scores, and badges.',
+    'Your cartoon avatar look and game nickname (never a real name).',
     'A random player code — never a name.',
   ],
   notStoredNote:
-    'This app never asks for a name, photo, phone number, school, or address. Messages typed or spoken to the guide are sent over the internet to an AI service only to create the reply — this app does not save them. Please remind your child not to share personal details in the chat.',
+    'This app never asks for a real name, photo, phone number, school, or address — the nickname is just a fun game name. Messages typed or spoken to the guide are sent over the internet to an AI service only to create the reply — this app does not save them. Please remind your child not to share personal details in the chat.',
   consentCheckbox:
     'I am a parent, guardian, or teacher, and I agree to let this child play.',
   prototypeNote:
@@ -384,6 +404,24 @@ const EN: UIStrings = {
 
   ambientLabel: 'Calm background music',
   ambientHint: 'Soft music while you explore. Turn it off any time.',
+
+  buildAvatarTitle: 'Make your hero',
+  buildAvatarHint: 'Choose how you look in Nyaya Nagri — cartoon looks only.',
+  baseLookLabel: 'Look',
+  baseLookNames: ['Sunny', 'Brave'],
+  skinToneLabel: 'Skin tone',
+  hairLabel: 'Hair',
+  hairStyleNames: ['Short', 'Curly', 'Braids', 'Bun'],
+  outfitLabel: 'Clothes',
+  outfitNames: ['Kurta', 'T-shirt', 'Kameez', 'Hoodie'],
+  accessoriesLabel: 'Extras (pick up to 3)',
+  accessoryNames: ['Glasses', 'Cap', 'Star badge', 'Scarf', 'Flower', 'Backpack'],
+  pickNickname: 'Pick a game nickname',
+  nicknameHint: 'Not your real name — just a fun game name!',
+  nicknamePlaceholder: 'e.g. StarHero',
+  editAvatar: 'Edit Avatar',
+  saveChanges: 'Save',
+  cancel: 'Cancel',
 };
 
 const HI: UIStrings = {
@@ -577,10 +615,11 @@ const HI: UIStrings = {
   storedPoints: [
     'तुम्हारा चुना हुआ उम्र-समूह, भाषा और सेटिंग्स।',
     'तुम्हारी क्वेस्ट की प्रगति, क्विज़ के अंक और बैज।',
+    'तुम्हारा कार्टून अवतार लुक और गेम निकनेम (कभी असली नाम नहीं)।',
     'एक रैंडम खिलाड़ी कोड — कभी नाम नहीं।',
   ],
   notStoredNote:
-    'यह ऐप कभी नाम, फ़ोटो, फ़ोन नंबर, स्कूल या पता नहीं माँगता। गाइड को लिखे या बोले गए संदेश सिर्फ़ जवाब बनाने के लिए इंटरनेट पर एक एआई (AI) सेवा को भेजे जाते हैं — यह ऐप उन्हें सेव नहीं करता। कृपया बच्चे को याद दिलाएँ कि वह चैट में अपनी निजी जानकारी न लिखे।',
+    'यह ऐप कभी असली नाम, फ़ोटो, फ़ोन नंबर, स्कूल या पता नहीं माँगता — निकनेम बस एक मज़ेदार गेम नाम है। गाइड को लिखे या बोले गए संदेश सिर्फ़ जवाब बनाने के लिए इंटरनेट पर एक एआई (AI) सेवा को भेजे जाते हैं — यह ऐप उन्हें सेव नहीं करता। कृपया बच्चे को याद दिलाएँ कि वह चैट में अपनी निजी जानकारी न लिखे।',
   consentCheckbox:
     'मैं माता-पिता, अभिभावक या शिक्षक हूँ, और मैं इस बच्चे को खेलने की अनुमति देता/देती हूँ।',
   prototypeNote:
@@ -591,6 +630,24 @@ const HI: UIStrings = {
 
   ambientLabel: 'शांत बैकग्राउंड संगीत',
   ambientHint: 'घूमते समय हल्का संगीत। जब चाहो बंद कर दो।',
+
+  buildAvatarTitle: 'अपना हीरो बनाओ',
+  buildAvatarHint: 'चुनो कि न्याय नगरी में तुम कैसे दिखोगे — सिर्फ़ कार्टून लुक।',
+  baseLookLabel: 'चेहरा',
+  baseLookNames: ['हँसमुख', 'बहादुर'],
+  skinToneLabel: 'त्वचा का रंग',
+  hairLabel: 'बाल',
+  hairStyleNames: ['छोटे', 'घुँघराले', 'चोटियाँ', 'जूड़ा'],
+  outfitLabel: 'कपड़े',
+  outfitNames: ['कुर्ता', 'टी-शर्ट', 'कमीज़', 'हुडी'],
+  accessoriesLabel: 'एक्स्ट्रा (ज़्यादा से ज़्यादा 3 चुनो)',
+  accessoryNames: ['चश्मा', 'टोपी', 'सितारा बैज', 'स्कार्फ़', 'फूल', 'बस्ता'],
+  pickNickname: 'गेम के लिए एक निकनेम चुनो',
+  nicknameHint: 'अपना असली नाम नहीं — बस एक मज़ेदार गेम नाम!',
+  nicknamePlaceholder: 'जैसे स्टारहीरो',
+  editAvatar: 'अवतार बदलो',
+  saveChanges: 'सेव करो',
+  cancel: 'रद्द करो',
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

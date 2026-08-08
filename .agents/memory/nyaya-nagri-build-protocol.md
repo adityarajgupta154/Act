@@ -26,3 +26,5 @@ ask guardians to remind children not to share personal details. Any new
 persisted store in Tasks 14-24 must gate on hasRecordedConsent().
 **Why:** architect review failed Task 13 for a pre-consent settings write and
 an incomplete disclosure — DPDP data-minimization is a hard PRD §9.4 rule.
+
+**Task 14 standing invariants:** the game NICKNAME is the only free-text input allowed in the whole app (always with "not your real name" guidance + length cap); no file/camera inputs may ever be added (smoke scans whole src). Player avatar is COSMETIC ONLY — quest engine/content must never read it. Any persisted config that feeds a renderer must pass its sanitizer at every ingress (store load, setter, editor seed) — architect failed round 1 on this once already.

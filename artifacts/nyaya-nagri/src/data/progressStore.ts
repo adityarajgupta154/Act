@@ -7,6 +7,8 @@
  * persistence (backend/localStorage) in a later task without changing callers.
  */
 
+import { sanitizeAvatar, type PlayerAvatarConfig } from '@/player/avatarConfig';
+
 export type AgeBand = '8-11' | '12-15' | '16-18';
 
 export interface ProgressState {
@@ -18,6 +20,12 @@ export interface ProgressState {
    * after consent — see createInitialAdapter().
    */
   onboarded: boolean;
+  /**
+   * The child's own playable character (Task 14, PRD §7.2). Cartoon config
+   * ids + game nickname only (never a real name) — COSMETIC ONLY, never
+   * read by the quest engine/content. Null until built during onboarding.
+   */
+  avatar: PlayerAvatarConfig | null;
   /** Zone completion flags keyed by zone id (e.g. "zone1"). */
   completedZones: Record<string, boolean>;
   /** Badges earned, keyed by badge id. */
@@ -39,6 +47,7 @@ function defaultState(): ProgressState {
   return {
     ageBand: '12-15',
     onboarded: false,
+    avatar: null,
     completedZones: {},
     badges: {},
     quizScores: {},
@@ -96,7 +105,10 @@ class LocalStorageAdapter implements StorageAdapter {
       if (!raw) return null;
       const parsed = JSON.parse(raw) as Partial<ProgressState>;
       // Merge over defaults so states saved by older versions stay valid.
-      return { ...defaultState(), ...parsed };
+      // The avatar is re-validated on every load: a malformed/edited saved
+      // config must degrade to null (no avatar) instead of crashing the
+      // renderer with unknown ids (Task 14).
+      return { ...defaultState(), ...parsed, avatar: sanitizeAvatar(parsed.avatar) };
     } catch {
       return null;
     }
@@ -188,6 +200,18 @@ class ProgressStore {
 
   setAgeBand(ageBand: AgeBand): void {
     this.update({ ageBand });
+  }
+
+  /**
+   * Task 14: save the player's cosmetic avatar (builder + Edit Avatar).
+   * Always sanitized at this ingress — an invalid config is dropped rather
+   * than persisted, so storage can never hold a config that would crash
+   * the SVG renderer.
+   */
+  setAvatar(avatar: PlayerAvatarConfig): void {
+    const clean = sanitizeAvatar(avatar);
+    if (!clean) return;
+    this.update({ avatar: clean });
   }
 
   /**
