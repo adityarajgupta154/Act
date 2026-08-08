@@ -19,7 +19,6 @@
  */
 import React, { useState } from 'react';
 import {
-  Landmark,
   Map as MapIcon,
   MessageCircle,
   ShieldAlert,
@@ -35,6 +34,7 @@ import { useStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
 import { AvatarBuilder } from '@/player/AvatarBuilder';
 import { createDefaultAvatar, type PlayerAvatarConfig } from '@/player/avatarConfig';
+import { WelcomeScene } from './WelcomeScene';
 
 const STEP_COUNT = 5;
 
@@ -71,6 +71,20 @@ export function OnboardingFlow() {
     settingsStore.flush();
   };
 
+  // Step 0 — Welcome + language, presented as the plaza sign-board scene.
+  // Same language handler, same strings, same step advance as before.
+  if (step === 0) {
+    return (
+      <WelcomeScene
+        language={settings.language}
+        onSelectLanguage={setLanguage}
+        onNext={() => setStep(1)}
+        step={step}
+        stepCount={STEP_COUNT}
+      />
+    );
+  }
+
   return (
     <div className="absolute inset-0 z-20 pointer-events-auto bg-gradient-to-b from-amber-50 via-orange-50 to-sky-100 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
       <div className="bg-white rounded-3xl shadow-2xl border border-orange-100 w-full max-w-lg my-auto p-6 md:p-8 animate-in zoom-in-95 duration-300">
@@ -86,51 +100,6 @@ export function OnboardingFlow() {
             />
           ))}
         </div>
-
-        {/* Step 0 — Welcome + language */}
-        {step === 0 && (
-          <div className="text-center animate-in fade-in duration-300">
-            <div className="mx-auto bg-orange-100 w-20 h-20 rounded-full flex items-center justify-center mb-5">
-              <Landmark className="w-10 h-10 text-orange-500" />
-            </div>
-            <h1 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-3">
-              {t.welcomeTitle}
-            </h1>
-            <p className="text-lg text-slate-600 font-medium mb-6">{t.welcomeBody}</p>
-
-            <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3">
-              {t.chooseLanguage}
-            </p>
-            <div className="flex justify-center gap-3 mb-8">
-              <button
-                onClick={() => setLanguage('en')}
-                aria-pressed={settings.language === 'en'}
-                lang="en"
-                className={cn(
-                  'px-6 py-3 rounded-full font-bold text-lg border-2 transition-colors touch-manipulation',
-                  settings.language === 'en'
-                    ? 'bg-orange-500 text-white border-orange-500'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-orange-300',
-                )}
-              >
-                {t.languageEnglish}
-              </button>
-              <button
-                onClick={() => setLanguage('hi')}
-                aria-pressed={settings.language === 'hi'}
-                lang="hi"
-                className={cn(
-                  'px-6 py-3 rounded-full font-bold text-lg border-2 transition-colors touch-manipulation',
-                  settings.language === 'hi'
-                    ? 'bg-orange-500 text-white border-orange-500'
-                    : 'bg-white text-slate-600 border-slate-200 hover:border-orange-300',
-                )}
-              >
-                {t.languageHindi}
-              </button>
-            </div>
-          </div>
-        )}
 
         {/* Step 1 — How it works */}
         {step === 1 && (

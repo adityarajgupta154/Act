@@ -36,3 +36,11 @@ Typecheck catches `Record<LevelKind, ...>` maps (level greetings in i18n, LevelS
 - When a flow targets a mid-quest level, spell out the navigation (pre-quiz MCQs are part of L1; later levels unlock sequentially) or the tester stops mid-Level-1 and reports the feature missing.
 - The tester does not know entering a zone opens a LEVEL SELECT panel (not an auto-started quest) — say "the level-select panel appearing = pass, then click the first level card" or it reports the quest as missing.
 - Subagent followups: `sendFollowup({ name, message })` — a `task` param fails validation.
+- WebGL can also fail **container-wide**, not just after reloads: a brand-new headless Chrome throws `Error creating WebGL context ... BindToCurrentSequence failed, VENDOR=0xffff` on the first paint. When that happens, the 3D canvas is unverifiable in this environment (report code posture + recommend a real-device check) but every DOM surface still renders and is testable.
+
+## Screenshotting the app when WebGL is dead
+The runtime-error overlay from the Replit vite error-modal plugin covers the top ~380px of every screenshot, hiding the UI under test. Two temporary, must-revert dev tweaks make visual checks possible:
+1. `server.hmr.overlay = false` in the artifact's `vite.config.ts` — also suppresses the runtime-error modal.
+2. To capture a Hindi screen without a clickable browser, flip the `settingsStore` DEFAULTS `language` to `'hi'`, screenshot, flip back (a fresh screenshot browser has empty localStorage, so it always boots on the default).
+**Why:** the Screenshot tool cannot click or press Esc, so neither the overlay nor the language toggle can be dismissed/switched from outside.
+**How to apply:** make both edits, screenshot, revert, then confirm with `git diff --stat` on those two files before finishing.

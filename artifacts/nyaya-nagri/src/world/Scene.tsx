@@ -15,7 +15,18 @@ export function Scene() {
         { name: 'interact', keys: ['KeyE'] },
       ]}
     >
-      <Canvas shadows camera={{ position: [0, 15, 20], fov: 45 }}>
+      {/*
+        Mid/low-end device budget (PRD v1.0 §7 non-functional requirement):
+        clamp the render resolution to at most 1.5x CSS pixels so a 3x-DPR
+        phone does not pay for ~4x the fragment work, and let R3F drop the
+        resolution further (down to 0.5x) when frames get expensive.
+      */}
+      <Canvas
+        shadows
+        dpr={[1, 1.5]}
+        performance={{ min: 0.5 }}
+        camera={{ position: [0, 15, 20], fov: 45 }}
+      >
         <color attach="background" args={['#e0f2fe']} />
         
         <ambientLight intensity={0.5} />

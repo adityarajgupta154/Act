@@ -14,6 +14,13 @@ export function Player() {
   const speed = 12;
   const capsuleHeight = 2;
   const targetPosition = useRef(new THREE.Vector3(0, capsuleHeight / 2, 0));
+
+  // Scratch vectors reused every frame — allocating inside useFrame creates
+  // ~240 short-lived Vector3s per second, which shows up as GC stutter on the
+  // low-end device profile (PRD v1.0 §7).
+  const moveDir = useRef(new THREE.Vector3());
+  const desiredCameraPos = useRef(new THREE.Vector3());
+  const lookAtTarget = useRef(new THREE.Vector3());
   
   // Listen for the interact key ('E')
   useEffect(() => {
@@ -42,29 +49,29 @@ export function Player() {
     
     // 1. Gather Input
     const { forward, back, left, right } = getKeys();
-    const moveDir = new THREE.Vector3(0, 0, 0);
+    const move = moveDir.current.set(0, 0, 0);
     
-    if (forward) moveDir.z -= 1;
-    if (back) moveDir.z += 1;
-    if (left) moveDir.x -= 1;
-    if (right) moveDir.x += 1;
+    if (forward) move.z -= 1;
+    if (back) move.z += 1;
+    if (left) move.x -= 1;
+    if (right) move.x += 1;
     
     // Mix joystick if active
     if (joystickRef.current.active) {
-      moveDir.x = joystickRef.current.x;
-      moveDir.z = joystickRef.current.y; 
+      move.x = joystickRef.current.x;
+      move.z = joystickRef.current.y;
     }
     
     // 2. Apply Movement
-    if (moveDir.lengthSq() > 0) {
-      if (moveDir.lengthSq() > 1) {
-        moveDir.normalize();
+    if (move.lengthSq() > 0) {
+      if (move.lengthSq() > 1) {
+        move.normalize();
       }
       
-      targetPosition.current.x += moveDir.x * speed * delta;
-      targetPosition.current.z += moveDir.z * speed * delta;
+      targetPosition.current.x += move.x * speed * delta;
+      targetPosition.current.z += move.z * speed * delta;
       
-      const targetRotation = Math.atan2(moveDir.x, moveDir.z);
+      const targetRotation = Math.atan2(move.x, move.z);
       const currentRotation = group.current.rotation.y;
       
       let diff = targetRotation - currentRotation;
@@ -81,12 +88,19 @@ export function Player() {
     playerPosition.z = targetPosition.current.z;
     
     // 3. Update Camera
-    const cameraOffset = new THREE.Vector3(0, 15, 20);
-    const desiredCameraPos = targetPosition.current.clone().add(cameraOffset);
-    state.camera.position.lerp(desiredCameraPos, 5 * delta);
+    desiredCameraPos.current.set(
+      targetPosition.current.x,
+      targetPosition.current.y + 15,
+      targetPosition.current.z + 20,
+    );
+    state.camera.position.lerp(desiredCameraPos.current, 5 * delta);
     
-    const lookAtTarget = targetPosition.current.clone().add(new THREE.Vector3(0, 2, -2));
-    state.camera.lookAt(lookAtTarget);
+    lookAtTarget.current.set(
+      targetPosition.current.x,
+      targetPosition.current.y + 2,
+      targetPosition.current.z - 2,
+    );
+    state.camera.lookAt(lookAtTarget.current);
 
     // 4. Proximity Check
     let closest: string | null = null;
