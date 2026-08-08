@@ -20,6 +20,27 @@ export interface QuestChoice {
   nextScene?: string;
 }
 
+/**
+ * Task 17 (PRD §7.4): role-play persona ids. Must match the server's
+ * persona configs — the server owns every prompt and guardrail; the
+ * client only ever sends the id.
+ */
+export const PERSONA_IDS = ['police', 'lawyer', 'teacher', 'judge', 'parent'] as const;
+export type PersonaId = (typeof PERSONA_IDS)[number];
+
+/**
+ * Task 17: optional in-scene persona interview. Purely a side conversation
+ * — it never affects scene branching, choices, scoring, or progression
+ * (finalizeLevel stays the only progression write path). The chips are
+ * static, hand-written suggested questions (PRD §9.8); free-text goes
+ * through the same server guardrails.
+ */
+export interface ScenePersona {
+  personaId: PersonaId;
+  /** 3-4 static suggested questions (the safe default input). */
+  chips: string[];
+}
+
 export interface QuestScene {
   sceneId: string;
   narration: string;
@@ -30,6 +51,12 @@ export interface QuestScene {
    * walkthrough quests. Purely presentational; static content per PRD §9.8.
    */
   stageLabel?: string;
+  /**
+   * Task 17: optional role-play persona the child can interview in this
+   * scene (12-15 and 16-18 bands only — validateQuest rejects personas in
+   * 8-11 quests). Always rendered with a "this is a role-play" disclaimer.
+   */
+  persona?: ScenePersona;
   choices: QuestChoice[];
 }
 
@@ -104,6 +131,29 @@ export function validateQuest(q: Quest): Quest {
         throw new Error(
           `Quest ${q.questId}/${scene.sceneId}: nextScene "${c.nextScene}" does not exist`,
         );
+      }
+    }
+    // Task 17: persona interviews are hard-restricted to the older bands —
+    // the 8-11 flowchart experience never gets personas (PRD §7.4).
+    if (scene.persona) {
+      if (q.ageBand === '8-11') {
+        throw new Error(
+          `Quest ${q.questId}/${scene.sceneId}: personas are not allowed in 8-11 quests`,
+        );
+      }
+      if (!(PERSONA_IDS as readonly string[]).includes(scene.persona.personaId)) {
+        throw new Error(
+          `Quest ${q.questId}/${scene.sceneId}: unknown personaId "${scene.persona.personaId}"`,
+        );
+      }
+      const chips = scene.persona.chips;
+      if (!Array.isArray(chips) || chips.length < 3 || chips.length > 4) {
+        throw new Error(
+          `Quest ${q.questId}/${scene.sceneId}: persona chips must be 3-4 suggested questions`,
+        );
+      }
+      if (chips.some((c) => typeof c !== 'string' || !c.trim())) {
+        throw new Error(`Quest ${q.questId}/${scene.sceneId}: empty persona chip`);
       }
     }
   }
@@ -209,6 +259,15 @@ export function validateTranslationParity(source: Quest, translated: Quest): Que
     const trScene = translated.scenes[sIdx];
     if (trScene.sceneId !== srcScene.sceneId) {
       throw new Error(`${ctx}: scene #${sIdx} id differs (${trScene.sceneId})`);
+    }
+    // Task 17: persona STRUCTURE is language-independent — same persona (or
+    // none) in the same scene, same number of suggested chips. Only the
+    // chip text may be translated.
+    if ((trScene.persona?.personaId ?? null) !== (srcScene.persona?.personaId ?? null)) {
+      throw new Error(`${ctx}/${srcScene.sceneId}: persona differs from source`);
+    }
+    if ((trScene.persona?.chips.length ?? 0) !== (srcScene.persona?.chips.length ?? 0)) {
+      throw new Error(`${ctx}/${srcScene.sceneId}: persona chip count differs`);
     }
     if (trScene.choices.length !== srcScene.choices.length) {
       throw new Error(`${ctx}/${srcScene.sceneId}: choice count differs`);

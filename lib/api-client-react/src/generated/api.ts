@@ -23,7 +23,8 @@ import type {
   AvatarChatInput,
   AvatarChatReply,
   AvatarError,
-  HealthStatus
+  HealthStatus,
+  PersonaChatInput
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -52,6 +53,78 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getPersonaChatUrl = () => {
+
+
+
+
+  return `/api/persona/chat`
+}
+
+/**
+ * Stateless interview with a clearly-labelled role-play persona (police officer, lawyer, teacher, judge, parent/guardian). The server owns every persona's narrowly-scoped system prompt and enforces the full Task 2 safety contract per persona: deterministic distress escalation before any AI call, no PII, no advice beyond pre-approved facts, fail-closed helpline output gate. Personas are only available to the 12-15 and 16-18 age bands; no conversation data is persisted.
+ * @summary Ask a question to an in-scene role-play persona
+ */
+export const personaChat = async (personaChatInput: PersonaChatInput, options?: Parameters<typeof customFetch>[1]): Promise<AvatarChatReply> => {
+
+  return customFetch<AvatarChatReply>(getPersonaChatUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(personaChatInput)
+  }
+);}
+
+
+
+
+
+export const getPersonaChatMutationOptions = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof personaChat>>, TError,{data: BodyType<PersonaChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof personaChat>>, TError,{data: BodyType<PersonaChatInput>}, TContext> => {
+
+const mutationKey = ['personaChat'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof personaChat>>, {data: BodyType<PersonaChatInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  personaChat(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PersonaChatMutationResult = NonNullable<Awaited<ReturnType<typeof personaChat>>>
+    export type PersonaChatMutationBody = BodyType<PersonaChatInput>
+    export type PersonaChatMutationError = ErrorType<AvatarError>
+
+    /**
+ * @summary Ask a question to an in-scene role-play persona
+ */
+export const usePersonaChat = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof personaChat>>, TError,{data: BodyType<PersonaChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof personaChat>>,
+        TError,
+        {data: BodyType<PersonaChatInput>},
+        TContext
+      > => {
+      return useMutation(getPersonaChatMutationOptions(options));
+    }
 
 export const getAvatarChatUrl = () => {
 

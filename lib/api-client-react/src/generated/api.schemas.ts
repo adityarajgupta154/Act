@@ -57,6 +57,61 @@ export interface AvatarChatInput {
   history?: AvatarChatTurn[];
 }
 
+/**
+ * Which role-play persona is being interviewed
+ */
+export type PersonaChatInputPersonaId = typeof PersonaChatInputPersonaId[keyof typeof PersonaChatInputPersonaId];
+
+
+export const PersonaChatInputPersonaId = {
+  police: 'police',
+  lawyer: 'lawyer',
+  teacher: 'teacher',
+  judge: 'judge',
+  parent: 'parent',
+} as const;
+
+/**
+ * Persona interviews exist only for the 12-15 and 16-18 bands (the 8-11 flowchart experience has no personas by design).
+ */
+export type PersonaChatInputAgeBand = typeof PersonaChatInputAgeBand[keyof typeof PersonaChatInputAgeBand];
+
+
+export const PersonaChatInputAgeBand = {
+  '12-15': '12-15',
+  '16-18': '16-18',
+} as const;
+
+/**
+ * Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change.
+ */
+export type PersonaChatInputLanguage = typeof PersonaChatInputLanguage[keyof typeof PersonaChatInputLanguage];
+
+
+export const PersonaChatInputLanguage = {
+  en: 'en',
+  hi: 'hi',
+} as const;
+
+export interface PersonaChatInput {
+  /**
+     * @minLength 1
+     * @maxLength 500
+     */
+  message: string;
+  /** Which role-play persona is being interviewed */
+  personaId: PersonaChatInputPersonaId;
+  /** Persona interviews exist only for the 12-15 and 16-18 bands (the 8-11 flowchart experience has no personas by design). */
+  ageBand: PersonaChatInputAgeBand;
+  /** Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change. */
+  language?: PersonaChatInputLanguage;
+  /**
+     * Recent turns kept client-side only (never persisted)
+     * @maxItems 12
+     */
+  history?: AvatarChatTurn[];
+}
+
 export interface AvatarChatReply {
   reply: string;
   /** True when the safety escalation path produced the reply */

@@ -128,3 +128,34 @@ const OUTPUT_ESCALATION_RE =
 export function requiresCanonicalEscalation(reply: string): boolean {
   return OUTPUT_ESCALATION_RE.test(reply);
 }
+
+/**
+ * PII INGRESS GATE (Task 17 hardening, PRD §7 zero-PII / DPDP minimization).
+ *
+ * Deterministic redaction of machine-detectable personal identifiers from
+ * client-supplied text BEFORE it is sent to the external AI provider:
+ *   - email addresses;
+ *   - phone-number-like digit runs (8+ digits incl. separators, Western or
+ *     Devanagari digits) — long enough to spare helplines (1098, 155260),
+ *     years, ages, and legal section numbers, all far below 8 digits;
+ *   - social-media handles (@name).
+ *
+ * Redaction (not rejection) keeps the conversation flowing: the model sees
+ * "[private detail removed]" and its system prompt already instructs it to
+ * remind the child not to share personal details. Free-form PII (names,
+ * addresses in prose) is not deterministically detectable; that remains
+ * prompt-enforced and the client UI never asks for any of it.
+ */
+const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
+const LONG_NUMBER_RE = /\+?[0-9०-९](?:[\s\-.()/]?[0-9०-९]){7,}/g;
+const HANDLE_RE = /@[A-Za-z0-9_.]{3,}/g;
+
+export const PII_PLACEHOLDER = '[private detail removed]';
+
+export function redactPii(text: string): string {
+  return text
+    .normalize('NFKC')
+    .replace(EMAIL_RE, PII_PLACEHOLDER)
+    .replace(LONG_NUMBER_RE, PII_PLACEHOLDER)
+    .replace(HANDLE_RE, PII_PLACEHOLDER);
+}

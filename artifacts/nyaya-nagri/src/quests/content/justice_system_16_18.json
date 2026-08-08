@@ -45,6 +45,15 @@
     {
       "sceneId": "scene3",
       "stageLabel": "Path B - Conflict with Law: First contact",
+      "persona": {
+        "personaId": "police",
+        "chips": [
+          "What are police not allowed to do when a child is accused?",
+          "Would Imran be handcuffed or kept in a lockup?",
+          "When would Imran's parents find out?",
+          "What must happen within the first 24 hours?"
+        ]
+      },
       "narration": "Now Path B. A 17-year-old, Imran, is accused of stealing a phone. This is the moment most people imagine wrong, so walk it precisely. What does the law REQUIRE at first contact between Imran and the police?",
       "choices": [
         {
@@ -64,6 +73,15 @@
     {
       "sceneId": "scene4",
       "stageLabel": "Path B - Conflict with Law: The Board",
+      "persona": {
+        "personaId": "judge",
+        "chips": [
+          "What does a JJB hearing look like from your seat?",
+          "How is a JJB inquiry different from a trial?",
+          "What outcomes can the Board order for a child?",
+          "What is the heinous-offence exception for 16-17 year olds?"
+        ]
+      },
       "narration": "Imran appears before the Juvenile Justice Board (JJB): a magistrate plus two social work members, at least one of them a woman, around a table, not a courtroom cage. The Board holds an INQUIRY, not a trial, in language Imran understands. Suppose the Board finds he did take the phone. What happens to a child in that position?",
       "choices": [
         {

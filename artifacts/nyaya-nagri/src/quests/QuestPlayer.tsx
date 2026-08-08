@@ -15,6 +15,7 @@ import { ZONES } from '@/world/zones';
 import { getStrings } from '@/i18n/strings';
 import { useSettings } from '@/data/settingsStore';
 import { speak, stopSpeaking } from '@/a11y/narrator';
+import { PersonaInterview } from '@/persona/PersonaInterview';
 
 function FeedbackColor(outcome: ChoiceOutcome) {
   switch (outcome) {
@@ -442,6 +443,19 @@ export function QuestPlayer({
               {scene.narration}
             </p>
           </div>
+
+          {/* Task 17: optional role-play interview — a side conversation
+              that never affects choices, scoring, or progression. Keyed by
+              scene so each persona appearance starts fresh (and the
+              disclaimer is shown anew every time). */}
+          {scene.persona && (
+            <PersonaInterview
+              key={scene.sceneId}
+              persona={scene.persona}
+              ageBand={quest.ageBand}
+              language={questLang}
+            />
+          )}
 
           {!feedback ? (
             <div className="flex flex-col gap-3 mt-auto">

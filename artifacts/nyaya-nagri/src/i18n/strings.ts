@@ -112,6 +112,24 @@ export interface UIStrings {
   closeChat: string;
   zoneWelcomeFallback: (zoneName: string, theme: string) => string;
 
+  // Persona interviews (Task 17, PRD §7.4) — disclaimer is HARD-CODED and
+  // shown every time a persona appears (PRD §9.2); never AI-generated.
+  personaDisclaimer: (role: string) => string;
+  personaRolePolice: string;
+  personaRoleLawyer: string;
+  personaRoleTeacher: string;
+  personaRoleJudge: string;
+  personaRoleParent: string;
+  personaNamePolice: string;
+  personaNameLawyer: string;
+  personaNameTeacher: string;
+  personaNameJudge: string;
+  personaNameParent: string;
+  personaIntroLine: (name: string) => string;
+  personaInputPlaceholder: string;
+  personaSend: string;
+  personaUnavailable: string;
+
   // Settings panel
   settingsTitle: string;
   languageLabel: string;
@@ -379,6 +397,23 @@ const EN: UIStrings = {
   closeChat: 'Close chat',
   zoneWelcomeFallback: (zoneName, theme) =>
     `Welcome to ${zoneName}! Here we'll learn about: ${theme}.`,
+
+  personaDisclaimer: (role) => `This is a role-play, not a real ${role}.`,
+  personaRolePolice: 'Police Officer',
+  personaRoleLawyer: 'Lawyer',
+  personaRoleTeacher: 'Teacher',
+  personaRoleJudge: 'Judge',
+  personaRoleParent: 'Parent or Guardian',
+  personaNamePolice: 'Officer Kavita',
+  personaNameLawyer: 'Advocate Arjun',
+  personaNameTeacher: 'Sunita Maam',
+  personaNameJudge: 'Judge Meera',
+  personaNameParent: 'Nisha Aunty',
+  personaIntroLine: (name) =>
+    `You can interview ${name}. Tap a suggested question, or type a short one of your own.`,
+  personaInputPlaceholder: 'Type a short question...',
+  personaSend: 'Ask',
+  personaUnavailable: 'This character is resting — try again in a moment.',
 
   settingsTitle: 'Settings',
   languageLabel: 'Language',
@@ -689,6 +724,23 @@ const HI: UIStrings = {
   closeChat: 'चैट बंद करो',
   zoneWelcomeFallback: (zoneName, theme) =>
     `${zoneName} में स्वागत है! यहाँ हम सीखेंगे: ${theme}।`,
+
+  personaDisclaimer: (role) => `यह सिर्फ़ एक रोल-प्ले है, असली ${role} नहीं।`,
+  personaRolePolice: 'पुलिस अफ़सर',
+  personaRoleLawyer: 'वकील',
+  personaRoleTeacher: 'टीचर',
+  personaRoleJudge: 'जज',
+  personaRoleParent: 'माता-पिता या अभिभावक',
+  personaNamePolice: 'ऑफ़िसर कविता',
+  personaNameLawyer: 'एडवोकेट अर्जुन',
+  personaNameTeacher: 'सुनीता मैम',
+  personaNameJudge: 'जज मीरा',
+  personaNameParent: 'निशा आंटी',
+  personaIntroLine: (name) =>
+    `तुम ${name} से सवाल पूछ सकते हो। नीचे दिया कोई सवाल चुनो, या अपना छोटा सवाल लिखो।`,
+  personaInputPlaceholder: 'छोटा सवाल लिखो...',
+  personaSend: 'पूछो',
+  personaUnavailable: 'यह किरदार थोड़ा आराम कर रहा है — थोड़ी देर में फिर कोशिश करो।',
 
   settingsTitle: 'सेटिंग्स',
   languageLabel: 'भाषा',

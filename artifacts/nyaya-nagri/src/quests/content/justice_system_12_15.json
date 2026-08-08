@@ -26,6 +26,15 @@
     {
       "sceneId": "scene2",
       "stageLabel": "Step 2 of 5: The first 24 hours",
+      "persona": {
+        "personaId": "police",
+        "chips": [
+          "How do police treat a child they find alone?",
+          "Would Deepak be handcuffed or put in a lockup?",
+          "Do police wear uniforms when helping a child?",
+          "Who tells the family what is happening?"
+        ]
+      },
       "narration": "A neighbour calls 1098. Now a clock starts ticking: the law says a child found in need of protection must be brought before the Child Welfare Committee within 24 hours (travel time not counted). So what exactly IS the Child Welfare Committee?",
       "choices": [
         {
@@ -64,6 +73,15 @@
     {
       "sceneId": "scene4",
       "stageLabel": "Step 4 of 5: The plan",
+      "persona": {
+        "personaId": "judge",
+        "chips": [
+          "What is it like inside a CWC hearing?",
+          "Is the CWC a court? Could Deepak be punished there?",
+          "How does the CWC decide where a child should live?",
+          "What happens if a child has to go to the Juvenile Justice Board instead?"
+        ]
+      },
       "narration": "The report is ready. Now the CWC makes the big decision: Deepak's long-term plan. Here is the question that reveals the whole spirit of the law. What is the system's FIRST-choice goal for a child like Deepak?",
       "choices": [
         {

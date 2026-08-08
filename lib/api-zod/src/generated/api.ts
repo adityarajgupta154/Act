@@ -9,6 +9,35 @@ import * as zod from 'zod';
 
 
 /**
+ * Stateless interview with a clearly-labelled role-play persona (police officer, lawyer, teacher, judge, parent/guardian). The server owns every persona's narrowly-scoped system prompt and enforces the full Task 2 safety contract per persona: deterministic distress escalation before any AI call, no PII, no advice beyond pre-approved facts, fail-closed helpline output gate. Personas are only available to the 12-15 and 16-18 age bands; no conversation data is persisted.
+ * @summary Ask a question to an in-scene role-play persona
+ */
+export const personaChatBodyMessageMax = 500;
+
+export const personaChatBodyHistoryItemContentMax = 2000;
+
+export const personaChatBodyHistoryMax = 12;
+
+
+
+export const PersonaChatBody = zod.object({
+  "message": zod.string().min(1).max(personaChatBodyMessageMax),
+  "personaId": zod.enum(['police', 'lawyer', 'teacher', 'judge', 'parent']).describe('Which role-play persona is being interviewed'),
+  "ageBand": zod.enum(['12-15', '16-18']).describe('Persona interviews exist only for the 12-15 and 16-18 bands (the 8-11 flowchart experience has no personas by design).\n'),
+  "language": zod.enum(['en', 'hi']).optional().describe('Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change.\n'),
+  "history": zod.array(zod.object({
+  "role": zod.enum(['user', 'assistant']),
+  "content": zod.string().max(personaChatBodyHistoryItemContentMax)
+})).max(personaChatBodyHistoryMax).optional().describe('Recent turns kept client-side only (never persisted)')
+})
+
+export const PersonaChatResponse = zod.object({
+  "reply": zod.string(),
+  "escalated": zod.boolean().describe('True when the safety escalation path produced the reply')
+})
+
+
+/**
  * Stateless chat with the child's AI guide. The server builds the age-band-scoped system prompt and enforces all safety guardrails. No conversation data is persisted (data minimization by design).
  * @summary Send a message to the AI avatar companion
  */

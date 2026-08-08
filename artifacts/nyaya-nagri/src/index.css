@@ -173,3 +173,18 @@ select {
   min-height: 0;
   min-width: 0;
 }
+
+/* --- Task 17: persona sprite idle animations (gentle, reduced-motion aware) --- */
+@keyframes persona-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes persona-blink {
+  0%, 92%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.12); }
+}
+.persona-bob { animation: persona-bob 3s ease-in-out infinite; }
+.persona-blink { animation: persona-blink 4.2s ease-in-out infinite; transform-origin: center; }
+@media (prefers-reduced-motion: reduce) {
+  .persona-bob, .persona-blink { animation: none; }
+}

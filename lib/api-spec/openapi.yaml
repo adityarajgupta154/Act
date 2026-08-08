@@ -12,7 +12,48 @@ tags:
     description: Health operations
   - name: avatar
     description: AI Avatar Companion (Adhikar Didi/Bhaiya) chat operations
+  - name: persona
+    description: AI Role-Play Persona interviews (Task 17, PRD §7.4)
 paths:
+  /persona/chat:
+    post:
+      operationId: personaChat
+      tags: [persona]
+      summary: Ask a question to an in-scene role-play persona
+      description: >
+        Stateless interview with a clearly-labelled role-play persona
+        (police officer, lawyer, teacher, judge, parent/guardian). The
+        server owns every persona's narrowly-scoped system prompt and
+        enforces the full Task 2 safety contract per persona: deterministic
+        distress escalation before any AI call, no PII, no advice beyond
+        pre-approved facts, fail-closed helpline output gate. Personas are
+        only available to the 12-15 and 16-18 age bands; no conversation
+        data is persisted.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PersonaChatInput"
+      responses:
+        "200":
+          description: Persona reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarChatReply"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "502":
+          description: Upstream AI error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
   /avatar/chat:
     post:
       operationId: avatarChat
@@ -90,6 +131,40 @@ components:
             $ref: "#/components/schemas/AvatarChatTurn"
       required:
         - message
+        - ageBand
+    PersonaChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 500
+        personaId:
+          type: string
+          enum: [police, lawyer, teacher, judge, parent]
+          description: Which role-play persona is being interviewed
+        ageBand:
+          type: string
+          enum: ["12-15", "16-18"]
+          description: >
+            Persona interviews exist only for the 12-15 and 16-18 bands
+            (the 8-11 flowchart experience has no personas by design).
+        language:
+          type: string
+          enum: [en, hi]
+          description: >
+            Reply language selected on the device (defaults to en). Safety
+            behaviour is identical in every language; helpline digits never
+            change.
+        history:
+          type: array
+          maxItems: 12
+          description: Recent turns kept client-side only (never persisted)
+          items:
+            $ref: "#/components/schemas/AvatarChatTurn"
+      required:
+        - message
+        - personaId
         - ageBand
     AvatarChatTurn:
       type: object

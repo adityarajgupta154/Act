@@ -14,3 +14,7 @@ export * from './avatarChatTurn';
 export * from './avatarChatTurnRole';
 export * from './avatarError';
 export * from './healthStatus';
+export * from './personaChatInput';
+export * from './personaChatInputAgeBand';
+export * from './personaChatInputLanguage';
+export * from './personaChatInputPersonaId';

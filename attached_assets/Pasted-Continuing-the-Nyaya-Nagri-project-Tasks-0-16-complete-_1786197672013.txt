@@ -1,0 +1,17 @@
+Continuing the "Nyaya Nagri" project (Tasks 0-16 complete, including the AI companion avatar system from Task 2).
+
+Add additional AI-driven personas the child can talk to inside specific levels, reusing the exact same server-side Claude API calling pattern already built for the companion avatar in Task 2 (never expose an API key client-side).
+
+1. Create FIVE new persona configs, each a simple 2D animated sprite with its own name, short idle animation, and a narrowly-scoped system prompt: Police Officer, Lawyer, Teacher, Judge, and Parent/Guardian.
+
+2. Each persona may ONLY discuss its designated in-scene topic for the level it appears in (e.g., inside a Zone 4 "Justice System Simulator" level, the "Judge" persona only explains what a JJB/CWC hearing conceptually looks like) — it must refuse to go off-topic, redirecting back to the scene politely.
+
+3. CRITICAL: every safety guardrail already built for the main companion avatar in Task 2 must be implemented for EACH persona individually and without exception — no PII collection, no medical/legal advice beyond pre-approved facts passed into context, and the same distress-disclosure escalation rule (immediately surface Childline 1098 / open the Get Help screen from Task 12, do not attempt to counsel). Do not assume this is "inherited" — explicitly build the guardrail check into each persona's prompt/logic.
+
+4. At the start of any level using a persona, show a clear one-line disclaimer: "This is a role-play, not a real [Police Officer/Lawyer/etc.]" — this must appear every time, not just once per session.
+
+5. Build a simple "interview" UI for these levels: a set of 3-4 suggested question chips the child can tap (safest default), plus an optional short free-text input that still passes through all Task 2/step-3 guardrails.
+
+6. Wire the Judge and Police personas into a redesigned Zone 4 "Justice System Simulator" level (replacing or enhancing the existing flowchart-style walkthrough from Task 7 with this more interactive persona-driven format for the 12-15 and 16-18 age bands specifically; keep the gentler 8-11 version from Task 7 as-is, no personas needed for that age band).
+
+Test each persona stays on-topic, correctly refuses off-topic questions, correctly escalates on a simulated distress message exactly like Task 2's companion avatar does, and that the role-play disclaimer always appears.
