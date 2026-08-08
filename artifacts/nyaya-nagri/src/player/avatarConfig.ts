@@ -14,7 +14,13 @@
 export type BaseLook = 'sunny' | 'brave';
 export type HairStyle = 'short' | 'curly' | 'braids' | 'bun';
 export type Outfit = 'kurta' | 'tshirt' | 'kameez' | 'hoodie';
-export type Accessory = 'glasses' | 'cap' | 'star' | 'scarf' | 'flower' | 'backpack';
+/**
+ * Task 16: 'bow' | 'medal' | 'crown' | 'cape' are Avatar Shop cosmetics —
+ * unlocked with in-game Coins only (never real money, PRD §7.3/§9.6).
+ */
+export type Accessory =
+  | 'glasses' | 'cap' | 'star' | 'scarf' | 'flower' | 'backpack'
+  | 'bow' | 'medal' | 'crown' | 'cape';
 
 export interface PlayerAvatarConfig {
   base: BaseLook;
@@ -38,7 +44,8 @@ export const SKIN_TONES: readonly string[] = [
 ];
 export const HAIR_STYLES: readonly HairStyle[] = ['short', 'curly', 'braids', 'bun'];
 export const OUTFITS: readonly Outfit[] = ['kurta', 'tshirt', 'kameez', 'hoodie'];
-export const ACCESSORIES: readonly Accessory[] = [
+/** Starter accessories — free from onboarding onwards (PRD §7.2). */
+export const FREE_ACCESSORIES: readonly Accessory[] = [
   'glasses',
   'cap',
   'star',
@@ -46,7 +53,26 @@ export const ACCESSORIES: readonly Accessory[] = [
   'flower',
   'backpack',
 ];
+/** Shop-only cosmetics (Task 16) — must be OWNED (bought with Coins) to equip. */
+export const SHOP_ACCESSORIES: readonly Accessory[] = ['bow', 'medal', 'crown', 'cape'];
+/** Every renderer-known accessory id, free first then shop (UI name lists follow this order). */
+export const ACCESSORIES: readonly Accessory[] = [...FREE_ACCESSORIES, ...SHOP_ACCESSORIES];
 export const MAX_ACCESSORIES = 3;
+
+/**
+ * Ownership filter (Task 16 ingress rule): shop accessories may only stay
+ * equipped when they appear in the owned list. Applied at every avatar
+ * write/load in the progress store — a save edited to wear an un-bought
+ * cosmetic quietly loses it.
+ */
+export function filterToOwnedAccessories(
+  accessories: Accessory[],
+  owned: readonly string[],
+): Accessory[] {
+  return accessories.filter(
+    (a) => !SHOP_ACCESSORIES.includes(a) || owned.includes(a),
+  );
+}
 export const NICKNAME_MAX_LENGTH = 16;
 
 export function createDefaultAvatar(): PlayerAvatarConfig {

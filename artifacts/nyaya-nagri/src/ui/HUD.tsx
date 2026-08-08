@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useJoystick } from './JoystickContext';
 import { HelpDialog } from './HelpDialog';
-import { Settings, Map as MapIcon, Award, Star, Users } from 'lucide-react';
-import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, enterLevel, clearLevel } from './uiStore';
+import { Settings, Map as MapIcon, Award, Star, Users, Trophy, Coins, Flame } from 'lucide-react';
+import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, openShop, enterLevel, clearLevel } from './uiStore';
 import { ProgressOverlay } from './ProgressScreen';
 import { SettingsPanel } from './SettingsPanel';
 import { CommunityOverlay } from './CommunityScreen';
@@ -14,6 +14,8 @@ import { AvatarWidget } from '@/avatar/AvatarWidget';
 import { OnboardingFlow } from '@/onboarding/OnboardingFlow';
 import { PlayerAvatar } from '@/player/PlayerAvatar';
 import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
+import { AvatarShopOverlay } from '@/economy/AvatarShop';
+import { rankForXp } from '@/economy/economy';
 import { sanitizeAvatar } from '@/player/avatarConfig';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
@@ -53,6 +55,50 @@ function BadgeCounter() {
       <Award className="w-4 h-4 fill-orange-500" />
       <span className="font-bold text-sm">{count}</span>
     </div>
+  );
+}
+
+/**
+ * Task 16 economy chips: "Player Rank" (wording is deliberate — never
+ * confusable with the in-zone "Level X"), Coins (tap = Avatar Shop), and
+ * the gentle streak. The streak chip only celebrates the current count —
+ * there is no warning, countdown, or guilt state anywhere (PRD §9.6).
+ */
+function EconomyChips() {
+  const t = useStrings();
+  const [snap, setSnap] = useState(() => {
+    const s = progressStore.getState();
+    return { xp: s.xp, coins: s.coins, streak: s.streak.count };
+  });
+  useEffect(
+    () =>
+      progressStore.subscribe((s) =>
+        setSnap({ xp: s.xp, coins: s.coins, streak: s.streak.count }),
+      ),
+    [],
+  );
+
+  return (
+    <>
+      <div className="self-start bg-white/90 backdrop-blur-sm border border-violet-200 text-violet-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+        <Trophy className="w-4 h-4" />
+        <span className="font-bold text-sm">{t.playerRankChip(rankForXp(snap.xp))}</span>
+      </div>
+      <button
+        onClick={openShop}
+        aria-label={t.openShopLabel}
+        className="self-start bg-white/90 backdrop-blur-sm border border-amber-200 text-amber-600 hover:bg-amber-50 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm font-bold text-sm transition-colors active:scale-95 touch-manipulation"
+      >
+        <Coins className="w-4 h-4" />
+        {t.coinsChip(snap.coins)}
+      </button>
+      {snap.streak > 0 && (
+        <div className="self-start bg-white/90 backdrop-blur-sm border border-orange-200 text-orange-500 px-3 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm">
+          <Flame className="w-4 h-4" />
+          <span className="font-bold text-sm">{t.streakChip(snap.streak)}</span>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -232,6 +278,12 @@ export function HUD() {
   const onboarded = useOnboarded();
   const playerAvatar = usePlayerAvatarConfig();
 
+  // Task 16: opening the game counts as "played today" — the streak grows
+  // gently from simply showing up (idempotent per local calendar day).
+  useEffect(() => {
+    if (onboarded) progressStore.touchDailyStreak();
+  }, [onboarded]);
+
   return (
     <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
       
@@ -260,6 +312,8 @@ export function HUD() {
               <div className="self-start">
                 <BadgeCounter />
               </div>
+              {/* Task 16: Player Rank / Coins (opens shop) / gentle streak */}
+              {onboarded && <EconomyChips />}
               <button
                 onClick={openProgress}
                 className="self-start bg-white/90 backdrop-blur-sm border border-amber-200 text-amber-600 hover:bg-amber-50 px-4 py-2 rounded-full flex items-center gap-2 shadow-sm font-bold text-sm transition-colors active:scale-95 touch-manipulation"
@@ -317,6 +371,10 @@ export function HUD() {
       {/* Edit Avatar overlay (z-30, Task 14) — rendered after SettingsPanel
           so it paints above it when opened from Settings */}
       <AvatarEditOverlay />
+
+      {/* Avatar Shop overlay (z-30, Task 16) — cosmetic Coins shop, no real
+          money anywhere; Get Help Now button (z-50) stays on top */}
+      <AvatarShopOverlay />
 
       {/* Community screen overlay (z-30, Task 11) — static, moderated-by-design;
           Get Help Now button (z-50) stays on top */}

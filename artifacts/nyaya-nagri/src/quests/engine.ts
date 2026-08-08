@@ -16,6 +16,12 @@
 import { progressStore } from '@/data/progressStore';
 import type { Quest, QuestLevel, ChoiceOutcome } from './schema';
 import { getRecap, type RecapItem } from './recaps';
+import {
+  advanceStreak,
+  awardForLevel,
+  newlyUnlockedTitles,
+  todayString,
+} from '@/economy/economy';
 
 export type QuestPhase = 'pre-quiz' | 'scenes' | 'post-quiz' | 'recap' | 'complete';
 
@@ -358,6 +364,12 @@ export function levelKey(zoneId: string, levelId: string): string {
 }
 
 export interface LevelResult {
+  /** Task 16: XP awarded (0 for practice/replays). */
+  xpAwarded: number;
+  /** Task 16: Coins awarded (0 for practice/replays). */
+  coinsAwarded: number;
+  /** Task 16: title ids newly unlocked by this completion (private). */
+  newTitles: string[];
   questId: string;
   zoneId: string;
   levelId: string;
@@ -400,6 +412,9 @@ export function finalizeLevel(session: QuestSession): LevelResult {
   if (session.practice || alreadyComplete) {
     progressStore.update({
       replayCounts: { ...state.replayCounts, [key]: (state.replayCounts[key] ?? 0) + 1 },
+      // Practice still counts as "played today" for the gentle streak —
+      // but NEVER awards XP/Coins (no practice grinding, Task 16).
+      streak: advanceStreak(state.streak, todayString()),
     });
     return {
       questId: quest.questId,
@@ -412,6 +427,9 @@ export function finalizeLevel(session: QuestSession): LevelResult {
       postScore,
       total: quest.quizQuestions.length,
       badgeId: null,
+      xpAwarded: 0,
+      coinsAwarded: 0,
+      newTitles: [],
     };
   }
 
@@ -450,6 +468,24 @@ export function finalizeLevel(session: QuestSession): LevelResult {
     patch.completedZones = { ...state.completedZones, [quest.zoneId]: true };
   }
 
+  // Task 16 economy — awarded ONLY on this recorded path, so XP/Coins keep
+  // the same single-write-authority guarantee as scores and badges. Rank is
+  // derived from XP at render time and never stored.
+  const award = awardForLevel(level.kind, zoneCompleted);
+  patch.xp = state.xp + award.xp;
+  patch.coins = state.coins + award.coins;
+  patch.streak = advanceStreak(state.streak, todayString());
+
+  // Titles: evaluate milestone predicates against the post-completion state.
+  const postState = { ...state, ...patch };
+  const newTitles = newlyUnlockedTitles(state.titles, postState);
+  if (newTitles.length > 0) {
+    patch.titles = {
+      ...state.titles,
+      ...Object.fromEntries(newTitles.map((id) => [id, true])),
+    };
+  }
+
   progressStore.update(patch);
   return {
     questId: quest.questId,
@@ -462,5 +498,8 @@ export function finalizeLevel(session: QuestSession): LevelResult {
     postScore,
     total: quest.quizQuestions.length,
     badgeId,
+    xpAwarded: award.xp,
+    coinsAwarded: award.coins,
+    newTitles,
   };
 }

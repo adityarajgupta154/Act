@@ -25,6 +25,7 @@ import {
   ShieldCheck,
   Sparkles,
   ChevronDown,
+  Trophy,
   X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -40,8 +41,9 @@ import {
   selectCirclePrompts,
   type CirclePrompt,
 } from '@/community/content';
+import { DEMO_COHORT } from '@/community/leaderboard';
 
-type CommunityTab = 'circle' | 'board' | 'expert';
+type CommunityTab = 'circle' | 'board' | 'expert' | 'leaderboard';
 
 function ZoneChip({ zoneId }: { zoneId: string | null }) {
   const t = useStrings();
@@ -238,6 +240,97 @@ function ExpertTab() {
   );
 }
 
+/**
+ * Task 16 (PRD §7.3 + §9.7): cohort-ONLY leaderboard — pseudonymous game
+ * nicknames, opt-in with the DEFAULT OFF, and no global/public board of
+ * any kind. This prototype is device-local with no accounts, so no real
+ * classroom cohort can exist yet: the cohort shown is a clearly labelled
+ * demo classroom written by the team (same precedent as the Task 11
+ * board). The child's own row uses their game nickname and real local XP.
+ */
+function LeaderboardTab() {
+  const t = useStrings();
+  const [progress, setProgress] = useState(() => progressStore.getState());
+  useEffect(() => progressStore.subscribe(setProgress), []);
+
+  const optIn = progress.leaderboardOptIn;
+  const nickname = progress.avatar?.nickname || t.leaderboardYouTag;
+  const rows = [
+    ...DEMO_COHORT.map((e) => ({ handle: e.handle, xp: e.xp, you: false })),
+    { handle: nickname, xp: progress.xp, you: true },
+  ].sort((a, b) => b.xp - a.xp);
+
+  return (
+    <div>
+      <h3 className="font-display font-bold text-xl text-slate-800 mb-2">
+        {t.leaderboardTitle}
+      </h3>
+      <p className="text-slate-600 font-medium mb-3">{t.leaderboardIntro}</p>
+      <p className="text-sm text-green-700 font-bold mb-4 flex items-start gap-2 bg-green-50 border border-green-100 rounded-xl px-3 py-2">
+        <ShieldCheck className="w-4 h-4 mt-0.5 shrink-0" />
+        {t.leaderboardNeverPublic}
+      </p>
+
+      {/* Opt-in switch — default OFF; joining is always the child's choice */}
+      <div className="flex items-center justify-between gap-4 bg-slate-50 border border-slate-100 rounded-2xl p-4 mb-4">
+        <p className="font-bold text-slate-700">{t.leaderboardOptInLabel}</p>
+        <button
+          role="switch"
+          aria-checked={optIn}
+          aria-label={t.leaderboardOptInLabel}
+          onClick={() => progressStore.setLeaderboardOptIn(!optIn)}
+          className={cn(
+            'w-12 h-7 rounded-full relative transition-colors shrink-0 touch-manipulation',
+            optIn ? 'bg-green-500' : 'bg-slate-300',
+          )}
+        >
+          <span
+            className={cn(
+              'absolute top-1 w-5 h-5 rounded-full bg-white shadow transition-all',
+              optIn ? 'left-6' : 'left-1',
+            )}
+          />
+        </button>
+      </div>
+
+      {!optIn ? (
+        <p className="text-slate-500 font-medium">{t.leaderboardOffNote}</p>
+      ) : (
+        <div>
+          <p className="text-sm text-amber-700 font-bold mb-3 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+            <Sparkles className="w-4 h-4 mt-0.5 shrink-0" />
+            {t.leaderboardDemoNote}
+          </p>
+          <ul className="flex flex-col gap-2">
+            {rows.map((row, i) => (
+              <li
+                key={`${row.handle}-${i}`}
+                className={cn(
+                  'flex items-center gap-3 p-3 rounded-2xl border-2',
+                  row.you ? 'bg-orange-50 border-orange-200' : 'bg-white border-slate-100',
+                )}
+              >
+                <span className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-sm shrink-0">
+                  {i + 1}
+                </span>
+                <span className="font-bold text-slate-700 min-w-0 truncate">{row.handle}</span>
+                {row.you && (
+                  <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full shrink-0">
+                    {t.leaderboardYouTag}
+                  </span>
+                )}
+                <span className="ml-auto font-bold text-sky-600 shrink-0">
+                  {t.leaderboardXp(row.xp)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function CommunityOverlay() {
   const { communityOpen } = useUIStore();
   const t = useStrings();
@@ -258,6 +351,7 @@ export function CommunityOverlay() {
     { id: 'circle', label: t.tabCircle, icon: <Users className="w-4 h-4" /> },
     { id: 'board', label: t.tabBoard, icon: <MessageSquare className="w-4 h-4" /> },
     { id: 'expert', label: t.tabExpert, icon: <Scale className="w-4 h-4" /> },
+    { id: 'leaderboard', label: t.tabLeaderboard, icon: <Trophy className="w-4 h-4" /> },
   ];
 
   return (
@@ -311,6 +405,7 @@ export function CommunityOverlay() {
           {tab === 'circle' && <CircleTab />}
           {tab === 'board' && <BoardTab />}
           {tab === 'expert' && <ExpertTab />}
+          {tab === 'leaderboard' && <LeaderboardTab />}
         </div>
       </div>
     </div>

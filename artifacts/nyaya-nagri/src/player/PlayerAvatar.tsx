@@ -52,6 +52,15 @@ export function PlayerAvatar({
     >
       {!face && (
         <g>
+          {/* Cape (Task 16 shop cosmetic) — drawn BEHIND the torso */}
+          {has(config, 'cape') && (
+            <path
+              d="M27,82 Q14,100 22,118 L34,112 L34,84 Z M73,82 Q86,100 78,118 L66,112 L66,84 Z"
+              fill="#DC2626"
+              stroke="#B91C1C"
+              strokeWidth="1.5"
+            />
+          )}
           {/* Torso */}
           <path d="M25,120 V96 Q25,78 50,78 Q75,78 75,96 V120 Z" fill={outfit.main} />
           {config.outfit === 'kurta' && (
@@ -87,6 +96,14 @@ export function PlayerAvatar({
               stroke="#F59E0B"
               strokeWidth="1"
             />
+          )}
+          {/* Medal (Task 16 shop cosmetic) — ribbon + disc on the chest */}
+          {has(config, 'medal') && (
+            <g>
+              <path d="M58,80 L62,92 L66,80 Z" fill="#3B82F6" />
+              <circle cx="62" cy="96" r="5.5" fill="#FBBF24" stroke="#D97706" strokeWidth="1.5" />
+              <circle cx="62" cy="96" r="2.2" fill="#FDE68A" />
+            </g>
           )}
         </g>
       )}
@@ -157,6 +174,26 @@ export function PlayerAvatar({
           <circle cx="28" cy="31" r="3" fill="#F472B6" />
           <circle cx="28" cy="37" r="3" fill="#F472B6" />
           <circle cx="28" cy="34" r="2.2" fill="#FDE047" />
+        </g>
+      )}
+      {/* Crown (Task 16 shop cosmetic) — sits on top of any hair style */}
+      {has(config, 'crown') && (
+        <g>
+          <path
+            d="M36,24 L38,12 L45,19 L50,9 L55,19 L62,12 L64,24 Z"
+            fill="#FBBF24"
+            stroke="#D97706"
+            strokeWidth="1.5"
+          />
+          <circle cx="50" cy="15" r="1.8" fill="#F87171" />
+        </g>
+      )}
+      {/* Hair bow (Task 16 shop cosmetic) */}
+      {has(config, 'bow') && (
+        <g>
+          <path d="M69,29 L78,24 L78,34 Z" fill="#F472B6" stroke="#DB2777" strokeWidth="1" />
+          <path d="M69,29 L60,24 L60,34 Z" fill="#F472B6" stroke="#DB2777" strokeWidth="1" />
+          <circle cx="69" cy="29" r="2.4" fill="#FDE047" />
         </g>
       )}
     </svg>

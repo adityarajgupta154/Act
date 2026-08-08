@@ -21,6 +21,8 @@ export type UIState = {
   helpOpen: boolean;
   /** Player avatar editor overlay, opened from Settings (Task 14). */
   avatarEditOpen: boolean;
+  /** Avatar Shop overlay (Task 16) — cosmetic Coins shop, no real money. */
+  shopOpen: boolean;
   /**
    * Task 15: the level currently being played inside the active zone, so
    * the AI companion can greet level entry (like it greets zone entry).
@@ -40,6 +42,7 @@ let state: UIState = {
   communityOpen: false,
   helpOpen: false,
   avatarEditOpen: false,
+  shopOpen: false,
   activeLevel: null,
 };
 
@@ -137,6 +140,14 @@ export function openAvatarEdit() {
 
 export function closeAvatarEdit() {
   uiStore.set({ avatarEditOpen: false });
+}
+
+export function openShop() {
+  uiStore.set({ shopOpen: true });
+}
+
+export function closeShop() {
+  uiStore.set({ shopOpen: false });
 }
 
 // DEV-ONLY test seam: the e2e browser cannot render WebGL, so it cannot

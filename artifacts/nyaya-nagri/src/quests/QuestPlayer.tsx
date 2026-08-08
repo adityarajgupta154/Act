@@ -174,6 +174,18 @@ export function QuestPlayer({
             {t.youGotXofY(finalResult.postScore ?? 0, finalResult.total)}
           </h3>
 
+          {/* Task 16: XP/Coin rewards + any newly earned (private) titles */}
+          {finalResult.xpAwarded > 0 && (
+            <p className="text-lg font-bold text-violet-600 mb-2">
+              {t.rewardsLine(finalResult.xpAwarded, finalResult.coinsAwarded)}
+            </p>
+          )}
+          {finalResult.newTitles.map((id) => (
+            <p key={id} className="text-base font-bold text-amber-600 mb-2">
+              {t.titleUnlocked(t.titleNames[id] ?? id)}
+            </p>
+          ))}
+
           {nextZoneName && (
             <p className="text-lg text-slate-600 font-medium mb-8 bg-sky-50 py-3 px-6 rounded-xl inline-block border border-sky-100">
               {t.unlockedNext(nextZoneName)}
@@ -217,6 +229,18 @@ export function QuestPlayer({
             {t.youGotXofY(finalResult.postScore, finalResult.total)}
           </h3>
         )}
+
+        {/* Task 16: rewards on first-time completions only (never practice) */}
+        {finalResult.xpAwarded > 0 && (
+          <p className="text-lg font-bold text-violet-600 mb-4">
+            {t.rewardsLine(finalResult.xpAwarded, finalResult.coinsAwarded)}
+          </p>
+        )}
+        {finalResult.newTitles.map((id) => (
+          <p key={id} className="text-base font-bold text-amber-600 mb-4">
+            {t.titleUnlocked(t.titleNames[id] ?? id)}
+          </p>
+        ))}
 
         {!finalResult.recorded && (
           <p className="text-base text-slate-500 font-medium mb-6">{t.practiceNote}</p>

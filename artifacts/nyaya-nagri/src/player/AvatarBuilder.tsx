@@ -12,6 +12,7 @@ import React from 'react';
 import {
   ACCESSORIES,
   BASE_LOOKS,
+  FREE_ACCESSORIES,
   HAIR_STYLES,
   MAX_ACCESSORIES,
   NICKNAME_MAX_LENGTH,
@@ -59,9 +60,16 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 export function AvatarBuilder({
   value,
   onChange,
+  accessoryOptions = FREE_ACCESSORIES,
 }: {
   value: PlayerAvatarConfig;
   onChange: (config: PlayerAvatarConfig) => void;
+  /**
+   * Which accessories to offer (Task 16): defaults to the free starter
+   * set (onboarding). The Settings editor passes free + OWNED shop items,
+   * so un-bought shop cosmetics never even appear as choices.
+   */
+  accessoryOptions?: readonly Accessory[];
 }) {
   const t = useStrings();
   const patch = (p: Partial<PlayerAvatarConfig>) => onChange({ ...value, ...p });
@@ -142,7 +150,8 @@ export function AvatarBuilder({
         <div>
           <SectionLabel>{t.accessoriesLabel}</SectionLabel>
           <div className="flex flex-wrap gap-2">
-            {ACCESSORIES.map((a, i) => {
+            {accessoryOptions.map((a) => {
+              const i = ACCESSORIES.indexOf(a);
               const selected = value.accessories.includes(a);
               const full = !selected && value.accessories.length >= MAX_ACCESSORIES;
               return (

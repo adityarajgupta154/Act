@@ -22,7 +22,13 @@ import { fileURLToPath } from 'node:url';
 import { STRINGS } from '../src/i18n/strings';
 import { progressStore } from '../src/data/progressStore';
 import { settingsStore } from '../src/data/settingsStore';
-import { MAX_ACCESSORIES, createDefaultAvatar, sanitizeAvatar } from '../src/player/avatarConfig';
+import {
+  ACCESSORIES,
+  FREE_ACCESSORIES,
+  MAX_ACCESSORIES,
+  createDefaultAvatar,
+  sanitizeAvatar,
+} from '../src/player/avatarConfig';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const SRC = join(__dir, '..', 'src');
@@ -76,7 +82,14 @@ for (const lang of ['en', 'hi'] as const) {
   assert(s.baseLookNames.length === 2, `${lang}.baseLookNames has 2 entries`);
   assert(s.hairStyleNames.length === 4, `${lang}.hairStyleNames has 4 entries`);
   assert(s.outfitNames.length === 4, `${lang}.outfitNames has 4 entries`);
-  assert(s.accessoryNames.length === 6, `${lang}.accessoryNames has 6 entries`);
+  // Task 16 added 4 shop cosmetics: the name list must cover EVERY
+  // renderer-known accessory id, while onboarding still offers only the
+  // 6 free starter accessories (shop items need Coins bought by playing).
+  assert(
+    s.accessoryNames.length === ACCESSORIES.length,
+    `${lang}.accessoryNames covers all ${ACCESSORIES.length} accessory ids`,
+  );
+  assert(FREE_ACCESSORIES.length === 6, 'free starter accessory set unchanged (6)');
   const avatarLists = [...s.baseLookNames, ...s.hairStyleNames, ...s.outfitNames, ...s.accessoryNames].join(' ');
   assert(!EMOJI_RE.test(avatarLists), `${lang} avatar option names have no emojis`);
   // Nickname guidance must say it is NOT the child's real name.
@@ -233,8 +246,14 @@ assert(
 );
 const progressSrc2 = readFileSync(join(SRC, 'data', 'progressStore.ts'), 'utf8');
 assert(
-  /avatar: sanitizeAvatar\(parsed\.avatar\)/.test(progressSrc2),
+  /const avatar = sanitizeAvatar\(parsed\.avatar\)/.test(progressSrc2),
   'localStorage load re-validates the avatar (malformed saves degrade to null, never crash)',
+);
+// Task 16 strengthened the same ingress: equipped shop cosmetics that were
+// never bought are stripped at load AND at setAvatar.
+assert(
+  (progressSrc2.match(/filterToOwnedAccessories\(/g) ?? []).length >= 2,
+  'load AND setAvatar filter equipped accessories to owned ones (Task 16)',
 );
 const editOverlaySrc = readFileSync(join(SRC, 'player', 'AvatarEditOverlay.tsx'), 'utf8');
 assert(

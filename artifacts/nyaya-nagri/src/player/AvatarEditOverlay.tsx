@@ -7,7 +7,13 @@ import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 
 import { AvatarBuilder } from './AvatarBuilder';
-import { createDefaultAvatar, sanitizeAvatar, type PlayerAvatarConfig } from './avatarConfig';
+import {
+  createDefaultAvatar,
+  FREE_ACCESSORIES,
+  sanitizeAvatar,
+  SHOP_ACCESSORIES,
+  type PlayerAvatarConfig,
+} from './avatarConfig';
 import { progressStore } from '@/data/progressStore';
 import { useStrings } from '@/i18n/strings';
 import { closeAvatarEdit, useUIStore } from '@/ui/uiStore';
@@ -37,6 +43,15 @@ export function AvatarEditOverlay() {
 
   if (!avatarEditOpen || !draft) return null;
 
+  // Task 16: offer the free starter set plus OWNED shop cosmetics only —
+  // un-bought shop items never appear here (and the store's ownership
+  // filter would drop them on save anyway).
+  const owned = progressStore.getState().ownedAccessories;
+  const accessoryOptions = [
+    ...FREE_ACCESSORIES,
+    ...SHOP_ACCESSORIES.filter((a) => owned.includes(a)),
+  ];
+
   const canSave = draft.nickname.trim().length > 0;
   const save = () => {
     if (!canSave) return;
@@ -58,7 +73,7 @@ export function AvatarEditOverlay() {
           </button>
         </div>
 
-        <AvatarBuilder value={draft} onChange={setDraft} />
+        <AvatarBuilder value={draft} onChange={setDraft} accessoryOptions={accessoryOptions} />
 
         <div className="flex justify-end gap-3 mt-6">
           <button

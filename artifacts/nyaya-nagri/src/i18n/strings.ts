@@ -210,6 +210,55 @@ export interface UIStrings {
   editAvatar: string;
   saveChanges: string;
   cancel: string;
+
+  // Game economy (Task 16, PRD §7.3) — "Player Rank" wording is deliberate:
+  // it must never be confused with the in-zone "Level X" (Task 15). Streak
+  // copy is gentle by design (§9.6). Leaderboard copy makes the cohort-only
+  // scope explicit (§9.7). Shop copy states no-real-money plainly.
+  playerRankChip: (rank: number) => string;
+  coinsChip: (coins: number) => string;
+  openShopLabel: string;
+  streakChip: (days: number) => string;
+  streakNote: string;
+  rewardsLine: (xp: number, coins: number) => string;
+  titleUnlocked: (titleName: string) => string;
+
+  // Avatar Shop (cosmetic-only)
+  avatarShopTitle: string;
+  shopIntro: string;
+  shopNoRealMoney: string;
+  shopBuy: string;
+  shopOwned: string;
+  shopConfirm: (name: string, price: number) => string;
+  shopYesBuy: string;
+  shopNotNow: string;
+  shopNotEnough: string;
+  shopEquipHint: string;
+  coinPrice: (price: number) => string;
+
+  // Player profile section (private — inside My Progress)
+  profileHeading: string;
+  playerRankLabel: string;
+  totalXpLabel: string;
+  coinsLabel: string;
+  streakLabel: string;
+  streakDays: (days: number) => string;
+  xpToNext: (xp: number) => string;
+  titlesHeading: string;
+  titlesPrivateNote: string;
+  noTitlesYet: string;
+  titleNames: Record<string, string>;
+
+  // Cohort leaderboard (opt-in, default OFF, never public)
+  tabLeaderboard: string;
+  leaderboardTitle: string;
+  leaderboardIntro: string;
+  leaderboardOptInLabel: string;
+  leaderboardOffNote: string;
+  leaderboardDemoNote: string;
+  leaderboardYouTag: string;
+  leaderboardNeverPublic: string;
+  leaderboardXp: (xp: number) => string;
 }
 
 const EN: UIStrings = {
@@ -446,13 +495,80 @@ const EN: UIStrings = {
   outfitLabel: 'Clothes',
   outfitNames: ['Kurta', 'T-shirt', 'Kameez', 'Hoodie'],
   accessoriesLabel: 'Extras (pick up to 3)',
-  accessoryNames: ['Glasses', 'Cap', 'Star badge', 'Scarf', 'Flower', 'Backpack'],
+  accessoryNames: [
+    'Glasses',
+    'Cap',
+    'Star badge',
+    'Scarf',
+    'Flower',
+    'Backpack',
+    'Hair bow',
+    'Medal',
+    'Crown',
+    'Cape',
+  ],
   pickNickname: 'Pick a game nickname',
   nicknameHint: 'Not your real name — just a fun game name!',
   nicknamePlaceholder: 'e.g. StarHero',
   editAvatar: 'Edit Avatar',
   saveChanges: 'Save',
   cancel: 'Cancel',
+
+  playerRankChip: (rank) => `Player Rank ${rank}`,
+  coinsChip: (coins) => `${coins} Coins`,
+  openShopLabel: 'Avatar Shop',
+  streakChip: (days) => (days === 1 ? '1-day streak' : `${days}-day streak`),
+  streakNote:
+    'Play on any day to grow your streak. Taking a break is always okay — your streak simply starts fresh.',
+  rewardsLine: (xp, coins) => `You earned ${xp} XP and ${coins} Coins!`,
+  titleUnlocked: (titleName) => `New title earned: ${titleName}`,
+
+  avatarShopTitle: 'Avatar Shop',
+  shopIntro: 'Spend your Coins on fun looks for your avatar. You earn Coins by finishing levels.',
+  shopNoRealMoney:
+    'Everything here uses game Coins only — nothing in Nyaya Nagri ever costs real money.',
+  shopBuy: 'Buy',
+  shopOwned: 'Owned',
+  shopConfirm: (name, price) => `Buy ${name} for ${price} Coins?`,
+  shopYesBuy: 'Yes, buy it',
+  shopNotNow: 'Not now',
+  shopNotEnough: 'Not enough Coins yet — finish more levels to earn Coins.',
+  shopEquipHint: 'You own this! Put it on in Edit Avatar.',
+  coinPrice: (price) => `${price} Coins`,
+
+  profileHeading: 'Player Profile',
+  playerRankLabel: 'Player Rank',
+  totalXpLabel: 'Total XP',
+  coinsLabel: 'Coins',
+  streakLabel: 'Play Streak',
+  streakDays: (days) => (days === 1 ? '1 day' : `${days} days`),
+  xpToNext: (xp) => `${xp} XP to the next rank`,
+  titlesHeading: 'My Titles',
+  titlesPrivateNote: 'Titles are just for you — no one else ever sees them.',
+  noTitlesYet: 'Finish levels and zones to earn your first title!',
+  titleNames: {
+    first_level: 'First Steps',
+    zone1_guardian: 'Safe Zone Guardian',
+    zone2_champion: 'Childhood Champion',
+    zone3_scholar: 'School Rights Scholar',
+    zone4_explorer: 'Justice Explorer',
+    zone5_defender: 'Digital Defender',
+    all_zones_champion: 'Nyaya Nagri Champion',
+  },
+
+  tabLeaderboard: 'Class Board',
+  leaderboardTitle: 'Class Points Board',
+  leaderboardIntro:
+    'A friendly XP board for your own classroom group only. It shows game nicknames — never real names.',
+  leaderboardOptInLabel: 'Show me on my class board',
+  leaderboardOffNote:
+    'Your name is not on the board. Join any time — or stay off it, both are completely fine.',
+  leaderboardDemoNote:
+    'Demo classroom: these example players were written by the Nyaya Nagri team. In a real school, your teacher would set up your class group.',
+  leaderboardYouTag: 'You',
+  leaderboardNeverPublic:
+    'Only your own class group could ever see this board. There is no public or school-wide leaderboard in Nyaya Nagri.',
+  leaderboardXp: (xp) => `${xp} XP`,
 };
 
 const HI: UIStrings = {
@@ -689,13 +805,80 @@ const HI: UIStrings = {
   outfitLabel: 'कपड़े',
   outfitNames: ['कुर्ता', 'टी-शर्ट', 'कमीज़', 'हुडी'],
   accessoriesLabel: 'एक्स्ट्रा (ज़्यादा से ज़्यादा 3 चुनो)',
-  accessoryNames: ['चश्मा', 'टोपी', 'सितारा बैज', 'स्कार्फ़', 'फूल', 'बस्ता'],
+  accessoryNames: [
+    'चश्मा',
+    'टोपी',
+    'सितारा बैज',
+    'स्कार्फ़',
+    'फूल',
+    'बस्ता',
+    'बालों का बो',
+    'मेडल',
+    'मुकुट',
+    'केप',
+  ],
   pickNickname: 'गेम के लिए एक निकनेम चुनो',
   nicknameHint: 'अपना असली नाम नहीं — बस एक मज़ेदार गेम नाम!',
   nicknamePlaceholder: 'जैसे स्टारहीरो',
   editAvatar: 'अवतार बदलो',
   saveChanges: 'सेव करो',
   cancel: 'रद्द करो',
+
+  playerRankChip: (rank) => `प्लेयर रैंक ${rank}`,
+  coinsChip: (coins) => `${coins} सिक्के`,
+  openShopLabel: 'अवतार दुकान',
+  streakChip: (days) => `लगातार ${days} दिन`,
+  streakNote:
+    'किसी भी दिन खेलो तो स्ट्रीक बढ़ती है। आराम करना हमेशा ठीक है — स्ट्रीक बस फिर से शुरू हो जाती है।',
+  rewardsLine: (xp, coins) => `तुमने ${xp} XP और ${coins} सिक्के कमाए!`,
+  titleUnlocked: (titleName) => `नई उपाधि मिली: ${titleName}`,
+
+  avatarShopTitle: 'अवतार दुकान',
+  shopIntro: 'अपने सिक्कों से अवतार के लिए मज़ेदार चीज़ें लो। सिक्के लेवल पूरे करने से मिलते हैं।',
+  shopNoRealMoney:
+    'यहाँ सब कुछ सिर्फ़ गेम के सिक्कों से मिलता है — न्याय नगरी में कुछ भी असली पैसों से नहीं मिलता।',
+  shopBuy: 'खरीदो',
+  shopOwned: 'तुम्हारा है',
+  shopConfirm: (name, price) => `${price} सिक्कों में ${name} खरीदो?`,
+  shopYesBuy: 'हाँ, खरीदो',
+  shopNotNow: 'अभी नहीं',
+  shopNotEnough: 'अभी सिक्के कम हैं — और लेवल पूरे करो, सिक्के मिलेंगे।',
+  shopEquipHint: 'यह तुम्हारा है! "अवतार बदलो" में जाकर पहनो।',
+  coinPrice: (price) => `${price} सिक्के`,
+
+  profileHeading: 'खिलाड़ी प्रोफ़ाइल',
+  playerRankLabel: 'प्लेयर रैंक',
+  totalXpLabel: 'कुल XP',
+  coinsLabel: 'सिक्के',
+  streakLabel: 'खेल स्ट्रीक',
+  streakDays: (days) => `${days} दिन`,
+  xpToNext: (xp) => `अगली रैंक के लिए ${xp} XP और`,
+  titlesHeading: 'मेरी उपाधियाँ',
+  titlesPrivateNote: 'उपाधियाँ सिर्फ़ तुम्हारे लिए हैं — इन्हें कोई और कभी नहीं देखता।',
+  noTitlesYet: 'लेवल और ज़ोन पूरे करो और अपनी पहली उपाधि पाओ!',
+  titleNames: {
+    first_level: 'पहला कदम',
+    zone1_guardian: 'सेफ़ ज़ोन रक्षक',
+    zone2_champion: 'बचपन चैंपियन',
+    zone3_scholar: 'स्कूल अधिकार ज्ञानी',
+    zone4_explorer: 'न्याय खोजी',
+    zone5_defender: 'डिजिटल रक्षक',
+    all_zones_champion: 'न्याय नगरी चैंपियन',
+  },
+
+  tabLeaderboard: 'क्लास बोर्ड',
+  leaderboardTitle: 'क्लास पॉइंट बोर्ड',
+  leaderboardIntro:
+    'सिर्फ़ तुम्हारे अपने क्लास ग्रुप का XP बोर्ड। इसमें सिर्फ़ गेम निकनेम दिखते हैं — असली नाम कभी नहीं।',
+  leaderboardOptInLabel: 'मुझे मेरे क्लास बोर्ड पर दिखाओ',
+  leaderboardOffNote:
+    'तुम्हारा नाम बोर्ड पर नहीं है। जब चाहो जुड़ो — या न जुड़ो, दोनों बिलकुल ठीक हैं।',
+  leaderboardDemoNote:
+    'डेमो क्लासरूम: ये उदाहरण खिलाड़ी न्याय नगरी टीम ने लिखे हैं। असली स्कूल में तुम्हारे टीचर क्लास ग्रुप बनाएँगे।',
+  leaderboardYouTag: 'तुम',
+  leaderboardNeverPublic:
+    'यह बोर्ड सिर्फ़ तुम्हारा अपना क्लास ग्रुप ही देख सकता है। न्याय नगरी में कोई पब्लिक या पूरे स्कूल का लीडरबोर्ड नहीं है।',
+  leaderboardXp: (xp) => `${xp} XP`,
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

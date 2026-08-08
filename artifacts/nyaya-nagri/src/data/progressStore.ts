@@ -7,7 +7,21 @@
  * persistence (backend/localStorage) in a later task without changing callers.
  */
 
-import { sanitizeAvatar, type PlayerAvatarConfig } from '@/player/avatarConfig';
+import {
+  filterToOwnedAccessories,
+  sanitizeAvatar,
+  SHOP_ACCESSORIES,
+  type Accessory,
+  type PlayerAvatarConfig,
+} from '@/player/avatarConfig';
+import {
+  advanceStreak,
+  getShopItem,
+  reconcileEconomy,
+  sanitizeStreak,
+  todayString,
+  type DailyStreak,
+} from '@/economy/economy';
 
 export type AgeBand = '8-11' | '12-15' | '16-18';
 
@@ -50,6 +64,24 @@ export interface ProgressState {
    * the same adaptive recap as before. Answer indices only — no PII.
    */
   preAnswersByQuest: Record<string, number[]>;
+  /**
+   * Task 16 economy (PRD §7.3) — ADDITIVE to badges/stars, never replaces
+   * them. XP/Coins are earned in-game only; no real-money path exists.
+   */
+  xp: number;
+  /** Virtual Coins — spendable ONLY on cosmetic avatar accessories. */
+  coins: number;
+  /** Shop accessory ids bought with Coins (cosmetic only). */
+  ownedAccessories: string[];
+  /** Gentle daily streak — a gap quietly restarts it, no guilt state. */
+  streak: DailyStreak;
+  /** Unlocked title ids (private flavor text — never shared publicly). */
+  titles: Record<string, boolean>;
+  /**
+   * Cohort leaderboard opt-in (PRD §7.3/§9.7) — DEFAULT FALSE. Only ever
+   * scopes to the child's own classroom group; no global board exists.
+   */
+  leaderboardOptIn: boolean;
   /** Pseudonymous session id — never a real name or any PII. */
   sessionId: string;
   /** Arbitrary key-value slot for future tasks (settings, avatar config, etc.). */
@@ -72,6 +104,12 @@ function defaultState(): ProgressState {
     levelProgress: {},
     replayCounts: {},
     preAnswersByQuest: {},
+    xp: 0,
+    coins: 0,
+    ownedAccessories: [],
+    streak: { count: 0, lastDay: null },
+    titles: {},
+    leaderboardOptIn: false,
     sessionId: generateSessionId(),
     extras: {},
   };
@@ -148,15 +186,47 @@ class LocalStorageAdapter implements StorageAdapter {
       // The avatar is re-validated on every load: a malformed/edited saved
       // config must degrade to null (no avatar) instead of crashing the
       // renderer with unknown ids (Task 14).
+      // Task 16 economy fields re-validated on load (same ingress rule).
+      const ownedAccessories = Array.isArray(parsed.ownedAccessories)
+        ? parsed.ownedAccessories.filter(
+            (a): a is string =>
+              typeof a === 'string' && (SHOP_ACCESSORIES as readonly string[]).includes(a),
+          )
+        : [];
+      const avatar = sanitizeAvatar(parsed.avatar);
+      // Task 15 maps re-validated on load, same ingress rule as the avatar:
+      // malformed entries are dropped, never allowed to reach the UI.
+      const levelProgress = sanitizeRecord(parsed.levelProgress, isBool);
+      const completedZones = sanitizeRecord(parsed.completedZones, isBool);
+      // Architect round (Task 16): shape-valid but FORGED economy fields
+      // (hand-edited xp/coins/ownedAccessories) are clamped to what the
+      // recorded progress can justify; titles are recomputed (derived data).
+      const economy = reconcileEconomy(
+        {
+          xp: isCount(parsed.xp) ? Math.floor(parsed.xp) : 0,
+          coins: isCount(parsed.coins) ? Math.floor(parsed.coins) : 0,
+          ownedAccessories,
+        },
+        { levelProgress, completedZones },
+      );
       return {
         ...defaultState(),
         ...parsed,
-        avatar: sanitizeAvatar(parsed.avatar),
-        // Task 15 maps re-validated on load, same ingress rule as the avatar:
-        // malformed entries are dropped, never allowed to reach the UI.
-        levelProgress: sanitizeRecord(parsed.levelProgress, isBool),
+        // Ownership ingress (Task 16): an equipped shop cosmetic that was
+        // never bought is quietly dropped from the loaded avatar.
+        avatar: avatar
+          ? { ...avatar, accessories: filterToOwnedAccessories(avatar.accessories, economy.ownedAccessories) }
+          : null,
+        levelProgress,
+        completedZones,
         replayCounts: sanitizeRecord(parsed.replayCounts, isCount),
         preAnswersByQuest: sanitizeRecord(parsed.preAnswersByQuest, isAnswerList),
+        xp: economy.xp,
+        coins: economy.coins,
+        ownedAccessories: economy.ownedAccessories,
+        streak: sanitizeStreak(parsed.streak),
+        titles: economy.titles,
+        leaderboardOptIn: parsed.leaderboardOptIn === true,
       };
     } catch {
       return null;
@@ -260,7 +330,46 @@ class ProgressStore {
   setAvatar(avatar: PlayerAvatarConfig): void {
     const clean = sanitizeAvatar(avatar);
     if (!clean) return;
+    // Task 16 ownership ingress: shop cosmetics must be bought to be worn.
+    clean.accessories = filterToOwnedAccessories(
+      clean.accessories,
+      this.state.ownedAccessories,
+    );
     this.update({ avatar: clean });
+  }
+
+  /**
+   * Task 16: buy a cosmetic shop accessory with in-game Coins. The ONLY
+   * way to own a shop cosmetic — there is no real-money path anywhere.
+   * Returns true when the purchase succeeded.
+   */
+  purchaseAccessory(id: Accessory): boolean {
+    const item = getShopItem(id);
+    if (!item) return false; // not a shop item (free ones need no purchase)
+    if (this.state.ownedAccessories.includes(id)) return false; // already owned
+    if (this.state.coins < item.price) return false; // gentle no — UI explains
+    this.update({
+      coins: this.state.coins - item.price,
+      ownedAccessories: [...this.state.ownedAccessories, id],
+    });
+    return true;
+  }
+
+  /** Task 16: cohort leaderboard opt-in (PRD §9.7) — default stays false. */
+  setLeaderboardOptIn(on: boolean): void {
+    this.update({ leaderboardOptIn: on === true });
+  }
+
+  /**
+   * Task 16: record "played today" for the gentle daily streak. Idempotent
+   * per local calendar day; a gap simply restarts the count at 1 — there is
+   * deliberately NO penalty state or guilt messaging (PRD §9.6).
+   */
+  touchDailyStreak(today: string = todayString()): void {
+    const next = advanceStreak(this.state.streak, today);
+    if (next.count !== this.state.streak.count || next.lastDay !== this.state.streak.lastDay) {
+      this.update({ streak: next });
+    }
   }
 
   /**

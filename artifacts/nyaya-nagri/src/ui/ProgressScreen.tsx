@@ -25,7 +25,8 @@ import { getAllQuests } from '@/quests/registry';
 import { useUIStore, closeProgress } from './uiStore';
 import { useStrings, type UIStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
-import { Star, Lock, MapPin, X, Award, Users } from 'lucide-react';
+import { Star, Lock, MapPin, X, Award, Users, Trophy, Coins, Flame } from 'lucide-react';
+import { rankForXp, xpToNextRank, TITLE_IDS } from '@/economy/economy';
 
 /** Aggregated pre/post literacy percentages for one zone (teacher view). */
 export interface ZoneImpact {
@@ -188,6 +189,74 @@ export function ProgressPanel({
             </li>
           ))}
         </ul>
+
+        {/* Player profile (Task 16) — PRIVATE economy summary: Player Rank
+            (deliberately never called just "Level" — that word belongs to
+            the in-zone levels), XP, Coins, the gentle streak, and titles.
+            Titles are flavor text for the child only; nothing here is ever
+            shared or shown to anyone else. */}
+        <div className="bg-violet-50 rounded-2xl p-5 border border-violet-100 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <Trophy className="w-5 h-5 text-violet-500" />
+            <h3 className="font-display font-bold text-xl text-slate-800">{t.profileHeading}</h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="bg-white rounded-xl border border-violet-100 p-3">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                {t.playerRankLabel}
+              </p>
+              <p className="font-display font-bold text-2xl text-violet-600">
+                {rankForXp(progress.xp)}
+              </p>
+              <p className="text-xs text-slate-500 font-medium">
+                {t.xpToNext(xpToNextRank(progress.xp))}
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-violet-100 p-3">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                {t.totalXpLabel}
+              </p>
+              <p className="font-display font-bold text-2xl text-sky-600">{progress.xp}</p>
+            </div>
+            <div className="bg-white rounded-xl border border-violet-100 p-3">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                {t.coinsLabel}
+              </p>
+              <p className="font-display font-bold text-2xl text-amber-500 flex items-center gap-1.5">
+                <Coins className="w-5 h-5" />
+                {progress.coins}
+              </p>
+            </div>
+            <div className="bg-white rounded-xl border border-violet-100 p-3">
+              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                {t.streakLabel}
+              </p>
+              <p className="font-display font-bold text-2xl text-orange-500 flex items-center gap-1.5">
+                <Flame className="w-5 h-5" />
+                {t.streakDays(progress.streak.count)}
+              </p>
+            </div>
+          </div>
+          {/* Gentle by design: a break never shows a warning or loss */}
+          <p className="text-xs text-slate-500 font-medium mb-4">{t.streakNote}</p>
+
+          <p className="font-bold text-slate-700 mb-2">{t.titlesHeading}</p>
+          {TITLE_IDS.some((id) => progress.titles[id]) ? (
+            <div className="flex flex-wrap gap-2">
+              {TITLE_IDS.filter((id) => progress.titles[id]).map((id) => (
+                <span
+                  key={id}
+                  className="bg-white border border-amber-200 text-amber-700 px-3 py-1.5 rounded-full font-bold text-sm"
+                >
+                  {t.titleNames[id] ?? id}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-slate-500 font-medium">{t.noTitlesYet}</p>
+          )}
+          <p className="text-xs text-slate-500 font-medium mt-2">{t.titlesPrivateNote}</p>
+        </div>
 
         {/* Teacher/Parent opt-in section — clearly separated and labelled */}
         <div className="border-t-2 border-slate-100 pt-5">
