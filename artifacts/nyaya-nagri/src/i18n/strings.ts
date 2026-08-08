@@ -117,6 +117,27 @@ export interface UIStrings {
   on: string;
   off: string;
   done: string;
+
+  // Community screen (Task 11) — static, moderated-by-design content
+  community: string;
+  communityTitle: string;
+  closeCommunity: string;
+  tabCircle: string;
+  tabBoard: string;
+  tabExpert: string;
+  safeByDesignNote: string;
+  circleIntro: string;
+  promptsRotateNote: string;
+  fromZone: (zoneName: string) => string;
+  generalPromptTag: string;
+  whyThisMatters: string;
+  thanksForReflecting: string;
+  boardIntro: string;
+  boardIllustrative: string;
+  boardModerationNote: string;
+  expertIntro: string;
+  expertDisclaimer: string;
+  ageLabel: (band: string) => string;
 }
 
 const EN: UIStrings = {
@@ -239,6 +260,33 @@ const EN: UIStrings = {
   on: 'On',
   off: 'Off',
   done: 'Done',
+
+  community: 'Rights Community',
+  communityTitle: 'Rights Community',
+  closeCommunity: 'Close community',
+  tabCircle: 'Rights Circle',
+  tabBoard: 'Circle Board',
+  tabExpert: 'Ask a Legal Expert',
+  safeByDesignNote:
+    'Safe by design: there is no chat here, and nothing you tap is sent to anyone.',
+  circleIntro:
+    'Pick the response that feels most like you. There are no wrong answers here — this is a space to reflect.',
+  promptsRotateNote:
+    'Prompts change as you complete more quests — come back tomorrow for a fresh mix.',
+  fromZone: (zoneName) => `From: ${zoneName}`,
+  generalPromptTag: 'For everyone',
+  whyThisMatters: 'Why this matters',
+  thanksForReflecting: 'Thanks for reflecting!',
+  boardIntro: 'See how other champions responded to Rights Circle prompts.',
+  boardIllustrative:
+    'Illustrative examples — written by the Nyaya Nagri team, not real children.',
+  boardModerationNote:
+    'In a real launch, trained NGO staff and teachers would review every response before it appears. There is no way to post here.',
+  expertIntro:
+    'Compiled from Ask-a-Legal-Expert sessions with child-rights experts.',
+  expertDisclaimer:
+    'This is general information for learning, not legal advice for a specific situation. Every situation is different — talk to a trusted adult, and remember Childline 1098 is always there.',
+  ageLabel: (band) => `Age ${band}`,
 };
 
 const HI: UIStrings = {
@@ -361,6 +409,33 @@ const HI: UIStrings = {
   on: 'चालू',
   off: 'बंद',
   done: 'हो गया',
+
+  community: 'अधिकार समुदाय',
+  communityTitle: 'अधिकार समुदाय',
+  closeCommunity: 'समुदाय बंद करो',
+  tabCircle: 'अधिकार मंडली',
+  tabBoard: 'मंडली बोर्ड',
+  tabExpert: 'कानूनी विशेषज्ञ से पूछो',
+  safeByDesignNote:
+    'सुरक्षा के साथ बनाया गया: यहाँ कोई चैट नहीं है, और तुम जो भी चुनो वह किसी को नहीं भेजा जाता।',
+  circleIntro:
+    'वह जवाब चुनो जो सबसे ज़्यादा तुम्हारे जैसा लगे। यहाँ कोई जवाब गलत नहीं — यह सोचने-समझने की जगह है।',
+  promptsRotateNote:
+    'जैसे-जैसे तुम क्वेस्ट पूरी करोगे, सवाल बदलते रहेंगे — कल फिर आओ, नया मिश्रण मिलेगा।',
+  fromZone: (zoneName) => `कहाँ से: ${zoneName}`,
+  generalPromptTag: 'सबके लिए',
+  whyThisMatters: 'यह क्यों ज़रूरी है',
+  thanksForReflecting: 'सोचने के लिए शाबाश!',
+  boardIntro: 'देखो, दूसरे चैंपियनों ने अधिकार मंडली के सवालों पर क्या कहा।',
+  boardIllustrative:
+    'उदाहरण के लिए बनाए गए नमूने — इन्हें न्याय नगरी टीम ने लिखा है, ये असली बच्चों के संदेश नहीं हैं।',
+  boardModerationNote:
+    'असली लॉन्च में हर संदेश दिखने से पहले प्रशिक्षित एनजीओ कार्यकर्ता और शिक्षक उसकी जाँच करेंगे। यहाँ खुद कुछ पोस्ट करने का कोई तरीका नहीं है।',
+  expertIntro:
+    'बाल-अधिकार विशेषज्ञों के साथ हुए सवाल-जवाब सत्रों से चुनकर बनाया गया।',
+  expertDisclaimer:
+    'यह सीखने के लिए सामान्य जानकारी है, किसी खास स्थिति के लिए कानूनी सलाह नहीं। हर स्थिति अलग होती है — किसी भरोसेमंद बड़े से बात करो, और याद रखो, चाइल्डलाइन 1098 हमेशा साथ है।',
+  ageLabel: (band) => `उम्र ${band}`,
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

@@ -1,10 +1,11 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useJoystick } from './JoystickContext';
 import { HelpDialog } from './HelpDialog';
-import { Settings, Map as MapIcon, Award, Star } from 'lucide-react';
-import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings } from './uiStore';
+import { Settings, Map as MapIcon, Award, Star, Users } from 'lucide-react';
+import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity } from './uiStore';
 import { ProgressOverlay } from './ProgressScreen';
 import { SettingsPanel } from './SettingsPanel';
+import { CommunityOverlay } from './CommunityScreen';
 import { getZoneStates, getZone } from '@/world/zones';
 import { progressStore } from '@/data/progressStore';
 import { useSettings } from '@/data/settingsStore';
@@ -202,6 +203,13 @@ export function HUD() {
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
                 {t.myProgress}
               </button>
+              <button
+                onClick={openCommunity}
+                className="self-start bg-white/90 backdrop-blur-sm border border-sky-200 text-sky-600 hover:bg-sky-50 px-4 py-2 rounded-full flex items-center gap-2 shadow-sm font-bold text-sm transition-colors active:scale-95 touch-manipulation"
+              >
+                <Users className="w-4 h-4" />
+                {t.community}
+              </button>
             </div>
             <div className="flex flex-col items-end gap-3 pointer-events-auto">
               <button 
@@ -241,6 +249,10 @@ export function HUD() {
 
       {/* Settings panel overlay (z-30, Task 10) — Help button (z-50) stays on top */}
       <SettingsPanel />
+
+      {/* Community screen overlay (z-30, Task 11) — static, moderated-by-design;
+          Get Help Now button (z-50) stays on top */}
+      <CommunityOverlay />
 
       {/* Black Fade Overlay (z-40) */}
       <div

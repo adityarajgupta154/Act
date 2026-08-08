@@ -11,6 +11,8 @@ export type UIState = {
   progressOpen: boolean;
   /** Settings panel overlay (Task 10). */
   settingsOpen: boolean;
+  /** Community screen overlay (Task 11). */
+  communityOpen: boolean;
 };
 
 let state: UIState = {
@@ -21,6 +23,7 @@ let state: UIState = {
   helpPulse: false,
   progressOpen: false,
   settingsOpen: false,
+  communityOpen: false,
 };
 
 const listeners = new Set<() => void>();
@@ -85,6 +88,14 @@ export function openSettings() {
 
 export function closeSettings() {
   uiStore.set({ settingsOpen: false });
+}
+
+export function openCommunity() {
+  uiStore.set({ communityOpen: true });
+}
+
+export function closeCommunity() {
+  uiStore.set({ communityOpen: false });
 }
 
 export function triggerHelpPulse() {
