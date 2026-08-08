@@ -1,10 +1,10 @@
 /**
- * Nyaya Nagri — Quest registry (Task 3, real Zone 1 content from Task 4)
+ * Nyaya Nagri — Quest registry (Task 3; content complete as of Task 8)
  *
- * Maps zone + age band to a quest content file. The resolver prefers an
- * exact age-band match and falls back to any quest for the zone so a zone
- * stays playable if a band variant is ever missing. Zone 1 now has all
- * three bands (real POCSO content); zones 2-5 get content in later tasks.
+ * Maps zone + age band to a quest content file. All 5 zones x 3 age bands
+ * (15 quests) now exist, so the resolver requires an exact zone + band
+ * match — the temporary any-band fallback from the content build-out has
+ * been removed so a band can never silently receive another band's quest.
  */
 
 import type { AgeBand } from '@/data/progressStore';
@@ -21,6 +21,9 @@ import schoolRights1618 from './content/school_rights_16_18.json';
 import justiceSystem811 from './content/justice_system_8_11.json';
 import justiceSystem1215 from './content/justice_system_12_15.json';
 import justiceSystem1618 from './content/justice_system_16_18.json';
+import digitalSafety811 from './content/digital_safety_8_11.json';
+import digitalSafety1215 from './content/digital_safety_12_15.json';
+import digitalSafety1618 from './content/digital_safety_16_18.json';
 
 const QUEST_FILES: Quest[] = [
   safeZone811 as Quest,
@@ -35,20 +38,19 @@ const QUEST_FILES: Quest[] = [
   justiceSystem811 as Quest,
   justiceSystem1215 as Quest,
   justiceSystem1618 as Quest,
+  digitalSafety811 as Quest,
+  digitalSafety1215 as Quest,
+  digitalSafety1618 as Quest,
 ];
 
 /** Validate everything once at module load — content bugs fail loudly in dev. */
 const QUESTS: Quest[] = QUEST_FILES.map(validateQuest);
 
 /**
- * Find the quest for a zone + age band. Exact band match wins, then any
- * quest for the zone, then null (zone has no content yet — UI shows the
- * placeholder interior from Task 1).
+ * Find the quest for a zone + age band. Exact match only (all 15 quests
+ * exist); null means an invalid zone — the UI shows the placeholder
+ * interior from Task 1.
  */
 export function resolveQuest(zoneId: string, ageBand: AgeBand): Quest | null {
-  return (
-    QUESTS.find((q) => q.zoneId === zoneId && q.ageBand === ageBand) ??
-    QUESTS.find((q) => q.zoneId === zoneId) ??
-    null
-  );
+  return QUESTS.find((q) => q.zoneId === zoneId && q.ageBand === ageBand) ?? null;
 }

@@ -1,0 +1,148 @@
+{
+  "questId": "digital_safety_16_18",
+  "zoneId": "zone5",
+  "ageBand": "16-18",
+  "title": "Consent Is the Law",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "An intimate photo of a 17-year-old classmate is spreading through a group chat. Nobody in the chat took it or leaked it; they are 'just forwarding what everyone already has'. Someone sends it to you. What is legally and morally true at this moment?",
+      "choices": [
+        {
+          "text": "Forwarding IS sharing. Passing on someone's intimate image without consent can be an offence under the IT Act, and if an image shows someone under 18 in a sexually explicit way, Section 67B can make creating, publishing, transmitting, or seeking, downloading, or collecting it an offence. The move is: do not forward, do not save, report the chat, tell a trusted adult, and stand by the classmate.",
+          "outcome": "correct",
+          "feedback": "Exactly, and this is the fact most people your age have never been told. The law does not distinguish between 'the one who leaked it' and 'the ones who kept it moving': transmitting or publishing someone's private image without consent can be an offence under the IT Act. And if an image depicts someone under 18 in a sexually explicit way, Section 67B can make creating, publishing, transmitting, or seeking, downloading, or collecting it an offence, with POCSO applying on top. So do not save it and do not forward it; note the account or link and report. 'Everyone had it' is not a defence.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Forwarding is harmless. Only the person who first leaked the photo has done anything wrong.",
+          "outcome": "incorrect",
+          "feedback": "That is the myth that keeps these chains alive. In law, transmitting or publishing a private image without consent can itself be an offence under the IT Act, whoever started it. And if an image depicts someone under 18 in a sexually explicit way, Section 67B can make even transmitting or collecting it an offence in itself, with POCSO on top. Do not forward, do not save, report the chat, tell a trusted adult, and stand by the classmate.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Someone in the chat pushes back: 'But she sent that photo to her boyfriend herself. That was her choice.' Untangle this properly. What does digital consent actually mean?",
+      "choices": [
+        {
+          "text": "Consent is specific: agreeing to share something with ONE person is not consent for that person to show or send it to anyone else. A relationship, past or present, never implies that consent, and trust once given does not become a licence forever.",
+          "outcome": "correct",
+          "feedback": "Precisely. Consent to take a photo is not consent to keep it forever; consent to send it to one person is not consent for the whole school to see it. Sharing it onward without her agreement can be an offence regardless of how the image first came to exist. The person who trusted someone is not the wrongdoer; the person who broke that trust and everyone who spreads it are.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Once you send anyone a photo, you have accepted that anything can happen to it, so no one else is responsible.",
+          "outcome": "incorrect",
+          "feedback": "The law says otherwise. Consent is specific: sharing something with one trusted person is not consent for it to travel further, and a relationship never implies that consent. Passing on an intimate image without the person's agreement can be an offence under the IT Act, and with an under-18 subject the law is stricter still. Responsibility sits with those who spread it, never with the person whose trust was broken.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "A different front: an anonymous account has been sending you abusive messages for weeks and has now started on a friend. You want it to stop in a way that actually works. What is the smart response protocol?",
+      "choices": [
+        {
+          "text": "Do not engage or retaliate. Block the account, keep a record of the harassment, usernames, links, and screenshots of the abusive messages, and use the platform's report and grievance tools, which the IT Rules 2021 require online platforms (intermediaries) to provide.",
+          "outcome": "correct",
+          "feedback": "That is the protocol. Not engaging starves harassers of the reaction they feed on; records preserve proof before it vanishes; and platform reporting has legal weight behind it: under the IT Rules 2021, intermediaries must provide a grievance mechanism, and for a complaint about covered private, nude, sexual, or impersonation or morphed content, the rules require them to remove or disable access to it within 24 hours of receiving the complaint. One careful line: records mean usernames, links, and screenshots of messages, but never save or forward sexually explicit images of anyone under 18 — Section 67B can make collecting or transmitting them an offence — note the account or link and report instead.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Reply with equal fire from your own anonymous account until they back off.",
+          "outcome": "incorrect",
+          "feedback": "Retaliation is the reaction harassers feed on, and abusive replies can cross legal lines themselves. The protocol that works: do not engage, block, keep records (usernames, links, screenshots of the abusive messages, but never save or forward sexually explicit images of anyone under 18), and report through the platform's grievance tools, which the IT Rules 2021 require intermediaries to provide.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "The hardest scenario, because it happens: someone threatens a 17-year-old, 'pay me, or send more photos, or I post what I have'. Sextortion. What is the way through?",
+      "choices": [
+        {
+          "text": "Do not pay and do not comply — giving in often leads to further demands. It is not the victim's fault. Tell a trusted adult, and report: the National Cyber Crime Reporting Portal (where women and child-related cybercrime reports can be made anonymously), the Cyber Crime Helpline 155260, and for anyone under 18, POCSO's child-friendly process and Childline 1098.",
+          "outcome": "correct",
+          "feedback": "Every element matters. Paying or complying often just leads to further demands. The fault sits entirely with the blackmailer: threatening to publish someone's images can be an offence, depending on the facts, and with an under-18 victim, POCSO applies with its child-friendly reporting you know from the Safe Zone. The National Cyber Crime Reporting Portal accepts women and child-related cybercrime reports anonymously, 155260 is the cyber crime helpline, 1098 is Childline. Telling a trusted adult and reporting brings support and help responding, and a victim who reports is someone the system is designed to protect, never to blame.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Quietly pay or comply once, so it all goes away without anyone finding out.",
+          "outcome": "incorrect",
+          "feedback": "Paying or complying often just leads to further demands. The way through is the opposite of silence: do not comply, tell a trusted adult, and report so you can get support and help responding — the National Cyber Crime Reporting Portal (anonymous reporting available for women and child-related cybercrime), the Cyber Crime Helpline 155260, and for anyone under 18, POCSO protection and Childline 1098. The victim is never the one at fault.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "In this story, the chain breaks: you delete without forwarding, two friends do the same, one reports the group, and a teacher and the classmate's parents help her file a report through the portal. The spread stops, and the classmate learns who her real friends are. Zoom out: what is the principle that covers everything in this zone?",
+      "choices": [
+        {
+          "text": "Consent governs the digital world too: what you share, keep, or forward involves real people with real rights, and when someone crosses the line, the response is records, reporting channels, and trusted adults, never silence or revenge.",
+          "outcome": "correct",
+          "feedback": "That is the whole zone in one sentence. Your feed is a place where law and dignity apply: consent before sharing, Section 67B and POCSO shielding everyone under 18, IT Rules 2021 grievance channels, the National Cyber Crime Reporting Portal, 155260, and Childline 1098. And in every scenario you walked, the turning point was the same: someone refused to stay a bystander."
+        },
+        {
+          "text": "Online life is a lawless zone, so the only rule is do not get caught.",
+          "outcome": "incorrect",
+          "feedback": "Everything you just walked through proves the opposite: the IT Act, Section 67B, POCSO, and the IT Rules 2021 all reach online conduct, and real channels, the portal, 155260, 1098, exist to enforce them. The principle is simpler and stronger: consent governs the digital world too, and real people with real rights are behind every screen."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "An intimate image of a 17-year-old is circulating and someone forwards it to you. What is true?",
+      "options": [
+        "Forwarding is harmless. Only the original leaker did anything wrong.",
+        "Forwarding can itself be an offence: sharing private images without consent is covered by the IT Act, and if an image shows someone under 18 in a sexually explicit way, creating, publishing, transmitting, or seeking, downloading, or collecting it can be an offence",
+        "It is legal as long as you do not comment on it"
+      ],
+      "correctIndex": 1,
+      "explanation": "Transmitting a private image without consent can be an offence under the IT Act regardless of who started the chain, and if an image depicts someone under 18 in a sexually explicit way, Section 67B can make creating, publishing, transmitting, or seeking, downloading, or collecting it an offence, with POCSO applying on top."
+    },
+    {
+      "question": "Someone sent a private photo to one person they trusted, and that person spread it. Whose consent was violated, and who is responsible?",
+      "options": [
+        "No one's. Sending it once means accepting anything that follows.",
+        "The sender is responsible for trusting someone",
+        "The person in the image: consent to share with one person is never consent to share with others, and responsibility sits with those who spread it"
+      ],
+      "correctIndex": 2,
+      "explanation": "Consent is specific. Agreeing to share with one person is not consent for further sharing, and no relationship implies it. The law targets those who spread the image, never the person whose trust was broken."
+    },
+    {
+      "question": "What do the IT Rules 2021 require of major online platforms?",
+      "options": [
+        "Nothing. Platforms are outside Indian law.",
+        "To provide a grievance mechanism, and to remove or disable access to covered private, nude, sexual, or impersonation or morphed content within 24 hours of receiving a complaint about it",
+        "To read every private message before it is delivered"
+      ],
+      "correctIndex": 1,
+      "explanation": "The IT Rules 2021 require intermediaries to provide a grievance mechanism, and for complaints about covered private, nude, sexual, or impersonation or morphed content, to remove or disable access within 24 hours of the complaint — which gives in-app reporting real legal weight."
+    },
+    {
+      "question": "A blackmailer threatens to publish a 17-year-old's photos unless they pay or send more. What is the way through?",
+      "options": [
+        "Do not comply or pay, tell a trusted adult, and report via the National Cyber Crime Reporting Portal (anonymous option for women and child-related cybercrime), the Cyber Crime Helpline 155260, or Childline 1098, with POCSO protecting anyone under 18",
+        "Pay once so it quietly ends",
+        "Delete your accounts and tell no one"
+      ],
+      "correctIndex": 0,
+      "explanation": "Complying often just leads to further demands. The blackmailer is the offender, never the victim. Reporting channels exist precisely for this, and for under-18s POCSO adds child-friendly protection."
+    },
+    {
+      "question": "While keeping records of online harassment, what must you NEVER do?",
+      "options": [
+        "Note down usernames and links",
+        "Take screenshots of abusive text messages",
+        "Save or forward sexually explicit images of anyone under 18, even 'as evidence': Section 67B can make keeping or sending such material an offence, so note where it was posted and report instead"
+      ],
+      "correctIndex": 2,
+      "explanation": "Records of harassment mean usernames, links, and screenshots of abusive messages. Sexually explicit material involving anyone under 18 is covered by Section 67B, which can make collecting or transmitting it an offence, so never keep or send it; note the location and report through the proper channels."
+    }
+  ]
+}

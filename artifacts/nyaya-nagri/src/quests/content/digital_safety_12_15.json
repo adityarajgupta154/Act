@@ -1,0 +1,138 @@
+{
+  "questId": "digital_safety_12_15",
+  "zoneId": "zone5",
+  "ageBand": "12-15",
+  "title": "Screenshots and Shadows",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "A new account appears in the class group chat. It uses a fake name, posts an edited photo of your classmate Ritu that makes her look silly, and half the class replies with laughing emojis and cruel nicknames. It has been going on for days, and Ritu has stopped coming online. Someone in the chat writes: 'Relax, it is just jokes.' Is it?",
+      "choices": [
+        {
+          "text": "No. Repeatedly targeting and humiliating one person online is cyberbullying, and forwarding or laughing along makes it bigger.",
+          "outcome": "correct",
+          "feedback": "Correct. The test is simple: is one person being repeatedly targeted and humiliated? Then it is not a joke, it is cyberbullying. Fake profiles, edited photos, cruel nicknames, pile-on laughter, every forward and every laughing reply spreads the harm. And online harm is real harm: Ritu has already gone quiet.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Yes. If it happens on a screen instead of in person, it cannot really hurt anyone.",
+          "outcome": "incorrect",
+          "feedback": "Look at Ritu: she has stopped coming online at all. Online harm is real harm, and it can be worse, because the whole class watches and the photo can spread forever. Repeatedly targeting and humiliating one person is cyberbullying, whatever anyone calls it.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "You want to help Ritu. What is the strong, smart move?",
+      "choices": [
+        {
+          "text": "Do not forward the photo or join in. Save screenshots of the bullying messages as a record, use the app's report and block tools on the fake account, tell a trusted adult like a teacher or parent, and let Ritu know it is not her fault.",
+          "outcome": "correct",
+          "feedback": "That is the complete playbook. Notice what is NOT in it: no counter-attack, no shaming the bullies publicly, that only feeds the fire and can cross lines itself. Screenshots preserve proof before posts vanish, report and block use the platform's own tools, a trusted adult can involve the school, and one kind message tells Ritu she is not alone.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Make a rival account and post embarrassing edited photos of the bullies, so they learn how it feels.",
+          "outcome": "incorrect",
+          "feedback": "Tempting, but now there would be two fake accounts humiliating people instead of one, and you would have joined the harm. The strong move is different: do not forward, save screenshots as a record, report and block the fake account, tell a trusted adult, and stand by Ritu. Help, not revenge.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "The same week, something quieter happens to you. A player called ProGamer_19, who you have never met, has been friendly for weeks: constant compliments, free game credits as gifts, messages like 'you are so much more mature than other kids' and 'our chats are just between us'. Today ProGamer_19 asks you to send a photo of yourself, 'a private one, just for me'. What are you looking at?",
+      "choices": [
+        {
+          "text": "A pattern of warning signs: flattery, gifts, secrecy demands, and now a photo request. Stop replying, do not send anything, block the account, and tell a trusted adult.",
+          "outcome": "correct",
+          "feedback": "You read it exactly right. Each piece alone might seem small; together they are the classic grooming pattern: build trust with flattery and gifts, isolate with secrecy, then ask for photos. The answer is never to negotiate: stop, do not send, block, and tell a trusted adult. You are not overreacting, this is what overreacting was invented for.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "A generous online friend. The gifts and compliments prove they genuinely care.",
+          "outcome": "incorrect",
+          "feedback": "That is exactly what it is designed to look like. But step back: an unknown adult-sounding account, weeks of flattery, gifts, 'keep it secret', and now a private photo request. That is the classic grooming pattern, and the gifts are part of the trap. Stop, do not send anything, block, and tell a trusted adult.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Your friend whispers a harder question: 'What if someone already sent a photo... and now the person is threatening to share it unless they send more?' What is TRUE in that situation?",
+      "choices": [
+        {
+          "text": "It is not the child's fault, threats should not be obeyed, and telling a trusted adult immediately brings support and help responding. The law protects people under 18 from online sexual exploitation, and reporting brings help, not punishment for the child.",
+          "outcome": "correct",
+          "feedback": "Every word of that is true. The person making threats is the one breaking the law. The POCSO Act protects everyone under 18 from sexual harassment and exploitation online just as offline, and demanding photos or blackmailing a child is exactly what it targets. Do not obey or pay; giving in often leads to further demands. Telling a trusted adult and reporting brings support and help responding, and the child who reports is treated as someone to protect, never to punish.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "The child broke the rules by sending a photo, so they have to obey the threats and keep it secret.",
+          "outcome": "incorrect",
+          "feedback": "No. Read this carefully: the person making threats is the one committing an offence, not the child. The POCSO Act protects everyone under 18 from online sexual exploitation, and blackmailing a child is exactly what it targets. Giving in to threats often just leads to more demands. Telling a trusted adult immediately brings the child support and protection, not punishment.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "In this story, things turn: a teacher is shown the screenshots and the school steps in for Ritu, while you block ProGamer_19 and report the account with your mother sitting beside you. Last question: beyond trusted adults and in-app tools, where can online crimes against anyone be reported in India?",
+      "choices": [
+        {
+          "text": "The Cyber Crime Helpline 155260 and the National Cyber Crime Reporting Portal, and for any child, Childline 1098 is always there too.",
+          "outcome": "correct",
+          "feedback": "Exactly. Keep the toolkit in order: block and report inside the app, a trusted adult beside you, the Cyber Crime Helpline 155260 and the National Cyber Crime Reporting Portal for reporting online crime, and Childline 1098, free and round the clock, for any child who needs help. You never have to handle the online world alone."
+        },
+        {
+          "text": "Nowhere. Once something happens online, no one can do anything about it.",
+          "outcome": "incorrect",
+          "feedback": "Not true at all. India has real channels for exactly this: the Cyber Crime Helpline 155260, the National Cyber Crime Reporting Portal for online offences, and Childline 1098 for any child, free, day and night. Along with in-app report and block tools and a trusted adult, that is a full toolkit."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "A fake account keeps posting edited photos and cruel nicknames targeting one classmate, and others pile on. What is this, and what should you do?",
+      "options": [
+        "Cyberbullying. Do not join or forward, save screenshots as a record, report and block the account, and tell a trusted adult.",
+        "Just jokes. Screens cannot hurt anyone.",
+        "A fight you should win by posting embarrassing photos of the bullies"
+      ],
+      "correctIndex": 0,
+      "explanation": "Repeatedly targeting and humiliating one person online is cyberbullying. The playbook is: never join in, keep screenshots as proof, use report and block tools, tell a trusted adult, and never retaliate publicly."
+    },
+    {
+      "question": "An online stranger has spent weeks on compliments and free game credits, says 'keep our chats secret', and now asks for a private photo. What is this pattern?",
+      "options": [
+        "True friendship. Gifts prove they care.",
+        "Grooming red flags: flattery, gifts, secrecy, then photo requests. Stop, block, and tell a trusted adult.",
+        "A normal way people talk in games"
+      ],
+      "correctIndex": 1,
+      "explanation": "Flattery, gifts, secrecy demands, and photo requests together form the classic grooming pattern. Never negotiate with it: stop replying, do not send anything, block, and tell a trusted adult."
+    },
+    {
+      "question": "Someone under 18 sent a photo, and the receiver now threatens to share it unless they send more. What is true?",
+      "options": [
+        "The child must obey the threats and keep everything secret",
+        "It is the child's fault for sending the photo",
+        "It is never the child's fault, threats should not be obeyed, and telling a trusted adult and reporting brings the child support and protection, not punishment"
+      ],
+      "correctIndex": 2,
+      "explanation": "The blackmailer is the one committing an offence. POCSO protects everyone under 18 from online sexual exploitation, giving in to threats often just leads to further demands, and a child who tells a trusted adult and reports gets help, never blame."
+    },
+    {
+      "question": "Which channels exist in India for reporting online crimes?",
+      "options": [
+        "There are none. The internet is outside the law.",
+        "Only the app's own settings",
+        "The Cyber Crime Helpline 155260 and the National Cyber Crime Reporting Portal, plus Childline 1098 for any child"
+      ],
+      "correctIndex": 2,
+      "explanation": "Online crime can be reported to the Cyber Crime Helpline 155260 and the National Cyber Crime Reporting Portal. For any child, Childline 1098 is free and available day and night, and in-app report and block tools plus a trusted adult complete the toolkit."
+    }
+  ]
+}

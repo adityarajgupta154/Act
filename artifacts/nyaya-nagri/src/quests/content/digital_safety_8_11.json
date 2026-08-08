@@ -1,0 +1,110 @@
+{
+  "questId": "digital_safety_8_11",
+  "zoneId": "zone5",
+  "ageBand": "8-11",
+  "title": "Not Everyone Is Who They Say",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Anu, who is nine, loves playing an online animal game. One day a player called Miko, with a cute kitten picture, sends her a message: 'Hi! I am nine too! We are best friends now, right? Which school do you go to? Send me your photo!' What should Anu do?",
+      "choices": [
+        {
+          "text": "Not share any of it. Her school's name, her address, her phone number, and her photos are personal, and personal things are never for online strangers.",
+          "outcome": "correct",
+          "feedback": "Smart thinking, Anu! Here is the tricky part about screens: Anu cannot SEE who Miko really is. A cute kitten picture proves nothing. Online, people are not always who they say they are, so personal things stay private from anyone she only knows online.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Send her photo and school name. Miko is nine, just like her!",
+          "outcome": "incorrect",
+          "feedback": "Wait! How does Anu know Miko is really nine? She cannot see them! Online, anyone can pretend to be anyone. A kitten picture and a friendly message prove nothing. School names, addresses, phone numbers, and photos are personal, never for online strangers.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Anu does not answer. But Miko keeps writing: 'Why are you quiet? Send the photo! And do not tell anyone about our chats. It is our special secret.' Anu gets a strange, wobbly feeling in her tummy. What is the best thing to do?",
+      "choices": [
+        {
+          "text": "Stop replying, put the game down, and tell a trusted grown-up right away.",
+          "outcome": "correct",
+          "feedback": "Exactly right! That wobbly feeling is a helper: it says 'something is wrong here'. And listen carefully: whenever someone says 'keep it secret from your grown-ups', that is one of the BIGGEST warning signs there is. Safe friends never need secrets. Stop, do not reply, and tell a trusted grown-up.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Keep it secret like Miko asked, so Miko does not get angry.",
+          "outcome": "incorrect",
+          "feedback": "No, this is exactly when telling matters most! 'Keep it secret' is one of the biggest warning signs in the whole online world. Safe friends never demand secrets. The best move is to stop replying and tell a trusted grown-up right away.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Anu runs to her papa and tells him everything. Papa listens carefully and says: 'Thank you for telling me, Anu. You did exactly the right thing.' Together they press the block button and the report button in the game, so Miko cannot write to her anymore. Now, a question: is Anu in trouble for having chatted with Miko at first?",
+      "choices": [
+        {
+          "text": "No! Telling a grown-up was brave and right. A child is never in trouble for asking for help.",
+          "outcome": "correct",
+          "feedback": "Exactly! Anu did nothing wrong. Tricky people online are the ones doing wrong, never the child. And look what happened when she told: her papa helped, and the block and report buttons shut the tricky player out. Telling makes things better.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Yes, she should have kept it hidden so no one would find out.",
+          "outcome": "incorrect",
+          "feedback": "Not at all! Anu is the hero of this story BECAUSE she told. A child is never in trouble for asking for help. Hiding is what tricky people want; telling a trusted grown-up is what keeps children safe.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "That evening, Anu and Papa make a poster for her desk called The Rules of the Screen. What belongs on the poster?",
+      "choices": [
+        {
+          "text": "Personal things stay private. People online are not always who they say. If something feels wrong: stop, do not reply, tell a trusted grown-up.",
+          "outcome": "correct",
+          "feedback": "Perfect poster! And one more thing belongs at the bottom: grown-ups can always help with the block and report buttons, and Childline 1098 is a free phone number for any child who needs help, day and night."
+        },
+        {
+          "text": "Believe everyone online, share everything, and keep problems secret.",
+          "outcome": "incorrect",
+          "feedback": "That would be the danger poster! The real rules are the opposite: personal things stay private, people online are not always who they say, and if something feels wrong: stop, do not reply, and tell a trusted grown-up. And remember Childline 1098, a free number for any child, day and night."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Someone you only know from an online game asks for your photo and your school's name. What do you do?",
+      "options": [
+        "Send it. Online friends are the same as real friends.",
+        "Do not share it, and tell a trusted grown-up about the message",
+        "Share just the school name. That part is not personal."
+      ],
+      "correctIndex": 1,
+      "explanation": "Photos, school names, addresses, and phone numbers are all personal. They are never for people you only know online, and a trusted grown-up should know when a stranger asks for them."
+    },
+    {
+      "question": "Are people online always who they say they are?",
+      "options": [
+        "Yes, the internet checks everyone",
+        "Yes, if their profile picture looks nice",
+        "No. Online, anyone can pretend to be anyone."
+      ],
+      "correctIndex": 2,
+      "explanation": "You cannot see who is really typing. A cute picture and a friendly message prove nothing, which is why personal things stay private from online strangers."
+    },
+    {
+      "question": "Something online makes you feel weird, scared, or wobbly inside. What is the best move?",
+      "options": [
+        "Stop, do not reply, and tell a trusted grown-up. You can also call Childline 1098, free, any time.",
+        "Keep replying to find out what they want",
+        "Keep it secret so nobody worries"
+      ],
+      "correctIndex": 0,
+      "explanation": "That weird feeling is a helper. Stop, do not reply, and tell a trusted grown-up, who can help with the block and report buttons. Childline 1098 is free for any child, day and night."
+    }
+  ]
+}

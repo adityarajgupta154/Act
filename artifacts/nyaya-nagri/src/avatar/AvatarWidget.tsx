@@ -67,6 +67,14 @@ const ZONE_GREETINGS: Record<string, Record<string, string>> = {
     '16-18':
       "Welcome to the Justice System zone. This simulation covers both pathways of the Juvenile Justice Act: care and protection through the CWC, and what really happens when someone under 18 is accused of an offence — SJPU, the Juvenile Justice Board, and why the law is built for rehabilitation, not punishment. Worth knowing precisely.",
   },
+  zone5: {
+    '8-11':
+      "Welcome to the Digital Safety zone! Screens are fun, but here is a secret: online, people are not always who they say they are. Let's follow Anu's story and learn the Rules of the Screen — what stays private, and who to tell if something feels wrong. I'm here if you have questions!",
+    '12-15':
+      "Welcome to the Digital Safety zone. This quest covers the real stuff: spotting cyberbullying and what actually helps, the grooming red flags that show up in DMs and games, and the tools on your side — block, report, trusted adults, the Cyber Crime Helpline 155260, and Childline 1098. Ready?",
+    '16-18':
+      "Welcome to the Digital Safety zone. This one is about digital consent and the law: why forwarding someone's private image can be an offence, how the rules protect everyone under 18, and the practical playbook for harassment and sextortion — records, platform grievance tools, the National Cyber Crime Reporting Portal, and 155260. Knowledge worth having.",
+  },
 };
 
 export function AvatarWidget() {

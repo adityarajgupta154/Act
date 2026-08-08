@@ -29,7 +29,7 @@ const ALL_ZONES = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
 // Zones with content so far (Task 4: zone1, Task 5: zone2, Task 6: zone3).
 const CONTENT_ZONES = ALL_ZONES.filter((z) => resolveQuest(z, '12-15') !== null);
 assert(
-  JSON.stringify(CONTENT_ZONES) === JSON.stringify(['zone1', 'zone2', 'zone3', 'zone4']),
+  JSON.stringify(CONTENT_ZONES) === JSON.stringify(['zone1', 'zone2', 'zone3', 'zone4', 'zone5']),
   `zones with content: ${CONTENT_ZONES.join(', ')}`,
 );
 
