@@ -163,6 +163,11 @@ export function QuestPlayer({ quest }: { quest: Quest }) {
 
         <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
           <div className="bg-sky-50 rounded-2xl p-6 md:p-8 mb-8 border border-sky-100">
+            {scene.stageLabel && (
+              <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-bold mb-4 uppercase tracking-wide">
+                {scene.stageLabel}
+              </span>
+            )}
             <p className="text-xl md:text-2xl font-medium text-slate-800 leading-relaxed">
               {scene.narration}
             </p>

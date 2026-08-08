@@ -1,0 +1,153 @@
+{
+  "questId": "justice_system_16_18",
+  "zoneId": "zone4",
+  "ageBand": "16-18",
+  "title": "Two Paths, One Principle",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "stageLabel": "Path A - Care and Protection: Intake",
+      "narration": "This simulation walks both pathways of India's Juvenile Justice Act, 2015 (amended 2021). The Act sorts every situation into two categories. A 'child in need of care and protection' (CNCP): abandoned, at risk, abused, or exploited, like a rescued child worker from the Right to Childhood zone. And a 'child in conflict with law' (CCL): a child ACCUSED of an offence. Everyone under 18 is a 'child' under this Act. Start with Path A: a 13-year-old, Meera, is found living on the street with no one caring for her. Which authority does the law route her to?",
+      "choices": [
+        {
+          "text": "The Child Welfare Committee (CWC) of the district, within 24 hours (excluding travel time). She can be brought by Childline, the police's child welfare officers, a social worker, any citizen, or she can approach it herself.",
+          "outcome": "correct",
+          "feedback": "Correct. Every district has a CWC: a chairperson and members, including at least one woman, sitting in child-friendly settings, not a criminal court. The 24-hour clock exists so no child in need of protection drifts in limbo. And note who can knock on the door: practically anyone, including the child.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "A regular criminal court, because all child cases go there.",
+          "outcome": "incorrect",
+          "feedback": "No. Meera is not accused of anything. A child in need of care and protection goes before the district's Child Welfare Committee within 24 hours, a child-friendly body whose only mandate is her safety and future. And most children who ARE accused of offences go before the Juvenile Justice Board, not a regular criminal court; only the narrow heinous-offence exception you will meet later can move a 16- or 17-year-old's case to a Children's Court.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "stageLabel": "Path A - Care and Protection: The plan",
+      "narration": "The CWC hears Meera gently, places her in a safe children's home for now, and orders a Social Investigation Report. Behind the scenes, the District Child Protection Unit (DCPU), the district's professional child-protection office, supports this whole machinery: tracking cases, running schemes, connecting services. When the report comes, the CWC builds Meera's long-term plan. What does the law want that plan to look like?",
+      "choices": [
+        {
+          "text": "Family first: restore her to her own family if safe, with support. If not possible, then foster care, adoption, or sponsorship. Institutional care is the last resort.",
+          "outcome": "correct",
+          "feedback": "Exactly. The Act's rehabilitation ladder runs: restoration to family (with support), then foster care, adoption, or sponsorship, and institutional care only as the last resort. There is also 'aftercare': support that can continue past 18, so a young person is not simply dropped at the door of adulthood.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Institution by default. It is simpler for the paperwork.",
+          "outcome": "incorrect",
+          "feedback": "The Act says the opposite: institutionalization is the LAST resort. The ladder is family restoration with support, then foster care, adoption, or sponsorship. And aftercare support can continue past 18. The system is measured by how well children leave it for real family life, not by how many it holds.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "stageLabel": "Path B - Conflict with Law: First contact",
+      "narration": "Now Path B. A 17-year-old, Imran, is accused of stealing a phone. This is the moment most people imagine wrong, so walk it precisely. What does the law REQUIRE at first contact between Imran and the police?",
+      "choices": [
+        {
+          "text": "He is handled by specially trained officers: the Special Juvenile Police Unit or the child welfare police officer every station must have. No handcuffs, never lodged in a police lockup or jail, parents or guardians informed as soon as possible, and he is produced before the Juvenile Justice Board within 24 hours, excluding journey time.",
+          "outcome": "correct",
+          "feedback": "Correct on every point. Plain clothes, no handcuffs, no lockup, no jail. Parents or guardians informed as soon as possible. Before the Juvenile Justice Board within 24 hours, excluding journey time. And for children, release on bail is the norm; if the Board decides release would put him in danger or among bad influences, he stays in an observation home, a facility for children, never a jail.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Ordinary arrest: handcuffs, a night in the police lockup, and jail until a court date.",
+          "outcome": "incorrect",
+          "feedback": "None of that is lawful for a child. Trained child welfare police officers handle it, no handcuffs, and a child can never be kept in a police lockup or jail. Parents or guardians are informed as soon as possible, the Juvenile Justice Board sees him within 24 hours (excluding journey time), and bail is the norm; if not released, he stays in an observation home for children, never a jail.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "stageLabel": "Path B - Conflict with Law: The Board",
+      "narration": "Imran appears before the Juvenile Justice Board (JJB): a magistrate plus two social work members, at least one of them a woman, around a table, not a courtroom cage. The Board holds an INQUIRY, not a trial, in language Imran understands. Suppose the Board finds he did take the phone. What happens to a child in that position?",
+      "choices": [
+        {
+          "text": "Reform-focused outcomes: counselling, community service, probation under a parent's or guardian's care, and for older children in serious cases, a special home for a limited period, up to three years. His identity is generally protected from being published, and in most cases the records are later protected so one mistake does not brand him for life.",
+          "outcome": "correct",
+          "feedback": "Exactly. The Board's toolkit is built for reform: counselling, community service, probation, and at most a stay in a special home, capped at three years, focused on education and skills. Publishing a child's identity is generally prohibited and an offence, unless the Board or Court permits disclosure in the child's own interest, and in most cases records are protected afterwards. The design goal is a functioning adult, not a marked one.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "The same prison sentence an adult thief would get. Fair is fair.",
+          "outcome": "incorrect",
+          "feedback": "That is precisely what the JJ Act rejects. Children are dealt with by the Board's reform toolkit: counselling, community service, probation, at most a limited stay in a special home (up to three years) focused on education and skills. Identity generally protected from publication, records in most cases protected afterwards. The law bets on the child's future, not against it.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "stageLabel": "The principle - and the honest exception",
+      "narration": "Step back and see the whole map. CNCP path: Childline 1098 or SJPU or anyone, then CWC, safe placement, family-first plan, with the DCPU supporting everything district-wide. CCL path: SJPU or child welfare police officer, then JJB, bail as the norm, reform-focused outcomes. One honest nuance completes the picture: for the gravest category of alleged offences, called 'heinous' offences, committed by a child aged 16 or 17, the Board first conducts a preliminary assessment and can transfer the case to a Children's Court, where the child may be tried as an adult. Even then, two lines can never be crossed for anyone who was under 18 at the time of the offence. Which two?",
+      "choices": [
+        {
+          "text": "No death penalty, and no life imprisonment without the possibility of release.",
+          "outcome": "correct",
+          "feedback": "Correct. Those two lines are absolute for anyone who was under 18 at the time of the offence. The transfer route is a narrow exception for the gravest alleged offences by 16- and 17-year-olds, decided case by case after a preliminary assessment. The Act's spine remains what you saw on both paths: children are to be protected, supported, and given a route back."
+        },
+        {
+          "text": "There are no such lines. Once transferred, a child can face any adult sentence.",
+          "outcome": "incorrect",
+          "feedback": "There are two absolute lines: no death penalty, and no life imprisonment without the possibility of release, for anyone who was under 18 at the time of the offence. The transfer to a Children's Court is a narrow, case-by-case exception. The Act's overall design remains rehabilitation over punishment."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "An abandoned or at-risk child (a 'child in need of care and protection') is routed to which authority?",
+      "options": [
+        "The Child Welfare Committee (CWC), within 24 hours",
+        "The Juvenile Justice Board (JJB)",
+        "A regular criminal court"
+      ],
+      "correctIndex": 0,
+      "explanation": "CNCP cases go before the district's Child Welfare Committee within 24 hours (excluding travel time). Most children accused of offences go before the JJB; only the narrow heinous-offence exception can move a 16-17 year old's case to a Children's Court."
+    },
+    {
+      "question": "A child accused of an offence (a 'child in conflict with law') is dealt with by which authority?",
+      "options": [
+        "The Child Welfare Committee",
+        "The Juvenile Justice Board (JJB), after being handled by the Special Juvenile Police Unit or a child welfare police officer",
+        "Whichever regular court is nearest"
+      ],
+      "correctIndex": 1,
+      "explanation": "CCL cases run through specially trained police (SJPU or the child welfare police officer in every station) to the Juvenile Justice Board: a magistrate plus two social work members, at least one a woman, holding a child-friendly inquiry."
+    },
+    {
+      "question": "Which of these does the JJ Act absolutely prohibit for any child?",
+      "options": [
+        "Being released on bail",
+        "Being kept in a police lockup or jail",
+        "Being informed of the accusation"
+      ],
+      "correctIndex": 1,
+      "explanation": "A child can never be lodged in a police lockup or jail. Bail is the norm for children, and if not released, a child accused of an offence stays in an observation home, a facility for children."
+    },
+    {
+      "question": "What is the Juvenile Justice Board's primary aim when dealing with a child who broke the law?",
+      "options": [
+        "Reform and rehabilitation: counselling, community service, probation, education and skills, so the child can rebuild",
+        "Maximum punishment as a warning to others",
+        "Publishing the child's name so society stays informed"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Act prioritizes rehabilitation over punishment: counselling, community service, probation, at most a limited special-home stay (up to three years). Publishing a child's identity is generally prohibited and an offence, unless the Board or Court permits disclosure in the child's own interest."
+    },
+    {
+      "question": "What is true when a 16- or 17-year-old is accused of a 'heinous' offence?",
+      "options": [
+        "Nothing changes. The transfer possibility is a myth.",
+        "The child is automatically tried and sentenced exactly like an adult",
+        "The Board first makes a preliminary assessment and may transfer the case to a Children's Court, but no one under 18 at the time of the offence can face the death penalty or life imprisonment without possibility of release"
+      ],
+      "correctIndex": 2,
+      "explanation": "The transfer route is a narrow, case-by-case exception for the gravest alleged offences by 16- and 17-year-olds, after a preliminary assessment by the Board. Even then, the death penalty and life without the possibility of release are absolutely barred for anyone under 18 at the time of the offence."
+    }
+  ]
+}

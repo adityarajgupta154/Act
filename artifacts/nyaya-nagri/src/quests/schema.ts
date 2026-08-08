@@ -23,6 +23,13 @@ export interface QuestChoice {
 export interface QuestScene {
   sceneId: string;
   narration: string;
+  /**
+   * Optional process-map label (Task 7, Zone 4 "Justice System Simulator").
+   * When present, the player renders it as a stage chip above the narration,
+   * e.g. "Step 2 of 5: The First 24 Hours" — used for flowchart-style
+   * walkthrough quests. Purely presentational; static content per PRD §9.8.
+   */
+  stageLabel?: string;
   choices: QuestChoice[];
 }
 

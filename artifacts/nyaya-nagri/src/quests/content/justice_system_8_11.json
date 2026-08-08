@@ -1,0 +1,106 @@
+{
+  "questId": "justice_system_8_11",
+  "zoneId": "zone4",
+  "ageBand": "8-11",
+  "title": "The Kindness Committee",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "This is the story of Golu. One evening, Golu is sitting all alone on a bench at a big, busy railway station. He does not know where his family is, and no one has come for him for a long, long time. A kind station worker named Salma Aunty notices him. What should Salma Aunty do?",
+      "choices": [
+        {
+          "text": "Call Childline on 1098, the free phone number for helping children.",
+          "outcome": "correct",
+          "feedback": "Yes! Salma Aunty knows the special number: 1098. It is free, it works day and night, and its whole job is helping children. In Golu's story, Childline helpers set out to meet him right away.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Ignore him. Someone else will probably help.",
+          "outcome": "incorrect",
+          "feedback": "If everyone thinks 'someone else will help', then no one helps! Kind grown-ups like Salma Aunty call Childline on 1098, the free helpline for children, open day and night. That is what she does.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Soon, a friendly Childline didi arrives with a warm smile and a glass of milk. She sits with Golu and talks softly. She tells him: 'I am here to help you. I will take you to meet a special group of kind grown-ups. Their whole job, every single day, is keeping children safe and happy. They are called the Child Welfare Committee.' Golu asks in a tiny voice: 'Am I... in trouble?' What is the true answer?",
+      "choices": [
+        {
+          "text": "No, Golu is not in trouble at all. These helpers NEVER punish children. Their only job is to help.",
+          "outcome": "correct",
+          "feedback": "Exactly right! A child who needs help is never in trouble for needing help. The Child Welfare Committee exists only to care for children and keep them safe. Punishing children is not their job at all.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Yes, children who get lost are punished.",
+          "outcome": "incorrect",
+          "feedback": "No, no, no! Being lost or alone is NEVER a child's fault, and no one punishes a child for needing help. The kind grown-ups of the Child Welfare Committee have one job only: keeping children safe.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "The next day, Golu meets the Child Welfare Committee. It is not scary at all. It is a room with friendly grown-ups who listen to him gently and ask kind questions. Then they find him a safe, warm place to stay, with beds, food, other children, and caring adults, while they search for his family. What is the committee trying to do for Golu?",
+      "choices": [
+        {
+          "text": "Keep him safe and comfortable while they look for his family and the best home for him.",
+          "outcome": "correct",
+          "feedback": "Yes! That is their plan for every child: safety first, then finding the child's own family if that is possible and safe, so every child can grow up loved and cared for.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Keep him locked up so he cannot get lost again.",
+          "outcome": "incorrect",
+          "feedback": "Not at all! The safe place is warm and caring, like a home, with food, beds, play, and kind adults. The committee's plan is to find Golu's family, or the best loving home for him. Helping, never locking up.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "In this story, the helpers find Golu's grandmother, who has been searching for him everywhere! She hugs him so tight he squeaks. Before Golu leaves, the Childline didi kneels down and says: 'Remember, Golu. In India there are helpers whose whole job is protecting children. If you or any child ever needs help, the number is 1098, free, any time.' What did we learn from Golu's story?",
+      "choices": [
+        {
+          "text": "India has kind helpers for children, like Childline 1098 and the Child Welfare Committee, and telling a trusted grown-up or calling 1098 is how a child can reach them.",
+          "outcome": "correct",
+          "feedback": "Perfect! Helpers exist just for children, and a child who needs help is NEVER in trouble for asking. Telling a trusted grown-up or calling 1098 can connect a child to these helpers, and what they do next depends on what the child needs. The number to remember is 1098."
+        },
+        {
+          "text": "Children should hide their problems so no one finds out.",
+          "outcome": "incorrect",
+          "feedback": "Golu's story shows the opposite! In this story, things got better once the helpers knew about Golu. Telling a trusted grown-up or calling Childline 1098, free, day and night, is how a child can reach the helpers whose job is to help."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "A child is lost or all alone with no one to care for them. Which free number can anyone call for help?",
+      "options": ["1098, the Childline number for children", "A random shop's number", "There is no such number"],
+      "correctIndex": 0,
+      "explanation": "Childline 1098 is a free helpline just for children. It works day and night, and anyone, a child or a grown-up, can call it to ask for help for a child."
+    },
+    {
+      "question": "Is a child who needs help in trouble?",
+      "options": [
+        "Yes, children get punished for having problems",
+        "No, never. The helpers' only job is to help children, not punish them.",
+        "Only if the problem is big"
+      ],
+      "correctIndex": 1,
+      "explanation": "A child is NEVER in trouble for needing help. India's child helpers, like Childline and the Child Welfare Committee, exist only to keep children safe."
+    },
+    {
+      "question": "What does the Child Welfare Committee do?",
+      "options": [
+        "It punishes children who get lost",
+        "It keeps children safe and helps find their family or the best loving home for them",
+        "It sells train tickets"
+      ],
+      "correctIndex": 1,
+      "explanation": "The Child Welfare Committee is a group of kind grown-ups in each district whose job is keeping children safe, listening to them, and helping them find their family or a loving home."
+    }
+  ]
+}

@@ -59,6 +59,14 @@ const ZONE_GREETINGS: Record<string, Record<string, string>> = {
     '16-18':
       "Welcome to the School Rights zone. You're past the RTE guarantee age, so this quest is about what changes after 14 and what doesn't: how education stays open, the protections every under-18 student keeps, and where a serious school grievance actually goes. Practical territory.",
   },
+  zone4: {
+    '8-11':
+      "Welcome to the Justice System zone! Did you know India has special helpers whose whole job is keeping children safe? Let's follow Golu's story and meet Childline 1098 and the kind Child Welfare Committee. A child who needs help is never in trouble for asking. I'm here if you have questions!",
+    '12-15':
+      "Welcome to the Justice System zone. This quest walks you step by step down the protection path: who to call when a child needs protection, what the Child Welfare Committee actually does, where a child stays in the meantime, and why the plan always aims at family, never punishment. Let's walk it.",
+    '16-18':
+      "Welcome to the Justice System zone. This simulation covers both pathways of the Juvenile Justice Act: care and protection through the CWC, and what really happens when someone under 18 is accused of an offence — SJPU, the Juvenile Justice Board, and why the law is built for rehabilitation, not punishment. Worth knowing precisely.",
+  },
 };
 
 export function AvatarWidget() {

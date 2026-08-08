@@ -1,0 +1,143 @@
+{
+  "questId": "justice_system_12_15",
+  "zoneId": "zone4",
+  "ageBand": "12-15",
+  "title": "The Protection Path",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "stageLabel": "Step 1 of 5: A child needs protection",
+      "narration": "Walk the path of the child protection system, step by step. It starts in an ordinary lane: neighbours slowly realize that 12-year-old Deepak has been living alone for weeks. The adult who was supposed to care for him left and never came back. Under the Juvenile Justice Act, Deepak is a 'child in need of care and protection', and the system exists exactly for him. First question: WHO is allowed to start the process?",
+      "choices": [
+        {
+          "text": "Almost anyone: a neighbour can call Childline 1098, tell the police's child welfare officer, or inform a social worker. Even the child can approach the system directly.",
+          "outcome": "correct",
+          "feedback": "Correct, and this is the system's front door design: it opens from anywhere. Police and the Special Juvenile Police Unit, Childline 1098, social workers, any concerned citizen, or the child personally. Nobody needs a lawyer or money to start protection for a child.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Only a judge can start it, after a long court case.",
+          "outcome": "incorrect",
+          "feedback": "The opposite is true. Protection is designed to start FAST and from anywhere: a neighbour calling Childline 1098, the police's child welfare officer, a social worker, any concerned citizen, or even the child directly. No court case needed to begin.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "stageLabel": "Step 2 of 5: The first 24 hours",
+      "narration": "A neighbour calls 1098. Now a clock starts ticking: the law says a child found in need of protection must be brought before the Child Welfare Committee within 24 hours (travel time not counted). So what exactly IS the Child Welfare Committee?",
+      "choices": [
+        {
+          "text": "A committee in each district that decides how to keep a child safe. It is not a criminal court, and appearing before it does not mean the child did anything wrong.",
+          "outcome": "correct",
+          "feedback": "Exactly. The CWC is the district's decision-maker for children who need care and protection. Its hearings are child-friendly: no cage, no dock, no accusation. Deepak is not 'a case against anyone'. He is a child the system now has a duty to protect.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "A court that will decide Deepak's punishment.",
+          "outcome": "incorrect",
+          "feedback": "No. There is no punishment anywhere on this path, because Deepak has done nothing wrong. The CWC is a child-friendly committee, not a criminal court. Its only question is: what does this child need to be safe and cared for?",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "stageLabel": "Step 3 of 5: A safe place, for now",
+      "narration": "The CWC listens to Deepak gently and orders a social worker to prepare a report about his situation, his family, and what he needs. That takes some days. Meanwhile, where does Deepak stay?",
+      "choices": [
+        {
+          "text": "Somewhere safe and caring: a children's home, or with a trusted adult the committee approves. Never a police lockup or jail.",
+          "outcome": "correct",
+          "feedback": "Right. While the system works out a plan, the child stays somewhere safe, a children's home with food, school, and caring staff, or with a suitable adult the committee approves. A child in need of protection can never be put in a police lockup or jail. Not for a night, not for an hour.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "In a police lockup, so he does not wander off.",
+          "outcome": "incorrect",
+          "feedback": "Never. The law is explicit: a child is never kept in a police lockup or jail, and Deepak is not even accused of anything. He stays somewhere genuinely safe: a children's home, or with a trusted adult approved by the committee.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "stageLabel": "Step 4 of 5: The plan",
+      "narration": "The report is ready. Now the CWC makes the big decision: Deepak's long-term plan. Here is the question that reveals the whole spirit of the law. What is the system's FIRST-choice goal for a child like Deepak?",
+      "choices": [
+        {
+          "text": "Restoring him to his own family, if that is safe and possible, with support for the family. Other options like foster care or adoption come after, and an institution is the last resort.",
+          "outcome": "correct",
+          "feedback": "Exactly. The law's ladder is: family first, with support to make it work. If the child's own family is not safe or cannot be found, then foster care, adoption, or sponsorship. Growing up in an institution is meant to be the LAST resort, never the default. Children belong in families, not files.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Keeping every rescued child in an institution until age 18.",
+          "outcome": "incorrect",
+          "feedback": "That is exactly what the law tries to AVOID. The first choice is always the child's own family, if safe, with support. Then foster care, adoption, or sponsorship. An institution is the last resort. The goal is a childhood in a family, not in a system.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "stageLabel": "Step 5 of 5: The principle",
+      "narration": "In this story, the social worker's report finds Deepak's aunt, who did not know he had been left alone and wants him. The CWC works towards placing him with her. Now step back and look at the whole path you just walked: noticed by a neighbour, 1098 call, CWC within 24 hours, a safe place, a plan aimed at family. One more thing worth knowing: a child ACCUSED of breaking the law walks a different path, through a Juvenile Justice Board, but it is built on the same spirit: help the child reform and rebuild, not punish. What is the single principle behind all of it?",
+      "choices": [
+        {
+          "text": "The system treats children as children to be protected and supported, never as problems to be punished.",
+          "outcome": "correct",
+          "feedback": "That is the heart of the Juvenile Justice Act. Whether a child needs protection or has been accused of something, the law's aim is care, support, and a real future. And the front door is always open: Childline 1098, free, day and night, for any child or anyone worried about a child."
+        },
+        {
+          "text": "The system exists to keep children away from society.",
+          "outcome": "incorrect",
+          "feedback": "The opposite. Every step you walked was aimed at getting Deepak BACK to a normal childhood: safety, family, school. The law treats children as children to be protected, never as problems to be locked away. And Childline 1098 is the always-open front door."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "A child found in need of care and protection must be brought before which authority, and how fast?",
+      "options": [
+        "The Child Welfare Committee, within 24 hours (not counting travel time)",
+        "A criminal court, within one month",
+        "No authority. Nothing happens."
+      ],
+      "correctIndex": 0,
+      "explanation": "The JJ Act requires the child to be brought before the Child Welfare Committee within 24 hours, excluding journey time. The CWC is child-friendly and exists to protect, not punish."
+    },
+    {
+      "question": "Who can bring a child's situation into the protection system?",
+      "options": [
+        "Only a lawyer hired by the family",
+        "Almost anyone: a neighbour via Childline 1098, police child welfare officers, social workers, any concerned citizen, or even the child directly",
+        "Only the child's parents"
+      ],
+      "correctIndex": 1,
+      "explanation": "The system's front door opens from anywhere. Anyone worried about a child can call Childline 1098, free and 24/7, and even the child can approach the system directly."
+    },
+    {
+      "question": "Where does a child in need of protection stay while the CWC works out a plan?",
+      "options": [
+        "In a police lockup",
+        "Somewhere safe: a children's home or with a trusted adult the committee approves. Never a lockup or jail.",
+        "Back where they were found, alone"
+      ],
+      "correctIndex": 1,
+      "explanation": "A child can never be kept in a police lockup or jail. Temporary stays are in safe, caring places, a children's home or with a suitable adult approved by the committee."
+    },
+    {
+      "question": "What is the system's first-choice long-term goal for a child in need of protection?",
+      "options": [
+        "An institution until age 18",
+        "Whatever is cheapest",
+        "Restoring the child to their own family if safe, then foster care, adoption, or sponsorship. An institution is the last resort."
+      ],
+      "correctIndex": 2,
+      "explanation": "The law's ladder is family first, with support. Foster care, adoption, and sponsorship come next, and institutional care is meant to be the last resort, never the default."
+    }
+  ]
+}
