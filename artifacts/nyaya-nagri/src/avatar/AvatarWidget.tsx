@@ -51,6 +51,14 @@ const ZONE_GREETINGS: Record<string, Record<string, string>> = {
     '16-18':
       "Welcome to the Right to Childhood zone. You're close to working age, so this one is practical: what jobs the law lets you take at 14-18, why hazardous work stays off-limits until 18, the hour and night-work rules employers owe you, and how it all protects your education. Useful stuff.",
   },
+  zone3: {
+    '8-11':
+      "Welcome to the School Rights zone! Did you know every child aged 6 to 14 in India has the right to free elementary education? Government schools charge no fees, and no child can be turned away because of money. Let's follow Tara's story and see how the law keeps the school gate open. I'm here if you have questions!",
+    '12-15':
+      "Welcome to the School Rights zone. The RTE Act gives you rights you can actually stand on: free elementary education, the 25 percent entry-level quota in private schools, no expulsion before Class 8, and a ban on physical punishment and humiliation. Let's see what they mean in real life.",
+    '16-18':
+      "Welcome to the School Rights zone. You're past the RTE guarantee age, so this quest is about what changes after 14 and what doesn't: how education stays open, the protections every under-18 student keeps, and where a serious school grievance actually goes. Practical territory.",
+  },
 };
 
 export function AvatarWidget() {

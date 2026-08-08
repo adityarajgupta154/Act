@@ -1,0 +1,150 @@
+{
+  "questId": "school_rights_12_15",
+  "zoneId": "zone3",
+  "ageBand": "12-15",
+  "title": "The Empty Bench",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Sana's bench has been empty for two days. When she finally returns, she tells you the truth at break: money is tight at home, and her parents are thinking of taking her out after Class 7. And honestly? Part of her is relieved, because one teacher keeps humiliating her in front of the whole class, mocking her answers and calling her 'hopeless'. What is the right first move?",
+      "choices": [
+        {
+          "text": "Listen properly, then help her find out what the law actually says before anyone makes a decision.",
+          "outcome": "correct",
+          "feedback": "Exactly. Big decisions made without information are usually bad ones. Sana is about to discover that the law has something to say about BOTH of her problems: the money and the humiliation.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Agree that leaving school sounds easier for everyone.",
+          "outcome": "incorrect",
+          "feedback": "Hold on. Leaving school at 13 closes doors that are very hard to reopen, and both of Sana's problems have legal answers she has not heard yet. First, get informed. Then decide.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Tell everyone in class about Sana's family money problems.",
+          "outcome": "incorrect",
+          "feedback": "That is Sana's private story to tell, not yours to broadcast. What she needs is a friend who listens and helps her find real information, not an audience.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "First, the money problem. Here is what the RTE Act says: elementary education, up to Class 8, is FREE in government schools. No tuition fees, free textbooks, free uniforms. No child can be turned away or expelled for inability to pay. And there is one more right worth knowing: eligible private unaided schools (minority institutions are exempt) must keep 25 percent of their ENTRY-level seats, in Class 1 or pre-primary, free for children from disadvantaged groups and weaker sections, with the government paying the school back. Sana asks: 'So could that 25 percent seat work for me, right now, in Class 7?'",
+      "choices": [
+        {
+          "text": "Not directly. The quota applies when children ENTER school at Class 1 or pre-primary. But it could matter for her little brother, and her own elementary schooling stays free at a government school.",
+          "outcome": "correct",
+          "feedback": "Precisely right, and this precision matters. The 25 percent quota is an admission right at the entry level, not a mid-school transfer ticket. For Sana herself, the key fact is simpler: up to Class 8, a government school seat is free, and money can never be the reason a child is pushed out.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Yes, any student can claim a free private school seat in any class at any time.",
+          "outcome": "incorrect",
+          "feedback": "That overstates it. The 25 percent quota is for admission at the ENTRY level, Class 1 or pre-primary, in private unaided schools. What protects Sana right now is different: elementary education is free in government schools, and no child can be expelled over money.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Sana frowns: 'But I failed one maths test this year. My cousin said schools can just throw students out for failing.' Time to bust a myth. What does the law actually say about failing and expulsion before Class 8?",
+      "choices": [
+        {
+          "text": "No child can be EXPELLED before completing Class 8. There are regular exams in Classes 5 and 8 with a second-chance re-exam, and only after that may some states hold a child back a year. And no board exam can be required before finishing Class 8.",
+          "outcome": "correct",
+          "feedback": "Exactly. Expulsion for failing is simply not allowed before a child completes elementary school. Even being held back a year can happen, in states that chose it, only in Classes 5 and 8 and only after a second-chance exam. One bad maths test in Class 7 cannot take Sana's seat away.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Schools can expel any student who fails any exam.",
+          "outcome": "incorrect",
+          "feedback": "The cousin is wrong. Before completing Class 8, no child can be expelled, and no board exam can be demanded. Being held back a year is possible only in Classes 5 and 8, in states that opted for it, and only after a second-chance re-exam. Sana's seat is not in danger from one test.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Now the harder problem: the teacher who mocks Sana in front of everyone and calls her 'hopeless'. Sana thinks she just has to endure it. But the RTE Act has a rule many students never hear about: physical punishment AND mental harassment are banned in elementary school. Repeated public humiliation is not 'discipline' or 'motivation'. It is prohibited conduct. What is the right way to act on this?",
+      "choices": [
+        {
+          "text": "Tell her parents, who can raise it with the principal and the School Management Committee, and escalate to the local education authority if needed. Childline 1098 is there for her too.",
+          "outcome": "correct",
+          "feedback": "That is the right ladder. Parents to principal, and the School Management Committee, where parents themselves sit, exists exactly for such concerns. If the school does not act, the local education authority can receive a complaint, and the child rights commissions monitor these rights. And at any point, Childline 1098 is free, day and night.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Secretly record the teacher and post the video online for justice.",
+          "outcome": "incorrect",
+          "feedback": "Tempting, but this can backfire badly on Sana, and public shaming is not a grievance process. The law gives her real channels: parents, principal, School Management Committee, local education authority, and Childline 1098. Those channels exist so children do not have to fight adults alone.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Endure it quietly. Teachers are allowed to treat students however they like.",
+          "outcome": "incorrect",
+          "feedback": "They are not. The RTE Act bans mental harassment along with physical punishment in elementary school. 'Hopeless' shouted across a classroom is not teaching. Sana has the right to raise this, through her parents, the principal, the School Management Committee, or Childline 1098.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "In this story, Sana's parents meet the principal, and the School Management Committee takes the harassment concern seriously. The school also confirms what the law already promised: her seat costs nothing, and no test result can throw her out before Class 8. Sana stays, and the empty bench stays occupied. Looking back, what made the difference?",
+      "choices": [
+        {
+          "text": "Knowing her rights: free elementary education, no expulsion, a ban on humiliation, and real channels to raise problems.",
+          "outcome": "correct",
+          "feedback": "That is the whole lesson. The RTE Act is not just a poster on a wall. It is a set of rights a student can actually stand on: a free seat, protection from expulsion, protection from harassment, and a ladder of people whose job is to listen, with Childline 1098 available to any child, any time."
+        },
+        {
+          "text": "Luck. If the school had refused, there was nothing anyone could do.",
+          "outcome": "incorrect",
+          "feedback": "Not luck, and not nothing. If a school ignores these rights, the complaint can go up the ladder: School Management Committee, local education authority, child rights commissions. And Childline 1098 can help a child find the right door. Rights only work when someone stands on them."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "What is the 25 percent EWS quota under the RTE Act?",
+      "options": [
+        "Private unaided schools must keep 25 percent of entry-level seats (Class 1 or pre-primary) free for children from disadvantaged groups and weaker sections",
+        "Any student can demand a free private school seat in any class",
+        "Government schools may charge 25 percent of families"
+      ],
+      "correctIndex": 0,
+      "explanation": "The quota is an admission right at the ENTRY level of eligible private unaided schools (unaided minority institutions are exempt), with the government reimbursing the school. It is not a mid-school transfer right."
+    },
+    {
+      "question": "Can a school expel a student in Class 7 for failing an exam?",
+      "options": [
+        "Yes, failing means automatic expulsion",
+        "No. No child can be expelled before completing Class 8, and being held back is possible only in Classes 5 and 8, in some states, after a second-chance re-exam",
+        "Only if the parents agree"
+      ],
+      "correctIndex": 1,
+      "explanation": "Before completing elementary school (Class 8), expulsion is not allowed and no board exam can be required. The limited hold-back rule applies only to Classes 5 and 8, only in states that adopted it, and only after a re-exam."
+    },
+    {
+      "question": "A teacher repeatedly humiliates a student in front of the class. What does the law say?",
+      "options": [
+        "Teachers may use any method they call discipline",
+        "Mental harassment, like physical punishment, is banned in elementary school, and it can be raised with the principal, the School Management Committee, or the local education authority",
+        "Students must simply endure it"
+      ],
+      "correctIndex": 1,
+      "explanation": "The RTE Act prohibits physical punishment and mental harassment. Concerns can be raised through parents, the principal, the School Management Committee, and the local education authority, and Childline 1098 is free for any child."
+    },
+    {
+      "question": "What does 'free elementary education' actually include in a government school?",
+      "options": [
+        "Only the classroom, everything else is paid",
+        "No tuition fees, plus free textbooks and uniforms, for ages 6 to 14",
+        "A discount on fees for some families"
+      ],
+      "correctIndex": 1,
+      "explanation": "For children aged 6 to 14, government schools charge no fees and provide free textbooks and uniforms, so money is never the barrier to elementary education."
+    }
+  ]
+}

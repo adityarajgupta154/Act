@@ -1,0 +1,116 @@
+{
+  "questId": "school_rights_8_11",
+  "zoneId": "zone3",
+  "ageBand": "8-11",
+  "title": "School Is for Everyone",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Meet Kiran. At lunch, his friend Tara is very quiet. Finally she whispers: 'Papa's work has stopped. There is no money at home. I think I cannot come to school anymore.' Tara looks like she might cry. What should Kiran do?",
+      "choices": [
+        {
+          "text": "Say: 'Wait. Let's ask our teacher first. I do not think a child can lose school because of money.'",
+          "outcome": "correct",
+          "feedback": "Good thinking, Kiran! Before believing sad news, it is smart to ask a grown-up who knows. And Kiran is on to something big: in India, school has a special protection just for children.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Say goodbye to Tara, because nothing can be done.",
+          "outcome": "incorrect",
+          "feedback": "Do not give up so fast! Tara has a right that she does not know about yet. When something feels unfair, asking a trusted grown-up, like a teacher, is always a good first step.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Tell her to keep it a secret from everyone.",
+          "outcome": "incorrect",
+          "feedback": "Keeping worries secret does not make them smaller. Sharing a worry with a trusted grown-up, like their teacher, is how children get help. Let's ask the teacher together.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Kiran and Tara ask their teacher. She smiles kindly: 'Tara, listen carefully. In India, every child aged 6 to 14 has the RIGHT to free education. It is written in our Constitution, in a promise called Article 21A. In a government school like ours there are no fees at all, and you get your textbooks and uniform free too.' Tara blinks. 'FREE? What does compulsory mean, teacher?' What is the answer?",
+      "choices": [
+        {
+          "text": "Free means Tara's family does not have to pay, and compulsory means it is the government's job to make sure every child aged 6 to 14 can go to school and finish.",
+          "outcome": "correct",
+          "feedback": "Exactly! Free means no fees stand between a child and elementary school. Compulsory does not mean children get punished. It means the government MUST make sure every child aged 6 to 14 gets to study. School is a right, not a favour.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Free means only rich children pay, and compulsory means children who miss school get punished.",
+          "outcome": "incorrect",
+          "feedback": "Not quite! Free means no child aged 6 to 14 has to pay for elementary school in a government school. And compulsory is a duty for the GOVERNMENT, not a punishment for children: it must make sure every child can study.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Tara has one more worry. She asks in a small voice: 'But teacher... if we have no money, can the school send me away?' The whole class waits for the answer. What does the law say?",
+      "choices": [
+        {
+          "text": "No. No child can be turned away or sent out of school because their family cannot pay.",
+          "outcome": "correct",
+          "feedback": "Right! A child cannot be turned away from school, and cannot be thrown out, because of money. Until a child finishes elementary school, the law keeps that seat safe. Tara's place in class belongs to HER.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Yes, schools can remove children whose families are poor.",
+          "outcome": "incorrect",
+          "feedback": "No! The law says the opposite. School is every child's right, whether their family has money or not. No child can be turned away or expelled because of money. Tara's seat is safe.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "In this story, the teacher meets Tara's parents and explains everything: no fees, free books, and Tara's seat stays hers. Tara comes to school the next day with the biggest smile Kiran has ever seen. And the teacher tells the whole class one more helpful thing: 'If any child is ever worried about school, or anything at all, you can always tell a trusted grown-up, or call Childline on 1098. It is free, and it is for every child, day and night.' What did we learn today?",
+      "choices": [
+        {
+          "text": "Every child aged 6 to 14 has the right to free elementary education, government schools charge no fees, no child can be turned away for money, and a trusted grown-up or Childline 1098 can always help.",
+          "outcome": "correct",
+          "feedback": "Perfect! Education is every child's RIGHT. Money can never lock the school gate for a child. And help is always one conversation, or one free call to 1098, away."
+        },
+        {
+          "text": "Children whose families have no money should stay home.",
+          "outcome": "incorrect",
+          "feedback": "Tara's story shows the opposite! Every child aged 6 to 14 has the right to free elementary education, government schools charge no fees, and no child can be turned away for money. When in doubt, ask a trusted grown-up, or call Childline 1098, free, any time."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "What does the law say about school for children aged 6 to 14 in India?",
+      "options": [
+        "Every child has the right to free elementary education: government schools charge no fees, and it is the government's job to make sure every child can go",
+        "It is only for families who can pay",
+        "It is optional, and no one has to help"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 21A of the Constitution and the RTE Act make education free and compulsory for every child aged 6 to 14. In government schools there are no fees, and textbooks and uniforms are free too."
+    },
+    {
+      "question": "Can a school turn a child away or expel them because the family cannot pay?",
+      "options": [
+        "Yes, if the fees are not paid",
+        "No. No child can lose school because of money.",
+        "Only the principal can decide"
+      ],
+      "correctIndex": 1,
+      "explanation": "No child can be turned away or expelled from school because of money. Education is a right for every child aged 6 to 14, not a favour."
+    },
+    {
+      "question": "Who can a child talk to if they are worried about school?",
+      "options": [
+        "No one. Worries should stay secret.",
+        "A trusted grown-up like a parent or teacher, or Childline 1098",
+        "Only other children"
+      ],
+      "correctIndex": 1,
+      "explanation": "Worries shared with a trusted grown-up get smaller. And Childline 1098 is a free helpline for every child, open day and night."
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "questId": "school_rights_16_18",
+  "zoneId": "zone3",
+  "ageBand": "16-18",
+  "title": "After Fourteen",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Aarav is 16, in Class 11. His cousin Nikhil, who just finished Class 8 and turned 14, drops a bombshell over dinner: 'The free-school law only covers kids till 14, right? So legally, school is basically over for me. No more guarantees, no more rights.' Is Nikhil reading the situation correctly?",
+      "choices": [
+        {
+          "text": "Half right, half very wrong. The RTE guarantee of free and compulsory education does end at 14, but that ends the statutory GUARANTEE. Education can remain available to him, and his protections as a student under 18 continue.",
+          "outcome": "correct",
+          "feedback": "Exactly. Article 21A and the RTE Act cover ages 6 to 14, through elementary school. After that, no law pushes anyone out of education, and education can remain available: government secondary schools, state schemes that may extend free schooling beyond 14, and government scholarship schemes for students who need support. What ends is the statutory guarantee, not the options.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Completely right. After 14, a student has no education rights at all.",
+          "outcome": "incorrect",
+          "feedback": "That is the myth this quest exists to bust. The RTE guarantee ends at 14, true. But education can remain available: government secondary schools, state schemes that may extend free schooling, and scholarship schemes. And every protection that comes with being under 18 stays fully alive.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Nikhil is considering working instead. Aarav connects the dots to something he learned in the Right to Childhood zone. How do the adolescent work rules relate to his studies?",
+      "choices": [
+        {
+          "text": "At 14 to 18 he may take permitted work, but hazardous occupations are banned, hours are capped, and night work is prohibited. Those limits help protect the time, health, and safety that studying needs.",
+          "outcome": "correct",
+          "feedback": "Right. The child labour law's adolescent protections, no hazardous work until 18, capped hours with rest, no work between 7 p.m. and 8 a.m., a weekly day off, help protect an adolescent's time, health, and safety, which makes continuing to study more possible. But they regulate work; they do not by themselves keep anyone in school. Nikhil still needs to actively pursue his school and support options.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Once he can legally work at 14, education law stops caring what happens to his studies.",
+          "outcome": "incorrect",
+          "feedback": "Not quite. The limits on adolescent work, no hazardous work until 18, capped hours, no night work between 7 p.m. and 8 a.m., cannot be waived by agreement, and they help protect the time and safety that studying needs. But they do not guarantee schooling by themselves, which is why looking into school and scholarship options still matters.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "A few weeks into Class 9, Nikhil calls Aarav, upset. A senior staff member at his new school screams abuse at certain students and once grabbed a boy roughly enough to scare the whole corridor. Nikhil sighs: 'We are past 14 now. The no-punishment protections were an RTE thing, weren't they? Nobody protects secondary students.' Is that true?",
+      "choices": [
+        {
+          "text": "No. Every student under 18 remains protected: the Juvenile Justice Act can make cruelty by an adult responsible for a child an offence. And if conduct is sexual abuse, sexual harassment, or exploitation, POCSO also protects every child under 18.",
+          "outcome": "correct",
+          "feedback": "Correct. The RTE Act's specific ban on physical punishment and mental harassment is written for elementary school, but it is not the only shield. The Juvenile Justice Act's cruelty provisions cover any child under 18 regardless of class, and POCSO separately protects every child under 18 against sexual offences, at school or anywhere else.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "True. After Class 8, teachers and staff can treat students however they want.",
+          "outcome": "incorrect",
+          "feedback": "False, and dangerously so. Protections do not expire at Class 8. The Juvenile Justice Act makes cruelty to a child under 18 by an adult in charge an offence, and if conduct is sexual in nature, POCSO protects every child under 18, including at school. A secondary student who faces abuse has every right to raise it.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "So where does a secondary student actually TAKE a serious school grievance, whether it is unsafe behaviour by staff, dangerous infrastructure, or harassment? Aarav and Nikhil map out the ladder together. Which version is right?",
+      "choices": [
+        {
+          "text": "Start inside the school: class teacher, principal, the school's management. If that fails, the district education authorities. For child rights violations, the child rights commissions (NCPCR and the state commission). And Childline 1098 for any child under 18, any time.",
+          "outcome": "correct",
+          "feedback": "That is the ladder. Most problems resolve at the first rungs, and putting a concern in writing helps at every step. The commissions exist to hear children's rights violations, and Childline 1098 remains free and open around the clock for anyone under 18. For anything involving abuse, a trusted adult plus 1098 is always a right answer.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "There is nowhere to go. Grievances only count until age 14.",
+          "outcome": "incorrect",
+          "feedback": "There is a whole ladder: teacher, principal, school management, district education authorities, and the child rights commissions for rights violations, with Childline 1098 available to every child under 18. Grievances do not age out at 14.",
+          "nextScene": "scene5"
+        },
+        {
+          "text": "Skip everyone and start a public social media campaign against the school.",
+          "outcome": "incorrect",
+          "feedback": "Public campaigns can expose the very students they mean to help and derail real accountability. The effective route is the grievance ladder: school, then district education authorities, then the child rights commissions, with Childline 1098 for support at any point.",
+          "nextScene": "scene5"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene5",
+      "narration": "In this story, Nikhil's parents put the safety concern in writing to the principal, and the school management takes it up. Nikhil stays in Class 9, applies for a state scholarship, and stops talking about school being 'over'. A year from now, Aarav turns 18 and steps out of childhood protections entirely. What is the clearest way to sum up the years from 14 to 18?",
+      "choices": [
+        {
+          "text": "The RTE guarantee is behind you, but education can remain available through government schools, state schemes, and scholarships; work rules help protect your study time; and every under-18 protection travels with you until the day you turn 18.",
+          "outcome": "correct",
+          "feedback": "That is it exactly. The statutory guarantee ends at 14; education can remain available, and the shield against cruelty and abuse and the grievance ladder continue to 18. Anyone who tells a 15-year-old that school and safety no longer matter for them is wrong, and Childline 1098 backs that up around the clock."
+        },
+        {
+          "text": "After 14 you are on your own, so it is smarter to lower your expectations.",
+          "outcome": "incorrect",
+          "feedback": "Nikhil believed that too, and he was wrong. Education can remain available through government schools, state schemes, and scholarships; adolescent work rules help protect study time; child protection law covers everyone under 18; and the grievance ladder plus Childline 1098 work at every age until adulthood."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Which ages does the RTE Act's free and compulsory education guarantee cover?",
+      "options": [
+        "6 to 14, through elementary school",
+        "6 to 18, through Class 12",
+        "All ages, forever"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 21A and the RTE Act guarantee free and compulsory education for children aged 6 to 14. After 14 the statutory guarantee ends, but education can remain available through government secondary schools, state schemes that may extend free schooling, and scholarships."
+    },
+    {
+      "question": "What does turning 14 change for a student?",
+      "options": [
+        "They lose all rights connected to school",
+        "The RTE guarantee ends, but education can remain available through government schools, state schemes, and scholarships, and their under-18 protections continue",
+        "School becomes legally forbidden"
+      ],
+      "correctIndex": 1,
+      "explanation": "Only the free-and-compulsory guarantee ends at 14. Education can remain available through government schools, state schemes, and scholarships, and protection from cruelty and abuse plus access to grievance channels continue until 18."
+    },
+    {
+      "question": "How does child labour law connect to education for 14 to 18 year olds?",
+      "options": [
+        "It does not; work and school are unrelated",
+        "It lets employers decide how much teenagers study",
+        "Its limits, no hazardous work, capped hours, no night work, help protect the time, health, and safety a student needs to keep studying"
+      ],
+      "correctIndex": 2,
+      "explanation": "The adolescent work protections from the Right to Childhood zone help protect study time and safety for 14 to 18 year olds. They regulate work; staying in school also depends on pursuing school options, state schemes, and scholarships."
+    },
+    {
+      "question": "A secondary school student faces abusive treatment by school staff. What is true?",
+      "options": [
+        "Nothing protects students after Class 8",
+        "Child protection law covers every person under 18: cruelty by an adult in charge is an offence under the Juvenile Justice Act, and POCSO protects against sexual offences at school too",
+        "Only students under 14 can complain"
+      ],
+      "correctIndex": 1,
+      "explanation": "The RTE ban on punishment and harassment is written for elementary school, but the Juvenile Justice Act's cruelty provisions cover every child under 18 in any class, and POCSO protects every child under 18 from sexual abuse, harassment, and exploitation, at school or anywhere."
+    },
+    {
+      "question": "Where can a secondary student take a serious school grievance?",
+      "options": [
+        "Nowhere, grievances end at 14",
+        "Straight to social media",
+        "Up the ladder: teacher, principal, school management, district education authorities, child rights commissions, with Childline 1098 available any time"
+      ],
+      "correctIndex": 2,
+      "explanation": "The grievance ladder runs from the school to district education authorities to the child rights commissions (NCPCR/SCPCR). Childline 1098 is free for every child under 18, day and night."
+    }
+  ]
+}

@@ -15,6 +15,9 @@ import safeZone1618 from './content/safe_zone_16_18.json';
 import rightChildhood811 from './content/right_childhood_8_11.json';
 import rightChildhood1215 from './content/right_childhood_12_15.json';
 import rightChildhood1618 from './content/right_childhood_16_18.json';
+import schoolRights811 from './content/school_rights_8_11.json';
+import schoolRights1215 from './content/school_rights_12_15.json';
+import schoolRights1618 from './content/school_rights_16_18.json';
 
 const QUEST_FILES: Quest[] = [
   safeZone811 as Quest,
@@ -23,6 +26,9 @@ const QUEST_FILES: Quest[] = [
   rightChildhood811 as Quest,
   rightChildhood1215 as Quest,
   rightChildhood1618 as Quest,
+  schoolRights811 as Quest,
+  schoolRights1215 as Quest,
+  schoolRights1618 as Quest,
 ];
 
 /** Validate everything once at module load — content bugs fail loudly in dev. */
