@@ -11,8 +11,16 @@ import { progressStore } from '@/data/progressStore';
 import { useSettings } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
 import { AvatarWidget } from '@/avatar/AvatarWidget';
+import { OnboardingFlow } from '@/onboarding/OnboardingFlow';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
+
+/** Task 13: has the onboarding (intro, age band, guardian consent) run? */
+function useOnboarded(): boolean {
+  const [onboarded, setOnboarded] = useState(() => progressStore.getState().onboarded);
+  useEffect(() => progressStore.subscribe((s) => setOnboarded(s.onboarded)), []);
+  return onboarded;
+}
 
 function BadgeCounter() {
   const [count, setCount] = useState(() => {
@@ -178,6 +186,7 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
 export function HUD() {
   const { activeZoneId, fadeOpacity } = useUIStore();
   const t = useStrings();
+  const onboarded = useOnboarded();
 
   return (
     <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
@@ -254,15 +263,21 @@ export function HUD() {
           Get Help Now button (z-50) stays on top */}
       <CommunityOverlay />
 
+      {/* Onboarding (z-20, Task 13) — covers the world until the guardian
+          consent step completes; Get Help Now (z-50) stays on top even here */}
+      {!onboarded && <OnboardingFlow />}
+
       {/* Black Fade Overlay (z-40) */}
       <div
         className="absolute inset-0 bg-slate-950 pointer-events-none transition-opacity duration-300 ease-in-out z-40"
         style={{ opacity: fadeOpacity }}
       />
 
-      {/* Floating Action Controls (z-50) - Always visible, never fades */}
+      {/* Floating Action Controls (z-50) - Always visible, never fades.
+          The guide needs an age band, so it appears after onboarding;
+          the Get Help Now button is there from the very first screen. */}
       <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
-        <AvatarWidget />
+        {onboarded && <AvatarWidget />}
         <HelpDialog />
       </div>
     </div>

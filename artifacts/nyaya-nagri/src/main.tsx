@@ -13,6 +13,11 @@ import '@fontsource/lexend/700.css';
 // Importing the settings store applies persisted language/accessibility
 // attributes to <html> before first render.
 import '@/data/settingsStore';
+import { initAmbientAudio } from '@/audio/ambient';
+
+// Calm, mutable ambient loop (Task 13) — starts after the first user
+// gesture (browser autoplay policy); toggled from Settings.
+initAmbientAudio();
 
 // Dev-only: `?demoProgress` seeds sample data so the progress dashboard can
 // be inspected without playing through quests. Never active in production.

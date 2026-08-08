@@ -151,6 +151,32 @@ export interface UIStrings {
   safetyReminderTitle: string;
   safetyReminderBody: string;
   seeHelpOptions: string;
+
+  // Onboarding (Task 13) — intro, age band, guardian consent (DPDP-aware)
+  welcomeTitle: string;
+  welcomeBody: string;
+  chooseLanguage: string;
+  howItWorksTitle: string;
+  howItWorksPoints: string[];
+  howOldAreYou: string;
+  ageWhy: string;
+  ageBandDesc811: string;
+  ageBandDesc1215: string;
+  ageBandDesc1618: string;
+  guardianTitle: string;
+  guardianIntro: string;
+  whatIsStoredTitle: string;
+  storedPoints: string[];
+  notStoredNote: string;
+  consentCheckbox: string;
+  prototypeNote: string;
+  startPlaying: string;
+  next: string;
+  back: string;
+
+  // Ambient audio setting (Task 13)
+  ambientLabel: string;
+  ambientHint: string;
 }
 
 const EN: UIStrings = {
@@ -320,6 +346,44 @@ const EN: UIStrings = {
   safetyReminderBody:
     'If anything in real life ever feels like this story, you are not alone — kind helpers are one tap away.',
   seeHelpOptions: 'See help options',
+
+  welcomeTitle: 'Welcome to Nyaya Nagri!',
+  welcomeBody:
+    'A friendly city where you play stories, meet a helpful guide, and learn the rights that keep every child safe and strong.',
+  chooseLanguage: 'Choose your language',
+  howItWorksTitle: 'How it works',
+  howItWorksPoints: [
+    'Walk around the city and visit 5 zones — each one is about rights that protect you.',
+    'Play story quests, make your own choices, and answer fun quizzes to earn badges.',
+    'Your friendly guide can answer questions any time.',
+    'The red Get Help Now button is always on screen — it shows real helplines like Childline 1098.',
+  ],
+  howOldAreYou: 'How old are you?',
+  ageWhy: 'We use this only to pick the right stories for you.',
+  ageBandDesc811: 'Simple, fun stories',
+  ageBandDesc1215: 'School, friends, and online-life stories',
+  ageBandDesc1618: 'Real-world rights and how to use them',
+  guardianTitle: 'A grown-up needs to agree',
+  guardianIntro:
+    'Please hand the device to a parent, guardian, or teacher for this step.',
+  whatIsStoredTitle: 'What this app saves (only on this device):',
+  storedPoints: [
+    'The age group and language you choose, and your settings.',
+    'Your quest progress, quiz scores, and badges.',
+    'A random player code — never a name.',
+  ],
+  notStoredNote:
+    'This app never asks for a name, photo, phone number, school, or address. Messages typed or spoken to the guide are sent over the internet to an AI service only to create the reply — this app does not save them. Please remind your child not to share personal details in the chat.',
+  consentCheckbox:
+    'I am a parent, guardian, or teacher, and I agree to let this child play.',
+  prototypeNote:
+    'This is a learning prototype: agreement is remembered only on this device, in the spirit of the DPDP Act, 2023.',
+  startPlaying: 'Start playing',
+  next: 'Next',
+  back: 'Back',
+
+  ambientLabel: 'Calm background music',
+  ambientHint: 'Soft music while you explore. Turn it off any time.',
 };
 
 const HI: UIStrings = {
@@ -489,6 +553,44 @@ const HI: UIStrings = {
   safetyReminderBody:
     'अगर असल ज़िंदगी में कभी कुछ इस कहानी जैसा लगे, तो तुम अकेले नहीं हो — मददगार बस एक टैप दूर हैं।',
   seeHelpOptions: 'मदद के रास्ते देखो',
+
+  welcomeTitle: 'न्याय नगरी में स्वागत है!',
+  welcomeBody:
+    'एक प्यारा शहर जहाँ तुम कहानियाँ खेलते हो, एक मददगार गाइड से मिलते हो, और वे अधिकार सीखते हो जो हर बच्चे को सुरक्षित और मज़बूत रखते हैं।',
+  chooseLanguage: 'अपनी भाषा चुनो',
+  howItWorksTitle: 'यह कैसे काम करता है',
+  howItWorksPoints: [
+    'शहर में घूमो और 5 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
+    'कहानी वाले क्वेस्ट खेलो, अपने फ़ैसले खुद लो, और मज़ेदार क्विज़ से बैज जीतो।',
+    'तुम्हारा दोस्ताना गाइड कभी भी सवालों के जवाब दे सकता है।',
+    'लाल "अभी मदद लो" बटन हमेशा स्क्रीन पर रहता है — इसमें चाइल्डलाइन 1098 जैसी असली हेल्पलाइन हैं।',
+  ],
+  howOldAreYou: 'तुम्हारी उम्र कितनी है?',
+  ageWhy: 'इससे हम बस तुम्हारे लिए सही कहानियाँ चुनते हैं।',
+  ageBandDesc811: 'आसान, मज़ेदार कहानियाँ',
+  ageBandDesc1215: 'स्कूल, दोस्तों और ऑनलाइन दुनिया की कहानियाँ',
+  ageBandDesc1618: 'असली दुनिया के अधिकार और उन्हें इस्तेमाल करने के तरीके',
+  guardianTitle: 'एक बड़े की हाँ चाहिए',
+  guardianIntro:
+    'कृपया इस कदम के लिए डिवाइस माता-पिता, अभिभावक या शिक्षक को दो।',
+  whatIsStoredTitle: 'यह ऐप क्या सेव करता है (सिर्फ़ इसी डिवाइस पर):',
+  storedPoints: [
+    'तुम्हारा चुना हुआ उम्र-समूह, भाषा और सेटिंग्स।',
+    'तुम्हारी क्वेस्ट की प्रगति, क्विज़ के अंक और बैज।',
+    'एक रैंडम खिलाड़ी कोड — कभी नाम नहीं।',
+  ],
+  notStoredNote:
+    'यह ऐप कभी नाम, फ़ोटो, फ़ोन नंबर, स्कूल या पता नहीं माँगता। गाइड को लिखे या बोले गए संदेश सिर्फ़ जवाब बनाने के लिए इंटरनेट पर एक एआई (AI) सेवा को भेजे जाते हैं — यह ऐप उन्हें सेव नहीं करता। कृपया बच्चे को याद दिलाएँ कि वह चैट में अपनी निजी जानकारी न लिखे।',
+  consentCheckbox:
+    'मैं माता-पिता, अभिभावक या शिक्षक हूँ, और मैं इस बच्चे को खेलने की अनुमति देता/देती हूँ।',
+  prototypeNote:
+    'यह एक सीखने का प्रोटोटाइप है: सहमति सिर्फ़ इसी डिवाइस पर याद रखी जाती है — डीपीडीपी (DPDP) एक्ट, 2023 की भावना के अनुसार।',
+  startPlaying: 'खेलना शुरू करो',
+  next: 'आगे',
+  back: 'पीछे',
+
+  ambientLabel: 'शांत बैकग्राउंड संगीत',
+  ambientHint: 'घूमते समय हल्का संगीत। जब चाहो बंद कर दो।',
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

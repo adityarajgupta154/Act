@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "JbrZIn_ULQCUmYpDNaec0"
+uri = "file://attached_assets/generated_audio/music_nyaya_nagri_ambient_loop.mp3"
+type = "audio"
+title = "nyaya nagri ambient loop"
+description = "Generated music: Gentle, warm ambient background loop for a children's educational game set in a friendly Indian town. Soft acoustic guitar, light marimba/glockenspiel, warm pads, a hint of bansuri f…"

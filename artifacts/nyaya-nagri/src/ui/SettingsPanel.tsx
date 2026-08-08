@@ -6,7 +6,7 @@
  * PII). Rendered as an overlay wired to the HUD settings button.
  */
 import React, { useEffect } from 'react';
-import { X, Languages, Volume2, Type, Contrast, ALargeSmall } from 'lucide-react';
+import { X, Languages, Volume2, Type, Contrast, ALargeSmall, Music } from 'lucide-react';
 import { useUIStore, closeSettings } from './uiStore';
 import { useSettings, settingsStore, type TextSize, type Language } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
@@ -173,6 +173,17 @@ export function SettingsPanel() {
           offLabel={t.off}
           disabled={!speechOk}
           disabledHint={t.narrationUnsupported}
+        />
+
+        {/* Ambient background music (Task 13) */}
+        <ToggleRow
+          icon={<Music className="w-5 h-5" />}
+          label={t.ambientLabel}
+          hint={t.ambientHint}
+          checked={settings.ambientSound}
+          onChange={(v) => settingsStore.update({ ambientSound: v })}
+          onLabel={t.on}
+          offLabel={t.off}
         />
 
         {/* Dyslexia-friendly font */}

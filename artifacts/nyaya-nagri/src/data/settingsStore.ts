@@ -7,11 +7,19 @@
  * PII, never progress data. Falls back to in-memory when storage is
  * unavailable (embedded/incognito contexts).
  *
+ * Task 13 (DPDP consent gating): like progress, settings are NOT written to
+ * device storage until the guardian consent screen is accepted — before
+ * that (e.g. picking a language during onboarding) they live in memory
+ * only. OnboardingFlow calls settingsStore.flush() right after consent so
+ * the choices made during onboarding are persisted at that moment.
+ *
  * The store also applies the visual settings to <html> as data attributes
  * so plain CSS (index.css) can implement the font / contrast / size modes
  * without touching every component.
  */
 import { useSyncExternalStore } from 'react';
+
+import { hasRecordedConsent } from './progressStore';
 
 export type Language = 'en' | 'hi';
 export type TextSize = 'small' | 'medium' | 'large';
@@ -23,6 +31,8 @@ export interface SettingsState {
   dyslexiaFont: boolean;
   highContrast: boolean;
   textSize: TextSize;
+  /** Calm ambient background music loop (Task 13); mutable any time. */
+  ambientSound: boolean;
 }
 
 const STORAGE_KEY = 'nn-settings-v1';
@@ -33,11 +43,15 @@ const DEFAULTS: SettingsState = {
   dyslexiaFont: false,
   highContrast: false,
   textSize: 'medium',
+  ambientSound: true,
 };
 
 function loadStored(): SettingsState {
   try {
     if (typeof localStorage === 'undefined') return { ...DEFAULTS };
+    // Consent-gated: settings are only ever persisted after guardian
+    // consent, so without recorded consent there is nothing valid to read.
+    if (!hasRecordedConsent()) return { ...DEFAULTS };
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULTS };
     const parsed = JSON.parse(raw) as Partial<SettingsState>;
@@ -50,6 +64,7 @@ function loadStored(): SettingsState {
         parsed.textSize === 'small' || parsed.textSize === 'large'
           ? parsed.textSize
           : 'medium',
+      ambientSound: parsed.ambientSound !== false,
     };
   } catch {
     return { ...DEFAULTS };
@@ -58,6 +73,9 @@ function loadStored(): SettingsState {
 
 function persist(state: SettingsState): void {
   try {
+    // Consent-gated (Task 13): nothing touches device storage before the
+    // guardian consent screen is accepted.
+    if (!hasRecordedConsent()) return;
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
@@ -101,6 +119,15 @@ class SettingsStore {
   subscribe(listener: Listener): () => void {
     this.listeners.add(listener);
     return () => this.listeners.delete(listener);
+  }
+
+  /**
+   * Persist the current settings now. Called by the onboarding flow right
+   * AFTER guardian consent is recorded, so choices made during onboarding
+   * (e.g. language) reach device storage only at that point.
+   */
+  flush(): void {
+    persist(this.state);
   }
 }
 

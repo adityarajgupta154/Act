@@ -10,8 +10,14 @@
 export type AgeBand = '8-11' | '12-15' | '16-18';
 
 export interface ProgressState {
-  /** Selected age band; defaults to '12-15' until onboarding exists (Task 13). */
+  /** Selected age band; chosen during onboarding (Task 13). */
   ageBand: AgeBand;
+  /**
+   * True once the onboarding flow (intro, age band, guardian consent) has
+   * been completed on this device (Task 13). Device persistence only BEGINS
+   * after consent — see createInitialAdapter().
+   */
+  onboarded: boolean;
   /** Zone completion flags keyed by zone id (e.g. "zone1"). */
   completedZones: Record<string, boolean>;
   /** Badges earned, keyed by badge id. */
@@ -32,6 +38,7 @@ function generateSessionId(): string {
 function defaultState(): ProgressState {
   return {
     ageBand: '12-15',
+    onboarded: false,
     completedZones: {},
     badges: {},
     quizScores: {},
@@ -60,6 +67,60 @@ class InMemoryAdapter implements StorageAdapter {
       ? (JSON.parse(JSON.stringify(this.snapshot)) as ProgressState)
       : null;
   }
+}
+
+/**
+ * Task 13 — device persistence (DPDP-aware, PRD §9.4).
+ *
+ * Progress holds ZERO PII: age band, language-independent quest progress,
+ * badges, quiz scores, and a random pseudonymous session id. Even so, the
+ * app follows data minimization: nothing is written to device storage until
+ * a parent/guardian/teacher accepts the consent screen. Before consent the
+ * store runs purely in memory; completeOnboarding() swaps in this adapter.
+ */
+const PROGRESS_STORAGE_KEY = 'nn-progress-v1';
+
+class LocalStorageAdapter implements StorageAdapter {
+  save(state: ProgressState): void {
+    try {
+      localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(state));
+    } catch {
+      // Storage may be unavailable (embedded/incognito) — progress then
+      // simply lives for the session, same as the in-memory adapter.
+    }
+  }
+
+  load(): ProgressState | null {
+    try {
+      const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw) as Partial<ProgressState>;
+      // Merge over defaults so states saved by older versions stay valid.
+      return { ...defaultState(), ...parsed };
+    } catch {
+      return null;
+    }
+  }
+}
+
+/**
+ * Was guardian consent recorded on this device? Pure localStorage read, so
+ * other stores (settings) can gate THEIR persistence on the same consent
+ * without import cycles. False when storage is unavailable.
+ */
+export function hasRecordedConsent(): boolean {
+  try {
+    if (typeof localStorage === 'undefined') return false;
+    const raw = localStorage.getItem(PROGRESS_STORAGE_KEY);
+    return !!raw && (JSON.parse(raw) as Partial<ProgressState>).onboarded === true;
+  } catch {
+    return false;
+  }
+}
+
+/** Consent-gated boot: only read device storage if consent was recorded. */
+function createInitialAdapter(): StorageAdapter {
+  return hasRecordedConsent() ? new LocalStorageAdapter() : new InMemoryAdapter();
 }
 
 type Listener = (state: ProgressState) => void;
@@ -128,7 +189,17 @@ class ProgressStore {
   setAgeBand(ageBand: AgeBand): void {
     this.update({ ageBand });
   }
+
+  /**
+   * Task 13: called when the guardian accepts the consent screen. Records
+   * the chosen age band + onboarded flag and — only now — switches from
+   * in-memory to device (localStorage) persistence.
+   */
+  completeOnboarding(ageBand: AgeBand): void {
+    this.update({ ageBand, onboarded: true });
+    this.setAdapter(new LocalStorageAdapter());
+  }
 }
 
 /** Singleton store instance used across the app. */
-export const progressStore = new ProgressStore();
+export const progressStore = new ProgressStore(createInitialAdapter());
