@@ -3,8 +3,16 @@ import { useAvatarChat } from '@workspace/api-client-react';
 import { progressStore } from '@/data/progressStore';
 import { useUIStore, triggerHelpPulse } from '@/ui/uiStore';
 import { getZone } from '@/world/zones';
+import { settingsStore } from '@/data/settingsStore';
+import { getStrings, useStrings } from '@/i18n/strings';
+import { getZoneGreeting } from '@/i18n/greetings';
 import { Mic, MicOff, Send, X, Volume2, VolumeX, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+/** BCP-47 tag for the currently selected app language (speech APIs). */
+function currentSpeechLang(): string {
+  return settingsStore.getState().language === 'hi' ? 'hi-IN' : 'en-IN';
+}
 
 // --- Animated SVG Avatar ---
 function AvatarFace({ speaking }: { speaking: boolean }) {
@@ -32,56 +40,15 @@ function AvatarFace({ speaking }: { speaking: boolean }) {
 // --- Main Chat Widget ---
 type Message = { role: 'user' | 'assistant'; content: string; escalated?: boolean };
 
-// Hard-coded, age-band-specific zone greetings (PRD §9.8: never AI-generated).
-// Tone per Task 2 rules: 8-11 playful/simple, 12-15 older-sibling, 16-18 practical.
-const ZONE_GREETINGS: Record<string, Record<string, string>> = {
-  zone1: {
-    '8-11':
-      "Welcome to the Safe Zone! Here we learn one BIG rule: your body belongs to YOU. Let's play a story about saying no, telling a trusted grown-up, and staying safe. I'm right here if you have questions!",
-    '12-15':
-      "Welcome to the Safe Zone. This quest covers real stuff: consent, personal boundaries, and how to spot manipulation online before it traps you or a friend. There's a law on your side here called POCSO. Ready when you are.",
-    '16-18':
-      "Welcome to the Safe Zone. This quest gets practical about the POCSO Act: what counts as an offence, why a minor's consent isn't legally valid, how child-friendly reporting, identity protection, and Special Courts actually work, and how to support a friend who confides in you. Knowledge worth having.",
-  },
-  zone2: {
-    '8-11':
-      "Welcome to the Right to Childhood zone! Every child has the right to learn, play, and rest, and there is a law in India that protects that. Let's follow Meera's story about noticing a child who needed a friend. I'm here if you have questions!",
-    '12-15':
-      "Welcome to the Right to Childhood zone. This quest is about child labour: where the law draws the line between helping your family and work that steals someone's schooling and safety, and exactly who to inform when you spot it. Ready?",
-    '16-18':
-      "Welcome to the Right to Childhood zone. You're close to working age, so this one is practical: what jobs the law lets you take at 14-18, why hazardous work stays off-limits until 18, the hour and night-work rules employers owe you, and how it all protects your education. Useful stuff.",
-  },
-  zone3: {
-    '8-11':
-      "Welcome to the School Rights zone! Did you know every child aged 6 to 14 in India has the right to free elementary education? Government schools charge no fees, and no child can be turned away because of money. Let's follow Tara's story and see how the law keeps the school gate open. I'm here if you have questions!",
-    '12-15':
-      "Welcome to the School Rights zone. The RTE Act gives you rights you can actually stand on: free elementary education, the 25 percent entry-level quota in private schools, no expulsion before Class 8, and a ban on physical punishment and humiliation. Let's see what they mean in real life.",
-    '16-18':
-      "Welcome to the School Rights zone. You're past the RTE guarantee age, so this quest is about what changes after 14 and what doesn't: how education stays open, the protections every under-18 student keeps, and where a serious school grievance actually goes. Practical territory.",
-  },
-  zone4: {
-    '8-11':
-      "Welcome to the Justice System zone! Did you know India has special helpers whose whole job is keeping children safe? Let's follow Golu's story and meet Childline 1098 and the kind Child Welfare Committee. A child who needs help is never in trouble for asking. I'm here if you have questions!",
-    '12-15':
-      "Welcome to the Justice System zone. This quest walks you step by step down the protection path: who to call when a child needs protection, what the Child Welfare Committee actually does, where a child stays in the meantime, and why the plan always aims at family, never punishment. Let's walk it.",
-    '16-18':
-      "Welcome to the Justice System zone. This simulation covers both pathways of the Juvenile Justice Act: care and protection through the CWC, and what really happens when someone under 18 is accused of an offence — SJPU, the Juvenile Justice Board, and why the law is built for rehabilitation, not punishment. Worth knowing precisely.",
-  },
-  zone5: {
-    '8-11':
-      "Welcome to the Digital Safety zone! Screens are fun, but here is a secret: online, people are not always who they say they are. Let's follow Anu's story and learn the Rules of the Screen — what stays private, and who to tell if something feels wrong. I'm here if you have questions!",
-    '12-15':
-      "Welcome to the Digital Safety zone. This quest covers the real stuff: spotting cyberbullying and what actually helps, the grooming red flags that show up in DMs and games, and the tools on your side — block, report, trusted adults, the Cyber Crime Helpline 155260, and Childline 1098. Ready?",
-    '16-18':
-      "Welcome to the Digital Safety zone. This one is about digital consent and the law: why forwarding someone's private image can be an offence, how the rules protect everyone under 18, and the practical playbook for harassment and sextortion — records, platform grievance tools, the National Cyber Crime Reporting Portal, and 155260. Knowledge worth having.",
-  },
-};
+// Zone greetings are hard-coded, age-band-specific strings (PRD §9.8: never
+// AI-generated). Task 10 moved them (EN + hand-written HI) to i18n/greetings.
 
 export function AvatarWidget() {
   const { activeZoneId } = useUIStore();
+  const t = useStrings();
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    { role: 'assistant', content: "Hi! I'm your guide here in Nyaya Nagri. I'm a computer friend, not a real person, but I'm here to help you learn about your rights. How can I help today?" }
+  const [messages, setMessages] = useState<Message[]>(() => [
+    { role: 'assistant', content: getStrings(settingsStore.getState().language).guideIntro }
   ]);
   const [input, setInput] = useState('');
   
@@ -120,9 +87,13 @@ export function AvatarWidget() {
       const zone = getZone(activeZoneId);
       if (zone) {
         setIsOpen(true);
+        // Greeting language = the language selected when the zone is entered.
+        const lang = settingsStore.getState().language;
+        const bundle = getStrings(lang);
+        const zoneStrings = bundle.zones[activeZoneId];
         const greeting =
-          ZONE_GREETINGS[activeZoneId]?.[progressStore.getState().ageBand] ??
-          `Welcome to ${zone.name}! Here we'll learn about: ${zone.theme}.`;
+          getZoneGreeting(activeZoneId, progressStore.getState().ageBand, lang) ??
+          bundle.zoneWelcomeFallback(zoneStrings?.name ?? zone.name, zoneStrings?.theme ?? zone.theme);
         appendAssistantMessage(greeting);
       }
     }
@@ -151,7 +122,7 @@ export function AvatarWidget() {
     const cleanText = text.replace(/\*\*/g, '');
     
     const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.lang = 'en-IN';
+    utterance.lang = currentSpeechLang();
     utterance.onstart = () => setSpeaking(true);
     utterance.onend = () => setSpeaking(false);
     utterance.onerror = () => setSpeaking(false);
@@ -189,6 +160,7 @@ export function AvatarWidget() {
           message: userText.substring(0, 500),
           ageBand: progressStore.getState().ageBand,
           zoneId: activeZoneId || undefined,
+          language: settingsStore.getState().language,
           history: history.slice(-12)
         }
       });
@@ -199,7 +171,7 @@ export function AvatarWidget() {
         triggerHelpPulse();
       }
     } catch (error) {
-      appendAssistantMessage("Your guide is taking a rest — try again in a moment.");
+      appendAssistantMessage(getStrings(settingsStore.getState().language).guideResting);
     }
   };
 
@@ -216,7 +188,7 @@ export function AvatarWidget() {
     }
     
     const recognition = new SpeechRec();
-    recognition.lang = 'en-IN';
+    recognition.lang = currentSpeechLang();
     recognition.continuous = false;
     recognition.interimResults = false;
     
@@ -260,8 +232,8 @@ export function AvatarWidget() {
             <div className="flex items-center gap-3">
               <AvatarFace speaking={speaking} />
               <div>
-                <h3 className="font-display font-bold text-slate-800 leading-tight">Your Guide</h3>
-                <p className="text-xs font-bold text-sky-600 uppercase tracking-wider">AI Companion</p>
+                <h3 className="font-display font-bold text-slate-800 leading-tight">{t.yourGuide}</h3>
+                <p className="text-xs font-bold text-sky-600 uppercase tracking-wider">{t.aiCompanion}</p>
               </div>
             </div>
             <div className="flex items-center gap-1">
@@ -271,14 +243,14 @@ export function AvatarWidget() {
                   "p-2 rounded-full transition-colors",
                   ttsEnabled ? "bg-sky-200 text-sky-700" : "bg-white text-slate-400 hover:bg-slate-100"
                 )}
-                aria-label="Toggle voice"
+                aria-label={t.toggleVoice}
               >
                 {ttsEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
               </button>
               <button 
                 onClick={() => setIsOpen(false)}
                 className="p-2 bg-white hover:bg-slate-100 text-slate-400 rounded-full transition-colors"
-                aria-label="Close chat"
+                aria-label={t.closeChat}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -311,7 +283,7 @@ export function AvatarWidget() {
               <div className="flex w-full justify-start">
                 <div className="px-4 py-3 rounded-2xl bg-white border border-slate-100 text-slate-400 rounded-tl-sm shadow-sm flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="text-sm font-bold">Thinking...</span>
+                  <span className="text-sm font-bold">{t.thinking}</span>
                 </div>
               </div>
             )}
@@ -338,7 +310,7 @@ export function AvatarWidget() {
                 value={input}
                 onChange={e => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask me anything..."
+                placeholder={t.askAnything}
                 className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 px-2 text-[15px] font-medium text-slate-700 placeholder:text-slate-400 min-w-0"
                 maxLength={500}
               />
@@ -360,7 +332,7 @@ export function AvatarWidget() {
         <button
           onClick={() => setIsOpen(true)}
           className="bg-white p-1 rounded-full shadow-xl border-[3px] border-orange-100 hover:border-orange-300 transition-all active:scale-95 animate-in zoom-in duration-300 touch-manipulation"
-          aria-label="Open Guide"
+          aria-label={t.openGuide}
         >
           <AvatarFace speaking={false} />
         </button>

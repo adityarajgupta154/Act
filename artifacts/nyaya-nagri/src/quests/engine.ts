@@ -140,7 +140,7 @@ export function buildRecapQueue(session: QuestSession): number[] {
     .filter(
       (i) =>
         preAnswers[i] !== quest.quizQuestions[i].correctIndex &&
-        getRecap(quest.questId, i) !== null,
+        getRecap(quest.questId, i, quest.language ?? 'en') !== null,
     );
 }
 
@@ -164,7 +164,7 @@ export function getActiveRecap(session: QuestSession): RecapItem | null {
   if (session.phase !== 'recap') return null;
   const questionIndex = session.recapQueue[session.recapIndex];
   if (questionIndex === undefined) return null;
-  return getRecap(session.quest.questId, questionIndex);
+  return getRecap(session.quest.questId, questionIndex, session.quest.language ?? 'en');
 }
 
 /** Answer the reinforcing question of the current recap item. */

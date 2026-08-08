@@ -79,3 +79,97 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 }
+
+/* ============================================================
+   Task 10 — Accessibility modes (PRD §6.4)
+   Driven by data attributes that settingsStore sets on <html>.
+   ============================================================ */
+
+/* --- Text size: scale the rem root. All UI text uses rem-based
+   Tailwind classes, so this scales everything proportionally. --- */
+html[data-textsize='small'] {
+  font-size: 93.75%;
+}
+html[data-textsize='large'] {
+  font-size: 115%;
+}
+
+/* --- Dyslexia-friendly font: Lexend (evidence-based readable font;
+   loaded locally via @fontsource, no external request). Overrides both
+   body and display fonts so ALL text becomes easy-reading. --- */
+html[data-font='dyslexic'] {
+  --font-sans: 'Lexend', var(--app-font-sans);
+  --font-display: 'Lexend', var(--app-font-sans);
+  letter-spacing: 0.01em;
+  word-spacing: 0.08em;
+}
+
+/* --- High contrast: darker text, stronger borders, no translucency.
+   Kid-friendly palette stays, but foreground/background contrast is
+   pushed toward WCAG AAA. --- */
+html[data-contrast='high'] {
+  --background: 0 0% 100%;
+  --foreground: 0 0% 0%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 0%;
+  --muted: 0 0% 94%;
+  --muted-foreground: 0 0% 15%;
+  --border: 0 0% 25%;
+  --primary: 28 100% 34%;
+  --secondary: 200 100% 27%;
+  --accent: 140 100% 22%;
+  --destructive: 350 100% 33%;
+  --ring: 220 100% 40%;
+}
+html[data-contrast='high'] .text-slate-400,
+html[data-contrast='high'] .text-slate-500,
+html[data-contrast='high'] .text-gray-400,
+html[data-contrast='high'] .text-gray-500 {
+  color: hsl(0 0% 22%);
+}
+html[data-contrast='high'] .text-white\/70,
+html[data-contrast='high'] .text-white\/80,
+html[data-contrast='high'] .text-white\/90 {
+  color: #ffffff;
+}
+/* Translucent panels become solid so text never sits on noisy 3D scenes. */
+html[data-contrast='high'] .bg-white\/80,
+html[data-contrast='high'] .bg-white\/90,
+html[data-contrast='high'] .backdrop-blur,
+html[data-contrast='high'] .backdrop-blur-sm,
+html[data-contrast='high'] .backdrop-blur-md {
+  background-color: #ffffff;
+  backdrop-filter: none;
+}
+html[data-contrast='high'] .bg-black\/40,
+html[data-contrast='high'] .bg-black\/50,
+html[data-contrast='high'] .bg-black\/60 {
+  background-color: rgba(0, 0, 0, 0.85);
+}
+
+/* --- Keyboard navigation: a thick, obvious focus ring everywhere.
+   :focus-visible only (mouse/touch users see no change). --- */
+:focus-visible {
+  outline: 3px solid hsl(220 100% 45%);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+html[data-contrast='high'] :focus-visible {
+  outline-color: #000000;
+  outline-width: 4px;
+}
+
+/* --- Touch targets: interactive elements get a comfortable minimum
+   hit area (WCAG 2.5.8; children benefit from larger targets). --- */
+button,
+[role='button'],
+input,
+select {
+  min-height: 44px;
+  min-width: 44px;
+}
+/* Tiny inline/icon exceptions opt out with .touch-compact */
+.touch-compact {
+  min-height: 0;
+  min-width: 0;
+}

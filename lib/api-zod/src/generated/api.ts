@@ -24,6 +24,7 @@ export const AvatarChatBody = zod.object({
   "message": zod.string().min(1).max(avatarChatBodyMessageMax),
   "ageBand": zod.enum(['8-11', '12-15', '16-18']),
   "zoneId": zod.string().optional().describe('Current zone id for topic scoping (e.g. zone1)'),
+  "language": zod.enum(['en', 'hi']).optional().describe('Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change.\n'),
   "history": zod.array(zod.object({
   "role": zod.enum(['user', 'assistant']),
   "content": zod.string().max(avatarChatBodyHistoryItemContentMax)

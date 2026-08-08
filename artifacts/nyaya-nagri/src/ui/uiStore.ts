@@ -9,6 +9,8 @@ export type UIState = {
   helpPulse: boolean;
   /** Progress dashboard overlay (Task 9). */
   progressOpen: boolean;
+  /** Settings panel overlay (Task 10). */
+  settingsOpen: boolean;
 };
 
 let state: UIState = {
@@ -18,6 +20,7 @@ let state: UIState = {
   fadeOpacity: 0,
   helpPulse: false,
   progressOpen: false,
+  settingsOpen: false,
 };
 
 const listeners = new Set<() => void>();
@@ -74,6 +77,14 @@ export function openProgress() {
 
 export function closeProgress() {
   uiStore.set({ progressOpen: false });
+}
+
+export function openSettings() {
+  uiStore.set({ settingsOpen: true });
+}
+
+export function closeSettings() {
+  uiStore.set({ settingsOpen: false });
 }
 
 export function triggerHelpPulse() {

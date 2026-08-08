@@ -75,6 +75,13 @@ components:
         zoneId:
           type: string
           description: Current zone id for topic scoping (e.g. zone1)
+        language:
+          type: string
+          enum: [en, hi]
+          description: >
+            Reply language selected on the device (defaults to en). Safety
+            behaviour is identical in every language; helpline digits never
+            change.
         history:
           type: array
           maxItems: 12

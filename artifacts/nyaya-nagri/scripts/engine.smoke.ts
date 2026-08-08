@@ -21,7 +21,8 @@ import {
   RECAP_TRIGGER_RATIO,
   type QuestSession,
 } from '../src/quests/engine';
-import { RECAPS } from '../src/quests/recaps';
+import { RECAPS, getRecap } from '../src/quests/recaps';
+import { RECAPS_HI } from '../src/quests/recaps.hi';
 import { progressStore, type AgeBand } from '../src/data/progressStore';
 import { isZoneUnlocked } from '../src/world/zones';
 import type { Quest } from '../src/quests/schema';
@@ -217,5 +218,98 @@ const boundary = walkToPostQuiz(boundaryQuest, (qi) =>
       : 0,
 );
 assert(boundary.phase === 'complete', `exactly ${RECAP_TRIGGER_RATIO * 100}% pre score skips recap`);
+
+// ---------------------------------------------------------------------------
+// Task 10: Hindi localization parity (quests + recaps).
+// The registry already throws at module load if structural parity fails;
+// these checks re-assert the safety-critical invariants explicitly.
+// ---------------------------------------------------------------------------
+
+const DEVANAGARI_RE = /[\u0900-\u097F]/;
+const EMOJI_RE = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u;
+
+for (const zoneId of ALL_ZONES) {
+  for (const band of BANDS) {
+    const en = resolveQuest(zoneId, band, 'en')!;
+    const hi = resolveQuest(zoneId, band, 'hi')!;
+    assert(hi.language === 'hi' && hi.questId === en.questId, `${en.questId} resolves in Hindi`);
+    assert(resolveQuest(zoneId, band)!.questId === en.questId, `${en.questId} default resolve is English`);
+    assert((resolveQuest(zoneId, band)!.language ?? 'en') === 'en', `${en.questId} default resolve stays 'en'`);
+
+    // Structural parity: same scene/choice/quiz shape, outcomes, branching,
+    // and correct answers — a translation can never change legal meaning.
+    assert(hi.scenes.length === en.scenes.length, `${en.questId} hi scene count matches`);
+    en.scenes.forEach((enScene, si) => {
+      const hiScene = hi.scenes[si];
+      assert(hiScene.sceneId === enScene.sceneId, `${en.questId}/${enScene.sceneId} hi sceneId matches`);
+      assert(
+        hiScene.choices.length === enScene.choices.length,
+        `${en.questId}/${enScene.sceneId} hi choice count matches`,
+      );
+      assert(
+        (hiScene.stageLabel !== undefined) === (enScene.stageLabel !== undefined),
+        `${en.questId}/${enScene.sceneId} hi stageLabel presence matches`,
+      );
+      enScene.choices.forEach((enChoice, ci) => {
+        const hiChoice = hiScene.choices[ci];
+        assert(hiChoice.outcome === enChoice.outcome, `${en.questId}/${enScene.sceneId} choice #${ci} outcome matches`);
+        assert(
+          (hiChoice.nextScene ?? null) === (enChoice.nextScene ?? null),
+          `${en.questId}/${enScene.sceneId} choice #${ci} nextScene matches`,
+        );
+      });
+    });
+    assert(hi.quizQuestions.length === en.quizQuestions.length, `${en.questId} hi quiz count matches`);
+    en.quizQuestions.forEach((enQ, qi) => {
+      const hiQ = hi.quizQuestions[qi];
+      assert(hiQ.options.length === enQ.options.length, `${en.questId} hi quiz #${qi} option count matches`);
+      assert(hiQ.correctIndex === enQ.correctIndex, `${en.questId} hi quiz #${qi} correctIndex matches`);
+    });
+
+    // Content rules for the Hindi text itself.
+    const hiText = JSON.stringify(hi);
+    assert(DEVANAGARI_RE.test(hiText), `${en.questId} hi content is in Devanagari`);
+    assert(hiText.includes('1098'), `${en.questId} hi mentions Childline 1098 (digits intact)`);
+    assert(!EMOJI_RE.test(hiText), `${en.questId} hi has no emojis`);
+    if (JSON.stringify(en).includes('155260')) {
+      assert(hiText.includes('155260'), `${en.questId} hi keeps 155260 digits intact`);
+    }
+
+    // Recap parity: every English recap item has a Hindi mirror with the
+    // same correct answer and option count.
+    const enRecaps = RECAPS[en.questId]!;
+    const hiRecaps = RECAPS_HI[en.questId];
+    assert(!!hiRecaps && hiRecaps.length === enRecaps.length, `${en.questId} hi recap coverage`);
+    enRecaps.forEach((enItem, ri) => {
+      const hiItem = hiRecaps![ri];
+      assert(hiItem.options.length === enItem.options.length, `${en.questId} hi recap #${ri} option count matches`);
+      assert(hiItem.correctIndex === enItem.correctIndex, `${en.questId} hi recap #${ri} correctIndex matches`);
+      assert(getRecap(en.questId, ri, 'hi') === hiItem, `${en.questId} getRecap('hi') #${ri} returns Hindi item`);
+      assert(getRecap(en.questId, ri) === enItem, `${en.questId} getRecap default #${ri} returns English item`);
+    });
+    const hiRecapText = JSON.stringify(hiRecaps);
+    assert(DEVANAGARI_RE.test(hiRecapText), `${en.questId} hi recaps are in Devanagari`);
+    assert(!EMOJI_RE.test(hiRecapText), `${en.questId} hi recaps have no emojis`);
+
+    // Engine integration: a Hindi quest queues recaps in Hindi.
+    let hs = startQuest(hi);
+    for (let i = 0; i < hi.quizQuestions.length; i++) {
+      hs = answerQuizQuestion(hs, hi.quizQuestions[i].correctIndex === 0 ? 1 : 0);
+    }
+    let hsSteps = 0;
+    while (hs.phase === 'scenes' && hsSteps++ < 25) {
+      const scene = getCurrentScene(hs)!;
+      hs = chooseSceneOption(hs, scene.choices.findIndex((c) => c.outcome === 'correct'));
+      hs = acknowledgeSceneFeedback(hs);
+    }
+    for (const q of hi.quizQuestions) {
+      hs = answerQuizQuestion(hs, q.correctIndex);
+      hs = acknowledgeQuizFeedback(hs);
+    }
+    assert(hs.phase === 'recap', `${en.questId} hi low pre-quiz triggers recap`);
+    const activeHiRecap = getActiveRecap(hs)!;
+    assert(DEVANAGARI_RE.test(activeHiRecap.question), `${en.questId} hi recap queue serves Hindi items`);
+  }
+}
 
 console.log('\nAll engine + content smoke tests passed.');

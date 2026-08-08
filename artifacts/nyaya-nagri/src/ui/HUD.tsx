@@ -2,10 +2,13 @@ import React, { useRef, useEffect, useState } from 'react';
 import { useJoystick } from './JoystickContext';
 import { HelpDialog } from './HelpDialog';
 import { Settings, Map as MapIcon, Award, Star } from 'lucide-react';
-import { useUIStore, playerPosition, enterZone, exitZone, openProgress } from './uiStore';
+import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings } from './uiStore';
 import { ProgressOverlay } from './ProgressScreen';
+import { SettingsPanel } from './SettingsPanel';
 import { getZoneStates, getZone } from '@/world/zones';
 import { progressStore } from '@/data/progressStore';
+import { useSettings } from '@/data/settingsStore';
+import { useStrings } from '@/i18n/strings';
 import { AvatarWidget } from '@/avatar/AvatarWidget';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
@@ -81,7 +84,8 @@ function Minimap() {
 function ProximityPrompt() {
   const { nearbyZoneId } = useUIStore();
   const [states, setStates] = useState(getZoneStates());
-  
+  const t = useStrings();
+
   useEffect(() => {
     return progressStore.subscribe(() => setStates(getZoneStates()));
   }, []);
@@ -91,30 +95,33 @@ function ProximityPrompt() {
   const zoneState = states.find(z => z.id === nearbyZoneId);
   if (!zoneState) return null;
 
+  const zoneName = t.zones[zoneState.id]?.name ?? zoneState.name;
+
   if (zoneState.unlocked) {
     return (
       <div className="bg-white/95 backdrop-blur-md px-6 py-4 rounded-3xl shadow-xl border border-orange-100 flex flex-col items-center gap-3 pointer-events-auto animate-in slide-in-from-bottom-4 duration-200">
-        <h3 className="font-display font-bold text-xl text-orange-500">{zoneState.name}</h3>
+        <h3 className="font-display font-bold text-xl text-orange-500">{zoneName}</h3>
         <button
           onClick={() => enterZone(nearbyZoneId)}
           className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 py-3 rounded-full font-bold transition-transform active:scale-95 shadow-md flex items-center gap-2 touch-manipulation"
         >
-          Press E or Tap to Enter
+          {t.pressToEnter}
         </button>
       </div>
     );
   }
 
   const previous = states.find(z => z.order === zoneState.order - 1);
+  const previousName = previous ? (t.zones[previous.id]?.name ?? previous.name) : null;
   return (
     <div className="bg-white/95 backdrop-blur-md px-6 py-4 rounded-3xl shadow-lg border border-slate-200 flex flex-col items-center gap-2 pointer-events-auto opacity-90 animate-in slide-in-from-bottom-4 duration-200">
-      <h3 className="font-display font-bold text-xl text-slate-500">{zoneState.name}</h3>
+      <h3 className="font-display font-bold text-xl text-slate-500">{zoneName}</h3>
       <div className="bg-slate-100 text-slate-600 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
-        Locked
+        {t.locked}
       </div>
-      {previous && (
+      {previousName && (
         <p className="text-sm font-medium text-slate-500">
-          Complete "{previous.name}" first
+          {t.completeFirst(previousName)}
         </p>
       )}
     </div>
@@ -122,12 +129,18 @@ function ProximityPrompt() {
 }
 
 function ZoneInterior({ zoneId }: { zoneId: string }) {
+  const [playingQuest, setPlayingQuest] = useState(false);
+  const { language } = useSettings();
+  const t = useStrings();
+
   const zone = getZone(zoneId);
   if (!zone) return null;
 
   const ageBand = progressStore.getState().ageBand;
-  const quest = resolveQuest(zoneId, ageBand);
-  const [playingQuest, setPlayingQuest] = useState(false);
+  // The quest is resolved in the CURRENT app language; once started, the
+  // session keeps that language for the whole quest (see QuestPlayer).
+  const quest = resolveQuest(zoneId, ageBand, language);
+  const zoneStrings = t.zones[zoneId];
 
   if (playingQuest && quest) {
     return <QuestPlayer quest={quest} />;
@@ -138,8 +151,8 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
       <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
         <MapIcon className="w-8 h-8 text-orange-500" />
       </div>
-      <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zone.name}</h2>
-      <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zone.theme}</p>
+      <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zoneStrings?.name ?? zone.name}</h2>
+      <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zoneStrings?.theme ?? zone.theme}</p>
       
       <div className="flex flex-col gap-4 items-center">
         {quest && (
@@ -147,14 +160,14 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
             onClick={() => setPlayingQuest(true)}
             className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-md flex items-center gap-2 touch-manipulation w-full md:w-auto justify-center"
           >
-            Start Quest: {quest.title}
+            {t.startQuest(quest.title)}
           </button>
         )}
         <button
           onClick={exitZone}
           className="bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-sm border border-sky-200 flex items-center gap-2 w-full md:w-auto justify-center touch-manipulation"
         >
-          Back to Map
+          {t.backToMap}
         </button>
       </div>
     </div>
@@ -163,6 +176,7 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
 
 export function HUD() {
   const { activeZoneId, fadeOpacity } = useUIStore();
+  const t = useStrings();
 
   return (
     <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
@@ -175,7 +189,7 @@ export function HUD() {
             <div className="flex flex-col gap-2 pointer-events-auto">
               <div className="bg-white/90 backdrop-blur-sm px-5 py-3 md:px-6 md:py-3 rounded-2xl shadow-sm border border-orange-100">
                 <h1 className="font-display font-bold text-xl md:text-2xl text-orange-500 tracking-wide">
-                  Nyaya Nagri
+                  {t.appTitle}
                 </h1>
               </div>
               <div className="self-start">
@@ -186,13 +200,14 @@ export function HUD() {
                 className="self-start bg-white/90 backdrop-blur-sm border border-amber-200 text-amber-600 hover:bg-amber-50 px-4 py-2 rounded-full flex items-center gap-2 shadow-sm font-bold text-sm transition-colors active:scale-95 touch-manipulation"
               >
                 <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                My Progress
+                {t.myProgress}
               </button>
             </div>
             <div className="flex flex-col items-end gap-3 pointer-events-auto">
               <button 
+                onClick={openSettings}
                 className="bg-white/90 backdrop-blur-sm p-3 md:p-4 rounded-full shadow-sm border border-slate-100 hover:bg-slate-50 transition-colors active:scale-95 touch-manipulation"
-                aria-label="Settings"
+                aria-label={t.settings}
               >
                 <Settings className="w-6 h-6 text-slate-500" />
               </button>
@@ -223,6 +238,9 @@ export function HUD() {
 
       {/* Progress dashboard overlay (z-30) — Help button (z-50) stays on top */}
       <ProgressOverlay />
+
+      {/* Settings panel overlay (z-30, Task 10) — Help button (z-50) stays on top */}
+      <SettingsPanel />
 
       {/* Black Fade Overlay (z-40) */}
       <div

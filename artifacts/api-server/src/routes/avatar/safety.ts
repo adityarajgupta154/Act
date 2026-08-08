@@ -47,12 +47,32 @@ const DISTRESS_PATTERNS: RegExp[] = [
   /\b(forc(es|ed|ing)? me|makes? me do|made me do|told me not to tell|keep (it|this) (a )?secret|can'?t tell anyone)\b/i,
 
   // --- Hindi / Hinglish (romanized) disclosures ---
-  /\b(mujhe|mereko|mujhko|humko|hume)\b.{0,35}\b(maar(ta|ti|te|a|i|e)?|peet(ta|ti|te|a)?|chhu(ta|ti|te)?|chhe(d|dta|dti)|pareshan|dhamk(i|ata|ati)|dar(r)?\s*lag|bacha(o|iye)?|madad)/i,
+  /\b(mujhe|mereko|mujhko|humko|hume)\b.{0,35}\b(maar(ta|ti|te|a|i|e)?|peet(ta|ti|te|a)?|chhu(ta|ti|te)?|chhe(d|dta|dti)|pareshan|dhamk(i|ata|ati)|blackmail|dar(r)?\s*lag|bacha(o|iye)?|madad)/i,
   /\b(maarta|maarti|maarte|peetta|peetti|pareshaan?|chhedta|chhedti|chhuta|chhuti|dhamkata|dhamkati|darata|darati)\b.{0,20}\b(hai|hain|h)\b/i,
+  /\b(blackmail|dhamki|dhamka)\w*\s+(kar|de)\s*(raha|rahi|rhe|rha|rhi)\b/i,
+  /\b(photos?|pics?|videos?|tasveer\w*)\b.{0,30}\b(viral|leak|failaa?\w*|share kar|bhej d\w+)/i,
   /\bgalat (tarah|tarike|jagah) se\b.{0,25}\b(chhu|touch|haath)/i,
   /\b(bachao|bacha lo|madad k(aro|ijiye)|meri madad)\b/i,
-  // --- Hindi (Devanagari) common disclosure fragments ---
+  // --- Hindi (Devanagari) disclosures. Broad by design: a false positive
+  // shows correct helpline info; a false negative leaves a child talking to
+  // a model about real harm. ---
   /(मुझे\s*(मार|पीट|छू|डरा|धमक)|बचाओ|मदद\s*कर|मुझे\s*डर|गलत\s*तरीके)/,
+  // Threats / blackmail (any inflection: धमकी दे रहा है, धमकाता है, ब्लैकमेल कर रही है)
+  /(धमकी|धमका|ब्लैकमेल|ब्लैक\s*मेल)/,
+  // Image-based abuse: photos/videos being spread, leaked, shared, demanded
+  /(फ़ोटो|फोटो|तस्वीर|वीडियो|विडियो|न्यूड)\S*.{0,40}(फैला|वायरल|लीक|शेयर|भेज|माँग|मांग|दिखा)/,
+  /(मेरी|मेरा|मेरे)\s*(फ़ोटो|फोटो|तस्वीर|वीडियो|विडियो|न्यूड)/,
+  // Physical/sexual harm by anyone (verb inflections beyond मुझे-prefixed forms)
+  /(मारता|मारती|मारते|पीटता|पीटती|पीटते|छूता|छूती|छुआ|छेड़|छेड़ता|छेड़ती|छेड़छाड़)/,
+  /(मेरे\s*साथ|मेरे\s*संग).{0,30}(गलत|बुरा|ज़बरदस्ती|जबरदस्ती)/,
+  // Fear / feeling unsafe
+  /(डर\s*लग|डरा\s*हुआ|डरी\s*हुई|सुरक्षित\s*(महसूस\s*)?नहीं|असुरक्षित|ख़तरे\s*में|खतरे\s*में)/,
+  // Self-harm
+  /(खुदकुशी|आत्महत्या|खुद\s*को\s*(चोट|नुकसान)|मरना\s*चाहत|जीना\s*नहीं\s*चाहत|अपनी\s*जान)/,
+  // Coercion / forced secrecy
+  /(मजबूर\s*कर|ज़बरदस्ती\s*कर|जबरदस्ती\s*कर|राज़?\s*रखने|किसी\s*को\s*मत\s*बता|बताने\s*से\s*मना)/,
+  // Ongoing harassment / stalking
+  /(परेशान\s*कर(ता|ती|\s*रहा|\s*रही)|पीछा\s*कर)/,
 ];
 
 /**
@@ -65,6 +85,24 @@ export const ESCALATION_REPLY = [
   'You can also call Childline free at 1098 any time, day or night (or 155260 for anything happening online).',
   'The "Get Help Now" button on your screen has these numbers whenever you need them. You are brave for speaking up.',
 ].join(' ');
+
+/**
+ * Hindi escalation reply (Task 10). Hand-written, hard-coded, human-reviewed —
+ * same meaning as the English text, same helpline digits (1098 / 155260,
+ * digits are NEVER localized or altered). "अभी मदद लो" matches the localized
+ * Get Help Now button label in the client's Hindi UI strings.
+ */
+export const ESCALATION_REPLY_HI = [
+  'मुझ पर भरोसा करने के लिए शुक्रिया — तुमने अभी जो बताया वह सच में बहुत ज़रूरी बात लगती है, और तुम एक असली इंसान से असली मदद के हकदार हो।',
+  'कृपया किसी भरोसेमंद बड़े से बात करो, जैसे माता-पिता, टीचर या कोई रिश्तेदार।',
+  'तुम चाइल्डलाइन को 1098 पर मुफ़्त कॉल भी कर सकते हो, किसी भी समय, दिन हो या रात (या ऑनलाइन होने वाली किसी भी बात के लिए 155260 पर)।',
+  'तुम्हारी स्क्रीन पर "अभी मदद लो" बटन में ये नंबर हमेशा मौजूद हैं। बोलकर तुमने बहादुरी दिखाई है।',
+].join(' ');
+
+/** Select the canonical escalation reply for a validated request language. */
+export function getEscalationReply(language: 'en' | 'hi'): string {
+  return language === 'hi' ? ESCALATION_REPLY_HI : ESCALATION_REPLY;
+}
 
 /** Returns true when a single text looks like a real disclosure or distress. */
 export function detectDistress(message: string): boolean {
@@ -84,7 +122,8 @@ export function scanForDistress(texts: string[]): boolean {
  * deliberately fail-closed: a false positive still shows correct, complete
  * help resources.
  */
-const OUTPUT_ESCALATION_RE = /1098|155\s?260|childline|child\s?line|cyber\s?crime\s?(helpline|number)|helpline/i;
+const OUTPUT_ESCALATION_RE =
+  /1098|155\s?260|१०९८|१५५२६०|childline|child\s?line|cyber\s?crime\s?(helpline|number)|helpline|चाइल्ड\s?लाइन|हेल्प\s?लाइन|साइबर\s?(क्राइम|अपराध)|बाल\s*सहायता|सहायता\s*(लाइन|नंबर)|(नंबर|फ़ोन|फोन)\s*पर\s*(मुफ़्त\s*)?(कॉल|फ़ोन|फोन)|आपातकालीन\s*(नंबर|मदद)|(कॉल|फ़ोन|फोन)\s*कर(ो|ना|\s*सकते)/i;
 
 export function requiresCanonicalEscalation(reply: string): boolean {
   return OUTPUT_ESCALATION_RE.test(reply);

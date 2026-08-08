@@ -23,6 +23,7 @@ import { progressStore, type ProgressState } from '@/data/progressStore';
 import { ZONES } from '@/world/zones';
 import { getAllQuests } from '@/quests/registry';
 import { useUIStore, closeProgress } from './uiStore';
+import { useStrings, type UIStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
 import { Star, Lock, MapPin, X, Award, Users } from 'lucide-react';
 
@@ -81,14 +82,14 @@ function childZoneStates(progress: ProgressState) {
   });
 }
 
-function encouragement(completedCount: number): string {
+function encouragement(completedCount: number, t: UIStrings): string {
   if (completedCount === 0) {
-    return 'Your adventure is just beginning. The Safe Zone is waiting for you!';
+    return t.encouragementStart;
   }
   if (completedCount < ZONES.length) {
-    return 'Amazing work! Keep exploring, the next zone is ready for you.';
+    return t.encouragementMid;
   }
-  return 'Incredible! You explored every zone. You are a true Rights Champion!';
+  return t.encouragementAll;
 }
 
 /**
@@ -106,6 +107,7 @@ export function ProgressPanel({
   onToggleTeacherView: () => void;
   onClose: () => void;
 }) {
+  const t = useStrings();
   const zones = childZoneStates(progress);
   const completedCount = zones.filter((z) => z.completed).length;
   const badgeCount = Object.values(progress.badges).filter(Boolean).length;
@@ -119,10 +121,10 @@ export function ProgressPanel({
     <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto flex flex-col max-h-[85vh]">
       {/* Header */}
       <div className="flex justify-between items-center p-6 md:p-8 pb-4 shrink-0">
-        <h2 className="font-display font-bold text-3xl text-slate-800">My Progress</h2>
+        <h2 className="font-display font-bold text-3xl text-slate-800">{t.progressTitle}</h2>
         <button
           onClick={onClose}
-          aria-label="Close progress"
+          aria-label={t.closeProgress}
           className="text-slate-400 hover:text-slate-600 p-2 bg-slate-100 rounded-full transition-colors touch-manipulation"
         >
           <X className="w-5 h-5" />
@@ -133,13 +135,13 @@ export function ProgressPanel({
         {/* Child-facing summary — counts only, never scores or percentages */}
         <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-100 mb-6 text-center">
           <p className="font-display font-bold text-2xl text-orange-600 mb-1">
-            You've completed {completedCount} out of {ZONES.length} Rights Quests!
+            {t.completedXofY(completedCount, ZONES.length)}
           </p>
-          <p className="text-lg text-slate-600 font-medium">{encouragement(completedCount)}</p>
+          <p className="text-lg text-slate-600 font-medium">{encouragement(completedCount, t)}</p>
           <div className="mt-4 inline-flex items-center gap-2 bg-white px-4 py-2 rounded-full border border-orange-200 shadow-sm">
             <Award className="w-5 h-5 text-orange-500 fill-orange-400" />
             <span className="font-bold text-slate-700">
-              {badgeCount === 1 ? '1 star badge earned' : `${badgeCount} star badges earned`}
+              {t.badgesEarned(badgeCount)}
             </span>
           </div>
         </div>
@@ -173,14 +175,14 @@ export function ProgressPanel({
                 )}
               </div>
               <div className="min-w-0">
-                <p className="font-display font-bold text-lg text-slate-800 leading-tight">{zone.name}</p>
+                <p className="font-display font-bold text-lg text-slate-800 leading-tight">{t.zones[zone.id]?.name ?? zone.name}</p>
                 <p
                   className={cn(
                     'text-sm font-bold',
                     zone.completed ? 'text-green-600' : zone.unlocked ? 'text-sky-600' : 'text-slate-400',
                   )}
                 >
-                  {zone.completed ? 'Complete! Star earned' : zone.unlocked ? 'Ready to explore' : 'Locked for now'}
+                  {zone.completed ? t.zoneComplete : zone.unlocked ? t.zoneReady : t.zoneLocked}
                 </p>
               </div>
             </li>
@@ -193,9 +195,9 @@ export function ProgressPanel({
             <div className="flex items-center gap-3">
               <Users className="w-5 h-5 text-slate-500" />
               <div>
-                <p className="font-bold text-slate-700">For Teachers and Parents</p>
+                <p className="font-bold text-slate-700">{t.teacherSection}</p>
                 <p className="text-sm text-slate-500 font-medium">
-                  Optional learning summary (hidden by default)
+                  {t.teacherSectionSub}
                 </p>
               </div>
             </div>
@@ -210,43 +212,38 @@ export function ProgressPanel({
                   : 'bg-white border-slate-200 text-slate-600 hover:border-slate-400',
               )}
             >
-              {teacherView ? 'Hide summary' : 'Show summary'}
+              {teacherView ? t.hideSummary : t.showSummary}
             </button>
           </div>
 
           {teacherView && (
             <div className="mt-5 bg-slate-50 rounded-2xl p-5 border border-slate-200 animate-in fade-in duration-200">
               <h3 className="font-bold text-slate-700 mb-1">
-                Learning summary for this device
+                {t.teacherSummaryTitle}
               </h3>
               <p className="text-sm text-slate-500 font-medium leading-relaxed mb-4">
-                Aggregated quiz improvement (before the quest vs after) per zone, for
-                measuring learning impact only. This view never shows individual
-                answers or any story choices, and it is not a tool for monitoring a
-                child's personal situation. Data is stored under a pseudonymous
-                session ID only — no names, no personal details.
+                {t.teacherPrivacyNote}
               </p>
 
               {impacts.length === 0 ? (
                 <p className="text-slate-500 font-medium bg-white rounded-xl p-4 border border-slate-200">
-                  No quests completed on this device yet — the summary will appear
-                  after the first completed quest.
+                  {t.teacherEmpty}
                 </p>
               ) : (
                 <>
                   <table className="w-full text-sm mb-4">
                     <thead>
                       <tr className="text-left text-slate-500">
-                        <th className="py-2 pr-2 font-bold">Zone</th>
-                        <th className="py-2 pr-2 font-bold">Before</th>
-                        <th className="py-2 pr-2 font-bold">After</th>
-                        <th className="py-2 font-bold">Change</th>
+                        <th className="py-2 pr-2 font-bold">{t.colZone}</th>
+                        <th className="py-2 pr-2 font-bold">{t.colBefore}</th>
+                        <th className="py-2 pr-2 font-bold">{t.colAfter}</th>
+                        <th className="py-2 font-bold">{t.colChange}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {impacts.map((impact) => (
                         <tr key={impact.zoneId} className="border-t border-slate-200">
-                          <td className="py-2 pr-2 font-bold text-slate-700">{impact.zoneName}</td>
+                          <td className="py-2 pr-2 font-bold text-slate-700">{t.zones[impact.zoneId]?.name ?? impact.zoneName}</td>
                           <td className="py-2 pr-2 text-slate-600 font-medium">{impact.prePct}%</td>
                           <td className="py-2 pr-2 text-slate-600 font-medium">{impact.postPct}%</td>
                           <td
@@ -259,23 +256,23 @@ export function ProgressPanel({
                                   : 'text-slate-500',
                             )}
                           >
-                            {impact.deltaPts > 0 ? `+${impact.deltaPts}` : impact.deltaPts} pts
+                            {t.ptsChange(impact.deltaPts)}
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                   <p className="text-sm font-bold text-slate-600 mb-3">
-                    Average improvement across played zones:{' '}
+                    {t.avgImprovement}{' '}
                     <span className={avgDelta >= 0 ? 'text-green-600' : 'text-orange-600'}>
-                      {avgDelta > 0 ? `+${avgDelta}` : avgDelta} pts
+                      {t.ptsChange(avgDelta)}
                     </span>
                   </p>
                 </>
               )}
 
               <p className="text-xs text-slate-400 font-medium">
-                Pseudonymous session ID: {progress.sessionId}
+                {t.sessionIdLabel} {progress.sessionId}
               </p>
             </div>
           )}

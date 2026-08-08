@@ -8,6 +8,7 @@
 
 export * from './avatarChatInput';
 export * from './avatarChatInputAgeBand';
+export * from './avatarChatInputLanguage';
 export * from './avatarChatReply';
 export * from './avatarChatTurn';
 export * from './avatarChatTurnRole';

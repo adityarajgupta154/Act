@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { AvatarChatInputAgeBand } from './avatarChatInputAgeBand';
+import type { AvatarChatInputLanguage } from './avatarChatInputLanguage';
 import type { AvatarChatTurn } from './avatarChatTurn';
 
 export interface AvatarChatInput {
@@ -17,6 +18,8 @@ export interface AvatarChatInput {
   ageBand: AvatarChatInputAgeBand;
   /** Current zone id for topic scoping (e.g. zone1) */
   zoneId?: string;
+  /** Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change. */
+  language?: AvatarChatInputLanguage;
   /**
      * Recent turns kept client-side only (never persisted)
      * @maxItems 12

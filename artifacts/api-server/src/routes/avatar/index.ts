@@ -18,7 +18,7 @@ import { buildSystemPrompt, type AgeBand } from "./prompt";
 import {
   scanForDistress,
   requiresCanonicalEscalation,
-  ESCALATION_REPLY,
+  getEscalationReply,
 } from "./safety";
 
 const router: IRouter = Router();
@@ -30,14 +30,17 @@ router.post("/avatar/chat", async (req, res) => {
     return;
   }
 
-  const { message, ageBand, zoneId, history = [] } = parsed.data;
+  const { message, ageBand, zoneId, language = "en", history = [] } = parsed.data;
 
   // 1. INPUT GATE — deterministic, runs BEFORE any AI call, and scans ALL
   //    client-supplied text (message + every history turn). The reply is a
-  //    hard-coded constant so helpline text can never be altered.
+  //    hard-coded constant (per validated language) so helpline text can
+  //    never be altered. Distress detection itself is language-independent:
+  //    the lexicon covers English, Hinglish, and Devanagari regardless of
+  //    the UI language setting.
   const allClientText = [message, ...history.map((t) => t.content)];
   if (scanForDistress(allClientText)) {
-    res.json({ reply: ESCALATION_REPLY, escalated: true });
+    res.json({ reply: getEscalationReply(language), escalated: true });
     return;
   }
 
@@ -63,7 +66,7 @@ router.post("/avatar/chat", async (req, res) => {
     const response = await anthropic.messages.create({
       model: "claude-sonnet-4-6",
       max_tokens: 8192,
-      system: buildSystemPrompt(ageBand as AgeBand, zoneId),
+      system: buildSystemPrompt(ageBand as AgeBand, zoneId, language),
       messages: [
         {
           role: "user" as const,
@@ -84,7 +87,7 @@ router.post("/avatar/chat", async (req, res) => {
     //    Any reply referencing a helpline is replaced wholesale with the
     //    canonical hard-coded escalation text (fail-closed).
     if (requiresCanonicalEscalation(reply)) {
-      res.json({ reply: ESCALATION_REPLY, escalated: true });
+      res.json({ reply: getEscalationReply(language), escalated: true });
       return;
     }
 

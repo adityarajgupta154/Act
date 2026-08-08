@@ -15,6 +15,8 @@
  * as one more friendly look at a big idea.
  */
 
+import { RECAPS_HI } from './recaps.hi';
+
 export interface RecapItem {
   /** 2-3 short, simplified sentences restating the concept. */
   summary: string;
@@ -731,7 +733,19 @@ export const RECAPS: Record<string, RecapItem[]> = {
   ],
 };
 
-/** Recap for one quiz question of one quest, or null if none exists. */
-export function getRecap(questId: string, questionIndex: number): RecapItem | null {
+/**
+ * Recap for one quiz question of one quest, or null if none exists.
+ * Task 10: pass language 'hi' for the hand-written Hindi mirror (falls
+ * back to English only if a Hindi item is missing — the smoke test
+ * enforces 1:1 parity so this fallback should never fire in practice).
+ */
+export function getRecap(
+  questId: string,
+  questionIndex: number,
+  language: 'en' | 'hi' = 'en',
+): RecapItem | null {
+  if (language === 'hi') {
+    return RECAPS_HI[questId]?.[questionIndex] ?? RECAPS[questId]?.[questionIndex] ?? null;
+  }
   return RECAPS[questId]?.[questionIndex] ?? null;
 }

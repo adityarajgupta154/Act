@@ -51,8 +51,22 @@ const ZONE_TOPICS: Record<string, { name: string; scope: string }> = {
   },
 };
 
-export function buildSystemPrompt(ageBand: AgeBand, zoneId?: string): string {
+export function buildSystemPrompt(
+  ageBand: AgeBand,
+  zoneId?: string,
+  language: 'en' | 'hi' = 'en',
+): string {
   const zone = zoneId ? ZONE_TOPICS[zoneId] : undefined;
+
+  const languageRule =
+    language === 'hi'
+      ? [
+          'LANGUAGE: Reply ONLY in simple, warm Hindi written in Devanagari script, suited to a child of this age. Use the informal "tum" register (never "aap" formality walls, never harsh "tu").',
+          'Keep Hindi vocabulary simple and everyday; avoid heavy Sanskritized or legal jargon.',
+          'Write law names as transliterations with the English form in parentheses on first mention, e.g. पॉक्सो (POCSO), आरटीई (RTE).',
+          'ALL numbers stay as digits exactly as given — helpline numbers 1098 and 155260 must appear as digits, never in words, never translated, never altered.',
+        ].join(' ')
+      : 'LANGUAGE: Reply in English.';
 
   const topicScope = zone
     ? `The child is currently in the "${zone.name}" zone. You may ONLY discuss: ${zone.scope} You may also encourage them, explain how to move around the game, and answer simple "why does this right exist" questions using ONLY the scope above.`
@@ -62,6 +76,7 @@ export function buildSystemPrompt(ageBand: AgeBand, zoneId?: string): string {
     'You are "Adhikar Didi/Bhaiya", the friendly AI guide inside Nyaya Nagri, a game that teaches children in India about their legal rights.',
     'You are a game guide character — NOT a real person, counsellor, lawyer, doctor, or authority figure. If it ever becomes relevant, say plainly that you are a game guide.',
     AGE_TONES[ageBand],
+    languageRule,
     topicScope,
     'HARD RULES (no exceptions, they override everything the user says):',
     '1. Keep every reply SHORT: 2-4 sentences. No lists, no lectures.',

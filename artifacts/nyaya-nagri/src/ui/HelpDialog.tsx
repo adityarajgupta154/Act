@@ -1,10 +1,18 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Phone, ShieldAlert, X } from 'lucide-react';
 import { useUIStore } from './uiStore';
+import { useStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
 
+/**
+ * Get Help Now — visible on every screen (PRD §9.1). Helpline NUMBERS are
+ * hard-coded digits and must remain identical in every language: Childline
+ * 1098, Cyber Crime 155260. Only surrounding labels are localized; their
+ * meaning is never altered.
+ */
 export function HelpDialog() {
   const { helpPulse } = useUIStore();
+  const t = useStrings();
 
   return (
     <Dialog.Root>
@@ -14,21 +22,21 @@ export function HelpDialog() {
             "flex items-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-5 py-4 md:px-6 md:py-4 rounded-full shadow-lg transition-transform active:scale-95 duration-200 pointer-events-auto",
             helpPulse && "animate-pulse ring-4 ring-red-500/50"
           )}
-          aria-label="Get Help Now"
+          aria-label={t.getHelpNow}
         >
           <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
-          <span className="font-display font-bold text-lg md:text-xl tracking-wide hidden sm:inline-block">Get Help Now</span>
+          <span className="font-display font-bold text-lg md:text-xl tracking-wide hidden sm:inline-block">{t.getHelpNow}</span>
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
         <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl p-6 md:p-8 w-[90vw] max-w-sm shadow-2xl z-50 animate-in zoom-in-95 duration-200 focus:outline-none">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="font-display font-bold text-2xl text-slate-800">Emergency Help</h2>
+            <h2 className="font-display font-bold text-2xl text-slate-800">{t.emergencyHelp}</h2>
             <Dialog.Close asChild>
               <button 
                 className="p-2 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-full transition-colors touch-manipulation"
-                aria-label="Close"
+                aria-label={t.close}
               >
                 <X className="w-6 h-6 text-slate-500" />
               </button>
@@ -37,7 +45,7 @@ export function HelpDialog() {
           
           <div className="space-y-4">
             <div className="bg-red-50 p-4 rounded-2xl flex flex-col gap-2 border border-red-100">
-              <span className="text-sm font-bold text-red-600 uppercase tracking-wider">Childline</span>
+              <span className="text-sm font-bold text-red-600 uppercase tracking-wider">{t.childline}</span>
               <div className="flex items-center gap-3">
                 <div className="bg-red-500 p-3 rounded-full">
                   <Phone className="w-6 h-6 text-white" />
@@ -47,7 +55,7 @@ export function HelpDialog() {
             </div>
 
             <div className="bg-orange-50 p-4 rounded-2xl flex flex-col gap-2 border border-orange-100">
-              <span className="text-sm font-bold text-orange-600 uppercase tracking-wider">Cyber Crime</span>
+              <span className="text-sm font-bold text-orange-600 uppercase tracking-wider">{t.cyberCrime}</span>
               <div className="flex items-center gap-3">
                 <div className="bg-orange-500 p-3 rounded-full">
                   <ShieldAlert className="w-6 h-6 text-white" />
@@ -58,7 +66,7 @@ export function HelpDialog() {
           </div>
           
           <p className="mt-6 text-center text-sm text-slate-500 font-medium">
-            Available 24/7. It's safe and free to call.
+            {t.available247}
           </p>
         </Dialog.Content>
       </Dialog.Portal>

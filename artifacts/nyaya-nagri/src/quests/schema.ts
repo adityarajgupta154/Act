@@ -45,6 +45,12 @@ export interface Quest {
   /** Which zone this quest belongs to (zone1..zone5). */
   zoneId: string;
   ageBand: AgeBand;
+  /**
+   * Content language (Task 10). Omitted in the original English files
+   * (defaults to 'en'); Hindi translations set 'hi'. Same questId across
+   * languages — progress is language-independent.
+   */
+  language?: 'en' | 'hi';
   title: string;
   scenes: QuestScene[];
   /** 3-5 questions; used for BOTH the silent pre-quiz and the scored post-quiz. */
@@ -85,4 +91,55 @@ export function validateQuest(q: Quest): Quest {
     }
   }
   return q;
+}
+
+/**
+ * Task 10: verify a translated quest is STRUCTURALLY identical to its
+ * English source — same ids, same branching, same choice outcomes, same
+ * correct answers. Only display strings may differ. This guarantees a
+ * translation can never change the legal meaning of which answer is
+ * correct or where a choice leads.
+ */
+export function validateTranslationParity(source: Quest, translated: Quest): Quest {
+  const ctx = `Translation ${translated.questId} (${translated.language ?? '?'})`;
+  if (translated.questId !== source.questId) {
+    throw new Error(`${ctx}: questId differs from source`);
+  }
+  if (translated.zoneId !== source.zoneId || translated.ageBand !== source.ageBand) {
+    throw new Error(`${ctx}: zoneId/ageBand differs from source`);
+  }
+  if (translated.scenes.length !== source.scenes.length) {
+    throw new Error(`${ctx}: scene count differs`);
+  }
+  source.scenes.forEach((srcScene, sIdx) => {
+    const trScene = translated.scenes[sIdx];
+    if (trScene.sceneId !== srcScene.sceneId) {
+      throw new Error(`${ctx}: scene #${sIdx} id differs (${trScene.sceneId})`);
+    }
+    if (trScene.choices.length !== srcScene.choices.length) {
+      throw new Error(`${ctx}/${srcScene.sceneId}: choice count differs`);
+    }
+    srcScene.choices.forEach((srcChoice, cIdx) => {
+      const trChoice = trScene.choices[cIdx];
+      if (trChoice.outcome !== srcChoice.outcome) {
+        throw new Error(`${ctx}/${srcScene.sceneId}: choice #${cIdx} outcome differs`);
+      }
+      if ((trChoice.nextScene ?? null) !== (srcChoice.nextScene ?? null)) {
+        throw new Error(`${ctx}/${srcScene.sceneId}: choice #${cIdx} nextScene differs`);
+      }
+    });
+  });
+  if (translated.quizQuestions.length !== source.quizQuestions.length) {
+    throw new Error(`${ctx}: quiz question count differs`);
+  }
+  source.quizQuestions.forEach((srcQ, qIdx) => {
+    const trQ = translated.quizQuestions[qIdx];
+    if (trQ.options.length !== srcQ.options.length) {
+      throw new Error(`${ctx}: quiz #${qIdx} option count differs`);
+    }
+    if (trQ.correctIndex !== srcQ.correctIndex) {
+      throw new Error(`${ctx}: quiz #${qIdx} correctIndex differs`);
+    }
+  });
+  return translated;
 }
