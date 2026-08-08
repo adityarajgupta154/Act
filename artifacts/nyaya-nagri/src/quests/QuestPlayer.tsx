@@ -1,12 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   QuestSession, startQuest, answerQuizQuestion, acknowledgeQuizFeedback,
-  chooseSceneOption, acknowledgeSceneFeedback, finalizeQuest, getCurrentScene
+  chooseSceneOption, acknowledgeSceneFeedback, finalizeQuest, getCurrentScene,
+  getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback
 } from './engine';
 import type { Quest, ChoiceOutcome } from './schema';
 import { exitZone } from '@/ui/uiStore';
 import { cn } from '@/lib/utils';
-import { CheckCircle2, XCircle, ArrowRight, ShieldAlert, Award, Star } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowRight, ShieldAlert, Award, Star, Lightbulb } from 'lucide-react';
 import { ZONES } from '@/world/zones';
 
 function FeedbackColor(outcome: ChoiceOutcome) {
@@ -66,6 +67,82 @@ export function QuestPlayer({ quest }: { quest: Quest }) {
         >
           Back to Map
         </button>
+      </div>
+    );
+  }
+
+  // Adaptive "let's revisit" recap (Task 9): shown only after a very low
+  // silent pre-quiz baseline. Framed as one more friendly look at big ideas —
+  // never as "you got these wrong", and no scores are shown.
+  if (session.phase === 'recap') {
+    const item = getActiveRecap(session);
+    const feedback = session.recapFeedback;
+    if (!item) return null;
+
+    return (
+      <div className="bg-white p-6 md:p-10 rounded-3xl shadow-xl max-w-3xl w-full border border-slate-100 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto flex flex-col h-[80vh] md:h-auto">
+        <div className="flex justify-between items-center mb-6 shrink-0">
+          <h2 className="font-display font-bold text-2xl text-slate-800 flex items-center gap-3">
+            <Lightbulb className="w-7 h-7 text-amber-500" />
+            Let's revisit one big idea!
+          </h2>
+          <span className="text-sm font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-wide shrink-0">
+            {session.recapIndex + 1} of {session.recapQueue.length}
+          </span>
+        </div>
+
+        <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
+          <div className="bg-amber-50 rounded-2xl p-6 md:p-8 mb-6 border border-amber-100">
+            <p className="text-lg md:text-xl font-medium text-slate-800 leading-relaxed">
+              {item.summary}
+            </p>
+          </div>
+
+          <h3 className="text-xl md:text-2xl font-medium text-slate-700 leading-relaxed mb-4">
+            {item.question}
+          </h3>
+
+          {!feedback ? (
+            <div className="flex flex-col gap-3">
+              {item.options.map((opt, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSession(answerRecapQuestion(session, idx))}
+                  className="text-left w-full p-4 md:p-5 rounded-2xl border-2 border-slate-100 hover:border-amber-300 hover:bg-amber-50 active:bg-amber-100 transition-all text-lg font-medium text-slate-700 shadow-sm touch-manipulation"
+                >
+                  {opt}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className={cn("p-6 rounded-2xl border-2 animate-in zoom-in-95 duration-200",
+                feedback.correct ? "bg-green-50 border-green-200" : "bg-sky-50 border-sky-200")}>
+              <div className="flex items-start gap-4">
+                {feedback.correct ? (
+                  <CheckCircle2 className="w-8 h-8 text-green-600 shrink-0 mt-1" />
+                ) : (
+                  <Lightbulb className="w-8 h-8 text-sky-500 shrink-0 mt-1" />
+                )}
+                <div>
+                  <h4 className={cn("font-bold text-xl mb-2", feedback.correct ? "text-green-700" : "text-sky-700")}>
+                    {feedback.correct ? "You've got it!" : "Good try! Here is the idea one more time:"}
+                  </h4>
+                  <p className="text-lg text-slate-700 leading-relaxed font-medium">
+                    {feedback.explanation}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setSession(acknowledgeRecapFeedback(session))}
+                className={cn("mt-6 px-6 py-3 rounded-full font-bold text-white shadow-sm flex items-center gap-2 transition-transform active:scale-95 touch-manipulation",
+                  feedback.correct ? "bg-green-600 hover:bg-green-700" : "bg-sky-500 hover:bg-sky-600"
+                )}
+              >
+                Continue <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     );
   }

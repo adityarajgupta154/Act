@@ -15,8 +15,16 @@
 
 import { progressStore } from '@/data/progressStore';
 import type { Quest, ChoiceOutcome } from './schema';
+import { getRecap, type RecapItem } from './recaps';
 
-export type QuestPhase = 'pre-quiz' | 'scenes' | 'post-quiz' | 'complete';
+export type QuestPhase = 'pre-quiz' | 'scenes' | 'post-quiz' | 'recap' | 'complete';
+
+/**
+ * Adaptive difficulty (Task 9): a pre-quiz score strictly below this share
+ * of the total counts as "very low" and triggers the "let's revisit" recap
+ * phase after the post-quiz, before the quest-complete screen.
+ */
+export const RECAP_TRIGGER_RATIO = 0.5;
 
 export interface SceneFeedback {
   outcome: ChoiceOutcome;
@@ -34,6 +42,18 @@ export interface QuestSession {
   postAnswers: number[];
   /** For the post-quiz only: feedback for the question just answered. */
   lastQuizFeedback: { correct: boolean; explanation: string } | null;
+  /**
+   * Adaptive recap (Task 9): quiz-question indices the player answered wrong
+   * in the SILENT pre-quiz, queued for a friendly revisit after the
+   * post-quiz. Populated only when the pre-quiz score was very low. The UI
+   * must never present this as "you got these wrong" — pre-quiz results
+   * stay unrevealed; the recap is framed as one more look at big ideas.
+   */
+  recapQueue: number[];
+  /** Position within recapQueue during the 'recap' phase. */
+  recapIndex: number;
+  /** Feedback for the recap question just answered (awaiting acknowledge). */
+  recapFeedback: { correct: boolean; explanation: string } | null;
   currentSceneId: string | null;
   /** Feedback awaiting acknowledgement for the last scene choice. */
   pendingFeedback: SceneFeedback | null;
@@ -48,6 +68,9 @@ export function startQuest(quest: Quest): QuestSession {
     preAnswers: [],
     postAnswers: [],
     lastQuizFeedback: null,
+    recapQueue: [],
+    recapIndex: 0,
+    recapFeedback: null,
     currentSceneId: null,
     pendingFeedback: null,
     choiceLog: [],
@@ -102,13 +125,76 @@ export function answerQuizQuestion(
   };
 }
 
+/**
+ * Which quiz-question indices qualify for the recap phase: only when the
+ * pre-quiz score was very low, and only questions answered wrong in the
+ * pre-quiz that have hard-coded recap content.
+ */
+export function buildRecapQueue(session: QuestSession): number[] {
+  const { quest, preAnswers } = session;
+  const total = quest.quizQuestions.length;
+  const preScore = scoreAnswers(quest, preAnswers);
+  if (preScore >= total * RECAP_TRIGGER_RATIO) return [];
+  return quest.quizQuestions
+    .map((q, i) => i)
+    .filter(
+      (i) =>
+        preAnswers[i] !== quest.quizQuestions[i].correctIndex &&
+        getRecap(quest.questId, i) !== null,
+    );
+}
+
 /** Acknowledge post-quiz feedback and move to the next question / finish. */
 export function acknowledgeQuizFeedback(session: QuestSession): QuestSession {
   if (session.phase !== 'post-quiz' || !session.lastQuizFeedback) return session;
   const isLast = session.quizIndex === session.quest.quizQuestions.length - 1;
+  if (!isLast) {
+    return { ...session, lastQuizFeedback: null, quizIndex: session.quizIndex + 1 };
+  }
+  // Adaptive step: a very low pre-quiz baseline earns a friendly revisit of
+  // those concepts before the quest wraps up; otherwise proceed directly.
+  const recapQueue = buildRecapQueue(session);
+  return recapQueue.length > 0
+    ? { ...session, lastQuizFeedback: null, phase: 'recap', recapQueue, recapIndex: 0 }
+    : { ...session, lastQuizFeedback: null, phase: 'complete' };
+}
+
+/** The recap item currently on screen during the 'recap' phase. */
+export function getActiveRecap(session: QuestSession): RecapItem | null {
+  if (session.phase !== 'recap') return null;
+  const questionIndex = session.recapQueue[session.recapIndex];
+  if (questionIndex === undefined) return null;
+  return getRecap(session.quest.questId, questionIndex);
+}
+
+/** Answer the reinforcing question of the current recap item. */
+export function answerRecapQuestion(
+  session: QuestSession,
+  optionIndex: number,
+): QuestSession {
+  if (session.phase !== 'recap' || session.recapFeedback) return session;
+  const item = getActiveRecap(session);
+  if (!item || optionIndex < 0 || optionIndex >= item.options.length) return session;
+  return {
+    ...session,
+    recapFeedback: {
+      correct: optionIndex === item.correctIndex,
+      explanation: item.explanation,
+    },
+  };
+}
+
+/**
+ * Acknowledge recap feedback → next recap item, or complete when done.
+ * One pass only: right or wrong, the player always moves forward — the
+ * recap reinforces, it never traps.
+ */
+export function acknowledgeRecapFeedback(session: QuestSession): QuestSession {
+  if (session.phase !== 'recap' || !session.recapFeedback) return session;
+  const isLast = session.recapIndex === session.recapQueue.length - 1;
   return isLast
-    ? { ...session, lastQuizFeedback: null, phase: 'complete' }
-    : { ...session, lastQuizFeedback: null, quizIndex: session.quizIndex + 1 };
+    ? { ...session, recapFeedback: null, phase: 'complete' }
+    : { ...session, recapFeedback: null, recapIndex: session.recapIndex + 1 };
 }
 
 export function getCurrentScene(session: QuestSession) {

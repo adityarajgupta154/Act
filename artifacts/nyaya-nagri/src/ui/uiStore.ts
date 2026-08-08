@@ -7,6 +7,8 @@ export type UIState = {
   isTransitioning: boolean;
   fadeOpacity: number;
   helpPulse: boolean;
+  /** Progress dashboard overlay (Task 9). */
+  progressOpen: boolean;
 };
 
 let state: UIState = {
@@ -15,6 +17,7 @@ let state: UIState = {
   isTransitioning: false,
   fadeOpacity: 0,
   helpPulse: false,
+  progressOpen: false,
 };
 
 const listeners = new Set<() => void>();
@@ -63,6 +66,14 @@ export function exitZone() {
       uiStore.set({ isTransitioning: false });
     }, 300);
   }, 300);
+}
+
+export function openProgress() {
+  uiStore.set({ progressOpen: true });
+}
+
+export function closeProgress() {
+  uiStore.set({ progressOpen: false });
 }
 
 export function triggerHelpPulse() {

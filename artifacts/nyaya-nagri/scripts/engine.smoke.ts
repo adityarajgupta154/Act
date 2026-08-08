@@ -14,9 +14,17 @@ import {
   acknowledgeSceneFeedback,
   getCurrentScene,
   finalizeQuest,
+  buildRecapQueue,
+  getActiveRecap,
+  answerRecapQuestion,
+  acknowledgeRecapFeedback,
+  RECAP_TRIGGER_RATIO,
+  type QuestSession,
 } from '../src/quests/engine';
+import { RECAPS } from '../src/quests/recaps';
 import { progressStore, type AgeBand } from '../src/data/progressStore';
 import { isZoneUnlocked } from '../src/world/zones';
+import type { Quest } from '../src/quests/schema';
 
 function assert(cond: boolean, msg: string) {
   if (!cond) throw new Error(`FAIL: ${msg}`);
@@ -48,6 +56,26 @@ for (const zoneId of CONTENT_ZONES) {
     assert(text.includes('1098'), `${quest!.questId} mentions Childline 1098`);
     assert(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(text), `${quest!.questId} has no emojis`);
 
+    // Task 9: every quiz question has aligned, valid recap content (also emoji-free).
+    const recaps = RECAPS[quest!.questId];
+    assert(
+      !!recaps && recaps.length === quest!.quizQuestions.length,
+      `${quest!.questId} recap coverage ${recaps?.length ?? 0}/${quest!.quizQuestions.length}`,
+    );
+    for (const [ri, item] of recaps!.entries()) {
+      assert(
+        item.summary.length > 0 &&
+          item.question.length > 0 &&
+          item.options.length >= 2 &&
+          item.correctIndex >= 0 &&
+          item.correctIndex < item.options.length &&
+          item.explanation.length > 0,
+        `${quest!.questId} recap #${ri} well-formed`,
+      );
+    }
+    const recapText = JSON.stringify(recaps);
+    assert(!/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(recapText), `${quest!.questId} recaps have no emojis`);
+
     let s = startQuest(quest!);
     assert(s.phase === 'pre-quiz', `${quest!.questId} starts in pre-quiz`);
 
@@ -77,7 +105,22 @@ for (const zoneId of CONTENT_ZONES) {
       assert(s.lastQuizFeedback?.correct === true, `${quest!.questId} post-quiz feedback correct`);
       s = acknowledgeQuizFeedback(s);
     }
-    assert(s.phase === 'complete', `${quest!.questId} post-quiz done -> complete`);
+
+    // Task 9: a very low pre-quiz baseline (pre-quiz above always picked
+    // option 0) routes through the recap phase before complete; otherwise
+    // the quest completes directly. Walk whichever path applies.
+    if (s.phase === 'recap') {
+      assert(s.recapQueue.length > 0, `${quest!.questId} recap queue non-empty in recap phase`);
+      let recapSteps = 0;
+      while (s.phase === 'recap' && recapSteps++ < 10) {
+        const item = getActiveRecap(s);
+        assert(!!item, `${quest!.questId} active recap item exists`);
+        s = answerRecapQuestion(s, item!.correctIndex);
+        assert(s.recapFeedback?.correct === true, `${quest!.questId} recap feedback correct`);
+        s = acknowledgeRecapFeedback(s);
+      }
+    }
+    assert(s.phase === 'complete', `${quest!.questId} post-quiz (+recap if low pre) -> complete`);
 
     const result = finalizeQuest(s);
     assert(
@@ -107,5 +150,72 @@ if (nextZone) {
 if (zoneAfter) {
   assert(!isZoneUnlocked(zoneAfter), `${zoneAfter} still locked`);
 }
+
+// ---------------------------------------------------------------------------
+// Task 9: adaptive recap trigger tests (pure engine walks, no finalize).
+// ---------------------------------------------------------------------------
+
+function walkToPostQuiz(quest: Quest, preAnswerFor: (qi: number) => number): QuestSession {
+  let s = startQuest(quest);
+  for (let i = 0; i < quest.quizQuestions.length; i++) {
+    s = answerQuizQuestion(s, preAnswerFor(i));
+  }
+  let steps = 0;
+  while (s.phase === 'scenes' && steps++ < 25) {
+    const scene = getCurrentScene(s)!;
+    const idx = scene.choices.findIndex((c) => c.outcome === 'correct');
+    s = chooseSceneOption(s, idx);
+    s = acknowledgeSceneFeedback(s);
+  }
+  for (const q of quest.quizQuestions) {
+    s = answerQuizQuestion(s, q.correctIndex);
+    s = acknowledgeQuizFeedback(s);
+  }
+  return s;
+}
+
+const recapQuest = resolveQuest('zone1', '12-15')!;
+const wrongOption = (qi: number) =>
+  recapQuest.quizQuestions[qi].correctIndex === 0 ? 1 : 0;
+
+// 1. All pre-quiz answers wrong (score 0) -> recap covers every question.
+let low = walkToPostQuiz(recapQuest, wrongOption);
+assert(low.phase === 'recap', 'low pre-quiz score triggers recap phase');
+assert(
+  low.recapQueue.length === recapQuest.quizQuestions.length,
+  `recap covers all ${low.recapQueue.length} pre-quiz misses`,
+);
+// A wrong recap answer still moves forward (reinforce, never trap) …
+const firstItem = getActiveRecap(low)!;
+low = answerRecapQuestion(low, firstItem.correctIndex === 0 ? 1 : 0);
+assert(low.recapFeedback?.correct === false, 'recap shows gentle feedback on wrong answer');
+low = acknowledgeRecapFeedback(low);
+assert(
+  (low.phase === 'recap' && low.recapIndex === 1) || low.phase === 'complete',
+  'wrong recap answer still advances',
+);
+while (low.phase === 'recap') {
+  const item = getActiveRecap(low)!;
+  low = answerRecapQuestion(low, item.correctIndex);
+  low = acknowledgeRecapFeedback(low);
+}
+assert(low.phase === 'complete', 'recap path ends in complete');
+
+// 2. Perfect pre-quiz -> no recap, straight to complete.
+const high = walkToPostQuiz(recapQuest, (qi) => recapQuest.quizQuestions[qi].correctIndex);
+assert(high.phase === 'complete', 'high pre-quiz score skips recap');
+assert(buildRecapQueue(high).length === 0, 'no recap queue for high pre score');
+
+// 3. Boundary: exactly 50% pre score does NOT trigger (threshold is strict).
+const boundaryQuest = resolveQuest('zone5', '12-15')!; // 4 questions
+assert(boundaryQuest.quizQuestions.length % 2 === 0, 'boundary quest has even question count');
+const boundary = walkToPostQuiz(boundaryQuest, (qi) =>
+  qi < boundaryQuest.quizQuestions.length / 2
+    ? boundaryQuest.quizQuestions[qi].correctIndex
+    : boundaryQuest.quizQuestions[qi].correctIndex === 0
+      ? 1
+      : 0,
+);
+assert(boundary.phase === 'complete', `exactly ${RECAP_TRIGGER_RATIO * 100}% pre score skips recap`);
 
 console.log('\nAll engine + content smoke tests passed.');

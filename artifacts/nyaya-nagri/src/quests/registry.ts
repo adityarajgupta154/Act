@@ -54,3 +54,8 @@ const QUESTS: Quest[] = QUEST_FILES.map(validateQuest);
 export function resolveQuest(zoneId: string, ageBand: AgeBand): Quest | null {
   return QUESTS.find((q) => q.zoneId === zoneId && q.ageBand === ageBand) ?? null;
 }
+
+/** All validated quests (read-only) — used by the progress dashboard to map questIds to zones/totals. */
+export function getAllQuests(): readonly Quest[] {
+  return QUESTS;
+}
