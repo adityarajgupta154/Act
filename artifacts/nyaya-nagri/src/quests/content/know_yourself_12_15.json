@@ -1,0 +1,150 @@
+{
+  "questId": "know_yourself_12_15",
+  "zoneId": "zone0",
+  "ageBand": "12-15",
+  "title": "The Country's Rulebook",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Arjun's civics teacher holds up a thick book. 'This is the Constitution of India — the country's master rulebook. Every law in India must follow it. And inside it is a list of promises called Fundamental Rights, made to every person — including every one of you, right now, as children.' Arjun asks: 'Wait, we don't have to wait till 18?' What is the correct answer?",
+      "choices": [
+        {
+          "text": "No waiting. Fundamental rights belong to you from birth — being a child does not shrink them.",
+          "outcome": "correct",
+          "feedback": "Correct. The Constitution's rights are not a licence you earn at 18. Children hold them too, and every law and authority in the country is supposed to respect that.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Rights switch on at 18, like a driving licence.",
+          "outcome": "incorrect",
+          "feedback": "That is the common myth. But no — fundamental rights protect every person, and courts in India have applied them to children again and again. What changes at 18 is things like voting, not your basic rights.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "The teacher writes 'Article 14' on the board: 'The State shall not deny to any person equality before the law or the equal protection of the laws.' She asks: 'In daily life, what does that actually mean?'",
+      "choices": [
+        {
+          "text": "The same rules protect everyone — rich or poor, boy or girl, any religion, any caste.",
+          "outcome": "correct",
+          "feedback": "Exactly. Equality before the law means no one is above the law, and equal protection means the law's shield covers everyone the same. A complaint from a poor student counts exactly as much as one from a rich student.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Everyone must be treated identically in every situation, no exceptions.",
+          "outcome": "incorrect",
+          "feedback": "Close, but not quite. Article 14 allows fair, reasonable differences — like special protections for children, because children need extra care. What it forbids is UNFAIR difference: treating people worse for no good reason.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Next day, a real test. A new student, Sameer, joins Arjun's class. At the water tap, an older student blocks him: 'Not this tap. People from your community use the other one.' Sameer freezes. Arjun is right there. What should Arjun do?",
+      "choices": [
+        {
+          "text": "Stand with Sameer, say clearly that this is wrong, and inform a teacher right away.",
+          "outcome": "correct",
+          "feedback": "Right. Article 15 of the Constitution forbids discrimination on grounds of religion, race, caste, sex, or place of birth. Blocking a tap over 'community' is exactly the kind of treatment the Constitution stands against. Telling a teacher or trusted adult is the correct, safe move — the school has a duty to act.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Stay quiet — it is awkward and none of his business.",
+          "outcome": "incorrect",
+          "feedback": "Staying silent feels easier, but it leaves Sameer alone against unfairness the Constitution itself forbids. Arjun does not have to fight anyone — calmly standing with Sameer and informing a teacher is enough, and it is safe.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Tell Sameer to just use the other tap and avoid trouble.",
+          "outcome": "incorrect",
+          "feedback": "That 'solution' makes the unfairness permanent. Article 15 exists so that no one has to accept being sorted by caste, religion, or community. The right move is to involve a teacher or trusted adult, who must address it.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Back in class, the teacher circles one more line: Article 21 — 'No person shall be deprived of his life or personal liberty except according to procedure established by law.' She says: 'Courts have read life to mean much more than breathing.' What does Article 21 promise?",
+      "choices": [
+        {
+          "text": "A life with dignity and safety — and no one can take your freedom except by a fair, legal process.",
+          "outcome": "correct",
+          "feedback": "Exactly. Article 21 is the foundation stone: life means living with dignity — with safety, health, and education growing out of it. And nobody, however powerful, can take away your liberty outside what fair law allows. If any child's dignity or safety is attacked, help exists: trusted adults, teachers, and Childline 1098, free and open 24 hours."
+        },
+        {
+          "text": "Only that the government cannot end someone's life.",
+          "outcome": "incorrect",
+          "feedback": "It goes far beyond that. Courts have read Article 21 as the right to live with human dignity — safety, shelter, health, education. It is the article many other child protections grow from. And when dignity or safety is threatened, telling a trusted adult or calling Childline 1098 is always a right and safe step."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Where do fundamental rights in India come from?",
+      "options": [
+        "The Constitution of India — the country's master rulebook",
+        "School rule books",
+        "They are given as a reward at age 18"
+      ],
+      "correctIndex": 0,
+      "explanation": "The Constitution is the highest rulebook; every law must follow it, and its fundamental rights belong to every person — including children."
+    },
+    {
+      "question": "Article 14 in one line?",
+      "options": [
+        "Everyone is equal before the law and equally protected by it",
+        "Older people count more before the law",
+        "Only citizens with property can go to court"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 14: equality before the law and equal protection of the laws — the same legal shield for everyone."
+    },
+    {
+      "question": "A student is told to use a separate tap because of his community. Which article stands against this?",
+      "options": [
+        "Article 15 — no discrimination on religion, race, caste, sex, or place of birth",
+        "No article — taps are not covered",
+        "Article 21A only"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 15 forbids exactly this kind of discrimination. If you see it happen, the safe, strong move is to stand with the person and inform a teacher or trusted adult."
+    },
+    {
+      "question": "What has Article 21 come to mean?",
+      "options": [
+        "Life with dignity and personal liberty, protected by fair legal process",
+        "Only protection from physical attack",
+        "The right to win court cases"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 21 protects life AND personal liberty — and 'life' means a life with dignity and safety, which many other protections for children grow from."
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
+  ]
+}

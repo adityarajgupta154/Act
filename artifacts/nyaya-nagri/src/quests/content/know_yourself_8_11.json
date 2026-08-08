@@ -1,0 +1,140 @@
+{
+  "questId": "know_yourself_8_11",
+  "zoneId": "zone0",
+  "ageBand": "8-11",
+  "title": "You Matter",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Meet Pihu. This morning at assembly, Teacher Sara holds up a big shiny shield and says: 'Every child in India carries an invisible shield like this one. It is called a RIGHT. It keeps you safe, lets you learn and play, and makes sure you are treated fairly.' Pihu whispers: 'Even me?' What is the true answer?",
+      "choices": [
+        {
+          "text": "Yes! Every single child has these shields — Pihu, you, everyone.",
+          "outcome": "correct",
+          "feedback": "Exactly right. Rights are not prizes you win or gifts only some children get. Every child has them from the day they are born, no matter what. You matter, always.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Only children with the best marks get shields.",
+          "outcome": "incorrect",
+          "feedback": "No. Rights have nothing to do with marks, money, or being the fastest runner. EVERY child carries the same invisible shields — including you. Nothing can change that.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "At lunch, a new girl named Amaira sits alone. She speaks a different language and wears different clothes. A boy laughs: 'She can't play with us, she is not like us.' Pihu remembers the shield talk. What is true?",
+      "choices": [
+        {
+          "text": "Amaira has the exact same shields. She gets the same chance to play, learn, and be respected.",
+          "outcome": "correct",
+          "feedback": "Yes! Being equal means exactly this: different language, different food, different clothes — same rights, same respect. Pihu invites Amaira to play, and lunchtime becomes more fun for everyone.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Children who seem different have smaller shields.",
+          "outcome": "incorrect",
+          "feedback": "No. There is no such thing as a smaller shield. No child can be treated as less because of how they look, talk, pray, or where they come from. Same rights. Same respect. Every time.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Shields only work at home.",
+          "outcome": "incorrect",
+          "feedback": "Shields work everywhere — home, school, the playground, the whole country! Every child, everywhere in India, carries them all day, every day.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "In class, Teacher Sara asks: 'Who can tell me what your invisible shields protect?' Hands fly up. Pihu thinks hard. Which answer should Pihu give?",
+      "choices": [
+        {
+          "text": "My safety, my learning, my playtime, and being treated with respect.",
+          "outcome": "correct",
+          "feedback": "Perfect. That is what rights protect: your body being safe, your chance to go to school, your time to play and rest, and being treated like you matter — because you do.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "They make sure I always win games.",
+          "outcome": "incorrect",
+          "feedback": "Not quite! Rights are not about winning or getting everything you wish for. They protect the BIG things: being safe, learning, playing, and being respected. Those belong to you no matter who wins the game.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "Walking home, Pihu's little cousin asks: 'What if someone makes a child feel small, scared, or unsafe? What happens to the shield?' Pihu smiles: 'The shield never breaks. And a child never has to hold it alone.' What is the BEST thing a child can do then?",
+      "choices": [
+        {
+          "text": "Tell a trusted grown-up, like Amma, Papa, or a teacher — and remember Childline 1098, a free phone friend for children.",
+          "outcome": "correct",
+          "feedback": "Exactly right. When something feels wrong, telling a trusted grown-up is strong and brave. And any child in India can call 1098 for free, day or night. You matter, your safety matters, and help is always there."
+        },
+        {
+          "text": "Hide the problem and hope it goes away.",
+          "outcome": "incorrect",
+          "feedback": "Hiding a problem does not make it smaller. Telling a trusted grown-up does. And Childline 1098 is always there, free, for any child. Asking for help is never wrong — you matter too much for that."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "Who has rights — the invisible shields that keep children safe and respected?",
+      "options": [
+        "Only toppers and prize-winners",
+        "Every single child, including me",
+        "Only grown-ups"
+      ],
+      "correctIndex": 1,
+      "explanation": "Every child is born with rights. No mark sheet, no amount of money, nothing can take them away."
+    },
+    {
+      "question": "A new classmate speaks a different language. How do her rights compare to yours?",
+      "options": [
+        "Exactly the same as mine",
+        "A little smaller",
+        "She has none until she learns our language"
+      ],
+      "correctIndex": 0,
+      "explanation": "Same rights, same respect, always. No child can be treated as less for language, clothes, food, or where they come from."
+    },
+    {
+      "question": "Someone makes a child feel scared or small. What is the strongest thing to do?",
+      "options": [
+        "Keep it a secret forever",
+        "Tell a trusted grown-up, or call Childline 1098",
+        "Wait until the child grows up"
+      ],
+      "correctIndex": 1,
+      "explanation": "Telling is brave and strong. Trusted grown-ups can help, and Childline 1098 is free for any child, any time, day or night."
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
+  ]
+}

@@ -69,8 +69,8 @@ export function awardForLevel(kind: LevelKind, zoneCompleted: boolean): LevelAwa
 // ---------------------------------------------------------------------------
 
 /**
- * XP needed per rank step. The base levels of all 5 zones total 900 XP
- * (=> Rank 7); Task 18 activity levels add 35 XP each on top (one or two
+ * XP needed per rank step. The base levels of all 6 zones total 1080 XP
+ * (=> Rank 8); Task 18 activity levels add 35 XP each on top (one or two
  * per age band, depending on which zones carry an activity for that band).
  */
 export const XP_PER_RANK = 150;
@@ -155,7 +155,7 @@ export interface ShopItem {
   price: number;
 }
 
-/** Full catalogue. Prices are reachable from normal play (900 coins max ~375). */
+/** Full catalogue. Prices are reachable from normal play (base zones yield 450 Coins; catalogue totals 210). */
 export const SHOP_ITEMS: readonly ShopItem[] = [
   { id: 'bow', price: 30 },
   { id: 'medal', price: 40 },
@@ -179,6 +179,7 @@ export function shopCatalogueMatchesConfig(): boolean {
 
 export type TitleId =
   | 'first_level'
+  | 'zone0_pathfinder'
   | 'zone1_guardian'
   | 'zone2_champion'
   | 'zone3_scholar'
@@ -188,6 +189,7 @@ export type TitleId =
 
 export const TITLE_IDS: readonly TitleId[] = [
   'first_level',
+  'zone0_pathfinder',
   'zone1_guardian',
   'zone2_champion',
   'zone3_scholar',
@@ -196,7 +198,7 @@ export const TITLE_IDS: readonly TitleId[] = [
   'all_zones_champion',
 ];
 
-const ALL_ZONES = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
+const ALL_ZONES = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
 
 /** The slice of progress that milestones and earnings derive from. */
 export type ProgressMilestones = Pick<ProgressState, 'levelProgress' | 'completedZones'>;
@@ -206,6 +208,7 @@ const TITLE_RULES: Record<TitleId, (s: ProgressMilestones) => boolean> = {
   first_level: (s) =>
     Object.values(s.levelProgress).some(Boolean) ||
     Object.values(s.completedZones).some(Boolean),
+  zone0_pathfinder: (s) => !!s.completedZones.zone0,
   zone1_guardian: (s) => !!s.completedZones.zone1,
   zone2_champion: (s) => !!s.completedZones.zone2,
   zone3_scholar: (s) => !!s.completedZones.zone3,
@@ -241,7 +244,7 @@ export function newlyUnlockedTitles(
 // still need a server-authoritative design — this local data is advisory.)
 // ---------------------------------------------------------------------------
 
-const ZONE_IDS = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'] as const;
+const ZONE_IDS = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5'] as const;
 const BASE_LEVEL_KIND_BY_ID: Record<string, LevelKind> = {
   level1: 'story',
   level2: 'decision',

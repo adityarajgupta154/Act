@@ -1,0 +1,150 @@
+{
+  "questId": "know_yourself_16_18",
+  "zoneId": "zone0",
+  "ageBand": "16-18",
+  "title": "Equal Before the Law",
+  "scenes": [
+    {
+      "sceneId": "scene1",
+      "narration": "Zoya, 17, waits at a government office with her aunt while a well-connected man tries to jump the queue, shouting 'Do you know who I am?' Her aunt smiles: 'Article 14 knows exactly who he is — a person, same as us.' What does 'equality before the law' actually mean here?",
+      "choices": [
+        {
+          "text": "No one is above the law — connections, wealth, or status give no extra legal rights, and the same rules bind everyone.",
+          "outcome": "correct",
+          "feedback": "Correct. Equality before the law means the law has no VIP lanes. Its twin, 'equal protection of the laws', means the law's shield covers a daily-wage worker's child and a minister's child alike. Reasonable classifications are allowed — arbitrary favouritism is not.",
+          "nextScene": "scene2"
+        },
+        {
+          "text": "Important people naturally get some legal priority; that is just how systems work.",
+          "outcome": "incorrect",
+          "feedback": "That is how queues sometimes look, but not how the law stands. Article 14 makes arbitrary state favouritism unconstitutional. If an official refuses you a service they give others in your position, that unequal treatment can itself be challenged.",
+          "nextScene": "scene2"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene2",
+      "narration": "Zoya's friend reads a notice for a government-run skills programme: 'Special batch: girls and children from Scheduled Castes and Scheduled Tribes encouraged; reserved seats available.' He frowns: 'Isn't THAT discrimination?' What is the accurate answer?",
+      "choices": [
+        {
+          "text": "No. Article 15 forbids the State from discriminating AGAINST anyone on religion, race, caste, sex, or place of birth — while 15(3) expressly allows special provisions FOR women and children.",
+          "outcome": "correct",
+          "feedback": "Exactly. The Constitution distinguishes between treating people worse because of who they are (forbidden) and lifting up those the system has left behind or who need extra protection (permitted — Article 15(3) for women and children, 15(4) and 15(5) for backward classes). That is why child-specific laws and schemes are constitutional protection, not favouritism.",
+          "nextScene": "scene3"
+        },
+        {
+          "text": "Yes, any different treatment is discrimination, full stop.",
+          "outcome": "incorrect",
+          "feedback": "The Constitution is more precise than that. Discrimination means adverse, unfair treatment on forbidden grounds. Article 15(3) explicitly empowers the State to make special provisions for women and children — the constitutional basis for everything from free girls' education schemes to the entire child protection framework.",
+          "nextScene": "scene3"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene3",
+      "narration": "Evening. Zoya's neighbour, 16-year-old Ravi, is being taken away over a market scuffle by two men who say they are plain-clothes police — 'We will keep him at the chowki till he confesses,' one says. Zoya's uncle steps forward. What is the constitutionally correct position?",
+      "choices": [
+        {
+          "text": "No one can be deprived of liberty except by fair legal procedure — and for anyone under 18, the law adds special child-protective procedures on top.",
+          "outcome": "correct",
+          "feedback": "Right. Article 21 allows liberty to be limited only 'according to procedure established by law' — and courts insist that procedure must be fair, just, and reasonable, with Article 22 adding safeguards like being told the grounds and being produced before a magistrate within 24 hours. For under-18s, the Juvenile Justice Act layers on more: specially trained officers, no police lockups, family informed immediately. 'Confess at the chowki' is not a legal procedure. The family can insist on the legal process and call Childline 1098 or a lawyer — legal aid for children is free.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "If police say so, they can hold anyone as long as needed — questioning them makes it worse.",
+          "outcome": "incorrect",
+          "feedback": "Fear says that; the Constitution says otherwise. Articles 21 and 22 make detention without fair procedure unconstitutional, and for children the Juvenile Justice Act's protections are mandatory, not optional. Calmly asking for the legal basis, informing family, and calling Childline 1098 or the district legal aid office (free for every child) is exactly what the framework expects.",
+          "nextScene": "scene4"
+        },
+        {
+          "text": "Liberty only matters for adults; minors are under their parents' authority anyway.",
+          "outcome": "incorrect",
+          "feedback": "No — Article 21 protects every PERSON, and being a minor increases the protection rather than reducing it. That is Article 15(3) thinking in action: the State may build extra shields for children, never fewer.",
+          "nextScene": "scene4"
+        }
+      ]
+    },
+    {
+      "sceneId": "scene4",
+      "narration": "That night, Zoya maps it out in her notes: 'Articles 14, 15, and 21 are not three separate rules — they are the floor everything else stands on.' How do these articles connect to the specific laws she will meet next — POCSO, RTE, the JJ Act, child labour law?",
+      "choices": [
+        {
+          "text": "Those statutes are Parliament building on the constitutional floor: 14's equal protection, 15(3)'s special provisions for children, and 21's life with dignity.",
+          "outcome": "correct",
+          "feedback": "Precisely. POCSO protects bodily dignity (Article 21) for every child equally (Article 14) through child-specific procedure (Article 15(3)). RTE grew out of 21's dignity into Article 21A's education guarantee. The JJ Act is 21's fair-procedure promise built for under-18s. Know the floor, and the whole structure makes sense — and if any of it is violated: tell trusted adults, use Childline 1098 or the police, and remember the District Legal Services Authority, where legal aid for every child is free by right."
+        },
+        {
+          "text": "They are mostly ceremonial words; the real law is only in the specific acts.",
+          "outcome": "incorrect",
+          "feedback": "The reverse is true — the specific acts exist BECAUSE the Constitution commands that floor, and courts strike down laws and state actions that fall below it. Articles 14, 15, and 21 are enforceable rights: they have been used again and again to strike down unfair rules and expand protections."
+        }
+      ]
+    }
+  ],
+  "quizQuestions": [
+    {
+      "question": "'Equality before the law' (Article 14) means:",
+      "options": [
+        "No person or official is above the law, and arbitrary favouritism by the State is unconstitutional",
+        "Everyone gets identical outcomes in every case",
+        "Only citizens over 18 can claim equality"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 14 pairs equality before the law with equal protection of the laws — one legal standard for everyone, with only reasonable, justified classifications allowed."
+    },
+    {
+      "question": "Article 15(3) allows the State to:",
+      "options": [
+        "Make special provisions for women and children — the constitutional base of child-protection laws",
+        "Discriminate on the basis of religion in emergencies",
+        "Cancel fundamental rights of minors"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 15(3) is an express empowerment: special provisions FOR women and children are not discrimination — they are constitutionally encouraged protection."
+    },
+    {
+      "question": "Under Article 21, personal liberty can be taken away:",
+      "options": [
+        "Only by a fair, just, and reasonable procedure established by law",
+        "By any official with enough authority",
+        "Never, under any circumstances"
+      ],
+      "correctIndex": 0,
+      "explanation": "Article 21 permits liberty to be limited only through fair legal procedure — and for under-18s the Juvenile Justice Act adds mandatory child-protective safeguards on top."
+    },
+    {
+      "question": "A child's family cannot afford a lawyer. What does the law provide?",
+      "options": [
+        "Free legal aid for every child through the Legal Services Authorities",
+        "Nothing — legal help is always paid",
+        "Legal aid only after age 18"
+      ],
+      "correctIndex": 0,
+      "explanation": "Every child is entitled to free legal aid through the Legal Services Authorities (national, state, and district). Childline 1098 can also connect a child to help — free, 24 hours."
+    }
+  ],
+  "levels": [
+    {
+      "levelId": "level1",
+      "kind": "story",
+      "sceneIds": [
+        "scene1",
+        "scene2"
+      ],
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level2",
+      "kind": "decision",
+      "sceneIds": [
+        "scene3",
+        "scene4"
+      ],
+      "entryScene": "scene3"
+    },
+    {
+      "levelId": "level3",
+      "kind": "quiz"
+    }
+  ]
+}

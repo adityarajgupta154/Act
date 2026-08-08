@@ -30,6 +30,116 @@ export interface RecapItem {
 }
 
 export const RECAPS: Record<string, RecapItem[]> = {
+  // ---------------------------------------------------------- zone0: 8-11
+  know_yourself_8_11: [
+    {
+      summary:
+        'Rights are like invisible shields that every child in India is born with. You do not have to earn them — no marks, prizes, or money decide them, and nobody can take them away.',
+      question: 'When did your rights become yours?',
+      options: ['The day I was born', 'Only after I win something'],
+      correctIndex: 0,
+      explanation:
+        'Yes! Your shields have been with you from your very first day, and they stay with you always.',
+    },
+    {
+      summary:
+        "Every child carries the very same shields. Speaking a different language, wearing different clothes, or coming from a different place never makes a child's rights smaller.",
+      question: 'Which children have the same rights as you?',
+      options: ['Every child, everywhere in India', 'Only children just like me'],
+      correctIndex: 0,
+      explanation: 'Right! Same rights, same respect — for every single child.',
+    },
+    {
+      summary:
+        'If someone makes you or a friend feel scared or small, telling is the strongest move. A trusted grown-up can help, and Childline 1098 is a free phone number for any child, day or night.',
+      question: 'What is a strong thing to do when something feels wrong?',
+      options: [
+        'Keep it secret forever',
+        'Tell a trusted grown-up or call Childline 1098',
+      ],
+      correctIndex: 1,
+      explanation: 'Exactly. Telling is brave — and 1098 is always free and always open.',
+    },
+  ],
+  // --------------------------------------------------------- zone0: 12-15
+  know_yourself_12_15: [
+    {
+      summary:
+        "The Constitution of India is the country's master rulebook. Every other law and rule must follow it, and the fundamental rights inside it belong to every person — including every child.",
+      question: 'Which book is the highest rulebook in India?',
+      options: ['The Constitution of India', 'A school rule book'],
+      correctIndex: 0,
+      explanation: 'Yes — and because it is the highest, no rule that breaks it can stand.',
+    },
+    {
+      summary:
+        'Article 14 says everyone is equal before the law and gets the equal protection of the laws. The same legal shield covers rich and poor, young and old.',
+      question: 'Under Article 14, who does the law protect equally?',
+      options: ['Everyone', 'Only adults'],
+      correctIndex: 0,
+      explanation: 'Correct. One law, one shield, for every person.',
+    },
+    {
+      summary:
+        'Article 15 forbids the State from discriminating against anyone only because of religion, race, caste, sex, or place of birth. Separate taps or separate treatment for one community is exactly what it stands against.',
+      question: 'A rule treats one community differently just because of their caste. Is that allowed?',
+      options: ['No — Article 15 forbids it', 'Yes, if a powerful person made the rule'],
+      correctIndex: 0,
+      explanation:
+        'Right. And if you see it happen, the safe, strong step is to stand with the person and tell a teacher or trusted adult.',
+    },
+    {
+      summary:
+        "Article 21 protects life and personal liberty, and courts have read 'life' to mean a life with dignity — not just staying alive. Many protections for children grow out of it.",
+      question: "What does 'life' mean in Article 21?",
+      options: ['A life with dignity and safety', 'Only not being physically attacked'],
+      correctIndex: 0,
+      explanation: 'Yes. Dignity is part of the right to life itself.',
+    },
+  ],
+  // --------------------------------------------------------- zone0: 16-18
+  know_yourself_16_18: [
+    {
+      summary:
+        'Article 14 puts every person and every official under the same law. Equality before the law plus equal protection of the laws means the State cannot act with arbitrary favouritism — only reasonable, justified classifications are allowed.',
+      question: 'Can any official claim to be above the law?',
+      options: ['No — Article 14 places everyone under it', 'Yes, senior officials are exempt'],
+      correctIndex: 0,
+      explanation:
+        'Correct. One legal standard for everyone is the foundation the rest of your rights stand on.',
+    },
+    {
+      summary:
+        'Article 15 bars State discrimination on religion, race, caste, sex, or place of birth — and Article 15(3) expressly allows special provisions for women and children. Child-protection laws are constitutionally encouraged protection, not discrimination.',
+      question: 'Are special protections for children a kind of discrimination?',
+      options: [
+        'No — Article 15(3) expressly permits them',
+        'Yes, all different treatment is discrimination',
+      ],
+      correctIndex: 0,
+      explanation: 'Right. Protecting those who need it is the Constitution working as designed.',
+    },
+    {
+      summary:
+        'Under Article 21, personal liberty can be limited only through a fair, just, and reasonable procedure established by law. For anyone under 18, the Juvenile Justice Act adds mandatory child-protective safeguards on top.',
+      question: 'How can personal liberty lawfully be taken away?',
+      options: ['Only by a fair legal procedure', 'By any sufficiently senior officer'],
+      correctIndex: 0,
+      explanation: 'Yes. No fair procedure, no deprivation — that is the Article 21 line.',
+    },
+    {
+      summary:
+        'Money never decides justice: every child is entitled to free legal aid through the Legal Services Authorities (national, state, and district). Childline 1098 can also connect a child to help — free, 24 hours.',
+      question: 'A family cannot afford a lawyer for their child. What follows?',
+      options: [
+        'The child is entitled to free legal aid',
+        'The child simply goes unrepresented',
+      ],
+      correctIndex: 0,
+      explanation:
+        'Correct. Free legal aid is a right, and 1098 is a free door to reach help any time.',
+    },
+  ],
   // ---------------------------------------------------------- zone1: 8-11
   safe_zone_8_11: [
     {

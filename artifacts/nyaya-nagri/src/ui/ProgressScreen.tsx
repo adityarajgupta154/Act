@@ -5,7 +5,7 @@
  *
  * 1. Child-facing "My Progress" (default): zones completed, badges earned,
  *    and a friendly encouraging summary. NO raw scores, NO percentages —
- *    only warm counts like "3 out of 5 Rights Quests".
+ *    only warm counts like "3 out of 6 Rights Quests".
  *
  * 2. Teacher/Parent summary (opt-in toggle, clearly labelled, off by
  *    default): aggregated pre-vs-post quiz percentages per zone for THIS
@@ -20,7 +20,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { progressStore, type ProgressState } from '@/data/progressStore';
-import { ZONES } from '@/world/zones';
+import { ZONES, isZoneUnlockedIn } from '@/world/zones';
 import { getAllQuests } from '@/quests/registry';
 import { useUIStore, closeProgress } from './uiStore';
 import { useStrings, type UIStrings } from '@/i18n/strings';
@@ -75,12 +75,13 @@ export function computeZoneImpact(progress: ProgressState): ZoneImpact[] {
 }
 
 function childZoneStates(progress: ProgressState) {
-  return ZONES.map((zone) => {
-    const completed = !!progress.completedZones[zone.id];
-    const previous = ZONES.find((z) => z.order === zone.order - 1);
-    const unlocked = zone.order === 1 || !!(previous && progress.completedZones[previous.id]);
-    return { ...zone, completed, unlocked };
-  });
+  // Same single-source lock rule as the 3D map (zones.ts): completed zones
+  // are always replayable, otherwise first zone free + previous-complete.
+  return ZONES.map((zone) => ({
+    ...zone,
+    completed: !!progress.completedZones[zone.id],
+    unlocked: isZoneUnlockedIn(progress.completedZones, zone.id),
+  }));
 }
 
 function encouragement(completedCount: number, t: UIStrings): string {

@@ -2,8 +2,8 @@
  * Nyaya Nagri — Quest registry (Task 3; content complete as of Task 8;
  * Hindi translations added in Task 10)
  *
- * Maps zone + age band (+ language) to a quest content file. All 5 zones x
- * 3 age bands (15 quests) exist in English and Hindi. The resolver requires
+ * Maps zone + age band (+ language) to a quest content file. All 6 zones x
+ * 3 age bands (18 quests) exist in English and Hindi. The resolver requires
  * an exact zone + band match — the temporary any-band fallback from the
  * content build-out has been removed so a band can never silently receive
  * another band's quest. Hindi falls back to English only if a translation
@@ -13,6 +13,9 @@
 import type { AgeBand } from '@/data/progressStore';
 import type { Language } from '@/data/settingsStore';
 import { validateQuest, validateTranslationParity, type Quest } from './schema';
+import knowYourself811 from './content/know_yourself_8_11.json';
+import knowYourself1215 from './content/know_yourself_12_15.json';
+import knowYourself1618 from './content/know_yourself_16_18.json';
 import safeZone811 from './content/safe_zone_8_11.json';
 import safeZone1215 from './content/safe_zone_12_15.json';
 import safeZone1618 from './content/safe_zone_16_18.json';
@@ -28,6 +31,9 @@ import justiceSystem1618 from './content/justice_system_16_18.json';
 import digitalSafety811 from './content/digital_safety_8_11.json';
 import digitalSafety1215 from './content/digital_safety_12_15.json';
 import digitalSafety1618 from './content/digital_safety_16_18.json';
+import knowYourself811Hi from './content/hi/know_yourself_8_11.json';
+import knowYourself1215Hi from './content/hi/know_yourself_12_15.json';
+import knowYourself1618Hi from './content/hi/know_yourself_16_18.json';
 import safeZone811Hi from './content/hi/safe_zone_8_11.json';
 import safeZone1215Hi from './content/hi/safe_zone_12_15.json';
 import safeZone1618Hi from './content/hi/safe_zone_16_18.json';
@@ -45,6 +51,9 @@ import digitalSafety1215Hi from './content/hi/digital_safety_12_15.json';
 import digitalSafety1618Hi from './content/hi/digital_safety_16_18.json';
 
 const QUEST_FILES: Quest[] = [
+  knowYourself811 as Quest,
+  knowYourself1215 as Quest,
+  knowYourself1618 as Quest,
   safeZone811 as Quest,
   safeZone1215 as Quest,
   safeZone1618 as Quest,
@@ -63,6 +72,9 @@ const QUEST_FILES: Quest[] = [
 ];
 
 const QUEST_FILES_HI: Quest[] = [
+  knowYourself811Hi as Quest,
+  knowYourself1215Hi as Quest,
+  knowYourself1618Hi as Quest,
   safeZone811Hi as Quest,
   safeZone1215Hi as Quest,
   safeZone1618Hi as Quest,
@@ -101,7 +113,7 @@ const QUESTS_HI: Quest[] = QUEST_FILES_HI.map((raw) => {
 
 /**
  * Find the quest for a zone + age band in the requested language. Exact
- * zone + band match only (all 15 quests exist per language); null means an
+ * zone + band match only (all 18 quests exist per language); null means an
  * invalid zone — the UI shows the placeholder interior from Task 1.
  * Hindi falls back to the English quest if no translation exists.
  */

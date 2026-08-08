@@ -20,8 +20,13 @@ function assert(cond: boolean, msg: string) {
   console.log(`ok - ${msg}`);
 }
 
+// NOTE: this is deliberately a LEGACY pre-Zone-0 save shape in spirit —
+// zone1-3 complete, zone0 (now the first zone) never played — so the child
+// view asserts below also cover the Task 19 save-migration rendering.
 const sample: ProgressState = {
   ageBand: '12-15',
+  onboarded: true,
+  avatar: null,
   completedZones: { zone1: true, zone2: true, zone3: true },
   badges: { zone1_star: true, zone2_star: true, zone3_star: true },
   quizScores: {
@@ -29,6 +34,16 @@ const sample: ProgressState = {
     right_childhood_12_15: { pre: 2, post: 4 },
     school_rights_12_15: { pre: 1, post: 3 },
   },
+  levelProgress: {},
+  replayCounts: {},
+  preAnswersByQuest: {},
+  activityScores: {},
+  xp: 540,
+  coins: 120,
+  ownedAccessories: [],
+  streak: { count: 3, lastDay: null },
+  titles: { zone1_guardian: true },
+  leaderboardOptIn: false,
   sessionId: 'nn-testsample-0001',
   extras: {},
 };
@@ -48,10 +63,15 @@ const noop = () => {};
 const childHtml = renderToStaticMarkup(
   <ProgressPanel progress={sample} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
 );
-assert(childHtml.includes('completed 3 out of 5 Rights Quests'), 'child view shows friendly quest count');
+assert(childHtml.includes('completed 3 out of 6 Rights Quests'), 'child view shows friendly quest count');
 assert(childHtml.includes('3 star badges earned'), 'child view shows badge count');
 assert(childHtml.includes('Safe Zone') && childHtml.includes('Digital Safety'), 'child view lists zones');
 assert(childHtml.includes('Locked for now'), 'child view marks locked zones');
+// Legacy pre-Zone-0 save (zone1-3 complete, zone0 never played): completed
+// zones show Complete (never locked), zone0 + zone4 are open, only zone5 is
+// locked — the migration rule from zones.ts applied to the dashboard too.
+assert((childHtml.match(/Locked for now/g) ?? []).length === 1,
+  'legacy save: exactly one locked zone (zone5) — completed zones stay open');
 assert(!childHtml.includes('%'), 'child view contains NO percentages');
 assert(!/[0-9]\s*\/\s*[0-9]/.test(childHtml), 'child view contains no raw score fractions');
 assert(!childHtml.includes(sample.sessionId), 'child view does not surface the session id');
@@ -78,7 +98,7 @@ const fresh: ProgressState = { ...sample, completedZones: {}, badges: {}, quizSc
 const freshChild = renderToStaticMarkup(
   <ProgressPanel progress={fresh} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
 );
-assert(freshChild.includes('completed 0 out of 5'), 'fresh child view renders zero state');
+assert(freshChild.includes('completed 0 out of 6'), 'fresh child view renders zero state');
 assert(freshChild.includes('adventure is just beginning'), 'fresh child view is encouraging');
 const freshTeacher = renderToStaticMarkup(
   <ProgressPanel progress={fresh} teacherView={true} onToggleTeacherView={noop} onClose={noop} />,

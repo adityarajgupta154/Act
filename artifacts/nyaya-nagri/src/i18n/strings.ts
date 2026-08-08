@@ -329,6 +329,10 @@ const EN: UIStrings = {
   backToLevels: 'Back to Levels',
 
   zones: {
+    zone0: {
+      name: 'Know Yourself',
+      theme: 'Every child is equal, matters, and lives with dignity (Constitution basics)',
+    },
     zone1: {
       name: 'Safe Zone',
       theme: 'Personal safety and body autonomy (POCSO awareness)',
@@ -391,7 +395,7 @@ const EN: UIStrings = {
   completedXofY: (done, total) =>
     `You've completed ${done} out of ${total} Rights Quests!`,
   encouragementStart:
-    'Your adventure is just beginning. The Safe Zone is waiting for you!',
+    'Your adventure is just beginning. The Know Yourself zone is waiting for you!',
   encouragementMid: 'Amazing work! Keep exploring, the next zone is ready for you.',
   encouragementAll:
     'Incredible! You explored every zone. You are a true Rights Champion!',
@@ -526,7 +530,7 @@ const EN: UIStrings = {
   chooseLanguage: 'Choose your language',
   howItWorksTitle: 'How it works',
   howItWorksPoints: [
-    'Walk around the city and visit 5 zones — each one is about rights that protect you.',
+    'Walk around the city and visit 6 zones — each one is about rights that protect you.',
     'Play story quests, make your own choices, and answer fun quizzes to earn badges.',
     'Your friendly guide can answer questions any time.',
     'The red Get Help Now button is always on screen — it shows real helplines like Childline 1098.',
@@ -622,6 +626,7 @@ const EN: UIStrings = {
   noTitlesYet: 'Finish levels and zones to earn your first title!',
   titleNames: {
     first_level: 'First Steps',
+    zone0_pathfinder: 'Rights Pathfinder',
     zone1_guardian: 'Safe Zone Guardian',
     zone2_champion: 'Childhood Champion',
     zone3_scholar: 'School Rights Scholar',
@@ -677,6 +682,10 @@ const HI: UIStrings = {
   backToLevels: 'लेवल सूची पर वापस',
 
   zones: {
+    zone0: {
+      name: 'खुद को जानो',
+      theme: 'हर बच्चा बराबर है, मायने रखता है, और गरिमा के साथ जीता है (संविधान की मूल बातें)',
+    },
     zone1: {
       name: 'सेफ़ ज़ोन',
       theme: 'निजी सुरक्षा और अपने शरीर पर अपना हक (पॉक्सो जागरूकता)',
@@ -739,7 +748,7 @@ const HI: UIStrings = {
   completedXofY: (done, total) =>
     `तुमने ${total} में से ${done} अधिकार क्वेस्ट पूरी कर ली हैं!`,
   encouragementStart:
-    'तुम्हारा सफ़र अभी शुरू हुआ है। सेफ़ ज़ोन तुम्हारा इंतज़ार कर रहा है!',
+    'तुम्हारा सफ़र अभी शुरू हुआ है। खुद को जानो ज़ोन तुम्हारा इंतज़ार कर रहा है!',
   encouragementMid: 'शानदार! खोज जारी रखो, अगला ज़ोन तुम्हारे लिए तैयार है।',
   encouragementAll:
     'कमाल कर दिया! तुमने हर ज़ोन घूम लिया। तुम सच्चे अधिकार चैंपियन हो!',
@@ -874,7 +883,7 @@ const HI: UIStrings = {
   chooseLanguage: 'अपनी भाषा चुनो',
   howItWorksTitle: 'यह कैसे काम करता है',
   howItWorksPoints: [
-    'शहर में घूमो और 5 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
+    'शहर में घूमो और 6 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
     'कहानी वाले क्वेस्ट खेलो, अपने फ़ैसले खुद लो, और मज़ेदार क्विज़ से बैज जीतो।',
     'तुम्हारा दोस्ताना गाइड कभी भी सवालों के जवाब दे सकता है।',
     'लाल "अभी मदद लो" बटन हमेशा स्क्रीन पर रहता है — इसमें चाइल्डलाइन 1098 जैसी असली हेल्पलाइन हैं।',
@@ -970,6 +979,7 @@ const HI: UIStrings = {
   noTitlesYet: 'लेवल और ज़ोन पूरे करो और अपनी पहली उपाधि पाओ!',
   titleNames: {
     first_level: 'पहला कदम',
+    zone0_pathfinder: 'अधिकार राही',
     zone1_guardian: 'सेफ़ ज़ोन रक्षक',
     zone2_champion: 'बचपन चैंपियन',
     zone3_scholar: 'स्कूल अधिकार ज्ञानी',

@@ -115,7 +115,7 @@ async function main() {
     safe_zone_16_18: { levelId: 'level_scenario', kind: 'scenario' },
   };
   const BANDS = ['8-11', '12-15', '16-18'] as const;
-  const ZONES_SEQ = ['zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
+  const ZONES_SEQ = ['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5'];
   let checked = 0;
   for (const zoneId of ZONES_SEQ) {
     for (const band of BANDS) {
@@ -139,7 +139,7 @@ async function main() {
       }
     }
   }
-  assert(checked === 30, 'all 30 quest files (15 EN + 15 HI) level-checked');
+  assert(checked === 36, 'all 36 quest files (18 EN + 18 HI) level-checked');
 
   // HI level STRUCTURE identical to EN (text differs; full structural parity
   // — pair counts, cue geometry, bucket/outcome sequences — is enforced by
@@ -436,6 +436,20 @@ async function main() {
       JSON.stringify(getLevelStatuses(quest)) === JSON.stringify(['completed', 'completed', 'completed']),
       'old save (zone complete, no level entries) counts all levels complete',
     );
+    resetProgress();
+  }
+
+  // ---------- 4b. Task 19 migration: pre-Zone-0 saves keep completed zones open ----------
+  // A child who finished Zone 1 before Zone 0 existed must never find their
+  // completed zone locked for replay; only genuinely new zones follow the
+  // Zone 0-first sequence.
+  {
+    resetProgress();
+    progressStore.update({ completedZones: { zone1: true } });
+    assert(isZoneUnlocked('zone0'), 'legacy save: zone0 (new first zone) is open');
+    assert(isZoneUnlocked('zone1'), 'legacy save: completed zone1 stays replayable without zone0');
+    assert(isZoneUnlocked('zone2'), 'legacy save: zone2 still unlocked by completed zone1');
+    assert(!isZoneUnlocked('zone3'), 'legacy save: zone3 still locked (zone2 not done)');
     resetProgress();
   }
 

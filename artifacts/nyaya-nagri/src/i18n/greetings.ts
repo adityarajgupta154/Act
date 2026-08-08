@@ -14,6 +14,14 @@ import type { LevelKind } from '@/quests/schema';
 type GreetingMap = Record<string, Record<AgeBand, string>>;
 
 const GREETINGS_EN: GreetingMap = {
+  zone0: {
+    '8-11':
+      "Welcome to the Know Yourself zone! Before we visit anywhere else, here is the biggest secret in Nyaya Nagri: YOU matter, exactly as you are. In this zone we discover the invisible shields called rights that every child in India carries. Let's meet Pihu and find yours. I'm here if you have questions!",
+    '12-15':
+      "Welcome to the Know Yourself zone. Everything in this city stands on one book: the Constitution of India. This quest shows you Articles 14, 15, and 21 in plain language — equality, no discrimination, and a life with dignity — and how to recognise unfair treatment when it happens right in front of you. Ready?",
+    '16-18':
+      "Welcome to the Know Yourself zone. Before the specific laws, the foundation: Articles 14, 15, 15(3), and 21 — equality before the law, the bar on discrimination, the State's power to specially protect children, and personal liberty with dignity. Every zone after this one is built on these four. Worth knowing precisely.",
+  },
   zone1: {
     '8-11':
       "Welcome to the Safe Zone! Here we learn one BIG rule: your body belongs to YOU. Let's play a story about saying no, telling a trusted grown-up, and staying safe. I'm right here if you have questions!",
@@ -57,6 +65,14 @@ const GREETINGS_EN: GreetingMap = {
 };
 
 const GREETINGS_HI: GreetingMap = {
+  zone0: {
+    '8-11':
+      'खुद को जानो ज़ोन में स्वागत है! किसी और जगह जाने से पहले, न्याय नगरी का सबसे बड़ा राज़ सुनो: तुम मायने रखते हो, बिल्कुल जैसे तुम हो। इस ज़ोन में हम वे अनदेखी ढालें खोजेंगे जिन्हें अधिकार कहते हैं और जो भारत का हर बच्चा साथ रखता है। चलो पीहू से मिलें और तुम्हारी ढालें ढूँढें। सवाल हों तो मैं यहीं हूँ!',
+    '12-15':
+      'खुद को जानो ज़ोन में स्वागत है। इस पूरे शहर की नींव एक किताब है: भारत का संविधान। यह क्वेस्ट तुम्हें आसान भाषा में अनुच्छेद 14, 15 और 21 दिखाती है — बराबरी, भेदभाव पर रोक, और गरिमा भरा जीवन — और यह भी कि आँखों के सामने नाइंसाफ़ी हो तो उसे पहचानो कैसे। तैयार हो?',
+    '16-18':
+      'खुद को जानो ज़ोन में स्वागत है। खास कानूनों से पहले, नींव: अनुच्छेद 14, 15, 15(3) और 21 — कानून के सामने बराबरी, भेदभाव पर रोक, बच्चों की खास सुरक्षा बनाने की राज्य की शक्ति, और गरिमा के साथ निजी स्वतंत्रता। इसके बाद का हर ज़ोन इन्हीं चार पर खड़ा है। इन्हें ठीक से जानना काम की बात है।',
+  },
   zone1: {
     '8-11':
       'सेफ़ ज़ोन में स्वागत है! यहाँ हम एक बड़ा नियम सीखते हैं: तुम्हारा शरीर सिर्फ़ तुम्हारा है। चलो एक कहानी खेलें — ना कहना, किसी भरोसेमंद बड़े को बताना, और सुरक्षित रहना। कोई सवाल हो तो मैं यहीं हूँ!',

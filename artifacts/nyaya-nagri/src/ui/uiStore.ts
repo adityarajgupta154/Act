@@ -154,7 +154,7 @@ export function closeShop() {
 // DEV-ONLY test seam: the e2e browser cannot render WebGL, so it cannot
 // walk the 3D world to a zone gate. Expose zone entry for tests. Stripped
 // from production builds (import.meta.env.DEV is false there).
-if (import.meta.env.DEV && typeof window !== 'undefined') {
+if (import.meta.env?.DEV && typeof window !== 'undefined') {
   (window as unknown as Record<string, unknown>).__nnDebug = { enterZone, exitZone };
 }
 

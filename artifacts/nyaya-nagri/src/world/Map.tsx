@@ -50,6 +50,32 @@ function ActiveRing({ unlocked }: { unlocked: boolean }) {
   );
 }
 
+function MarkerZone0({ position, unlocked }: { position: [number, number]; unlocked: boolean }) {
+  // Open book (the Constitution) on a pedestal — the city's foundation stone.
+  return (
+    <group position={[position[0], 0, position[1]]}>
+      <mesh position={[0, 1, 0]} castShadow receiveShadow>
+        <cylinderGeometry args={[1.4, 1.8, 2, 16]} />
+        <meshStandardMaterial color={getColor("#c4b5fd", unlocked)} />
+      </mesh>
+      <mesh position={[0, 2.35, 0]} castShadow receiveShadow>
+        <boxGeometry args={[0.4, 0.5, 2.4]} />
+        <meshStandardMaterial color={getColor("#7c3aed", unlocked)} />
+      </mesh>
+      <mesh position={[-1.05, 2.7, 0]} rotation={[0, 0, 0.3]} castShadow receiveShadow>
+        <boxGeometry args={[2.2, 0.22, 2.4]} />
+        <meshStandardMaterial color={getColor("#fdf2f8", unlocked)} />
+      </mesh>
+      <mesh position={[1.05, 2.7, 0]} rotation={[0, 0, -0.3]} castShadow receiveShadow>
+        <boxGeometry args={[2.2, 0.22, 2.4]} />
+        <meshStandardMaterial color={getColor("#fdf2f8", unlocked)} />
+      </mesh>
+      <ActiveRing unlocked={unlocked} />
+      {!unlocked && <LockIcon position={[0, 6, 0]} />}
+    </group>
+  );
+}
+
 function MarkerZone1({ position, unlocked }: { position: [number, number]; unlocked: boolean }) {
   return (
     <group position={[position[0], 0, position[1]]}>
@@ -165,6 +191,7 @@ export function Map() {
       {states.map((zone) => {
         const props = { position: zone.position, unlocked: zone.unlocked };
         switch (zone.id) {
+          case 'zone0': return <MarkerZone0 key={zone.id} {...props} />;
           case 'zone1': return <MarkerZone1 key={zone.id} {...props} />;
           case 'zone2': return <MarkerZone2 key={zone.id} {...props} />;
           case 'zone3': return <MarkerZone3 key={zone.id} {...props} />;
