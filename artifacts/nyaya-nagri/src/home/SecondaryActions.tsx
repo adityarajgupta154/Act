@@ -12,7 +12,7 @@ const secondaryButtonClass = cn(
   'flex items-center gap-2 rounded-full font-bold text-slate-700',
   'bg-gradient-to-b from-white to-amber-50 hover:to-amber-100',
   'border-b-4 border-amber-300 ring-1 ring-amber-200/80',
-  'px-5 py-2.5 text-sm md:px-6 md:py-3 md:text-base',
+  'px-5 py-2.5 text-sm md:px-6 md:py-3 md:text-base xl:px-8 xl:py-3.5 xl:text-lg',
   'shadow-[0_10px_20px_-10px_rgba(120,80,20,0.6)]',
   'transition-all duration-150 active:translate-y-0.5 active:border-b-2 touch-manipulation',
 );

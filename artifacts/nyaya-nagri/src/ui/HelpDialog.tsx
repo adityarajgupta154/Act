@@ -54,10 +54,11 @@ export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } =
               <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
             </span>
             <span className="flex flex-col items-start text-left leading-tight">
-              <span className="font-display font-bold text-base md:text-lg">{t.getHelpNow}</span>
-              <span className="text-[11px] md:text-xs font-semibold text-white/95">
-                {t.childline} 1098 · {t.cyberCrime} 155260
-              </span>
+              <span className="font-display font-bold text-base md:text-lg xl:text-xl">{t.getHelpNow}</span>
+              {/* Canonical service names + numbers, identical in every
+                  language (PRD §9): they are what a child reads out or dials. */}
+              <span className="mt-0.5 text-[11px] md:text-xs font-semibold text-white/95">Childline 1098</span>
+              <span className="text-[11px] md:text-xs font-semibold text-white/95">Cyber Crime 155260</span>
             </span>
           </button>
         )}

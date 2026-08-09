@@ -48,18 +48,25 @@ export function HomeScreen({ onEnter }: { onEnter: () => void }) {
       <BrandHeader />
       <TopControls onAbout={() => setAboutOpen(true)} />
 
-      {/* Desktop speech bubble, beside the guide boy in the lower-left */}
+      {/* Desktop speech bubble — left side, above the guide boy, tail pointing
+          down at him. It is parked in the sky/hillside band ABOVE the painted
+          zone signboards: under `object-cover` those signs always land around
+          40–48% of viewport height, so anything lower would cover the artwork's
+          "SAFE ZONE" / "RIGHT TO CHILDHOOD" labels. Shown from `md` up, i.e.
+          exactly where the boy sprite is shown. */}
       <WelcomeBubble
-        className="hidden xl:block absolute left-[2.5%] bottom-[36%] z-20 w-72"
+        className="hidden md:block absolute left-[2%] bottom-[60%] z-20 w-60 lg:w-64 xl:w-72"
         hey={t.homeWelcomeHey}
         title={t.welcomeTitle}
         body={t.welcomeBody}
       />
 
-      {/* Bottom action column (mobile: bubble + CTAs + help stacked; desktop: CTAs centered, help bottom-right) */}
-      <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2.5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:gap-3 md:p-5">
+      {/* Bottom action column. Desktop: CTA cluster centred and lifted off the
+          bottom edge so it sits over the plaza as in the reference, with help
+          pinned bottom-right. Mobile: bubble + CTAs + help stacked. */}
+      <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2.5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:gap-4 md:p-5 md:pb-[5%] xl:gap-5 xl:pb-[7%]">
         <WelcomeBubble
-          className="xl:hidden self-start ml-1 max-w-[260px]"
+          className="md:hidden self-start ml-1 max-w-[260px]"
           hey={t.homeWelcomeHey}
           title={t.welcomeTitle}
           body={t.welcomeBody}

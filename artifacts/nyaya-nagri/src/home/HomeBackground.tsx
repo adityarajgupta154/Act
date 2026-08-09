@@ -1,46 +1,50 @@
 /**
- * Nyaya Nagri — Home backdrop (redesign brief: reference-image-based,
- * strictly NO 3D / Three.js on the homepage).
+ * Nyaya Nagri — Home backdrop (2D only; strictly NO Three.js / R3F here).
  *
- * The whole environment (palace, statue, six zone buildings, gardens, flag,
- * airship) is ONE pre-rendered illustration. Zone signboards + the palace
- * banner are baked into the plate per language (EN/HI) so the signage always
- * crops, scales and moves WITH the buildings under `object-cover`.
- * The guide boy is a separate transparent 2D sprite positioned with CSS
- * (per brief §3), so smaller screens can recompose him independently.
+ * Per the reference-composition brief the artwork is the SUPPLIED illustration
+ * used verbatim:
+ *   IMAGE 1 -> `home-city.webp`  — palace, statue, zone buildings + their
+ *              signage, gardens, paths and flag are all part of that single
+ *              painting. Nothing in it is regenerated, recreated or redrawn.
+ *   IMAGE 2 -> `guide-boy.webp`  — the guide boy stays a SEPARATE transparent
+ *              sprite (never flattened into the plate) so his position and
+ *              scale can be tuned per breakpoint.
+ *
+ * The real 3D world is lazy-loaded only after "Enter Nyaya Nagri".
  */
 import React from 'react';
-import { useSettings } from '@/data/settingsStore';
-import cityEn from '@/assets/home/home-city-en.jpg';
-import cityHi from '@/assets/home/home-city-hi.jpg';
-import boyBack from '@/assets/home/guide-boy-back.png';
+import city from '@/assets/home/home-city.webp';
+import guideBoy from '@/assets/home/guide-boy.webp';
 
 export function HomeBackground() {
-  const { language } = useSettings();
-
   return (
     <div className="absolute inset-0" aria-hidden="true">
-      {/* Illustrated city plate (language-matched signage baked in) */}
+      {/* Supplied city artwork, unmodified. `object-cover` keeps the palace
+          centred; the crop bias leans slightly low so the foreground plaza
+          (where the CTA sits) survives on wide 16:9 screens. */}
       <img
-        src={language === 'hi' ? cityHi : cityEn}
+        src={city}
         alt=""
         draggable={false}
-        className="home-drift absolute inset-0 h-full w-full select-none object-cover object-[50%_25%]"
+        fetchPriority="high"
+        className="absolute inset-0 h-full w-full select-none object-cover object-[50%_42%]"
       />
 
-      {/* Guide boy — 2D sprite, lower-left area, looking toward the city.
-          Positioned on the open pathway between the buildings so he never
-          covers the baked signboard text; on small screens the bottom UI
-          column would hide him anyway, so he only renders from md up. */}
+      {/* Guide boy — supplied transparent sprite, standing on the pathway in
+          the lower-left and facing the city. Below `md` the stacked UI column
+          fills this space, so he is hidden there rather than colliding with
+          the CTA / Get Help card (brief §14: reposition only to prevent
+          overlap; the desktop composition stays the source of truth). */}
       <img
-        src={boyBack}
+        src={guideBoy}
         alt=""
         draggable={false}
-        className="hidden md:block absolute bottom-[-1%] left-[20%] h-[38vh] w-auto select-none drop-shadow-[0_16px_14px_rgba(15,23,42,0.4)]"
+        className="hidden md:block absolute bottom-[2%] left-[6%] h-[44vh] w-auto select-none drop-shadow-[0_18px_16px_rgba(15,23,42,0.38)] lg:h-[48vh] xl:h-[52vh]"
       />
 
-      {/* Soft vignette for overlay legibility */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-sky-950/15 via-transparent to-slate-950/35" />
+      {/* Very light bottom vignette — just enough to seat the CTA cluster on
+          the bright plaza without tinting the supplied artwork. */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/20" />
     </div>
   );
 }

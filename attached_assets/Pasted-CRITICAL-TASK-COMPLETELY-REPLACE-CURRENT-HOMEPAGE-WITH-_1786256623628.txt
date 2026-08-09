@@ -1,0 +1,571 @@
+CRITICAL TASK — COMPLETELY REPLACE CURRENT HOMEPAGE WITH THE PROVIDED REFERENCE COMPOSITION
+
+I am providing THREE reference images.
+
+IMAGE 1 = BACKGROUND / NYAYA NAGRI WORLD
+IMAGE 2 = BOY CHARACTER WITH TRANSPARENT BACKGROUND
+IMAGE 3 = FINAL TARGET DESIGN / EXACT COMPOSITION REFERENCE
+
+You MUST use all three images together.
+
+==================================================
+IMPORTANT — DO NOT RECREATE THE ARTWORK
+==================================================
+
+I do NOT want you to generate or recreate the buildings, city, trees, paths, sky, character, or environment using Three.js or procedural components.
+
+IMAGE 1 is already the final background artwork.
+
+Use IMAGE 1 directly as the homepage background.
+
+IMAGE 2 is already the final boy character.
+
+Use IMAGE 2 directly as a transparent foreground character.
+
+IMAGE 3 shows EXACTLY how the final homepage should look.
+
+Use IMAGE 3 as the composition/layout reference.
+
+DO NOT reinterpret the design.
+
+DO NOT create a different design.
+
+DO NOT generate alternative buildings.
+
+DO NOT generate another character.
+
+DO NOT use Three.js for the homepage visual.
+
+==================================================
+FINAL COMPOSITION
+==================================================
+
+The final homepage should be:
+
+IMAGE 1
++
+IMAGE 2
++
+UI ELEMENTS
+=
+IMAGE 3
+
+The result should visually match IMAGE 3 as closely as possible.
+
+Think of IMAGE 3 as the FINAL DESIGN SPECIFICATION.
+
+==================================================
+1. BACKGROUND
+==================================================
+
+Use IMAGE 1 as the complete full-screen background.
+
+Do not modify the artwork.
+
+Do not redraw it.
+
+Do not replace it with another generated image.
+
+Do not add procedural 3D objects over it.
+
+Use:
+
+background-image: IMAGE_1
+
+or an equivalent optimized image element.
+
+Maintain the original visual composition of IMAGE 1.
+
+Use object-fit / background-size appropriately.
+
+The central Know Your Rights building and all existing zone labels must remain exactly as they appear in IMAGE 1:
+
+- SAFE ZONE
+- RIGHT TO CHILDHOOD
+- SCHOOL RIGHTS
+- DIGITAL SAFETY
+- FAMILY & COMMUNITY
+- KNOW YOUR RIGHTS
+
+Do not recreate or reposition these background elements individually.
+
+==================================================
+2. BOY CHARACTER
+==================================================
+
+Use IMAGE 2 as the character asset.
+
+IMAGE 2 already has a transparent background.
+
+Place the boy exactly according to IMAGE 3.
+
+IMPORTANT:
+
+The boy must NOT be recreated using:
+- Three.js
+- CSS shapes
+- procedural models
+- another generated asset
+
+Use IMAGE 2 directly.
+
+Position:
+
+- lower-left / left-center
+- standing on the pathway
+- facing toward the Nyaya Nagri city
+- approximately the same size as IMAGE 3
+- same visual scale
+- same vertical alignment
+
+Match IMAGE 3's:
+
+- character size
+- X position
+- Y position
+- distance from left edge
+- distance from bottom edge
+
+Do not randomly reposition the character.
+
+==================================================
+3. LAYERING
+==================================================
+
+Use this exact visual layer order:
+
+Layer 1:
+IMAGE 1 — Background
+
+Layer 2:
+IMAGE 2 — Boy
+
+Layer 3:
+Welcome speech bubble
+
+Layer 4:
+Top navigation
+
+Layer 5:
+Main CTA
+
+Layer 6:
+Secondary buttons
+
+Layer 7:
+Get Help Now
+
+Do not place UI behind the character.
+
+Do not place the character behind the background incorrectly.
+
+==================================================
+4. TOP-LEFT LOGO
+==================================================
+
+Recreate the branding placement from IMAGE 3.
+
+Top-left:
+
+NYAYA
+NAGRI
+
+with the existing Nyaya Nagri logo.
+
+Subtitle:
+
+Know Your Rights. Build Your Future.
+
+Match IMAGE 3 closely in:
+
+- position
+- width
+- height
+- spacing
+- typography
+- orange/navy colors
+
+Do NOT move the logo to another location.
+
+==================================================
+5. TOP-RIGHT CONTROLS
+==================================================
+
+Create exactly three buttons:
+
+About
+Accessibility
+Settings
+
+Position them exactly like IMAGE 3:
+
+- top-right
+- horizontal alignment
+- equal spacing
+- same approximate dimensions
+- white/cream pill appearance
+- subtle shadow
+
+These are HTML/CSS UI elements.
+
+Connect them to the EXISTING functionality.
+
+Do not create duplicate settings/accessibility systems.
+
+==================================================
+6. WELCOME SPEECH BUBBLE
+==================================================
+
+Create the speech bubble shown in IMAGE 3.
+
+Position it:
+
+- left side
+- above/next to the boy
+- approximately matching IMAGE 3
+
+Content:
+
+Hey! 👋
+
+Welcome to Nyaya Nagri!
+
+A friendly city where you play stories,
+meet a helpful guide, and learn the rights
+that keep every child safe and strong.
+
+Use:
+
+- cream/off-white background
+- rounded corners
+- subtle shadow
+- navy text
+- orange accent
+- small speech-bubble pointer
+
+Match IMAGE 3's approximate size and position.
+
+==================================================
+7. MAIN CTA
+==================================================
+
+Create the main button exactly where it appears in IMAGE 3.
+
+Text:
+
+ENTER NYAYA NAGRI →
+
+Position:
+
+BOTTOM-CENTER
+
+It must sit in front of the central lower portion of the scene.
+
+Match IMAGE 3's:
+
+- width
+- height
+- position
+- orange color
+- rounded shape
+- shadow
+- text size
+- arrow position
+
+This must be the primary CTA.
+
+On click:
+
+Navigate to the EXISTING language-selection screen.
+
+Do NOT create a new onboarding system.
+
+==================================================
+8. JOURNEY LABEL
+==================================================
+
+Immediately below the main CTA:
+
+Your journey begins here
+
+Match IMAGE 3's placement and visual style.
+
+Use the same cream/gold visual language.
+
+==================================================
+9. SECONDARY BUTTONS
+==================================================
+
+Below the journey label create two buttons:
+
+Explore Nyaya Nagri
+
+How It Works
+
+Position them exactly like IMAGE 3:
+
+- horizontally aligned
+- centered
+- equal visual weight
+- same approximate dimensions
+- same spacing
+
+Use HTML/CSS.
+
+Explore Nyaya Nagri must NOT bypass required onboarding/safety gates.
+
+How It Works should use the existing How It Works screen/component if available.
+
+==================================================
+10. GET HELP NOW
+==================================================
+
+Bottom-right.
+
+Create the red:
+
+GET HELP NOW
+
+button.
+
+Below it:
+
+Childline 1098
+Cyber Crime 155260
+
+Match IMAGE 3's:
+
+- position
+- width
+- height
+- red color
+- rounded shape
+- icon
+- typography
+- shadow
+
+Connect it to the EXISTING support/help functionality.
+
+Do not create a new safety implementation.
+
+==================================================
+11. HOMEPAGE MUST BE 2D
+==================================================
+
+This is extremely important.
+
+The homepage should NOT use:
+
+- Three.js scene
+- Three.js camera
+- 3D buildings
+- 3D trees
+- 3D player
+- 3D zones
+- procedural geometry
+- WebGL-generated environment
+
+The homepage is a composition of:
+
+IMAGE 1
++
+IMAGE 2
++
+HTML/CSS UI
+
+The actual Three.js game world remains untouched and should start later.
+
+==================================================
+12. COMPLETELY REMOVE CURRENT HOMEPAGE
+==================================================
+
+The current homepage implementation must be removed/replaced.
+
+Do NOT keep the current procedural 3D homepage running underneath.
+
+Do NOT initialize the Three.js game world on the homepage.
+
+Do NOT render the old homepage in the background.
+
+The new structure should be:
+
+NEW HOMEPAGE
+    ↓
+ENTER NYAYA NAGRI
+    ↓
+EXISTING LANGUAGE SELECTION
+    ↓
+EXISTING ONBOARDING
+    ↓
+EXISTING THREE.JS GAME WORLD
+
+==================================================
+13. EXISTING FUNCTIONALITY
+==================================================
+
+Do NOT break:
+
+- language selection
+- i18n
+- How It Works
+- age-band selection
+- guardian consent
+- avatar creation
+- progress persistence
+- quest engine
+- AI companion
+- safety system
+- Get Help
+- existing Three.js game world
+
+Only replace the homepage presentation.
+
+==================================================
+14. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop is the PRIMARY target.
+
+The desktop homepage should match IMAGE 3 extremely closely.
+
+Do NOT redesign the desktop composition.
+
+For smaller screens:
+
+Maintain the same visual hierarchy.
+
+Scale/reposition only when required to prevent:
+
+- text overlap
+- button overlap
+- character clipping
+- important UI going off-screen
+
+The desktop composition is the source of truth.
+
+==================================================
+15. IMAGE HANDLING
+==================================================
+
+Optimize IMAGE 1 for web performance if necessary.
+
+Use:
+
+- WebP/AVIF where appropriate
+- lazy loading where appropriate
+- proper image dimensions
+- no unnecessary duplication
+
+IMAGE 2 should remain transparent.
+
+Do not flatten the boy into the background.
+
+The boy must remain a separate layer so its position can be controlled.
+
+==================================================
+16. EXACTNESS RULE
+==================================================
+
+IMAGE 3 is NOT just inspiration.
+
+IMAGE 3 is the TARGET.
+
+Compare the implemented homepage against IMAGE 3.
+
+Check:
+
+✓ Background composition
+✓ Central building
+✓ Boy position
+✓ Boy size
+✓ Logo position
+✓ About position
+✓ Accessibility position
+✓ Settings position
+✓ Speech bubble position
+✓ Main CTA position
+✓ Journey label position
+✓ Explore button position
+✓ How It Works position
+✓ Get Help position
+✓ Overall spacing
+✓ Overall proportions
+
+If something looks different, adjust the CSS positioning/sizing.
+
+Do NOT redesign it.
+
+==================================================
+17. IMPORTANT — DO NOT ADD EXTRA ELEMENTS
+==================================================
+
+Do not add:
+
+- extra cards
+- extra menus
+- extra buildings
+- extra characters
+- extra 3D objects
+- extra buttons
+- extra animations
+- extra text
+- floating UI
+- new dashboard panels
+
+The homepage should contain ONLY the elements visible in IMAGE 3.
+
+==================================================
+18. IMPLEMENTATION WORKFLOW
+==================================================
+
+Before coding:
+
+1. Inspect the current homepage implementation.
+2. Identify the current Three.js homepage components.
+3. Identify the current routing.
+4. Identify the existing onboarding route.
+5. Identify the existing Get Help functionality.
+6. Identify existing About / Accessibility / Settings functionality.
+
+Then:
+
+7. Remove the old homepage visual implementation.
+8. Create the new 2D reference-based homepage.
+9. Use IMAGE 1 as background.
+10. Use IMAGE 2 as character.
+11. Recreate only the HTML/CSS UI visible in IMAGE 3.
+12. Connect all buttons to existing functionality.
+13. Test navigation.
+
+==================================================
+19. FINAL ACCEPTANCE CRITERIA
+==================================================
+
+The task is complete ONLY when:
+
+- The old homepage is completely gone.
+- The homepage no longer uses Three.js.
+- IMAGE 1 is the background.
+- IMAGE 2 is the boy.
+- The boy matches IMAGE 3's placement and scale.
+- UI placement matches IMAGE 3.
+- The homepage visually resembles IMAGE 3 extremely closely.
+- Enter Nyaya Nagri works.
+- Language selection works.
+- How It Works works.
+- Get Help Now works.
+- About works.
+- Accessibility works.
+- Settings works.
+- Existing onboarding is untouched.
+- Existing game world is untouched.
+- No duplicate UI exists.
+- No console errors exist.
+
+FINAL RULE:
+
+DO NOT DESIGN SOMETHING "SIMILAR".
+
+COMBINE IMAGE 1 + IMAGE 2 AND RECREATE THE UI COMPOSITION OF IMAGE 3.
+
+IMAGE 3 IS THE VISUAL SOURCE OF TRUTH.

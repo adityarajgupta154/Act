@@ -188,17 +188,3 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .persona-bob, .persona-blink { animation: none; }
 }
-
-/* --- Home landing backdrop: slow ambient drift so the illustrated city
-   feels alive (redesign brief "polished animated landing page"); disabled
-   automatically for prefers-reduced-motion users. --- */
-@media (prefers-reduced-motion: no-preference) {
-  .home-drift {
-    animation: home-drift 50s ease-in-out infinite alternate;
-    will-change: transform;
-  }
-  @keyframes home-drift {
-    from { transform: scale(1); }
-    to { transform: scale(1.05); }
-  }
-}
