@@ -68,7 +68,7 @@ export function HowItWorksScene({ onBack, onNext, step, stepCount }: HowItWorksS
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="nn-guide-idle hidden md:block relative z-20 w-[24%] max-w-[275px] -mr-[4.5%] mb-1 select-none pointer-events-none drop-shadow-[0_28px_22px_rgba(15,23,42,0.35)]"
+              className="hidden md:block relative z-20 w-[24%] max-w-[275px] -mr-[4.5%] mb-1 select-none pointer-events-none drop-shadow-[0_28px_22px_rgba(15,23,42,0.35)]"
             />
 
             <div className="relative w-full max-w-xl md:max-w-2xl motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-300">
