@@ -7,9 +7,10 @@
  * HowItWorksContent the Home dialog renders. Nothing here stores anything.
  *
  * Composition follows the reference image: the same plaza backdrop and
- * carved cream board as the language scene, the guide boy presenting from
- * the left, Home's brand block + About/Accessibility/Settings pills as the
- * top chrome, and Back/Next on the board's bottom rail. It renders in the
+ * carved cream board as the language scene, the guide boy sitting to the
+ * left of the board (thoughtful pose, cut verbatim from the user's
+ * reference), Home's brand block + About/Accessibility/Settings pills as
+ * the top chrome, and Back/Next on the board's bottom rail. It renders in the
  * onboarding z-20 layer, so the z-50 "Get Help Now" control stays visible
  * and tappable here too (PRD §9.1).
  */
@@ -24,7 +25,7 @@ import { AboutContent } from '@/home/AboutContent';
 import { HowItWorksContent } from './HowItWorksContent';
 import { StepDots } from './decor';
 import plazaBackdrop from '@/assets/onboarding/plaza-bg.jpg';
-import guideCharacter from '@/assets/onboarding/guide-boy.png';
+import guideCharacter from '@/assets/onboarding/guide-boy-thinking.png';
 
 interface HowItWorksSceneProps {
   /** Return to the language scene (same setStep handler as before). */
@@ -60,7 +61,10 @@ export function HowItWorksScene({ onBack, onNext, step, stepCount }: HowItWorksS
       <div className="relative min-h-full flex flex-col items-center px-3 pb-4 pt-16 md:px-6 md:py-5">
         <StepDots step={step} stepCount={stepCount} />
 
-        {/* Stage: guide boy presenting the info board */}
+        {/* Stage: guide boy sitting at the left, musing at the info board.
+            Sprite is cut from the user's reference (boy + ledge + books +
+            thought-bulb, their pixels verbatim). Flex sibling with a real
+            gap, so he can never overlap the board or its text. */}
         <div className="flex-1 w-full flex items-center justify-center py-4 md:py-6">
           <div className="flex items-end justify-center w-full max-w-5xl">
             <img
@@ -68,7 +72,7 @@ export function HowItWorksScene({ onBack, onNext, step, stepCount }: HowItWorksS
               alt=""
               aria-hidden="true"
               draggable={false}
-              className="hidden md:block relative z-20 w-[24%] max-w-[275px] -mr-[4.5%] mb-1 select-none pointer-events-none drop-shadow-[0_28px_22px_rgba(15,23,42,0.35)]"
+              className="hidden md:block relative z-20 w-[26%] max-w-[310px] mr-2 md:mr-3 mb-1 select-none pointer-events-none drop-shadow-[0_24px_20px_rgba(15,23,42,0.35)]"
             />
 
             <div className="relative w-full max-w-xl md:max-w-2xl motion-safe:animate-in motion-safe:fade-in motion-safe:zoom-in-95 motion-safe:duration-300">
