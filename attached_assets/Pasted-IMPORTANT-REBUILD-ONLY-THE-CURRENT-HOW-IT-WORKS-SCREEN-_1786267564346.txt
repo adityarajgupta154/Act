@@ -1,0 +1,357 @@
+IMPORTANT — REBUILD ONLY THE CURRENT “HOW IT WORKS” SCREEN TO MATCH THE ATTACHED REFERENCE
+
+I have attached TWO images:
+
+IMAGE 1 = Current Replit implementation
+IMAGE 2 = Target/reference design
+
+Use IMAGE 2 as the STRICT visual source of truth.
+
+The current implementation shown in IMAGE 1 is NOT correct, especially the boy's sitting position, scale, and overall composition.
+
+REMOVE the current “How It Works” visual implementation and recreate it to match IMAGE 2 as closely as possible.
+
+DO NOT redesign it creatively.
+DO NOT invent a new layout.
+DO NOT make your own interpretation.
+
+==================================================
+MAIN REQUIREMENT
+==================================================
+
+The final screen should visually look like IMAGE 2.
+
+Match IMAGE 2's:
+
+- overall composition
+- camera/view
+- background framing
+- panel position
+- panel size
+- boy position
+- boy scale
+- boy sitting pose
+- bench/stone platform
+- books placement
+- spacing
+- proportions
+- typography hierarchy
+- colors
+- shadows
+- lighting
+- button positions
+- Get Help button position
+- top navigation
+- progress indicator
+
+The goal is NOT “similar”.
+
+The goal is to reproduce the same visual composition as the reference.
+
+==================================================
+1. BOY CHARACTER — MOST IMPORTANT
+==================================================
+
+The current boy placement in IMAGE 1 is WRONG.
+
+Do NOT keep the current placement.
+
+Use the existing Nyaya Nagri boy character asset, but position him exactly like IMAGE 2.
+
+In IMAGE 2:
+
+- Boy is sitting on the stone bench/platform on the LEFT.
+- His body is positioned naturally on the bench.
+- His legs extend downward naturally.
+- His feet remain fully visible.
+- His body is NOT floating.
+- His body does NOT overlap the main panel.
+- He is positioned clearly outside the panel.
+- He is large enough to be visually important.
+- He occupies the lower-left portion of the screen.
+- His head is around the lower-middle vertical area.
+- His feet reach close to the bottom portion of the scene.
+- His sitting pose must look physically grounded.
+
+IMPORTANT:
+
+Do NOT simply place the boy as an absolute-positioned image over the scene.
+
+Match the visual relationship between:
+
+BOY → BENCH → BOOKS → BACKGROUND → PANEL
+
+from IMAGE 2.
+
+The boy must look like he is actually sitting on the bench.
+
+==================================================
+2. BOY EXPRESSION / POSE
+==================================================
+
+Use the same general expression and pose shown in IMAGE 2:
+
+- curious
+- happy
+- thoughtful
+- looking toward the How It Works content
+- one hand supporting his face
+- relaxed sitting posture
+
+If the existing character asset supports multiple poses/expressions, use the closest matching one.
+
+Do NOT use the previous standing character pose.
+
+Do NOT use a standing boy.
+
+==================================================
+3. BOOK STACK
+==================================================
+
+Recreate the books shown beside the boy in IMAGE 2.
+
+Place them on the LEFT side of the stone bench.
+
+Books should be stacked vertically and remain clearly visible.
+
+Use the existing visual style.
+
+The books should not overlap the boy's body unnaturally.
+
+==================================================
+4. BACKGROUND
+==================================================
+
+Use the same Nyaya Nagri environment style as IMAGE 2.
+
+Keep:
+
+- grand civic/government building
+- blue sky
+- clouds
+- trees
+- flowers
+- pathway
+- Indian flag
+- warm daylight
+- lamp posts
+- garden
+
+Do NOT replace the background with a generic gradient.
+
+Do NOT use the background from IMAGE 1 if it causes different framing.
+
+Match IMAGE 2's camera framing and visual balance.
+
+IMPORTANT:
+
+Do NOT stretch the background image.
+
+Use:
+
+background-size: cover;
+
+only if required, but preserve the original aspect ratio and crop naturally.
+
+The important central building must remain correctly framed.
+
+==================================================
+5. MAIN HOW IT WORKS PANEL
+==================================================
+
+The panel must match IMAGE 2.
+
+Position:
+
+CENTER / SLIGHTLY RIGHT OF CENTER
+
+The boy occupies the LEFT visual area.
+
+The panel occupies the CENTER-RIGHT area.
+
+The panel must NOT overlap the boy.
+
+Use the same:
+
+- cream/gold panel
+- thick rounded border
+- 3D depth
+- shadow
+- rounded corners
+- Nyaya Nagri shield at top
+- decorative gold elements
+
+Do not make the panel wider or narrower than the reference unnecessarily.
+
+==================================================
+6. HOW IT WORKS CONTENT
+==================================================
+
+Keep the existing content and functionality.
+
+Do NOT change the meaning of the content.
+
+Keep these sections:
+
+Explore the City
+
+Play, Choose & Earn
+
+Ask Anything
+
+Get Help Anytime
+
+Keep the existing icons and text.
+
+Only change their visual presentation if necessary to match IMAGE 2.
+
+==================================================
+7. PANEL HEADER
+==================================================
+
+Match IMAGE 2:
+
+Nyaya Nagri shield/logo at the top of the panel.
+
+Title:
+
+How it works
+
+Use the same:
+
+- navy typography
+- rounded/friendly font
+- orange/gold decorative stars
+- centered alignment
+- spacing
+
+Do not move the title to another location.
+
+==================================================
+8. NAVIGATION BUTTONS
+==================================================
+
+Match IMAGE 2 exactly.
+
+Bottom-left inside panel:
+
+← Back
+
+Bottom-right inside panel:
+
+Next →
+
+Keep the existing navigation functionality.
+
+Do NOT create new navigation logic.
+
+Only reproduce the visual placement.
+
+==================================================
+9. TOP UI
+==================================================
+
+Keep the existing:
+
+- Nyaya Nagri logo
+- About
+- Accessibility
+- Settings
+- onboarding progress indicator
+
+Position them like IMAGE 2.
+
+Do NOT remove their existing functionality.
+
+==================================================
+10. GET HELP NOW
+==================================================
+
+Keep the existing safety functionality.
+
+Position the Get Help Now button at the BOTTOM-RIGHT like IMAGE 2.
+
+It must NOT become a full-width bottom bar.
+
+Keep:
+
+Get Help Now
+Childline 1098
+Cyber Crime 155260
+
+Do not change the existing safety logic.
+
+==================================================
+11. VERY IMPORTANT — DO NOT BREAK FUNCTIONALITY
+==================================================
+
+This is a VISUAL REBUILD ONLY.
+
+Do NOT modify:
+
+- onboarding state
+- progress state
+- i18n
+- language system
+- Back navigation
+- Next navigation
+- safety system
+- Get Help functionality
+- accessibility
+- existing game logic
+- existing data
+- existing avatar system
+
+Reuse the existing components and assets wherever possible.
+
+==================================================
+12. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop is the priority.
+
+On desktop, reproduce IMAGE 2's composition as closely as possible.
+
+Do not allow:
+
+- boy overlapping panel
+- boy floating above bench
+- stretched character
+- cropped feet
+- distorted background
+- cropped central building
+- overlapping buttons
+- overlapping text
+
+On smaller screens, adapt responsively while preserving the same visual hierarchy.
+
+==================================================
+13. FINAL QUALITY CHECK
+==================================================
+
+Before finishing, compare the implementation against IMAGE 2.
+
+Specifically verify:
+
+✓ Boy is sitting in the SAME LEFT-SIDE AREA
+✓ Boy scale matches the reference
+✓ Boy is grounded on the bench
+✓ Boy's feet are visible
+✓ Books are in the correct position
+✓ Boy does not overlap the panel
+✓ Main panel has the same size and position
+✓ Central building framing matches
+✓ Background is not stretched
+✓ How It Works title position matches
+✓ Content rows match
+✓ Back button position matches
+✓ Next button position matches
+✓ Get Help Now position matches
+✓ Top navigation matches
+✓ Progress indicator matches
+
+If IMAGE 1 and IMAGE 2 conflict, ALWAYS prioritize IMAGE 2.
+
+Do not make creative changes.
+
+Recreate IMAGE 2's composition as closely as possible using the existing Nyaya Nagri implementation.

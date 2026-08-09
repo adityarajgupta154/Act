@@ -29,6 +29,42 @@ export function StepDots({ step, stepCount }: { step: number; stepCount: number 
 }
 
 /** Gold rule with a star in the middle, as on the reference sign-board. */
+/** One gold laurel branch, as on the reference crests. Mirror with -scale-x-100. */
+export function Laurel({ className }: { className?: string }) {
+  const leaves: Array<[number, number, number]> = [
+    [34, 78, -26],
+    [26, 62, -32],
+    [20, 46, -40],
+    [16, 31, -50],
+    [15, 17, -62],
+    [40, 62, 34],
+    [33, 45, 26],
+    [29, 29, 16],
+  ];
+  return (
+    <svg viewBox="0 0 52 96" className={className} aria-hidden="true" focusable="false">
+      <path
+        d="M44 92C29 80 18 60 15 30"
+        fill="none"
+        stroke="#c9902b"
+        strokeWidth="4.5"
+        strokeLinecap="round"
+      />
+      {leaves.map(([cx, cy, rot], i) => (
+        <ellipse
+          key={i}
+          cx={cx}
+          cy={cy}
+          rx="12"
+          ry="6.2"
+          transform={`rotate(${rot} ${cx} ${cy})`}
+          fill={i % 2 ? '#e7b64a' : '#f2cc6c'}
+        />
+      ))}
+    </svg>
+  );
+}
+
 export function StarRule({ className }: { className?: string }) {
   return (
     <div

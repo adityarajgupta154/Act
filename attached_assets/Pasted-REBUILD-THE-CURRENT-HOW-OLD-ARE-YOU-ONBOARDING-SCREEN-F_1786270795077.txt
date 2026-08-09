@@ -1,0 +1,411 @@
+REBUILD THE CURRENT "HOW OLD ARE YOU?" ONBOARDING SCREEN FROM SCRATCH.
+
+I am attaching a reference image. Treat the attached image as the EXACT visual source of truth.
+
+IMPORTANT:
+Do NOT redesign it.
+Do NOT make your own interpretation.
+Do NOT reuse the current UI styling.
+Do NOT create a similar-looking generic onboarding screen.
+
+The goal is to recreate the attached reference image as accurately as possible using the existing React application.
+
+==================================================
+1. REMOVE CURRENT IMPLEMENTATION
+==================================================
+
+Completely remove the existing "How old are you?" page UI and rebuild it from scratch.
+
+Keep the existing:
+- navigation flow
+- age selection functionality
+- language state
+- Back functionality
+- Next functionality
+- localization
+- existing application architecture
+
+Only replace the visual/UI implementation.
+
+==================================================
+2. FULL SCREEN BACKGROUND
+==================================================
+
+Use the Nyaya Nagri environment shown in the reference.
+
+The background must cover the entire viewport.
+
+Use:
+
+width: 100%;
+height: 100vh;
+object-fit: cover;
+
+IMPORTANT:
+Never stretch the background image.
+
+Preserve its original aspect ratio.
+
+Match the crop/composition of the reference image.
+
+The large government/court building must remain visible on the LEFT side.
+
+The garden, Indian flag and pathway must remain visible on the RIGHT side.
+
+==================================================
+3. TOP LEFT BRANDING
+==================================================
+
+Reproduce the Nyaya Nagri logo exactly as shown in the reference.
+
+Position:
+- top-left
+- same approximate size
+- same spacing from edges
+
+Below the logo keep:
+
+"Know Your Rights. Build Your Future."
+
+Match the typography, color and spacing from the reference.
+
+==================================================
+4. TOP CENTER PROGRESS INDICATOR
+==================================================
+
+Create the small horizontal progress indicator at the top center.
+
+It contains 5 circular indicators.
+
+The SECOND step is active.
+
+Active indicator:
+- orange
+- elongated pill shape
+
+Inactive indicators:
+- light blue/white circles
+
+Match the size, spacing and position of the reference.
+
+==================================================
+5. TOP RIGHT NAVIGATION
+==================================================
+
+Keep three buttons:
+
+About
+Accessibility
+Settings
+
+Place them horizontally in the TOP-RIGHT exactly like the reference.
+
+Use:
+- white/cream pill background
+- rounded corners
+- subtle shadow
+- dark navy text
+- blue icons
+
+Do not make them oversized.
+
+==================================================
+6. MAIN PANEL
+==================================================
+
+Create the large centered cream-colored onboarding panel.
+
+This is the most important component.
+
+Match the reference exactly for:
+
+- width
+- height
+- position
+- border radius
+- outer golden border
+- inner border
+- cream background
+- subtle shadow
+- decorative corner details
+- spacing
+
+The panel should occupy the center-right portion of the screen.
+
+It must NOT cover the boy.
+
+==================================================
+7. TOP CENTER SHIELD LOGO
+==================================================
+
+Place the Nyaya Nagri shield logo at the top center of the panel.
+
+The shield should slightly overlap the panel's top border.
+
+Match:
+- size
+- position
+- shadow
+- overlap
+
+==================================================
+8. HEADER
+==================================================
+
+Inside the panel reproduce:
+
+"How old are you?"
+
+Use:
+- bold rounded/playful font
+- dark navy
+- large size
+- centered alignment
+
+Add the orange decorative stars on both sides.
+
+Under the heading add the decorative orange horizontal line and center star.
+
+Then add:
+
+"We use this only to pick the right stories for you."
+
+Center it exactly like the reference.
+
+==================================================
+9. AGE SELECTION CARDS
+==================================================
+
+Create exactly THREE large selectable cards.
+
+CARD 1:
+8–11
+Simple, fun stories
+
+CARD 2:
+12–15
+School, friends,
+and online-life stories
+
+CARD 3:
+16–18
+Real-world rights and
+how to use them
+
+Each card must match the reference:
+
+- large horizontal rounded rectangle
+- cream/white background
+- subtle border
+- soft shadow
+- large circular colored age badge on the LEFT
+- dark navy text
+- right-facing chevron on the RIGHT
+
+Age badge colors:
+
+8–11:
+light blue
+
+12–15:
+light green
+
+16–18:
+light purple
+
+Age numbers should be bold and large.
+
+The card spacing and dimensions must closely match the reference.
+
+==================================================
+10. SELECTION BEHAVIOR
+==================================================
+
+The cards must remain functional.
+
+When the user selects an age:
+
+- clearly indicate the selected state
+- preserve the same visual language
+- do not destroy the reference layout
+- Next becomes enabled
+
+If no age is selected:
+Next should remain disabled/subtle.
+
+Keep the existing application logic wherever possible.
+
+==================================================
+11. BOY CHARACTER
+==================================================
+
+Use the existing Nyaya Nagri boy character asset.
+
+Place him on the LEFT side of the screen exactly as shown in the reference.
+
+IMPORTANT:
+
+The boy must:
+- stand naturally
+- remain completely visible
+- NOT overlap the main panel
+- NOT be cropped
+- NOT be stretched
+- maintain original aspect ratio
+
+His position should be approximately:
+bottom-left / lower-left area.
+
+His feet should remain visible.
+
+His head should remain below the logo area.
+
+The boy should visually appear to be looking toward the age-selection panel.
+
+==================================================
+12. THOUGHT BUBBLE
+==================================================
+
+Place the white thought bubble above the boy's head.
+
+It contains:
+
+"?"
+
+Use:
+- white cloud-like bubble
+- soft shadow
+- blue question mark
+- small connecting dots leading toward the boy
+
+Match the reference position and size.
+
+==================================================
+13. BACK BUTTON
+==================================================
+
+Place the Back button at the bottom-left inside the panel.
+
+Match the reference:
+
+- cream/light background
+- rounded pill
+- dark brown/navy text
+- left arrow
+- subtle shadow
+
+Keep the existing Back functionality.
+
+==================================================
+14. NEXT BUTTON
+==================================================
+
+Place the Next button at the bottom-right inside the panel.
+
+Match the reference:
+
+- orange gradient/background
+- white text
+- right arrow
+- rounded pill
+- subtle depth/shadow
+
+Keep existing Next functionality.
+
+==================================================
+15. GET HELP NOW
+==================================================
+
+Keep the floating red "Get Help Now" button fixed at the bottom-right.
+
+It must contain:
+
+Get Help Now
+Childline 1098
+Cyber Crime 155260
+
+Match:
+- red color
+- rounded corners
+- shield icon
+- typography
+- shadow
+- position
+- dimensions
+
+Do NOT allow it to overlap the main panel.
+
+==================================================
+16. NO 3D COMPONENTS
+==================================================
+
+Do NOT use:
+- Three.js
+- WebGL
+- 3D scenes
+- 3D cards
+- 3D generated components
+
+This screen is a 2D composition using:
+
+- background image
+- PNG assets
+- HTML/CSS
+- React
+- existing icon library
+
+==================================================
+17. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop is the primary target.
+
+First make the screen match the reference at desktop/full-screen resolution.
+
+Then add responsive behavior.
+
+Do NOT solve responsiveness by simply scaling the entire screen down.
+
+At smaller widths:
+- reposition the boy
+- resize the panel proportionally
+- stack elements when necessary
+- keep all content accessible
+- prevent clipping
+
+Never stretch any image.
+
+==================================================
+18. FINAL VISUAL CHECK
+==================================================
+
+Before finishing, compare the implementation against the attached reference image.
+
+Correct any differences in:
+
+1. Background crop
+2. Logo position
+3. Progress indicator
+4. Top navigation
+5. Main panel size
+6. Panel position
+7. Shield logo
+8. Heading
+9. Decorative stars
+10. Description text
+11. Age cards
+12. Age badge colors
+13. Boy position
+14. Thought bubble
+15. Back button
+16. Next button
+17. Get Help Now button
+18. Overall spacing
+19. Proportions
+20. Shadows and borders
+
+STRICTLY FOLLOW THE REFERENCE IMAGE.
+
+Do not stop at an approximate recreation.
+
+The final result should look like the reference image has been recreated as a real interactive React webpage.

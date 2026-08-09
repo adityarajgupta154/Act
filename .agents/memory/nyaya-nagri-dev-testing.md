@@ -58,3 +58,22 @@ The runtime-error overlay from the Replit vite error-modal plugin covers the top
 
 ## Source-grep smoke asserts vs props
 - onboarding/help smokes assert literal mounts (e.g. '<HelpDialog />'). When adding props to an asserted mount, relax to a prop-tolerant regex like /<HelpDialog[^>]*\/>/ AND keep a negative guard against conditional mounting (/\{\s*!?onboarded\s*&&\s*<HelpDialog/). Don't weaken the invariant, just the literal.
+
+## Screenshotting an onboarding step the tool cannot click to
+The Screenshot tool has no clicks, and a fresh screenshot browser can still boot straight past onboarding, so a mid-flow scene is otherwise unreachable. Temporary, must-revert harness: (1) make the entry page render the onboarding flow directly instead of the home screen, (2) default the flow's step state to the step under test. Mark both with a `TEMP-SCREENSHOT` comment, then `grep -rn TEMP-SCREENSHOT src/` + `git status` before finishing — these are trivial to forget and they ship a broken entry point.
+
+## Measuring a screen against a reference image
+Screenshot, then scan one pixel column/row for the panel's distinctive face colour and compare fractions with the same scan of the reference file. `magick file -crop 1xH+X+0 +repage txt:-` gives `x,y: (r,g,b)` — fields parse as x,y,r,g,b; PIL is not installed and the binary is `magick`, not `convert`. Pick a colour unique to the element (cream face with a small r-b spread), not "blue" or "gold" — sky, pavement and artwork poison those and the scan silently reports the backdrop.
+
+## Testing-subagent slot can be held by an orphan
+Only one testing subagent may run at a time, and one left running by an earlier session blocks every new tester for the rest of the session ("1 testing subagents are already running"). There is no way to reclaim it from here — after a couple of retries, fall back to typecheck + smokes + screenshot evidence and say so in the report instead of burning turns.
+
+## Architect reviews vs uncommitted multi-task diffs
+`includeGitDiff: true` shows the reviewer ALL uncommitted work — including PRIOR tasks' approved rebuilds (this project rarely commits between pasted tasks), so "file X must be unchanged" constraints false-FAIL against earlier tasks.
+**How to apply:** scope review constraints to "changes made for THIS task, listed here: ..."; treat "revert prior-task work" recommendations as diff-scoping artifacts — check task history before acting.
+
+## Testing-subagent slot (recurring)
+An orphaned tester can hold the single slot across sessions/compaction indefinitely. Retry once per task, no more; fallback loop = typecheck + seven smokes + harness screenshots, and say so in the report.
+
+- Phaser world screenshots WORK in the headless capture browser: Phaser.AUTO falls back to Canvas2D there (WebGL is dead container-wide). Console proof: "Phaser v3.90.0 (Canvas | Web Audio)". The 3D-era "world cannot be screenshotted" limitation is gone for the 2D engine.
+- generateImage may return square output even when the prompt asks for a different aspect ratio (zone territory art requested 3:2, got 1024x1024). Design world territory tiles as squares.

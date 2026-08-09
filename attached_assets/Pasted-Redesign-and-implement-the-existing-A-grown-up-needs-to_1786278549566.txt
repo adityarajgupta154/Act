@@ -1,0 +1,100 @@
+Redesign and implement the existing “A grown-up needs to agree” consent/parental agreement screen using the attached reference image as the EXACT visual design reference.
+
+IMPORTANT:
+This is an IMPLEMENTATION task, not a new feature or content rewrite.
+
+1. VISUAL DESIGN
+- Match the attached reference image as closely as possible.
+- Keep the existing Nyaya Nagri visual identity and overall application theme.
+- Use the same soft cream-to-light-blue background gradient.
+- Use a centered white rounded card with a subtle shadow.
+- Keep the 5-step progress indicator at the top, with the current step highlighted in orange.
+- Add the green shield/check illustration at the top of the card.
+- Match the typography hierarchy, spacing, border radius, shadows and proportions from the reference.
+- Use the same blue, green, orange and red accent colors.
+- Make the page feel polished, friendly, safe and child-friendly — NOT like a generic admin form.
+
+2. CARD CONTENT
+Keep the existing content and functionality exactly as it is:
+
+Title:
+“A grown-up needs to agree”
+
+Subtitle:
+“Please hand the device to a parent, guardian, or teacher for this step.”
+
+Privacy/data information section:
+“What this app saves (only on this device):”
+
+Keep all existing bullet points and privacy explanation exactly as currently implemented.
+
+3. AGREEMENT CHECKBOX
+Keep the existing parent/guardian/teacher agreement checkbox.
+
+Text:
+“I am a parent, guardian, or teacher, and I agree to let this child play.”
+
+Improve its visual presentation to match the reference:
+- soft green background
+- green border
+- large accessible checkbox
+- clear selected/unselected state
+- subtle hover/press interaction
+
+FUNCTIONALITY:
+- When unchecked → “Start playing” must remain disabled.
+- When checked → “Start playing” becomes enabled.
+- Do not bypass the agreement requirement.
+
+4. BUTTONS
+At the bottom:
+- Back button on the left.
+- Start playing button on the right.
+- Match the reference design.
+- Disabled state must be visually obvious.
+- Enabled state should use the application's primary accent color.
+- Preserve the existing navigation functionality.
+
+5. GET HELP NOW
+Keep the existing floating “Get Help Now” emergency/help widget.
+
+It must remain fixed at the bottom-right of the viewport and must not overlap the main card.
+
+Keep:
+- Get Help Now
+- Childline 1098
+- Cyber Crime 155260
+
+Do not remove or break its existing functionality.
+
+6. RESPONSIVE / LAPTOP VIEW
+The reference is designed for a laptop/desktop viewport.
+
+Make the implementation responsive:
+- Center the card vertically and horizontally.
+- Maintain comfortable margins.
+- Prevent unnecessary page scrolling on normal laptop resolutions.
+- On smaller screens, allow natural vertical scrolling instead of breaking the layout.
+- The help widget should remain visible without covering important controls.
+
+7. IMPORTANT — DO NOT BREAK EXISTING LOGIC
+Before changing the UI, inspect the existing component and preserve:
+- checkbox state
+- validation
+- Back navigation
+- Start playing navigation
+- progress state
+- localStorage/device-only consent behavior
+- existing help widget functionality
+
+Only change the presentation/layout unless a small code adjustment is required to support the new UI.
+
+8. CODE QUALITY
+- Reuse existing components, state and styling system where possible.
+- Do not duplicate the entire application.
+- Do not introduce unnecessary dependencies.
+- Keep the implementation clean and maintainable.
+- Make sure the application builds successfully after the changes.
+
+FINAL REQUIREMENT:
+The final result should visually resemble the attached reference image very closely, while retaining the exact existing functionality and content of the consent screen.

@@ -1,0 +1,380 @@
+IMPORTANT: Completely remove/rollback ALL previous UI changes made to the "How It Works" page.
+
+I am attaching TWO reference images:
+
+REFERENCE IMAGE 1 = the exact final UI/design that must be reproduced.
+REFERENCE IMAGE 2 = the transparent boy character asset that must be used in the design.
+
+Start the "How It Works" page from scratch.
+
+STRICT REQUIREMENT:
+The final implementation must visually match REFERENCE IMAGE 1 as closely as possible. Treat Reference Image 1 as the single source of truth for layout, positioning, proportions, spacing, sizing, colors, typography, shadows, borders, and overall composition.
+
+DO NOT redesign or reinterpret the reference.
+DO NOT create your own variation.
+DO NOT use the previous implementation as a design reference.
+
+==================================================
+1. REMOVE CURRENT IMPLEMENTATION
+==================================================
+
+Delete/replace the current "How It Works" page UI completely.
+
+Remove all previous:
+- card positioning
+- panel sizing
+- boy positioning
+- background treatment
+- icon styling
+- button styling
+- spacing
+- typography
+- decorative elements
+- responsive layout decisions
+
+Keep only the existing functional logic/navigation/data if needed.
+
+Then rebuild the UI from zero.
+
+==================================================
+2. BACKGROUND
+==================================================
+
+Use the same Nyaya Nagri environment/background style shown in REFERENCE IMAGE 1.
+
+The background should fill the entire viewport.
+
+Do NOT stretch or distort the background image.
+
+Use:
+- width: 100%
+- height: 100vh
+- object-fit: cover
+- object-position matching the reference
+
+The background composition must remain visually consistent with the reference.
+
+==================================================
+3. MAIN HOW IT WORKS PANEL
+==================================================
+
+Create the large central cream/golden framed panel exactly like REFERENCE IMAGE 1.
+
+Match:
+- overall width
+- height
+- position
+- rounded corners
+- thick golden/brown outer border
+- inner cream border
+- subtle depth/shadow
+- cream gradient/background
+- spacing inside the panel
+
+The panel should be centered approximately in the same location as Reference Image 1.
+
+Do NOT make it unnecessarily wider, narrower, taller, or smaller.
+
+==================================================
+4. NYAYA NAGRI LOGO
+==================================================
+
+Place the Nyaya Nagri shield logo at the TOP CENTER of the panel exactly like Reference Image 1.
+
+It should slightly overlap the top border of the panel.
+
+Match:
+- size
+- vertical position
+- horizontal position
+- shadow
+- overlap depth
+
+==================================================
+5. HEADER
+==================================================
+
+Inside the panel, reproduce the exact:
+
+"How it works"
+
+heading from Reference Image 1.
+
+Match:
+- font style
+- weight
+- dark navy color
+- font size
+- alignment
+- vertical spacing
+
+Keep the orange decorative sparkles/stars around the heading exactly as shown.
+
+Keep the decorative orange horizontal line and center star underneath the heading.
+
+==================================================
+6. FOUR INFORMATION ROWS
+==================================================
+
+Create exactly FOUR large rounded information rows.
+
+Use the same structure and visual hierarchy as Reference Image 1.
+
+Each row contains:
+
+LEFT:
+- circular icon container
+- blue/red icon
+
+CENTER:
+- bold dark navy title
+- smaller descriptive text below
+
+RIGHT:
+- subtle arrow/chevron
+
+Match Reference Image 1 for:
+- row height
+- width
+- border radius
+- border
+- background
+- shadow
+- spacing between rows
+- icon circle size
+- typography
+- text alignment
+- arrow position
+
+Use the existing content:
+
+1. Explore the City
+"Walk around the city and visit 7 zones — each one is about rights that protect you."
+
+2. Play, Choose & Earn
+"Play story quests, make your own choices, and answer fun quizzes to earn badges."
+
+3. Ask Anything
+"Your friendly guide can answer questions any time."
+
+4. Get Help Anytime
+"The red Get Help Now button is always on screen — it shows real helplines like Childline 1098."
+
+Do not change the wording unless the existing application requires localization.
+
+==================================================
+7. BOY CHARACTER — VERY IMPORTANT
+==================================================
+
+Use REFERENCE IMAGE 2 as the exact boy character asset.
+
+DO NOT generate a new character.
+
+DO NOT crop him.
+
+DO NOT modify his face.
+
+DO NOT change his pose.
+
+DO NOT change his clothes.
+
+DO NOT remove the books.
+
+DO NOT remove the glowing bulb.
+
+Use the transparent character asset exactly as supplied.
+
+Place the entire character on the LEFT SIDE of the screen exactly according to REFERENCE IMAGE 1.
+
+The boy must appear seated on the bench exactly as shown in Reference Image 1.
+
+IMPORTANT:
+The character must NOT overlap the main panel.
+
+The character should remain completely visible, including:
+- head
+- glowing bulb
+- backpack
+- arms
+- legs
+- shoes
+- bench
+- books
+
+Preserve the original aspect ratio.
+
+NEVER stretch the character.
+
+Use proportional scaling only.
+
+==================================================
+8. BOY POSITIONING
+==================================================
+
+Reference Image 1 is the exact positioning reference.
+
+The boy should sit toward the lower-left area.
+
+His feet should remain near the bottom portion of the viewport.
+
+The books should remain beside him.
+
+The glowing bulb should remain above his head.
+
+Do NOT place him too close to the center panel.
+
+Do NOT move him behind the panel.
+
+Do NOT make him tiny.
+
+Do NOT make him excessively large.
+
+Use absolute positioning where necessary so the composition stays stable.
+
+==================================================
+9. TOP NAVIGATION
+==================================================
+
+Keep the existing:
+- About
+- Accessibility
+- Settings
+
+buttons.
+
+Position them exactly like Reference Image 1:
+top-right area, horizontal alignment, matching spacing and size.
+
+Do not redesign these buttons.
+
+==================================================
+10. PROGRESS INDICATOR
+==================================================
+
+Keep the five-step progress indicator at the top center.
+
+Match Reference Image 1:
+- position
+- pill shape
+- blue background
+- five circles
+- active orange indicator
+
+The correct step must remain highlighted based on the application's existing onboarding state.
+
+==================================================
+11. BACK / NEXT BUTTONS
+==================================================
+
+At the bottom of the main panel, reproduce the buttons from Reference Image 1.
+
+LEFT:
+Back button.
+
+RIGHT:
+Next button.
+
+Match:
+- dimensions
+- border radius
+- colors
+- typography
+- icons
+- shadows
+- spacing
+
+Next must remain orange.
+
+Back must remain cream/light.
+
+Keep their existing functionality.
+
+==================================================
+12. GET HELP NOW
+==================================================
+
+Keep the red "Get Help Now" floating button at the bottom-right.
+
+Match Reference Image 1:
+- size
+- position
+- red color
+- rounded shape
+- icon
+- typography
+- shadow
+
+It must stay fixed to the viewport.
+
+==================================================
+13. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop is the PRIMARY target.
+
+First reproduce Reference Image 1 accurately at desktop resolution.
+
+Do not sacrifice desktop accuracy to make the layout generic.
+
+For smaller screens, create a responsive adaptation while preserving the same visual hierarchy.
+
+Never:
+- stretch images
+- distort the boy
+- crop important character parts
+- allow the panel to cover the character
+- allow buttons to overlap
+- break the four information rows
+
+==================================================
+14. TECHNICAL IMPLEMENTATION
+==================================================
+
+Use the existing project architecture and framework.
+
+Do NOT introduce 3D components.
+
+Do NOT use Three.js.
+
+Do NOT create a 3D scene.
+
+Do NOT use unnecessary animation libraries.
+
+This is a flat 2D UI composed from:
+- background image
+- transparent character PNG
+- HTML/CSS UI elements
+- existing icons/assets
+
+Use absolute/flex/grid positioning as appropriate.
+
+Preserve existing navigation and functionality.
+
+==================================================
+15. MOST IMPORTANT RULE
+==================================================
+
+REFERENCE IMAGE 1 IS THE DESIGN AUTHORITY.
+
+Before finishing, compare the implementation against Reference Image 1 and correct:
+
+- panel position
+- panel dimensions
+- boy position
+- boy scale
+- logo position
+- heading position
+- row dimensions
+- row spacing
+- button position
+- progress indicator
+- top navigation
+- Get Help button
+- overall proportions
+- background crop
+
+The result should look like the same screen recreated in HTML/CSS, NOT like a redesigned version.
+
+Do not stop after making a rough approximation.
+
+Make the implementation pixel-accurate as far as reasonably possible.

@@ -78,5 +78,8 @@
     "vite": "catalog:",
     "wouter": "^3.3.5",
     "zod": "catalog:"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
   }
 }

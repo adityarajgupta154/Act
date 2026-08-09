@@ -24,6 +24,8 @@ export interface UIStrings {
   // HUD / map
   appTitle: string;
   myProgress: string;
+  mapLabel: string;
+  startHereTagline: string;
   settings: string;
   pressToEnter: string;
   locked: string;
@@ -234,6 +236,9 @@ export interface UIStrings {
   // Player avatar builder (Task 14) — cartoon assets only, nickname never a real name
   buildAvatarTitle: string;
   buildAvatarHint: string;
+  /** Boy/Girl hero picker — label + names aligned to CHARACTERS [boy, girl]. */
+  characterLabel: string;
+  characterNames: string[];
   baseLookLabel: string;
   baseLookNames: string[];
   skinToneLabel: string;
@@ -246,6 +251,7 @@ export interface UIStrings {
   pickNickname: string;
   nicknameHint: string;
   nicknamePlaceholder: string;
+  avatarLiveNote: string;
   editAvatar: string;
   saveChanges: string;
   cancel: string;
@@ -315,6 +321,8 @@ export interface UIStrings {
 const EN: UIStrings = {
   appTitle: 'Nyaya Nagri',
   myProgress: 'My Progress',
+  mapLabel: 'Map',
+  startHereTagline: 'Start here!',
   settings: 'Settings',
   pressToEnter: 'Press E or Tap to Enter',
   locked: 'Locked',
@@ -602,13 +610,15 @@ const EN: UIStrings = {
 
   buildAvatarTitle: 'Make your hero',
   buildAvatarHint: 'Choose how you look in Nyaya Nagri — cartoon looks only.',
+  characterLabel: 'Your hero',
+  characterNames: ['Boy', 'Girl'],
   baseLookLabel: 'Look',
   baseLookNames: ['Sunny', 'Brave'],
   skinToneLabel: 'Skin tone',
   hairLabel: 'Hair',
-  hairStyleNames: ['Short', 'Curly', 'Braids', 'Bun'],
+  hairStyleNames: ['Short', 'Curly', 'Braids', 'Bun', 'Ponytail'],
   outfitLabel: 'Clothes',
-  outfitNames: ['Kurta', 'T-shirt', 'Kameez', 'Hoodie'],
+  outfitNames: ['Kurta', 'T-shirt', 'Kameez', 'Hoodie', 'Kurti', 'Dress'],
   accessoriesLabel: 'Extras (pick up to 3)',
   accessoryNames: [
     'Glasses',
@@ -625,6 +635,7 @@ const EN: UIStrings = {
   pickNickname: 'Pick a game nickname',
   nicknameHint: 'Not your real name — just a fun game name!',
   nicknamePlaceholder: 'e.g. StarHero',
+  avatarLiveNote: 'Changes you make will update your hero in real time.',
   editAvatar: 'Edit Avatar',
   saveChanges: 'Save',
   cancel: 'Cancel',
@@ -706,6 +717,8 @@ const EN: UIStrings = {
 const HI: UIStrings = {
   appTitle: 'न्याय नगरी',
   myProgress: 'मेरी प्रगति',
+  mapLabel: 'नक्शा',
+  startHereTagline: 'यहाँ से शुरू करो!',
   settings: 'सेटिंग्स',
   pressToEnter: 'E दबाओ या टैप करके अंदर जाओ',
   locked: 'अभी बंद है',
@@ -990,14 +1003,16 @@ const HI: UIStrings = {
   ambientHint: 'घूमते समय हल्का संगीत। जब चाहो बंद कर दो।',
 
   buildAvatarTitle: 'अपना हीरो बनाओ',
+  characterLabel: 'आपका हीरो',
+  characterNames: ['लड़का', 'लड़की'],
   buildAvatarHint: 'चुनो कि न्याय नगरी में तुम कैसे दिखोगे — सिर्फ़ कार्टून लुक।',
   baseLookLabel: 'चेहरा',
   baseLookNames: ['हँसमुख', 'बहादुर'],
   skinToneLabel: 'त्वचा का रंग',
   hairLabel: 'बाल',
-  hairStyleNames: ['छोटे', 'घुँघराले', 'चोटियाँ', 'जूड़ा'],
+  hairStyleNames: ['छोटे', 'घुँघराले', 'चोटियाँ', 'जूड़ा', 'पोनीटेल'],
   outfitLabel: 'कपड़े',
-  outfitNames: ['कुर्ता', 'टी-शर्ट', 'कमीज़', 'हुडी'],
+  outfitNames: ['कुर्ता', 'टी-शर्ट', 'कमीज़', 'हुडी', 'कुर्ती', 'फ्रॉक'],
   accessoriesLabel: 'एक्स्ट्रा (ज़्यादा से ज़्यादा 3 चुनो)',
   accessoryNames: [
     'चश्मा',
@@ -1014,6 +1029,7 @@ const HI: UIStrings = {
   pickNickname: 'गेम के लिए एक निकनेम चुनो',
   nicknameHint: 'अपना असली नाम नहीं — बस एक मज़ेदार गेम नाम!',
   nicknamePlaceholder: 'जैसे स्टारहीरो',
+  avatarLiveNote: 'तुम जो भी बदलोगे, वह तुम्हारे हीरो पर तुरंत दिखेगा।',
   editAvatar: 'अवतार बदलो',
   saveChanges: 'सेव करो',
   cancel: 'रद्द करो',

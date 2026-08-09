@@ -27,8 +27,14 @@ import {
   FREE_ACCESSORIES,
   MAX_ACCESSORIES,
   createDefaultAvatar,
+  HAIR_STYLES_FOR,
+  OUTFITS_FOR,
   sanitizeAvatar,
+  SKIN_TONES,
 } from '../src/player/avatarConfig';
+import { createElement } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { PlayerAvatar } from '../src/player/PlayerAvatar';
 
 const __dir = dirname(fileURLToPath(import.meta.url));
 const SRC = join(__dir, '..', 'src');
@@ -46,13 +52,14 @@ const DEVANAGARI_DIGITS_RE = /[\u0966-\u096F]/;
 
 // ---- 1. Strings: parity, language, numerals, no emojis --------------------
 const KEYS = [
+  'avatarLiveNote',
   'welcomeTitle', 'welcomeBody', 'chooseLanguage', 'howItWorksTitle',
   'howOldAreYou', 'ageWhy', 'ageBandDesc811', 'ageBandDesc1215',
   'ageBandDesc1618', 'guardianTitle', 'guardianIntro', 'whatIsStoredTitle',
   'notStoredNote', 'consentCheckbox', 'prototypeNote', 'startPlaying',
   'next', 'back', 'ambientLabel', 'ambientHint',
-  // Task 14 — avatar builder
-  'buildAvatarTitle', 'buildAvatarHint', 'baseLookLabel', 'skinToneLabel',
+  // Task 14 — avatar builder (+ Boy/Girl hero picker)
+  'buildAvatarTitle', 'buildAvatarHint', 'characterLabel', 'baseLookLabel', 'skinToneLabel',
   'hairLabel', 'outfitLabel', 'accessoriesLabel', 'pickNickname',
   'nicknameHint', 'nicknamePlaceholder', 'editAvatar', 'saveChanges', 'cancel',
 ] as const;
@@ -82,10 +89,13 @@ for (const lang of ['en', 'hi'] as const) {
       : s.storedPoints.join(' ').includes('निकनेम') && s.storedPoints.join(' ').includes('असली नाम नहीं'),
     `${lang} consent list discloses avatar + nickname storage (never a real name)`,
   );
-  // Task 14: avatar builder option lists have full EN/HI parity.
+  // Task 14: avatar builder option lists have full EN/HI parity. The
+  // Boy/Girl hero task appended Ponytail (hair) and Kurti + Dress
+  // (clothes) to the index-aligned name arrays, plus the two hero names.
+  assert(s.characterNames.length === 2, `${lang}.characterNames has 2 entries (Boy, Girl)`);
   assert(s.baseLookNames.length === 2, `${lang}.baseLookNames has 2 entries`);
-  assert(s.hairStyleNames.length === 4, `${lang}.hairStyleNames has 4 entries`);
-  assert(s.outfitNames.length === 4, `${lang}.outfitNames has 4 entries`);
+  assert(s.hairStyleNames.length === 5, `${lang}.hairStyleNames has 5 entries (incl. Ponytail)`);
+  assert(s.outfitNames.length === 6, `${lang}.outfitNames has 6 entries (incl. Kurti, Dress)`);
   // Task 16 added 4 shop cosmetics: the name list must cover EVERY
   // renderer-known accessory id, while onboarding still offers only the
   // 6 free starter accessories (shop items need Coins bought by playing).
@@ -94,7 +104,7 @@ for (const lang of ['en', 'hi'] as const) {
     `${lang}.accessoryNames covers all ${ACCESSORIES.length} accessory ids`,
   );
   assert(FREE_ACCESSORIES.length === 6, 'free starter accessory set unchanged (6)');
-  const avatarLists = [...s.baseLookNames, ...s.hairStyleNames, ...s.outfitNames, ...s.accessoryNames].join(' ');
+  const avatarLists = [...s.characterNames, ...s.baseLookNames, ...s.hairStyleNames, ...s.outfitNames, ...s.accessoryNames].join(' ');
   assert(!EMOJI_RE.test(avatarLists), `${lang} avatar option names have no emojis`);
   // Nickname guidance must say it is NOT the child's real name.
   assert(
@@ -171,13 +181,18 @@ settingsStore.update({ ambientSound: true });
 
 // ---- 4. Static scans: zero PII, Get Help always visible, quiet audio ------
 const onboardingSrc = readFileSync(join(SRC, 'onboarding', 'OnboardingFlow.tsx'), 'utf8');
+const consentSceneSrc = readFileSync(join(SRC, 'onboarding', 'ConsentScene.tsx'), 'utf8');
 // Task 14: the ONLY free-text input in the app is the nickname inside
 // AvatarBuilder.tsx — OnboardingFlow itself still has none.
 assert(
   !/type="text"|<textarea|type="email"|type="tel"|type="number"/.test(onboardingSrc),
   'OnboardingFlow itself has NO free-text/PII inputs (nickname lives in AvatarBuilder)',
 );
-assert(onboardingSrc.includes('type="checkbox"'), 'onboarding consent uses a checkbox');
+assert(
+  !/type="text"|<textarea|type="email"|type="tel"|type="number"/.test(consentSceneSrc),
+  'ConsentScene has NO free-text/PII inputs — the consent checkbox is its only control',
+);
+assert(consentSceneSrc.includes('type="checkbox"'), 'onboarding consent uses a checkbox');
 assert(
   onboardingSrc.includes('completeOnboarding'),
   'Start button routes through consent-gated completeOnboarding',
@@ -187,9 +202,11 @@ assert(
   'settings flush happens AFTER consent is recorded',
 );
 assert(!EMOJI_RE.test(onboardingSrc), 'OnboardingFlow source has no emojis');
+assert(!EMOJI_RE.test(consentSceneSrc), 'ConsentScene source has no emojis');
 assert(
-  /disabled=\{!consented/.test(onboardingSrc),
-  'Start button is disabled until the guardian checks consent',
+  /startDisabled=\{!consented \|\| !band\}/.test(onboardingSrc) &&
+    /disabled=\{startDisabled\}/.test(consentSceneSrc),
+  'Start button is disabled until the guardian checks consent (flow computes, scene wires)',
 );
 
 const hudSrc = readFileSync(join(SRC, 'ui', 'HUD.tsx'), 'utf8');
@@ -231,6 +248,85 @@ const clamped = sanitizeAvatar({
 });
 assert(clamped !== null && clamped.base === 'sunny' && clamped.hair === 'short', 'unknown ids fall back to safe defaults');
 assert(clamped !== null && clamped.accessories.length === MAX_ACCESSORIES, `accessories clamp to ${MAX_ACCESSORIES}`);
+
+// ---- 5b. Boy/Girl hero system: per-character lists, sanitize, dual drafts --
+
+assert(createDefaultAvatar().character === 'boy', 'default hero stays boy (legacy behavior unchanged)');
+const girlDefault = createDefaultAvatar('girl');
+assert(
+  girlDefault.character === 'girl' && girlDefault.hair === 'ponytail' && girlDefault.outfit === 'kurti',
+  'girl default is her own config (ponytail + kurti), not the boy re-labelled',
+);
+// Legacy saves have no character field -> sanitize to boy, choices kept.
+const legacy = sanitizeAvatar({
+  base: 'sunny', skinTone: SKIN_TONES[1], hair: 'bun', outfit: 'hoodie',
+  accessories: ['cap'], nickname: 'OldSave',
+});
+assert(
+  legacy?.character === 'boy' && legacy.hair === 'bun' && legacy.outfit === 'hoodie',
+  'legacy saves (no character field) sanitize to boy with their choices kept',
+);
+// Character-aware clamping: cross-character ids degrade to that hero's defaults.
+const crossGirl = sanitizeAvatar({ ...girlDefault, nickname: 'Tara', outfit: 'kurta' });
+assert(
+  crossGirl?.character === 'girl' && crossGirl.outfit === 'kurti',
+  'boy-only outfit on a girl falls back to her default kurti',
+);
+const crossBoy = sanitizeAvatar({ ...createDefaultAvatar(), nickname: 'Veer', hair: 'ponytail', outfit: 'dress' });
+assert(
+  crossBoy?.hair === 'short' && crossBoy.outfit === 'kurta',
+  'girl-only hair/outfit on a boy fall back to his defaults',
+);
+const girlValid = { ...girlDefault, nickname: 'Tara' };
+assert(
+  JSON.stringify(sanitizeAvatar(girlValid)) === JSON.stringify(girlValid),
+  'a valid girl config round-trips sanitizeAvatar',
+);
+// Option lists per the task brief: boy unchanged, girl female-appropriate.
+assert(HAIR_STYLES_FOR.boy.length === 4 && OUTFITS_FOR.boy.length === 4, 'boy keeps his original 4 hair + 4 clothes options');
+assert(
+  HAIR_STYLES_FOR.girl.includes('ponytail') &&
+    OUTFITS_FOR.girl.includes('kurti') && OUTFITS_FOR.girl.includes('dress') &&
+    !OUTFITS_FOR.girl.includes('kurta') && !HAIR_STYLES_FOR.boy.includes('ponytail'),
+  'girl offers Ponytail/Kurti/Dress; kurta stays boy-only, ponytail girl-only',
+);
+// The girl renders as her OWN art: identical hair/outfit ids (short +
+// tshirt are valid for both heroes) must still produce different SVGs.
+const boySvg = renderToStaticMarkup(
+  createElement(PlayerAvatar, { config: { ...createDefaultAvatar(), hair: 'short', outfit: 'tshirt', nickname: 'X' } }),
+);
+const girlSvg = renderToStaticMarkup(
+  createElement(PlayerAvatar, { config: { ...girlDefault, hair: 'short', outfit: 'tshirt', nickname: 'X' } }),
+);
+assert(boySvg.includes('<svg') && girlSvg.includes('<svg'), 'PlayerAvatar renders SVG for both heroes');
+assert(boySvg !== girlSvg, 'same hair/outfit ids render DIFFERENT art for girl vs boy (own art, not a recolor)');
+const girlDress = renderToStaticMarkup(createElement(PlayerAvatar, { config: { ...girlValid, outfit: 'dress' } }));
+const girlKurti = renderToStaticMarkup(createElement(PlayerAvatar, { config: girlValid }));
+assert(girlDress !== girlKurti, 'dress renders its own A-line silhouette (not the standard torso)');
+// Dual-draft switch flow (the brief's exact test): customize boy -> switch
+// to girl -> customize -> switch back; each draft must be exactly as left,
+// with the one shared game nickname travelling across.
+{
+  let drafts = { boy: createDefaultAvatar('boy'), girl: createDefaultAvatar('girl') };
+  let active: 'boy' | 'girl' = 'boy';
+  const select = (c: 'boy' | 'girl') => {
+    if (c === active) return;
+    drafts = { ...drafts, [c]: { ...drafts[c], nickname: drafts[active].nickname } };
+    active = c;
+  };
+  drafts = { ...drafts, boy: { ...drafts.boy, skinTone: SKIN_TONES[4], hair: 'curly', nickname: 'Hero1' } };
+  select('girl');
+  drafts = { ...drafts, girl: { ...drafts.girl, outfit: 'dress' } };
+  select('boy');
+  assert(drafts.boy.skinTone === SKIN_TONES[4] && drafts.boy.hair === 'curly', 'switching heroes never resets the boy draft');
+  assert(drafts.girl.outfit === 'dress' && drafts.girl.nickname === 'Hero1', 'girl draft survives too; nickname is shared');
+  assert(sanitizeAvatar(drafts[active])?.character === 'boy', 'Start saves the SELECTED hero with its own customization');
+}
+// Onboarding really keeps BOTH drafts (seeds one per hero).
+assert(
+  /createDefaultAvatar\('boy'\)/.test(onboardingSrc) && /createDefaultAvatar\('girl'\)/.test(onboardingSrc),
+  'onboarding seeds independent boy AND girl drafts',
+);
 
 // progressStore: avatar defaults to null; setAvatar stores it.
 assert(progressStore.getState().avatar === null || progressStore.getState().avatar !== undefined, 'avatar field exists on progress state');
@@ -301,9 +397,16 @@ for (const rel of [['quests', 'engine.ts'], ['quests', 'registry.ts']]) {
 }
 
 // Onboarding gates Next on a non-blank nickname; start() trims + stores it.
+// The gate is computed in the flow (nextDisabled) and wired onto the plaza
+// scene's Next button — assert BOTH halves so neither can silently drop it.
 assert(
-  /step === 3 && !avatar\.nickname\.trim\(\)/.test(onboardingSrc),
+  /nextDisabled=\{!avatar\.nickname\.trim\(\)\}/.test(onboardingSrc),
   'onboarding Next is disabled until the nickname is non-blank',
+);
+const makeHeroSrc = readFileSync(join(SRC, 'onboarding', 'MakeHeroScene.tsx'), 'utf8');
+assert(
+  makeHeroSrc.includes('disabled={nextDisabled}'),
+  'MakeHeroScene wires the nickname gate onto its Next button',
 );
 assert(
   /nickname: avatar\.nickname\.trim\(\)/.test(onboardingSrc),

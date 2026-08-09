@@ -1,0 +1,163 @@
+Implement a complete Boy/Girl character selection system in the existing “Make your hero” onboarding screen.
+
+IMPORTANT:
+This feature is being added to the existing project for the first time. Do not break or replace the existing onboarding flow, styling, navigation, or current customization logic.
+
+REFERENCE:
+Use the uploaded reference image only as the visual/design reference for the Boy/Girl selection area and overall “Make your hero” screen.
+
+1. CHARACTER TYPE SELECTION
+Add a clear character selection section near the top of “Make your hero”:
+
+[ Boy ]    [ Girl ]
+
+Show two attractive cartoon avatar preview cards:
+- Boy avatar
+- Girl avatar
+
+The currently selected character must have a clear active/selected state.
+The unselected character should remain visually available but slightly less emphasized.
+
+Default:
+- Keep Boy selected initially so the existing behavior remains unchanged.
+
+2. BOY SELECTION
+When the user selects “Boy”:
+- Show the boy avatar in the main preview.
+- All customization controls should work for the boy.
+- Look options should apply to the boy.
+- Skin tone should change the boy's skin tone.
+- Hair options should show/use boy-appropriate hair styles.
+- Clothes should update the boy's clothing.
+- Extras should be applied to the boy.
+- Backpack, glasses, cap, scarf, star badge, etc. should work normally.
+- The selected boy configuration must persist while navigating between onboarding steps.
+
+3. GIRL SELECTION
+When the user selects “Girl”:
+- Replace the main avatar preview with the girl avatar.
+- Do NOT simply recolor or modify the boy.
+- Use a proper female cartoon avatar/character.
+- The girl's customization must be independent from the boy's customization.
+
+For Girl:
+- Skin tone → applies to girl.
+- Hair → show female-appropriate hairstyles such as:
+  Short, Curly, Braids, Ponytail, Bun
+- Clothes → provide suitable options such as:
+  T-shirt, Kurti, Kameez, Hoodie, Dress
+- Extras → glasses, cap, star badge, scarf, flower, backpack, etc.
+- The girl should retain the same Nyaya Nagri visual identity and cartoon style as the boy.
+
+4. INDEPENDENT CUSTOMIZATION STATE
+Maintain separate customization state for Boy and Girl.
+
+Example:
+boyCustomization = {...}
+girlCustomization = {...}
+
+If the user:
+Boy → customizes → switches to Girl → customizes → switches back to Boy,
+
+the Boy must return with his previous customization intact.
+
+Do NOT reset the Boy when switching to Girl.
+Do NOT reset the Girl when switching back to Boy.
+
+5. MAIN HERO PREVIEW
+The large hero preview must dynamically reflect:
+- Selected gender/character
+- Skin tone
+- Hair
+- Clothes
+- Extras
+
+The preview must update immediately when an option is selected.
+
+Do not use stretched images.
+Maintain the original character aspect ratio.
+Use object-fit: contain where appropriate.
+
+6. DATA MODEL
+Keep the selected character and customization in a clean structured state, for example:
+
+selectedCharacter: "boy" | "girl"
+
+boyCustomization: {
+  look,
+  skinTone,
+  hair,
+  clothes,
+  extras,
+  nickname
+}
+
+girlCustomization: {
+  look,
+  skinTone,
+  hair,
+  clothes,
+  extras,
+  nickname
+}
+
+Use the existing project's state-management approach if one already exists. Do not introduce unnecessary new libraries.
+
+7. NICKNAME
+The nickname field should work for both Boy and Girl.
+The nickname is a game name, NOT a real name.
+Keep the existing validation and behavior.
+
+8. NEXT BUTTON
+When the user clicks Next:
+- Save the selected character type.
+- Save the complete customization of the selected character.
+- Continue through the existing onboarding flow exactly as before.
+
+The rest of the application should be able to access which character was selected and that character's customization.
+
+9. UI / DESIGN
+Match the uploaded reference image closely:
+- Same bright Nyaya Nagri visual language.
+- Same cream/gold/blue/orange palette.
+- Rounded character selection cards.
+- Clean spacing.
+- Child-friendly but professional.
+- No dark theme.
+- No futuristic/cyberpunk styling.
+- No unnecessary animations.
+
+Do NOT redesign the entire page.
+Only extend the existing “Make your hero” screen with the Boy/Girl functionality and make the existing customization controls gender-aware.
+
+10. RESPONSIVE BEHAVIOR
+The screen must work properly on laptop/desktop view.
+Do not introduce horizontal scrolling.
+Keep the main hero preview and customization panel properly aligned.
+
+11. IMPORTANT IMPLEMENTATION RULE
+Do not hard-code the UI so that Boy works and Girl is only visual.
+
+Both characters must be fully functional:
+Boy → complete customization
+Girl → complete customization
+
+Every customization option must update the correct selected character.
+
+Before finishing, test this exact flow:
+
+Boy selected
+→ change skin tone
+→ change hair
+→ change clothes
+→ add extras
+→ switch to Girl
+→ customize Girl differently
+→ switch back to Boy
+→ verify Boy customization is still preserved
+→ switch back to Girl
+→ verify Girl customization is still preserved
+→ click Next
+→ verify the selected character and customization are correctly saved.
+
+Do not modify unrelated pages or existing functionality.

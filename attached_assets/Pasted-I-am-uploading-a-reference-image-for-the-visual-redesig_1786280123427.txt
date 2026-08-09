@@ -1,0 +1,149 @@
+I am uploading a reference image for the visual redesign of my existing 3D game.
+
+IMPORTANT:
+The reference image is the VISUAL SOURCE OF TRUTH.
+My existing project is the FUNCTIONAL SOURCE OF TRUTH.
+
+Do NOT rebuild the game from scratch.
+Do NOT replace the existing 3D engine, gameplay, movement, collision, interaction logic, progression system, or existing game mechanics unless absolutely necessary.
+
+Your task is to redesign the EXISTING 3D GAME so its final presentation closely matches the uploaded reference image.
+
+This is a REAL 3D GAME, so do not simply create a 2D screenshot-like overlay or fake the environment with flat images.
+
+RECREATE THE REFERENCE IN 3D:
+
+1. WORLD / ENVIRONMENT
+- Match the reference's bright, colorful, friendly low-poly 3D aesthetic.
+- Use clean stylized low-poly geometry.
+- Replace the current plain/unfinished environment with a polished game-world composition similar to the reference.
+- Add/adjust grass, paths, trees, flowers, rocks, monuments, buildings/structures and decorative elements according to the reference.
+- Keep the world readable and uncluttered.
+- Use rounded/stylized shapes rather than realistic high-detail assets.
+
+2. LIGHTING
+- Bright daytime lighting.
+- Soft warm sunlight.
+- Clear but soft shadows.
+- Pleasant ambient lighting.
+- Saturated but controlled colors.
+- Avoid dark, realistic, horror-like or cyberpunk lighting.
+- The scene should feel like a polished educational adventure game for children.
+
+3. CAMERA
+- Adjust the existing 3D camera to achieve a composition visually close to the reference.
+- Use the same general third-person/isometric-style perspective.
+- Keep the player character clearly visible near the lower-center/foreground area.
+- Make important landmarks visible in the camera view.
+- Do not use a completely fixed fake camera if the existing game supports player-controlled movement.
+- Preserve gameplay camera controls while matching the reference's default framing.
+
+4. PLAYER CHARACTER
+- Keep the existing player character and its functionality.
+- Improve its visual presentation so it fits naturally into the new environment.
+- Character must remain a real 3D object inside the scene.
+- Make sure the character is correctly grounded on the terrain and casts an appropriate shadow.
+
+5. GAME HUD
+Redesign the HUD to closely match the reference:
+- Nyaya Nagri branding at top-left.
+- Player/profile information below it.
+- Player rank.
+- Coins.
+- Streak.
+- My Progress.
+- Rights Community.
+- Settings button at top-right.
+- Mini-map at top-right.
+- Virtual joystick/control at bottom-left.
+- Assistant/help control at bottom-right.
+- Prominent red "Get Help Now" button at bottom-right.
+- Use rounded white cards, soft shadows, clean typography and the same visual hierarchy as the reference.
+
+6. UI STYLE
+Use the reference's design language:
+- White/cream UI surfaces.
+- Blue, orange, purple and green accent colors.
+- Large rounded cards.
+- Soft shadows.
+- Friendly children's educational-game aesthetic.
+- Clear typography.
+- Consistent spacing.
+- No excessive glassmorphism.
+- No dark dashboard.
+- No futuristic cyberpunk styling.
+- No unnecessary gradients.
+- No excessive animations.
+
+7. GAME WORLD LANDMARKS
+The reference contains recognizable interactive-looking landmarks and locked areas.
+
+Translate these into actual 3D game objects:
+- justice/law themed monuments
+- locked areas
+- decorative structures
+- central landmark
+- paths connecting areas
+- collectible/progression locations
+
+They must exist as actual 3D objects in the game and remain compatible with the existing interaction/progression logic.
+
+8. LOCKED CONTENT
+Preserve the current locked/unlocked system.
+
+However:
+- Remove unnecessary large "Locked / Complete Digital Safety first" popups from the permanent screen.
+- Communicate locked states visually using padlocks, color treatment, subtle labels or landmark design.
+- Do not block the entire gameplay view with a large modal unless the player actually interacts with a locked location.
+
+9. RESPONSIVENESS
+The game should remain visually correct in the current desktop/laptop landscape viewport.
+Do not let HUD elements overlap the game world incorrectly.
+Keep all important controls inside the viewport.
+
+10. PERFORMANCE
+This is a browser-based 3D game.
+Do NOT add extremely heavy 3D assets unnecessarily.
+Prefer optimized low-poly geometry, instancing where appropriate, compressed textures and lightweight effects.
+Maintain smooth camera movement and gameplay.
+
+11. MOST IMPORTANT
+Do not interpret this request as creating a website that looks like the screenshot.
+
+It must remain a REAL INTERACTIVE 3D GAME.
+
+The reference image defines:
+- visual style
+- composition
+- color language
+- UI hierarchy
+- environment quality
+- camera presentation
+- overall polish
+
+The existing project defines:
+- gameplay
+- movement
+- interactions
+- progression
+- game state
+- existing mechanics
+
+First inspect the entire existing project and understand how the current 3D scene, camera, player, HUD and interactions are implemented.
+
+Then modify the existing implementation rather than creating a parallel demo.
+
+After implementation:
+1. Run the game.
+2. Compare the result against the uploaded reference.
+3. Fix visual mismatches.
+4. Check camera framing.
+5. Check HUD positioning.
+6. Check player placement.
+7. Check lighting and shadows.
+8. Check that all existing gameplay still works.
+9. Remove unnecessary elements that do not belong in the reference.
+10. Polish the result until it looks like a cohesive, production-quality version of the reference.
+
+Do not stop after the first implementation.
+Iterate and visually refine the result.

@@ -1,0 +1,83 @@
+Use the attached reference image as the EXACT visual design reference for the “Make Your Hero” screen.
+
+IMPORTANT: Do NOT change the overall UI design, layout, background, typography, colors, spacing, card structure, buttons, or branding. Recreate the reference design in the existing project and preserve the current Nyaya Nagri theme.
+
+The main requirement is that the character customization must be FULLY FUNCTIONAL and LIVE.
+
+1. CHARACTER PREVIEW
+- The large boy character on the left side of the customization panel is the live preview.
+- Whenever the user changes ANY customization option, the character preview must update immediately.
+- Do not use a static image that stays unchanged.
+
+2. LOOK
+- Sunny and Brave must visually affect the character's appearance/expression according to the selected option.
+- The selected option must have the same active-state styling shown in the reference.
+
+3. SKIN TONE
+- Provide all available skin-tone options.
+- Clicking a skin tone must immediately update the boy's skin color in the preview.
+- Do not reload the page.
+
+4. HAIR
+- Short, Curly, Braids, and Bun must be functional.
+- Selecting a hairstyle must immediately replace the character's hairstyle.
+- The rest of the character must remain unchanged.
+
+5. CLOTHES
+- Kurta, T-shirt, Kameez, and Hoodie must be functional.
+- When the user selects a clothing option, the character's clothes must visibly change in the live preview.
+- Only the relevant clothing layer should change; do not replace the entire character unnecessarily.
+
+6. EXTRAS
+- Glasses, Cap, Star Badge, Scarf, Flower, and Backpack must work.
+- User can select up to 3 extras.
+- Selected extras should appear on the character immediately.
+- Clicking a selected extra again should remove it.
+- Visually indicate selected extras in the UI.
+
+7. NICKNAME
+- The nickname field should update the character/profile state in real time.
+- Keep the existing validation and privacy message.
+
+8. STATE MANAGEMENT
+Create a single character customization state containing:
+- gender/character type
+- look
+- skinTone
+- hair
+- clothes
+- extras
+- nickname
+
+Every UI control must update this state, and the preview must derive its appearance from this state.
+
+9. IMPORTANT IMPLEMENTATION RULE
+Do NOT fake the customization using only CSS, text, or placeholder changes.
+Use a proper layered avatar system if assets are available:
+- base character
+- skin
+- hair
+- clothing
+- accessories/extras
+
+If the project already contains character assets, reuse them instead of creating unrelated new assets.
+
+If separate assets are not currently available, structure the code so each customization option has its own asset/layer mapping and can easily be replaced with the correct asset later.
+
+10. UX
+- Changes should appear instantly with no page refresh.
+- Keep smooth transitions when changing hair, clothes, skin tone, or extras.
+- Maintain the exact visual hierarchy of the reference image.
+- Keep the screen responsive for laptop/desktop view.
+- Do not break the existing Back and Next navigation.
+- Existing “Get Help Now” button must remain unchanged and functional.
+
+11. DO NOT MODIFY
+Do not redesign the rest of the application.
+Do not change the Nyaya Nagri branding.
+Do not remove existing functionality.
+Do not add unnecessary animations or futuristic UI.
+Do not replace the reference design with a generic avatar builder.
+
+FINAL RESULT:
+The screen should look like the attached reference image, but the boy character must behave like a real interactive avatar builder. When the user clicks Short → Curly → Hoodie → Glasses → Backpack etc., the large character preview should immediately reflect every selected customization.

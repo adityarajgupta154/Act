@@ -12,6 +12,7 @@ import {
   FREE_ACCESSORIES,
   sanitizeAvatar,
   SHOP_ACCESSORIES,
+  type CharacterType,
   type PlayerAvatarConfig,
 } from './avatarConfig';
 import { progressStore } from '@/data/progressStore';
@@ -21,14 +22,23 @@ import { closeAvatarEdit, useUIStore } from '@/ui/uiStore';
 export function AvatarEditOverlay() {
   const { avatarEditOpen } = useUIStore();
   const t = useStrings();
-  const [draft, setDraft] = useState<PlayerAvatarConfig | null>(null);
+  const [drafts, setDrafts] = useState<Record<CharacterType, PlayerAvatarConfig> | null>(null);
+  const [character, setCharacter] = useState<CharacterType>('boy');
 
-  // (Re)seed the draft from the saved config each time the overlay opens —
+  // (Re)seed the drafts from the saved config each time the overlay opens —
   // sanitized, so a malformed persisted config falls back to a fresh
-  // default instead of crashing the renderer.
+  // default instead of crashing the renderer. The OTHER hero starts from
+  // its default look (sharing the one game nickname), so the child can
+  // switch characters here too and both drafts survive switching.
   useEffect(() => {
     if (avatarEditOpen) {
-      setDraft(sanitizeAvatar(progressStore.getState().avatar) ?? createDefaultAvatar());
+      const saved = sanitizeAvatar(progressStore.getState().avatar) ?? createDefaultAvatar();
+      const other: CharacterType = saved.character === 'girl' ? 'boy' : 'girl';
+      setDrafts({
+        [saved.character]: saved,
+        [other]: { ...createDefaultAvatar(other), nickname: saved.nickname },
+      } as Record<CharacterType, PlayerAvatarConfig>);
+      setCharacter(saved.character);
     }
   }, [avatarEditOpen]);
 
@@ -41,7 +51,16 @@ export function AvatarEditOverlay() {
     return () => window.removeEventListener('keydown', onKey);
   }, [avatarEditOpen]);
 
-  if (!avatarEditOpen || !draft) return null;
+  if (!avatarEditOpen || !drafts) return null;
+  const draft = drafts[character];
+  const setDraft = (config: PlayerAvatarConfig) =>
+    setDrafts((d) => (d ? { ...d, [character]: config } : d));
+  const selectCharacter = (c: CharacterType) => {
+    if (c === character) return;
+    // Keep both drafts; only the shared nickname travels across.
+    setDrafts((d) => (d ? { ...d, [c]: { ...d[c], nickname: d[character].nickname } } : d));
+    setCharacter(c);
+  };
 
   // Task 16: offer the free starter set plus OWNED shop cosmetics only —
   // un-bought shop items never appear here (and the store's ownership
@@ -73,7 +92,13 @@ export function AvatarEditOverlay() {
           </button>
         </div>
 
-        <AvatarBuilder value={draft} onChange={setDraft} accessoryOptions={accessoryOptions} />
+        <AvatarBuilder
+          value={draft}
+          onChange={setDraft}
+          onSelectCharacter={selectCharacter}
+          drafts={drafts}
+          accessoryOptions={accessoryOptions}
+        />
 
         <div className="flex justify-end gap-3 mt-6">
           <button

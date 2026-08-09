@@ -1,4 +1,6 @@
 - [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — user pastes Tasks 0-24 one at a time; re-read PRD §9 (+§4 if legal content) before EVERY task; hard safety rules apply forever.
-- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — api-server curl on own PORT; SEVEN smokes; zone/level-kind checklists; e2e unlock recipe; HI JSON language:'hi'; restart Vite after delete→recreate.
+- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — SEVEN smokes; api-server curl on own PORT; zone/level checklists; e2e unlock recipe; HI JSON language:'hi'; 2D world screenshots OK (Canvas fallback).
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
 - [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — art is USER-SUPPLIED, verbatim; extra elements = cutouts of their refs; signs at 40-48% vh (overlays above/below); pango for Devanagari baking.
+- [Reference-frame layout](nyaya-nagri-reference-layout.md) — measure the frame as vh fractions; 100dvh not %, panel min-h in vh + flex-1 rows; vh coefficient rules short screens, rem cap rules tall.
+- [Nyaya Nagri world perf](nyaya-nagri-world-perf.md) — decor via drei Instances (frustumCulled=false) + castShadow on main hulls only; ~150 individual casters broke the low-end budget.

@@ -1,0 +1,39 @@
+TASK 25 — Visual Engine Migration: 3D (Three.js) → 2D Illustrated World
+
+CONTEXT: The current Three.js low-poly 3D implementation is not achieving the intended visual quality. Reference target style is a warm, painterly, illustrated 2D/isometric look (rich color, soft baked lighting and shadows, detailed environment props, expressive character sprite) — NOT flat low-poly 3D primitives with basic materials. Real-time 3D lighting/post-processing that could approximate this style is too performance-heavy for our mid/low-end Android device requirement (per PRD §7 non-functional requirements), so we are switching rendering approach entirely, not trying to tune the existing 3D scene further.
+
+GOAL: Replace the Three.js 3D world renderer with a 2D game engine and illustrated 2D scenes, while preserving 100% of existing game logic, state, and features exactly as they currently work. This is a RENDERING LAYER swap only — it must not touch quest logic, zone/level unlock logic, the AI avatar/persona system, the economy system, the avatar builder's data model, accessibility features, localization, dashboards, or safety features (Get Help button, disclosure escalation, etc.).
+
+STRICT NON-NEGOTIABLE RULE: Before writing any code, list out every existing feature and system currently working (zone/level lock-unlock logic, quest state machine, AI avatar conversation + role-play personas, XP/coins/streak/titles/leaderboard, player avatar customization data, teacher/parent dashboards, accessibility toggles, localization, Get Help button, story variation layer). After the migration, go through this list one by one and confirm each one still works identically — nothing on this list may break, regress, or change behavior. Only the WORLD RENDERING and CHARACTER MOVEMENT visuals should change.
+
+STEP 1 — Engine choice:
+Replace Three.js with Phaser 3 (via CDN or npm) for the 2D world rendering, since it is purpose-built for exactly this kind of 2D game (sprites, scenes, input, camera, tilemaps) and is well-documented. Keep every other part of the stack (existing UI/HUD overlay, existing state stores, existing backend calls) untouched — Phaser only replaces the world-rendering module identified in Task 0's folder structure (/src/world).
+
+STEP 2 — Illustrated scene assets, one per zone:
+For each zone (Zone 0 "Know Yourself" through Zone 6 "Family & Community Shield"), generate/produce ONE wide illustrated 2D background scene image in the target painterly isometric style (matching the reference: warm lighting, detailed foliage, stone/monument props representing each zone's theme, a "well" or similar landmark as the zone hub) — use the image generation tool available to you to produce these, in a consistent art style across all 7 zones so the whole game feels visually unified (same color grading, same level of detail, same "camera angle" across every zone background).
+
+STEP 3 — Zone hub interaction model:
+Within each zone's illustrated scene, place the existing zone/level nodes (currently 3D pillars/markers in the Three.js version) as 2D illustrated "monument" sprites at fixed positions on top of the background — reuse the exact same lock/unlock visual state logic that already exists (locked = grey with a lock icon overlay, unlocked = full color, completed = a checkmark/glow state), just render it as a 2D sprite state instead of a 3D material swap. Tapping/clicking a monument opens the same Level-Select screen that already exists — do not change that screen or its logic at all.
+
+STEP 4 — Player character:
+Replace the 3D player model with a 2D character sprite (front/back/side-facing walk-cycle frames, 4 or 8-directional) reflecting the player's avatar customization choices from the existing Avatar Builder (Task 14) — map each existing customization option (look/hair/clothing/accessories) to a corresponding 2D sprite layer or sprite-sheet variant. The avatar builder's UI and data model do not change — only how the resulting avatar is rendered in the world changes, from a 3D model to a 2D sprite.
+
+STEP 5 — Movement & controls:
+Keep the exact same on-screen joystick UI and control scheme already built (Task 0/1) — only change what it drives: instead of moving a 3D character through a 3D scene with a 3D camera, it now moves the 2D sprite around the illustrated 2D scene (Phaser's arcade/tilemap movement, with the existing joystick input events wired into Phaser's input system instead of Three.js's). Add simple collision boundaries so the character can't walk off the illustrated scene or through solid props (trees, monuments, the well) — approximate with basic invisible collision zones, doesn't need to be pixel-perfect for this prototype.
+
+STEP 6 — Camera & transitions:
+Use a simple top-down or slightly tilted 2D camera that follows the player sprite within each zone's background image (with camera bounds clamped to the image edges). Keep the existing fade-to-black transition behavior when moving between zones (already defined in earlier tasks) — implement the same transition using Phaser's scene transition/camera fade instead of Three.js's, so the *feel* of moving between zones is unchanged for the player.
+
+STEP 7 — HUD & UI overlay:
+Do NOT touch the existing HTML/CSS UI overlay (top-left player info panel, mini-map, settings gear, Get Help Now button, AI avatar companion bubble) — this already matches the target visual quality and sits on top of the world canvas exactly as it does now. Only the canvas underneath it changes from a Three.js WebGL canvas to a Phaser canvas; confirm the overlay still renders correctly on top of the new canvas with no z-index or layout regressions, on both desktop and mobile viewport sizes.
+
+STEP 8 — Mini-map:
+Update the existing mini-map component to plot player/zone positions using the new 2D scene's coordinate system instead of the old 3D world coordinates — visual style of the mini-map itself does not need to change, only the coordinate mapping logic.
+
+STEP 9 — Performance check:
+Confirm the new 2D scenes load and run smoothly on a simulated mid/low-end device profile — 2D sprite/tilemap rendering should be significantly LIGHTER than the old 3D scene was, so this should be an improvement, not a regression; report actual before/after performance if you can measure it.
+
+STEP 10 — Regression pass:
+Go through the full feature checklist from the top of this prompt (zone/level unlock logic, quest state machine, AI avatar + personas, economy system, avatar builder, dashboards, accessibility, localization, Get Help button, story variation layer) and confirm each one individually still works exactly as before with the new 2D rendering layer. Report back a clear pass/fail list for every item — do not just say "everything still works," go feature by feature.
+
+Do this migration one zone at a time, starting with Zone 0 ("Know Yourself") as a proof-of-concept before converting the remaining 6 zones, so we can review the visual quality and confirm no logic broke before committing to redo every zone's art and hookup.
