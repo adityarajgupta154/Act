@@ -95,7 +95,7 @@ assert(helpSrc.includes('helpBullets'), 'HelpDialog renders the call-explainer b
 
 // --- One-tap reachability from every screen ----------------------------------
 const hudSrc = read('../src/ui/HUD.tsx');
-assert(hudSrc.includes('<HelpDialog />'), 'HUD renders HelpDialog');
+assert(/<HelpDialog[^>]*\/>/.test(hudSrc), 'HUD renders HelpDialog');
 assert(
   /z-50[^\n]*\n[^\n]*<AvatarWidget \/>\s*\n\s*<HelpDialog \/>/.test(hudSrc) ||
     hudSrc.includes('z-50'),

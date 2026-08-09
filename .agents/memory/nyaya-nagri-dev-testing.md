@@ -50,3 +50,11 @@ The runtime-error overlay from the Replit vite error-modal plugin covers the top
 2. To capture a Hindi screen without a clickable browser, flip the `settingsStore` DEFAULTS `language` to `'hi'`, screenshot, flip back (a fresh screenshot browser has empty localStorage, so it always boots on the default).
 **Why:** the Screenshot tool cannot click or press Esc, so neither the overlay nor the language toggle can be dismissed/switched from outside.
 **How to apply:** make both edits, screenshot, revert, then confirm with `git diff --stat` on those two files before finishing.
+
+## E2E screenshot pitfalls (learned Aug 2026, onboarding scene redesign)
+- Tester screenshots can catch staggered entrance animations mid-flight (later cards look missing/faded). In e2e recipes: instruct "wait ~2s after reaching an animated screen before screenshotting or visual asserts". DOM-text asserts are unaffected.
+- When a redesign replaces a similar-looking screen, give the tester DISTINGUISHING markers (what the OLD design looked like vs NEW) or they may misreport the new UI as the old one.
+- Hindi flow: tester must switch language via the step-0 on-scene buttons, not Settings — say so explicitly.
+
+## Source-grep smoke asserts vs props
+- onboarding/help smokes assert literal mounts (e.g. '<HelpDialog />'). When adding props to an asserted mount, relax to a prop-tolerant regex like /<HelpDialog[^>]*\/>/ AND keep a negative guard against conditional mounting (/\{\s*!?onboarded\s*&&\s*<HelpDialog/). Don't weaken the invariant, just the literal.

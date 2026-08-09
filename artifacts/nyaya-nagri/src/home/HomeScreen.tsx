@@ -27,7 +27,6 @@ import { useStrings } from '@/i18n/strings';
 import { SettingsPanel } from '@/ui/SettingsPanel';
 import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
 import { HelpDialog } from '@/ui/HelpDialog';
-import { JusticeCrest } from '@/ui/JusticeCrest';
 import { HowItWorksContent } from '@/onboarding/HowItWorksContent';
 import { HomeBackground } from './HomeBackground';
 import { BrandHeader } from './BrandHeader';
@@ -35,6 +34,7 @@ import { TopControls } from './TopControls';
 import { PrimaryCta } from './PrimaryCta';
 import { SecondaryActions } from './SecondaryActions';
 import { InfoDialog } from './InfoDialog';
+import { AboutContent } from './AboutContent';
 
 export function HomeScreen({ onEnter }: { onEnter: () => void }) {
   const t = useStrings();
@@ -74,18 +74,7 @@ export function HomeScreen({ onEnter }: { onEnter: () => void }) {
       </InfoDialog>
 
       <InfoDialog open={aboutOpen} onOpenChange={setAboutOpen} title={t.homeAboutTitle} closeLabel={t.close}>
-        <div className="flex flex-col items-center pt-2 text-center">
-          <JusticeCrest className="w-16 md:w-20" />
-          <h2 className="mt-3 font-display font-bold text-2xl text-slate-800 md:text-3xl">{t.homeAboutTitle}</h2>
-          <p className="mt-1 font-display font-semibold text-sm text-orange-600">{t.homeTagline}</p>
-          <div className="mt-4 space-y-3 text-left">
-            {t.homeAboutBody.map((paragraph, i) => (
-              <p key={i} className="text-sm md:text-[15px] font-medium leading-relaxed text-slate-600">
-                {paragraph}
-              </p>
-            ))}
-          </div>
-        </div>
+        <AboutContent />
       </InfoDialog>
     </div>
   );

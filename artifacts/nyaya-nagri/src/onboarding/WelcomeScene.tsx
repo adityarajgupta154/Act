@@ -14,11 +14,12 @@
  * on the very first screen (PRD §9.1).
  */
 import React from 'react';
-import { ArrowRight, Globe, Star } from 'lucide-react';
+import { ArrowRight, Globe } from 'lucide-react';
 import type { Language } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
 import { JusticeCrest } from '@/ui/JusticeCrest';
+import { StepDots, StarRule } from './decor';
 import plazaBackdrop from '@/assets/onboarding/plaza-bg.jpg';
 import guideCharacter from '@/assets/onboarding/guide-boy.png';
 
@@ -32,17 +33,6 @@ interface WelcomeSceneProps {
   /** Step indicator state, shared with the rest of the flow. */
   step: number;
   stepCount: number;
-}
-
-/** Gold rule with a star in the middle, as on the reference sign-board. */
-function StarRule() {
-  return (
-    <div className="flex items-center justify-center gap-3 my-3 md:my-4" aria-hidden="true">
-      <span className="h-[3px] w-16 md:w-24 rounded-full bg-gradient-to-r from-transparent to-amber-400/80" />
-      <Star className="w-5 h-5 md:w-6 md:h-6 text-amber-500 fill-amber-400 drop-shadow-sm" />
-      <span className="h-[3px] w-16 md:w-24 rounded-full bg-gradient-to-l from-transparent to-amber-400/80" />
-    </div>
-  );
 }
 
 export function WelcomeScene({
@@ -90,20 +80,7 @@ export function WelcomeScene({
 
       <div className="relative min-h-full flex flex-col items-center px-3 py-4 md:px-6 md:py-5">
         {/* Step dots (same 5-step indicator, legible over the sky) */}
-        <div
-          className="flex justify-center gap-2 rounded-full bg-slate-900/25 px-3.5 py-2 backdrop-blur-sm ring-1 ring-white/25"
-          aria-hidden="true"
-        >
-          {Array.from({ length: stepCount }).map((_, i) => (
-            <div
-              key={i}
-              className={cn(
-                'h-2.5 rounded-full transition-all duration-300',
-                i === step ? 'w-8 bg-orange-400' : 'w-2.5 bg-white/70',
-              )}
-            />
-          ))}
-        </div>
+        <StepDots step={step} stepCount={stepCount} />
 
         {/* Stage: guide character beside the sign-board */}
         <div className="flex-1 w-full flex items-center justify-center py-4 md:py-6">

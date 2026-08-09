@@ -395,7 +395,10 @@ export function HUD() {
           the Get Help Now button is there from the very first screen. */}
       <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
         {onboarded && <AvatarWidget />}
-        <HelpDialog />
+        {/* Reference redesign: during onboarding the trigger is the card
+            (name + both helpline numbers visible); in-world it stays the
+            compact pill so it never crowds the game HUD. Same shared screen. */}
+        <HelpDialog variant={onboarded ? 'pill' : 'card'} />
       </div>
     </div>
   );

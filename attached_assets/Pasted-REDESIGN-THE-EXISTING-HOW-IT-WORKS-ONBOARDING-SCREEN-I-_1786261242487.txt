@@ -1,0 +1,431 @@
+REDESIGN THE EXISTING “HOW IT WORKS” ONBOARDING SCREEN
+
+I am providing a reference image.
+
+IMPORTANT:
+Use the uploaded reference image as the PRIMARY VISUAL REFERENCE.
+
+Do NOT create a generic “How it works” page.
+Do NOT use the old flat 2D design.
+Do NOT use a plain gradient background.
+
+I want this screen to belong to the EXACT SAME VISUAL WORLD as the Nyaya Nagri language-selection screen shown in the reference.
+
+Do NOT rebuild the application.
+Modify only the existing “How it works” onboarding screen while keeping all existing functionality and navigation intact.
+
+==================================================
+1. OVERALL VISUAL STYLE
+==================================================
+
+Match the reference image's visual language:
+
+- Premium 3D children's educational game
+- Warm Indian civic environment
+- Bright blue sky
+- Beautiful government/civic building
+- Green gardens
+- Indian flag
+- Warm cream/gold UI
+- Navy blue typography
+- Orange/gold accents
+- Soft 3D shadows
+- Rounded UI
+- Friendly child character
+- Polished game onboarding experience
+
+The screen should feel like the NEXT SCREEN of the same Nyaya Nagri onboarding journey.
+
+It must NOT look like a separate page.
+
+==================================================
+2. BACKGROUND
+==================================================
+
+Reuse the SAME Nyaya Nagri environment/background style from the existing language-selection screen.
+
+Do NOT create a completely different environment.
+
+Use:
+
+- grand civic/court building
+- Indian flag
+- trees
+- flowers
+- stone pathway
+- warm daylight
+- blue sky
+- subtle depth
+
+The background should remain visually secondary to the onboarding panel.
+
+Do NOT stretch the background.
+
+Do NOT distort the background.
+
+Preserve the original aspect ratio.
+
+==================================================
+3. BOY CHARACTER
+==================================================
+
+Reuse the EXISTING Nyaya Nagri boy character.
+
+Do NOT generate another character.
+
+Place the boy on the LEFT side of the screen, similar to the reference.
+
+The boy should:
+
+- be fully visible
+- have his feet visible
+- maintain original proportions
+- not be stretched
+- not be cropped
+- face toward the onboarding panel
+- appear to be presenting/explaining the content
+
+Use the existing transparent character asset if available.
+
+The character should feel naturally integrated into the scene.
+
+==================================================
+4. MAIN ONBOARDING PANEL
+==================================================
+
+Create one large centered cream-colored panel.
+
+The panel should look like a physical premium game information board.
+
+Match the reference:
+
+- warm cream background
+- thick gold/brown outer border
+- rounded corners
+- subtle 3D depth
+- soft shadow
+- slightly elevated appearance
+- clean internal spacing
+
+Do NOT make it look like a standard HTML modal.
+
+==================================================
+5. NYAYA NAGRI BRANDING
+==================================================
+
+At the top of the panel:
+
+Use the Nyaya Nagri shield/logo.
+
+Below/near it use:
+
+Nyaya Nagri
+
+Keep the same orange + navy brand colors from the reference.
+
+Do not create a new logo.
+
+==================================================
+6. TITLE
+==================================================
+
+Main title:
+
+How it works
+
+Use the same friendly rounded typography style as the reference.
+
+Dark navy color.
+
+Large and highly readable.
+
+Add subtle gold decorative elements around the heading if they fit the reference.
+
+==================================================
+7. PROGRESS INDICATOR
+==================================================
+
+At the very top of the screen/panel:
+
+Show the existing onboarding progress indicator.
+
+Example:
+
+● ━ ○ ○ ○
+
+The current step should use the existing onboarding state.
+
+Do NOT hard-code the progress state.
+
+Do NOT create a separate progress system.
+
+==================================================
+8. CONTENT
+==================================================
+
+Convert the existing “How it works” content into four visually attractive sections.
+
+Keep the EXISTING meaning/content.
+
+Use these concepts:
+
+1. Explore the City
+Walk around the city and visit 7 zones — each one is about rights that protect you.
+
+2. Play, Choose & Earn
+Play story quests, make your own choices, and answer fun quizzes to earn badges.
+
+3. Ask Anything
+Your friendly guide can answer questions any time.
+
+4. Get Help Anytime
+The red Get Help Now button is always on screen — it shows real helplines like Childline 1098.
+
+Do NOT change the legal/safety meaning.
+
+==================================================
+9. CONTENT CARD DESIGN
+==================================================
+
+Instead of plain text rows, create four elegant rounded content cards INSIDE the main panel.
+
+Each row should contain:
+
+LEFT:
+Large circular icon container.
+
+RIGHT:
+Bold heading
++
+Short description
+
+Example:
+
+[ MAP ICON ]  Explore the City
+               Walk around the city and visit
+               7 zones — each one is about
+               rights that protect you.
+
+Use different icons:
+
+Explore the City:
+Map icon
+
+Play, Choose & Earn:
+Badge/trophy icon
+
+Ask Anything:
+Chat/message icon
+
+Get Help Anytime:
+Shield/exclamation icon
+
+Icon colors:
+
+- Blue for learning/exploration
+- Blue for quests
+- Blue for guide
+- Red/coral for safety
+
+Keep everything child-friendly.
+
+==================================================
+10. BOTTOM NAVIGATION
+==================================================
+
+At the bottom of the panel:
+
+LEFT:
+
+← Back
+
+RIGHT:
+
+Next →
+
+Use the SAME button style as the language-selection reference.
+
+Back:
+- cream/white
+- navy text
+- subtle border/shadow
+
+Next:
+- orange
+- white text
+- rounded
+- subtle 3D elevation
+
+Keep the buttons large and accessible.
+
+==================================================
+11. GET HELP NOW
+==================================================
+
+Keep the persistent existing safety button visible.
+
+Position:
+
+BOTTOM-RIGHT
+
+Do NOT make it a full-width bottom bar.
+
+It should look like the reference:
+
+GET HELP NOW
+
+Childline 1098
+Cyber Crime 155260
+
+Use:
+
+- red/coral background
+- white shield icon
+- rounded pill/card
+- subtle shadow
+- strong readable text
+
+Most importantly:
+
+Keep the EXISTING Get Help functionality.
+
+Do not create a new safety system.
+
+==================================================
+12. TOP-RIGHT CONTROLS
+==================================================
+
+Keep the existing:
+
+About
+Accessibility
+Settings
+
+buttons.
+
+Place them at the top-right like the reference.
+
+Use:
+
+- white/cream pill
+- navy text
+- blue icons
+- subtle shadow
+
+Do not create duplicate functionality.
+
+==================================================
+13. ANIMATIONS
+==================================================
+
+Add only subtle animations:
+
+- panel soft entrance
+- boy idle movement
+- slight hand gesture
+- content cards subtle fade/slide
+- button hover/press
+- progress indicator transition
+
+Do NOT over-animate.
+
+Respect existing reduced-motion accessibility settings.
+
+==================================================
+14. RESPONSIVE
+==================================================
+
+Desktop should closely match the uploaded reference.
+
+On tablet:
+
+- reduce panel size
+- reduce character size
+- preserve proportions
+
+On mobile:
+
+- panel becomes the primary focus
+- boy becomes smaller and moves beside/above the panel
+- content remains readable
+- Back/Next remain accessible
+- Get Help remains visible
+- no overlap
+- no horizontal scrolling
+
+Never stretch the character or background.
+
+==================================================
+15. EXISTING FUNCTIONALITY MUST REMAIN
+==================================================
+
+DO NOT BREAK:
+
+- language selection
+- onboarding state
+- progress state
+- Back navigation
+- Next navigation
+- localization/i18n
+- safety system
+- Get Help functionality
+- accessibility settings
+- existing onboarding sequence
+- existing game world
+
+The screen should simply be a visual redesign of the existing “How it works” step.
+
+==================================================
+16. IMPORTANT IMPLEMENTATION RULE
+==================================================
+
+Before changing anything:
+
+FIRST inspect the existing implementation.
+
+Find the existing:
+
+- How It Works component
+- onboarding state
+- progress indicator
+- navigation handlers
+- i18n strings
+- Get Help functionality
+- character/avatar asset
+- background asset
+
+Then modify the existing component.
+
+Do NOT create a parallel onboarding system.
+
+Do NOT duplicate state.
+
+Do NOT duplicate navigation.
+
+Do NOT replace existing safety logic.
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+The final result should look like:
+
+“Nyaya Nagri Language Selection Screen → Next Step → How It Works”
+
+Both screens must clearly look like they belong to the SAME application.
+
+Use the uploaded reference image as the visual source of truth for:
+
+- composition
+- colors
+- panel style
+- character placement
+- typography
+- spacing
+- buttons
+- shadows
+- overall 3D children's-game aesthetic.
+
+Do not interpret the reference loosely.
+
+Make the implementation as visually close to the reference as possible while preserving the existing Nyaya Nagri functionality.

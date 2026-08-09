@@ -69,7 +69,11 @@ for (const key of KEYS) {
 
 for (const lang of ['en', 'hi'] as const) {
   const s = STRINGS[lang];
-  assert(s.howItWorksPoints.length === 4, `${lang}.howItWorksPoints has 4 points`);
+  assert(s.howItWorksCards.length === 4, `${lang}.howItWorksCards has 4 cards`);
+  assert(
+    s.howItWorksCards.every((c) => c.title.length > 0 && c.body.length > 0),
+    `${lang}.howItWorksCards all have a title and a body`,
+  );
   // Task 14: consent list gained the avatar/nickname disclosure item.
   assert(s.storedPoints.length === 4, `${lang}.storedPoints has 4 points (incl. avatar+nickname)`);
   assert(
@@ -99,10 +103,10 @@ for (const lang of ['en', 'hi'] as const) {
       : s.nicknameHint.includes('असली नाम नहीं'),
     `${lang} nickname hint says "not your real name"`,
   );
-  const all = [...s.howItWorksPoints, ...s.storedPoints].join(' ');
+  const all = [...s.howItWorksCards.flatMap((c) => [c.title, c.body]), ...s.storedPoints].join(' ');
   assert(!EMOJI_RE.test(all), `${lang} onboarding lists have no emojis`);
   assert(
-    s.howItWorksPoints.some((p) => p.includes('1098')),
+    s.howItWorksCards.some((c) => c.body.includes('1098')),
     `${lang} how-it-works mentions Childline 1098 (digits intact)`,
   );
   assert(!DEVANAGARI_DIGITS_RE.test(all), `${lang} lists use Western numerals only`);
@@ -124,8 +128,8 @@ for (const lang of ['en', 'hi'] as const) {
   );
 }
 assert(
-  DEVANAGARI_RE.test(STRINGS.hi.howItWorksPoints.join(' ')),
-  'hi.howItWorksPoints is in Devanagari',
+  DEVANAGARI_RE.test(STRINGS.hi.howItWorksCards.flatMap((c) => [c.title, c.body]).join(' ')),
+  'hi.howItWorksCards is in Devanagari',
 );
 // PRD-qualified legal reference style: DPDP transliterated with English parens.
 assert(
@@ -198,7 +202,9 @@ assert(
   'guide appears only after onboarding (needs age band)',
 );
 assert(
-  /<HelpDialog \/>/.test(hudSrc) && !/onboarded && <HelpDialog/.test(hudSrc),
+  // The mount may carry props (e.g. the onboarding-time card variant), but
+  // it must never be conditionally RENDERED on onboarding state.
+  /<HelpDialog[^>]*\/>/.test(hudSrc) && !/\{\s*!?onboarded\s*&&\s*<HelpDialog/.test(hudSrc),
   'Get Help Now stays unconditionally mounted — visible during onboarding too',
 );
 

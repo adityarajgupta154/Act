@@ -31,7 +31,7 @@ import { cn } from '@/lib/utils';
 import { AvatarBuilder } from '@/player/AvatarBuilder';
 import { createDefaultAvatar, type PlayerAvatarConfig } from '@/player/avatarConfig';
 import { WelcomeScene } from './WelcomeScene';
-import { HowItWorksContent } from './HowItWorksContent';
+import { HowItWorksScene } from './HowItWorksScene';
 
 const STEP_COUNT = 5;
 
@@ -75,6 +75,19 @@ export function OnboardingFlow() {
     );
   }
 
+  // Step 1 — "How it works", presented as the plaza info-board scene
+  // (reference redesign). Same shared content, same step handlers.
+  if (step === 1) {
+    return (
+      <HowItWorksScene
+        onBack={() => setStep(0)}
+        onNext={() => setStep(2)}
+        step={step}
+        stepCount={STEP_COUNT}
+      />
+    );
+  }
+
   return (
     <div className="absolute inset-0 z-20 pointer-events-auto bg-gradient-to-b from-amber-50 via-orange-50 to-sky-100 flex items-center justify-center p-4 md:p-6 overflow-y-auto">
       <div className="bg-white rounded-3xl shadow-2xl border border-orange-100 w-full max-w-lg my-auto p-6 md:p-8 animate-in zoom-in-95 duration-300">
@@ -90,13 +103,6 @@ export function OnboardingFlow() {
             />
           ))}
         </div>
-
-        {/* Step 1 — How it works (same shared content the Home screen shows) */}
-        {step === 1 && (
-          <div className="animate-in fade-in duration-300">
-            <HowItWorksContent />
-          </div>
-        )}
 
         {/* Step 2 — Age band */}
         {step === 2 && (

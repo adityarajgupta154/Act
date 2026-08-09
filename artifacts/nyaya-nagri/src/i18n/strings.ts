@@ -210,7 +210,7 @@ export interface UIStrings {
   welcomeBody: string;
   chooseLanguage: string;
   howItWorksTitle: string;
-  howItWorksPoints: string[];
+  howItWorksCards: Array<{ title: string; body: string }>;
   howOldAreYou: string;
   ageWhy: string;
   ageBandDesc811: string;
@@ -552,11 +552,25 @@ const EN: UIStrings = {
     'A friendly city where you play stories, meet a helpful guide, and learn the rights that keep every child safe and strong.',
   chooseLanguage: 'Choose your language',
   howItWorksTitle: 'How it works',
-  howItWorksPoints: [
-    'Walk around the city and visit 7 zones — each one is about rights that protect you.',
-    'Play story quests, make your own choices, and answer fun quizzes to earn badges.',
-    'Your friendly guide can answer questions any time.',
-    'The red Get Help Now button is always on screen — it shows real helplines like Childline 1098.',
+  // Card titles are the reference-image headings; bodies keep the original
+  // approved wording — the safety meaning is never rephrased (PRD §9).
+  howItWorksCards: [
+    {
+      title: 'Explore the City',
+      body: 'Walk around the city and visit 7 zones — each one is about rights that protect you.',
+    },
+    {
+      title: 'Play, Choose & Earn',
+      body: 'Play story quests, make your own choices, and answer fun quizzes to earn badges.',
+    },
+    {
+      title: 'Ask Anything',
+      body: 'Your friendly guide can answer questions any time.',
+    },
+    {
+      title: 'Get Help Anytime',
+      body: 'The red Get Help Now button is always on screen — it shows real helplines like Childline 1098.',
+    },
   ],
   howOldAreYou: 'How old are you?',
   ageWhy: 'We use this only to pick the right stories for you.',
@@ -929,11 +943,23 @@ const HI: UIStrings = {
     'एक प्यारा शहर जहाँ तुम कहानियाँ खेलते हो, एक मददगार गाइड से मिलते हो, और वे अधिकार सीखते हो जो हर बच्चे को सुरक्षित और मज़बूत रखते हैं।',
   chooseLanguage: 'अपनी भाषा चुनो',
   howItWorksTitle: 'यह कैसे काम करता है',
-  howItWorksPoints: [
-    'शहर में घूमो और 7 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
-    'कहानी वाले क्वेस्ट खेलो, अपने फ़ैसले खुद लो, और मज़ेदार क्विज़ से बैज जीतो।',
-    'तुम्हारा दोस्ताना गाइड कभी भी सवालों के जवाब दे सकता है।',
-    'लाल "अभी मदद लो" बटन हमेशा स्क्रीन पर रहता है — इसमें चाइल्डलाइन 1098 जैसी असली हेल्पलाइन हैं।',
+  howItWorksCards: [
+    {
+      title: 'शहर की सैर करो',
+      body: 'शहर में घूमो और 7 ज़ोन देखो — हर ज़ोन तुम्हारी रक्षा करने वाले अधिकारों के बारे में है।',
+    },
+    {
+      title: 'खेलो, चुनो और जीतो',
+      body: 'कहानी वाले क्वेस्ट खेलो, अपने फ़ैसले खुद लो, और मज़ेदार क्विज़ से बैज जीतो।',
+    },
+    {
+      title: 'कुछ भी पूछो',
+      body: 'तुम्हारा दोस्ताना गाइड कभी भी सवालों के जवाब दे सकता है।',
+    },
+    {
+      title: 'कभी भी मदद लो',
+      body: 'लाल "अभी मदद लो" बटन हमेशा स्क्रीन पर रहता है — इसमें चाइल्डलाइन 1098 जैसी असली हेल्पलाइन हैं।',
+    },
   ],
   howOldAreYou: 'तुम्हारी उम्र कितनी है?',
   ageWhy: 'इससे हम बस तुम्हारे लिए सही कहानियाँ चुनते हैं।',
