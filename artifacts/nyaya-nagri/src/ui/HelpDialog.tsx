@@ -42,23 +42,23 @@ export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } =
         ) : (
           <button
             className={cn(
-              'pointer-events-auto flex w-full items-center justify-center gap-3 rounded-2xl xl:w-auto',
-              'bg-gradient-to-b from-red-500 to-red-600 text-white px-4 py-2.5 xl:px-5 xl:py-3',
+              'pointer-events-auto flex w-full items-center justify-center gap-3 rounded-2xl md:w-auto',
+              'bg-gradient-to-b from-red-500 to-red-600 text-white px-4 py-2.5 md:px-5 md:py-3',
               'ring-2 ring-white/40 border-b-4 border-red-800 shadow-[0_14px_28px_-12px_rgba(127,29,29,0.9)]',
               'transition-all duration-150 hover:to-red-500 active:translate-y-0.5 active:border-b-2 touch-manipulation',
               helpPulse && 'animate-pulse ring-4 ring-red-400/60'
             )}
             aria-label={t.getHelpNow}
           >
-            <span className="bg-white/20 rounded-full p-2 shrink-0">
-              <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
+            <span className="bg-white/20 rounded-full p-2 shrink-0 xl:p-2.5">
+              <ShieldAlert className="w-6 h-6 md:w-7 md:h-7 xl:w-8 xl:h-8" />
             </span>
             <span className="flex flex-col items-start text-left leading-tight">
-              <span className="font-display font-bold text-base md:text-lg xl:text-xl">{t.getHelpNow}</span>
+              <span className="font-display font-bold text-base md:text-lg xl:text-2xl">{t.getHelpNow}</span>
               {/* Canonical service names + numbers, identical in every
                   language (PRD §9): they are what a child reads out or dials. */}
-              <span className="mt-0.5 text-[11px] md:text-xs font-semibold text-white/95">Childline 1098</span>
-              <span className="text-[11px] md:text-xs font-semibold text-white/95">Cyber Crime 155260</span>
+              <span className="mt-0.5 text-[11px] md:text-xs font-semibold text-white/95 xl:text-sm">Childline 1098</span>
+              <span className="text-[11px] md:text-xs font-semibold text-white/95 xl:text-sm">Cyber Crime 155260</span>
             </span>
           </button>
         )}

@@ -6,12 +6,16 @@ description: Where the 2D landing screen's art comes from (user-supplied, used v
 ## Source of the artwork (current rule)
 The home backdrop and the guide boy are the USER'S OWN supplied illustrations, used **verbatim**: one city painting as the background layer and one transparent boy sprite as a CSS-positioned foreground layer (never flattened into the background, so his scale/position stay tunable per breakpoint).
 
+Extra elements the user shows only in a REFERENCE COMPOSITE (e.g. the "Nyaya Nagri" airship) are sourced by CROPPING that reference + `removeImageBackground`, kept as separate static sprites — still their pixels, never generated art. The airship and boy are decorative (`aria-hidden`, hidden below `md`).
+
 **Why:** the user iterated twice on agent-generated city plates, then supplied their own final art with an explicit "DO NOT RECREATE THE ARTWORK — do not generate alternative buildings or another character" brief. Regenerating or repainting their art is a spec violation, not an improvement.
 
 **How to apply:** for any future home-screen visual request, change CSS (crop bias, position, scale, overlay placement) — not the pixels. Only bake/repaint if the user asks for it in that request.
 
 ## Overlay safe zones under `object-cover`
-The painted zone signboards land at roughly **40–48% of viewport height** on every wide desktop size, and that stays stable across 1280/1440/1920 because `object-cover` scales by width and the crop bias is proportional. Keep HTML overlays out of that band on the left half: the welcome bubble goes **above** it (sky/hillside), the CTA cluster **below** it (plaza).
+The painted zone signboards land at roughly **40–48% of viewport height** on every wide desktop size, and that stays stable across 1280/1440/1920 because `object-cover` scales by width and the crop bias is proportional. Keep HTML overlays out of that band on the left half — the welcome bubble may sit **above** it (sky) or, per the final pixel-match reference, **below** it beside the boy (top edge ≤ ~52vh, i.e. `bottom-[26%]` at w-44/48/52); the CTA cluster stays below it (plaza).
+
+Vertical crop bias: `object-[50%_12%]` protects the dome + its little flag (top edge of painting) on 16:9 — the sacrificed strip is bottom cobblestones that the UI column covers anyway. Don't raise Y past ~16% or the flag clips at 1920×1080.
 
 **How to apply:** predict before screenshotting — displayed height = viewportWidth ÷ imageAspect; topOffset = (displayedHeight − viewportHeight) × objectPositionY; screenY = (sourceY × scale − topOffset) ÷ viewportHeight.
 

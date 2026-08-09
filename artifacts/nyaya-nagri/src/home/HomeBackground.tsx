@@ -15,19 +15,22 @@
 import React from 'react';
 import city from '@/assets/home/home-city.webp';
 import guideBoy from '@/assets/home/guide-boy.webp';
+import blimp from '@/assets/home/home-blimp.webp';
 
 export function HomeBackground() {
   return (
     <div className="absolute inset-0" aria-hidden="true">
-      {/* Supplied city artwork, unmodified. `object-cover` keeps the palace
-          centred; the crop bias leans slightly low so the foreground plaza
-          (where the CTA sits) survives on wide 16:9 screens. */}
+      {/* Supplied city artwork, unmodified. `object-cover` never distorts it;
+          the vertical bias keeps the TOP of the painting (sky, dome + flag —
+          IMAGE 4's "central building fully visible" rule) when wide 16:9
+          screens have to crop, sacrificing bottom cobblestones that the CTA
+          cluster covers anyway. Horizontally the palace stays centred. */}
       <img
         src={city}
         alt=""
         draggable={false}
         fetchPriority="high"
-        className="absolute inset-0 h-full w-full select-none object-cover object-[50%_42%]"
+        className="absolute inset-0 h-full w-full select-none object-cover object-[50%_12%]"
       />
 
       {/* Guide boy — supplied transparent sprite, standing on the pathway in
@@ -39,7 +42,18 @@ export function HomeBackground() {
         src={guideBoy}
         alt=""
         draggable={false}
-        className="hidden md:block absolute bottom-[2%] left-[6%] h-[44vh] w-auto select-none drop-shadow-[0_18px_16px_rgba(15,23,42,0.38)] lg:h-[48vh] xl:h-[52vh]"
+        className="hidden md:block absolute bottom-[3%] left-[10%] h-[54vh] w-auto select-none drop-shadow-[0_18px_16px_rgba(15,23,42,0.38)] lg:h-[56vh] xl:h-[58vh]"
+      />
+
+      {/* "Nyaya Nagri" airship from the reference composition (IMAGE 4) — a
+          cutout of the USER'S OWN reference image (never regenerated art),
+          floating as a separate static sprite in the sky band left of the
+          painted flag. Decorative only; desktop composition, like the boy. */}
+      <img
+        src={blimp}
+        alt=""
+        draggable={false}
+        className="hidden md:block absolute left-[68%] top-[10%] w-[13.5%] select-none"
       />
 
       {/* Very light bottom vignette — just enough to seat the CTA cluster on

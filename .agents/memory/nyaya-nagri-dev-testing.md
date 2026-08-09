@@ -38,6 +38,9 @@ Typecheck catches `Record<LevelKind, ...>` maps (level greetings in i18n, LevelS
 - Subagent followups: `sendFollowup({ name, message })` — a `task` param fails validation.
 - WebGL can also fail **container-wide**, not just after reloads: a brand-new headless Chrome throws `Error creating WebGL context ... BindToCurrentSequence failed, VENDOR=0xffff` on the first paint. When that happens, the 3D canvas is unverifiable in this environment (report code posture + recommend a real-device check) but every DOM surface still renders and is testable.
 
+## Vite dev server after delete→recreate
+Deleting a module file and recreating it later (even in a later session) leaves the RUNNING dev server with a stale module graph: fresh page loads log a 404 + `[vite] Failed to reload <file>` for that path while the UI still renders fine. Restart the artifact workflow after any delete-then-recreate before judging console cleanliness, or the e2e "zero console errors" check fails spuriously.
+
 ## Home screen (post-redesign, Aug 2026)
 Home is pure 2D/DOM — NO canvas until ENTER (3D world is a lazy chunk). WebGL overlays/context errors can only appear AFTER entering; homepage screenshots need no overlay-suppression hacks. The HI home visual difference is the baked plate itself, verifiable from the composite file without a browser language flip.
 

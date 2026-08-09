@@ -301,6 +301,7 @@ export interface UIStrings {
 
   // Home / landing screen (entry presentation layer — Task 25)
   homeTagline: string;
+  homeWelcomeHey: string;
   homeEnterCta: string;
   homeJourney: string;
   homeExplore: string;
@@ -674,6 +675,7 @@ const EN: UIStrings = {
   leaderboardXp: (xp) => `${xp} XP`,
 
   homeTagline: 'Know Your Rights. Build Your Future.',
+  homeWelcomeHey: 'Hey!',
   homeEnterCta: 'Enter Nyaya Nagri',
   homeJourney: 'Your journey begins here',
   homeExplore: 'Explore Nyaya Nagri',
@@ -1051,6 +1053,7 @@ const HI: UIStrings = {
   leaderboardXp: (xp) => `${xp} XP`,
 
   homeTagline: 'अपने अधिकार जानो। अपना भविष्य बनाओ।',
+  homeWelcomeHey: 'नमस्ते!',
   homeEnterCta: 'न्याय नगरी में चलो',
   homeJourney: 'तुम्हारा सफ़र यहीं से शुरू होता है',
   homeExplore: 'न्याय नगरी घूमो',

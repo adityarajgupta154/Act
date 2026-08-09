@@ -1,4 +1,4 @@
 - [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — user pastes Tasks 0-24 one at a time; re-read PRD §9 (+§4 if legal content) before EVERY task; hard safety rules apply forever.
-- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — api-server curl on own PORT; SEVEN smokes (scripts/ untypechecked); new-level-kind + zone checklists; e2e zone-unlock recipe; HI JSON needs language:'hi'.
+- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — api-server curl on own PORT; SEVEN smokes; zone/level-kind checklists; e2e unlock recipe; HI JSON language:'hi'; restart Vite after delete→recreate.
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
-- [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — home art is USER-SUPPLIED, use verbatim; painted signs sit at 40-48% vh under object-cover (keep overlays out); pango for Devanagari baking.
+- [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — art is USER-SUPPLIED, verbatim; extra elements = cutouts of their refs; signs at 40-48% vh (overlays above/below); pango for Devanagari baking.

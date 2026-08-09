@@ -1,0 +1,571 @@
+CRITICAL FINAL HOMEPAGE REDESIGN — PIXEL-ACCURATE REFERENCE MATCH
+
+I am uploading 4 images.
+
+IMAGE 1 = Full-screen Nyaya Nagri background artwork
+IMAGE 2 = Transparent boy character
+IMAGE 3 = Current Replit implementation / incorrect result
+IMAGE 4 = FINAL TARGET REFERENCE
+
+IMPORTANT:
+IMAGE 4 is the FINAL SOURCE OF TRUTH.
+
+Do NOT redesign the homepage.
+Do NOT create a new interpretation.
+Do NOT approximate the reference.
+
+The final desktop homepage must visually match IMAGE 4 as closely as technically possible.
+
+==================================================
+1. COMPLETELY REMOVE THE CURRENT HOMEPAGE
+==================================================
+
+Remove the current homepage implementation shown in IMAGE 3.
+
+Remove/fix:
+
+- current incorrect character placement
+- stretched background
+- cropped central building
+- incorrect image scaling
+- incorrect UI positioning
+- incorrect Get Help placement
+- incorrect spacing
+- incorrect proportions
+- any duplicate/old homepage components
+- any old welcome bubble implementation if it conflicts with IMAGE 4
+
+Do not keep the old homepage underneath the new one.
+
+Do not layer two homepage implementations together.
+
+Start from a clean HomePage implementation using the provided assets.
+
+==================================================
+2. IMAGE 1 — BACKGROUND
+==================================================
+
+IMAGE 1 is the actual Nyaya Nagri background artwork.
+
+Use IMAGE 1 directly.
+
+DO NOT recreate the background using:
+
+- Three.js
+- WebGL
+- procedural geometry
+- CSS buildings
+- 3D components
+- generated trees
+- generated houses
+- generated environment
+
+The background is already complete.
+
+IMPORTANT:
+
+The background must NOT be stretched.
+
+The background must NOT be distorted.
+
+The background must NOT crop the central "KNOW YOUR RIGHTS" building.
+
+The entire important composition of IMAGE 1 must remain visible.
+
+Use the correct aspect-ratio strategy.
+
+Prefer:
+
+width: 100%;
+height: 100%;
+object-fit: cover;
+
+BUT adjust the composition responsively so that the central building and important zone buildings remain visible.
+
+If object-fit: cover causes important content to be cropped, DO NOT simply accept the crop.
+
+Use a responsive positioning strategy or a suitable container/aspect-ratio solution.
+
+Desktop is the primary target.
+
+==================================================
+3. IMAGE 2 — BOY CHARACTER
+==================================================
+
+IMAGE 2 is the transparent boy character.
+
+Use the exact provided character asset.
+
+Do NOT recreate the boy.
+
+Do NOT use a 3D model.
+
+Do NOT generate another character.
+
+Place the boy exactly like IMAGE 4.
+
+Target placement:
+
+- lower-left
+- standing on the foreground pathway
+- facing toward the city
+- fully visible from head to shoes
+- feet visible
+- no clipping
+- no stretching
+
+IMPORTANT:
+
+The boy must remain a SEPARATE foreground layer.
+
+Do not merge him into the background.
+
+Use CSS positioning.
+
+The boy's proportions must remain unchanged.
+
+Use:
+
+height: auto;
+width: auto;
+
+or equivalent aspect-ratio-preserving sizing.
+
+NEVER stretch the character horizontally or vertically.
+
+==================================================
+4. IMAGE 4 — FINAL TARGET
+==================================================
+
+IMAGE 4 is the visual source of truth.
+
+Match IMAGE 4 for:
+
+- background composition
+- character position
+- character size
+- central building visibility
+- logo position
+- top navigation
+- welcome bubble
+- main CTA
+- journey label
+- secondary buttons
+- Get Help button
+- spacing
+- typography
+- colors
+- shadows
+- proportions
+
+Do not make creative changes.
+
+==================================================
+5. CENTRAL BUILDING — VERY IMPORTANT
+==================================================
+
+The "KNOW YOUR RIGHTS" central building must remain completely visible.
+
+This is one of the most important visual elements.
+
+The current implementation is incorrectly cropping the building.
+
+FIX THIS.
+
+The top dome, main facade, "KNOW YOUR RIGHTS" sign, columns and central statue must remain visible.
+
+Do not allow the hero UI to hide an unnecessary portion of the building.
+
+The final composition should resemble IMAGE 4.
+
+==================================================
+6. BACKGROUND SCALING
+==================================================
+
+The current implementation stretches IMAGE 1.
+
+FIX THIS.
+
+Never use:
+
+width: 100%;
+height: 100%;
+
+in a way that distorts the image independently on both axes.
+
+Always preserve the original image aspect ratio.
+
+Use one of these approaches:
+
+- object-fit: cover with controlled object-position
+- object-fit: contain where appropriate
+- aspect-ratio container
+- background-size: cover with carefully selected background-position
+
+Choose whichever produces the closest visual match to IMAGE 4.
+
+IMPORTANT:
+
+Do not allow the central building to become cropped because of the scaling strategy.
+
+==================================================
+7. LOGO
+==================================================
+
+Top-left exactly like IMAGE 4.
+
+Use:
+
+NYAYA
+NAGRI
+
+and:
+
+Know Your Rights. Build Your Future.
+
+Match:
+
+- size
+- position
+- spacing
+- colors
+- typography
+- logo proportions
+
+Do not move it.
+
+==================================================
+8. TOP-RIGHT CONTROLS
+==================================================
+
+Create exactly:
+
+About
+Accessibility
+Settings
+
+Place them in the top-right exactly like IMAGE 4.
+
+Match:
+
+- size
+- spacing
+- pill shape
+- white background
+- shadow
+- icon placement
+- typography
+
+Connect them to the EXISTING functionality.
+
+Do not create duplicate systems.
+
+==================================================
+9. WELCOME BUBBLE
+==================================================
+
+IMAGE 4 shows the intended welcome bubble.
+
+Place it on the left side near the boy.
+
+Use:
+
+Hey! 👋
+
+Welcome to
+Nyaya Nagri!
+
+A friendly city where you play stories,
+meet a helpful guide, and learn the rights
+that keep every child safe and strong.
+
+Match IMAGE 4 for:
+
+- position
+- width
+- height
+- typography
+- background
+- border radius
+- shadow
+- pointer
+
+Do not let it overlap the boy incorrectly.
+
+==================================================
+10. MAIN CTA
+==================================================
+
+Place exactly:
+
+ENTER NYAYA NAGRI →
+
+at the lower center like IMAGE 4.
+
+Match:
+
+- width
+- height
+- position
+- orange color
+- border
+- shadow
+- font size
+- arrow
+- rounded corners
+
+This is the primary CTA.
+
+Clicking it must navigate to the EXISTING language-selection screen.
+
+Do not create a new navigation flow.
+
+==================================================
+11. JOURNEY LABEL
+==================================================
+
+Immediately below the main CTA:
+
+Your journey begins here
+
+Match IMAGE 4.
+
+Keep the same cream/gold styling and positioning.
+
+==================================================
+12. SECONDARY BUTTONS
+==================================================
+
+Below the journey label:
+
+Explore Nyaya Nagri
+How It Works
+
+Place them exactly like IMAGE 4.
+
+Match:
+
+- width
+- height
+- spacing
+- icon size
+- typography
+- shadow
+- border radius
+
+Connect them to existing functionality.
+
+Do NOT allow Explore Nyaya Nagri to bypass required onboarding/safety gates.
+
+==================================================
+13. GET HELP NOW
+==================================================
+
+Bottom-right.
+
+Use:
+
+GET HELP NOW
+
+Childline 1098
+Cyber Crime 155260
+
+Match IMAGE 4 exactly in:
+
+- position
+- width
+- height
+- red color
+- icon
+- typography
+- shadow
+- border radius
+
+IMPORTANT:
+
+Do NOT make it a full-width bottom bar.
+
+The current Replit implementation incorrectly makes the help button stretch across the entire bottom.
+
+FIX THIS.
+
+It must remain a compact bottom-right floating button like IMAGE 4.
+
+Connect it to the EXISTING Get Help functionality.
+
+==================================================
+14. NO 3D HOMEPAGE
+==================================================
+
+The homepage must NOT use Three.js.
+
+Do NOT initialize:
+
+- Three.js scene
+- Three.js camera
+- 3D buildings
+- 3D character
+- 3D environment
+- 3D zones
+
+The homepage should simply be:
+
+IMAGE 1
++
+IMAGE 2
++
+HTML/CSS UI
+
+The actual Three.js game world must remain untouched and load later.
+
+==================================================
+15. LAYOUT ARCHITECTURE
+==================================================
+
+Use a clean structure similar to:
+
+HomePage
+ ├── BackgroundArtwork
+ ├── BoyCharacter
+ ├── BrandHeader
+ ├── TopControls
+ ├── WelcomeBubble
+ ├── PrimaryCTA
+ ├── JourneyLabel
+ ├── SecondaryActions
+ └── GetHelpButton
+
+BackgroundArtwork:
+absolute
+inset: 0
+full viewport
+preserve aspect ratio
+
+BoyCharacter:
+absolute
+separate layer
+preserve aspect ratio
+
+UI:
+absolute/overlay
+positioned according to IMAGE 4
+
+==================================================
+16. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop is the most important target.
+
+Match IMAGE 4's desktop composition first.
+
+Do NOT redesign desktop.
+
+For tablet/mobile:
+
+- preserve aspect ratio
+- preserve character proportions
+- avoid stretching
+- avoid cropping important building areas
+- keep CTA usable
+- keep Get Help accessible
+- prevent UI overlap
+
+Do not simply scale every element independently.
+
+==================================================
+17. EXISTING FUNCTIONALITY
+==================================================
+
+DO NOT BREAK:
+
+- i18n
+- language selection
+- onboarding
+- age-band selection
+- guardian consent
+- avatar creation
+- progress persistence
+- quest system
+- AI companion
+- safety system
+- Get Help
+- existing Three.js game world
+
+Only replace the visual homepage.
+
+==================================================
+18. DO NOT ADD EXTRA ELEMENTS
+==================================================
+
+The homepage should contain ONLY what is shown in IMAGE 4.
+
+Do not add:
+
+- extra cards
+- extra buildings
+- extra characters
+- extra UI
+- extra menus
+- extra 3D objects
+- unnecessary animations
+- new dashboard elements
+
+==================================================
+19. FINAL VISUAL CHECK
+==================================================
+
+Before finishing, compare the running homepage against IMAGE 4.
+
+Check every item:
+
+[ ] Background is NOT stretched
+[ ] Background is NOT incorrectly cropped
+[ ] Central Know Your Rights building is fully visible
+[ ] Boy is fully visible
+[ ] Boy is positioned like IMAGE 4
+[ ] Boy proportions are correct
+[ ] Logo matches position
+[ ] About matches position
+[ ] Accessibility matches position
+[ ] Settings matches position
+[ ] Welcome bubble matches position
+[ ] Enter button matches position
+[ ] Journey label matches position
+[ ] Explore button matches position
+[ ] How It Works matches position
+[ ] Get Help is compact and bottom-right
+[ ] No full-width Get Help bar
+[ ] No duplicate UI
+[ ] No old homepage remains
+[ ] No Three.js homepage rendering
+[ ] Existing navigation still works
+
+==================================================
+10/10 STRICT VISUAL REQUIREMENT
+==================================================
+
+DO NOT interpret IMAGE 4 as inspiration.
+
+IMAGE 4 IS THE TARGET.
+
+The result should look like the same homepage with the same assets and the same composition.
+
+If there is a conflict between your design preference and IMAGE 4:
+
+ALWAYS FOLLOW IMAGE 4.
+
+Do not make creative improvements.
+
+Do not move elements because you think another position looks better.
+
+Do not change the background.
+
+Do not replace the boy.
+
+Do not stretch the background.
+
+Do not crop the central building.
+
+Do not make Get Help full width.
+
+Make the implementation visually match IMAGE 4 first.
