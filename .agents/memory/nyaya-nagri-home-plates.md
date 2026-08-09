@@ -13,7 +13,9 @@ Extra elements the user shows only in a REFERENCE COMPOSITE (e.g. the "Nyaya Nag
 **How to apply:** for any future home-screen visual request, change CSS (crop bias, position, scale, overlay placement) — not the pixels. Only bake/repaint if the user asks for it in that request.
 
 ## Overlay safe zones under `object-cover`
-The painted zone signboards land at roughly **40–48% of viewport height** on every wide desktop size, and that stays stable across 1280/1440/1920 because `object-cover` scales by width and the crop bias is proportional. Keep HTML overlays out of that band on the left half — the welcome bubble may sit **above** it (sky) or, per the final pixel-match reference, **below** it beside the boy (top edge ≤ ~52vh, i.e. `bottom-[26%]` at w-44/48/52); the CTA cluster stays below it (plaza).
+The painted zone signboards land at roughly **40–48% of viewport height** on every wide desktop size, and that stays stable across 1280/1440/1920 because `object-cover` scales by width and the crop bias is proportional. Keep HTML overlays out of that band on the left half; the CTA cluster stays below it (plaza).
+
+**Welcome bubble: REMOVED for good (Aug 9, 2026).** The user deleted it twice — once even after their own pixel-match reference reinstated it. Do NOT reintroduce it (or new left-side overlays) unless explicitly asked; if it ever returns, the safe slots are above the sign band (sky) or beside the boy with top edge ≤ ~52vh.
 
 Vertical crop bias: `object-[50%_12%]` protects the dome + its little flag (top edge of painting) on 16:9 — the sacrificed strip is bottom cobblestones that the UI column covers anyway. Don't raise Y past ~16% or the flag clips at 1920×1080.
 
