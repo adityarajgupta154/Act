@@ -1,0 +1,517 @@
+NYAYA NAGRI — IMPLEMENT 3D HOME / LANDING SCREEN
+
+You are working on the existing Nyaya Nagri project.
+
+I am attaching a reference image showing the target design for the new Home screen.
+
+IMPORTANT:
+Do NOT rebuild the project.
+Do NOT replace the existing architecture.
+Do NOT remove or break existing functionality.
+
+First inspect the existing codebase and understand:
+- current routing/navigation
+- Three.js scene
+- onboarding flow
+- i18n/language system
+- safety/Get Help system
+- avatar system
+- progress/state persistence
+- existing UI components
+- existing assets
+
+Then implement the Home screen inside the existing architecture.
+
+==================================================
+1. PURPOSE
+==================================================
+
+Currently, the website opens directly on the language-selection screen.
+
+Change the entry flow to:
+
+HOME
+  ↓
+SELECT LANGUAGE
+  ↓
+HOW IT WORKS
+  ↓
+AGE BAND
+  ↓
+GUARDIAN CONSENT
+  ↓
+AVATAR CREATION
+  ↓
+ENTER NYAYA NAGRI WORLD
+
+The new Home screen should be the first screen users see when they open Nyaya Nagri.
+
+Do NOT show the language selector immediately on initial load.
+
+==================================================
+2. REFERENCE IMAGE
+==================================================
+
+Use the attached reference image as the PRIMARY visual reference.
+
+Recreate the same overall:
+
+- 3D composition
+- visual hierarchy
+- camera perspective
+- warm color palette
+- game-world feeling
+- UI hierarchy
+- spacing
+- typography style
+- character placement
+- central CTA
+- environmental depth
+
+Do NOT make it a flat website landing page.
+
+It must feel like the entrance screen of a 3D educational game.
+
+==================================================
+3. NYAYA NAGRI WORLD
+==================================================
+
+Create/use the existing Three.js world as the background.
+
+The scene should contain:
+
+- Grand central "Know Your Rights" civic building
+- Justice/scales statue
+- Stone pathways
+- Trees
+- Flowers
+- Small gardens
+- Indian flag
+- Nyaya Nagri airship/blimp
+- Stylized Indian-inspired architecture
+- Soft blue sky
+- Warm daylight
+- Subtle environmental animation
+
+The environment should look polished but lightweight.
+
+Use low-poly/stylized geometry.
+
+Do NOT create an extremely detailed AAA environment.
+
+Performance is important.
+
+==================================================
+4. ZONE LANDMARKS
+==================================================
+
+Show the major Nyaya Nagri zones as distant visual landmarks around the central building.
+
+Use the existing project terminology.
+
+Examples:
+
+SAFE ZONE
+RIGHT TO CHILDHOOD
+SCHOOL RIGHTS
+JUSTICE SYSTEM
+DIGITAL SAFETY
+FAMILY & COMMUNITY
+
+These should look like small themed buildings/portals in the distance.
+
+IMPORTANT:
+
+They are visual previews on the Home screen.
+
+They are NOT directly interactive gameplay zones yet.
+
+Do not bypass the normal onboarding flow.
+
+==================================================
+5. PLAYER CHARACTER
+==================================================
+
+Use the existing player/avatar system if available.
+
+The reference design uses a young Indian boy.
+
+Place the boy in the lower-left / foreground area.
+
+He should be shown from a rear or three-quarter view, looking toward Nyaya Nagri.
+
+Appearance:
+
+- approximately 10–13 years old
+- Indian appearance
+- blue Nyaya Nagri hoodie
+- small backpack
+- dark shorts/pants
+- blue/white shoes
+- friendly stylized 3D proportions
+
+Do NOT use a real person's likeness.
+
+Do not create a second incompatible avatar system.
+
+Reuse the existing avatar architecture whenever possible.
+
+Add subtle idle animation.
+
+==================================================
+6. BRANDING
+==================================================
+
+Top-left:
+
+NYAYA NAGRI
+
+Subtitle:
+
+Know Your Rights. Build Your Future.
+
+Use the existing Nyaya Nagri branding where available.
+
+Visual style:
+
+- Orange
+- Deep navy
+- White/cream
+- Justice/scales emblem
+
+Do not introduce a completely different brand identity.
+
+==================================================
+7. WELCOME MESSAGE
+==================================================
+
+Near the player character show a friendly speech bubble.
+
+Example:
+
+"Hey! 👋
+
+Welcome to
+Nyaya Nagri!
+
+A city where every
+child can discover
+their rights."
+
+This should be a UI overlay, not hard-coded into the 3D world.
+
+Keep it responsive.
+
+==================================================
+8. PRIMARY CTA
+==================================================
+
+The main action must be:
+
+ENTER NYAYA NAGRI →
+
+Make this the most visually prominent button on the screen.
+
+Design:
+
+- Large orange 3D button
+- Rounded/pill shape
+- Slight depth/elevation
+- Soft shadow
+- White bold text
+- Arrow icon
+- Hover animation
+- Press animation
+
+Below it:
+
+"Your journey begins here"
+
+On click:
+
+Navigate to the EXISTING language-selection onboarding step.
+
+Do NOT create a new onboarding flow.
+
+==================================================
+9. SECONDARY ACTIONS
+==================================================
+
+Below/near the primary CTA add:
+
+Explore Nyaya Nagri
+How It Works
+
+These should be visually secondary.
+
+IMPORTANT:
+
+"Explore Nyaya Nagri" must NOT bypass required onboarding/safety steps.
+
+If the existing product flow requires language/age/guardian consent first, route the user through that flow.
+
+"How It Works" can open the existing How It Works onboarding screen.
+
+Do not duplicate that screen if it already exists.
+
+==================================================
+10. TOP-RIGHT CONTROLS
+==================================================
+
+Add small, clean controls:
+
+About
+Accessibility
+Settings
+
+Use existing settings/accessibility functionality where available.
+
+Do not create duplicate settings logic.
+
+Keep these visually subtle.
+
+==================================================
+11. GET HELP NOW
+==================================================
+
+Keep the existing persistent safety feature.
+
+Do NOT remove or redesign its underlying functionality.
+
+Display:
+
+GET HELP NOW
+
+Childline 1098
+Cyber Crime 155260
+
+Use the existing support-services modal/screen when clicked.
+
+Do NOT create a new emergency handler.
+
+The safety button should remain clearly visible but should not overpower the main CTA.
+
+==================================================
+12. 3D CAMERA
+==================================================
+
+Use a cinematic third-person/elevated camera.
+
+Composition:
+
+Foreground:
+Player character
+
+Middle:
+Paths + plaza + gardens
+
+Background:
+Central Know Your Rights building
+
+Far background:
+Nyaya Nagri districts, trees, mountains/sky
+
+Camera should provide a clear sense of depth.
+
+Do NOT use a completely flat orthographic UI composition.
+
+==================================================
+13. ANIMATION
+==================================================
+
+Add subtle animations:
+
+- Character idle breathing
+- Character slight head movement
+- Flags gently moving
+- Airship slowly moving
+- Trees/environment subtle movement
+- Floating particles
+- Soft environmental lighting
+- CTA hover/press animation
+- Welcome speech bubble entrance
+- Gentle camera/environment movement
+
+Keep animations lightweight.
+
+Respect reduced-motion settings.
+
+==================================================
+14. NAVIGATION LOGIC
+==================================================
+
+Implement:
+
+App launch
+    ↓
+Home Screen
+    ↓
+ENTER NYAYA NAGRI
+    ↓
+Existing Language Selection
+    ↓
+Existing Onboarding Flow
+
+If a user has already completed onboarding:
+
+App launch
+    ↓
+Home Screen
+    ↓
+ENTER NYAYA NAGRI
+    ↓
+Existing Main Game World
+
+Do not force an already-onboarded user through onboarding again.
+
+Use the existing persisted onboarding/progress state.
+
+==================================================
+15. BACK BUTTON / BROWSER BEHAVIOR
+==================================================
+
+Integrate correctly with the existing router/navigation system.
+
+Browser back should behave naturally.
+
+Do not create multiple duplicate navigation states.
+
+Refreshing the page must preserve the correct persisted state.
+
+==================================================
+16. RESPONSIVE DESIGN
+==================================================
+
+Desktop:
+
+- Large cinematic 3D world
+- Player foreground
+- Central CTA
+- Full environment
+
+Tablet:
+
+- Scale UI proportionally
+- Keep player and central building visible
+
+Mobile:
+
+- Recompose the scene
+- Reduce background detail
+- Keep the player visible
+- Keep CTA easily tappable
+- Keep Get Help accessible
+- Avoid text overlap
+- Do not simply shrink the desktop layout
+
+==================================================
+17. PERFORMANCE
+==================================================
+
+This is a Three.js educational game.
+
+Optimize for mid-range and lower-end devices.
+
+Use:
+
+- Reusable geometries
+- Low-poly models
+- Texture reuse
+- Limited dynamic lights
+- Minimal post-processing
+- Efficient shadows
+- Frustum culling where appropriate
+- Reasonable draw calls
+- Asset lazy loading where useful
+
+Do not allow the Home screen to significantly reduce the performance of the actual game world.
+
+==================================================
+18. EXISTING CODE
+==================================================
+
+Before writing code:
+
+1. Inspect the existing project structure.
+2. Find the current app entry route.
+3. Find the existing onboarding components.
+4. Find the existing Three.js scene.
+5. Find the existing avatar system.
+6. Find the existing i18n system.
+7. Find the existing Get Help functionality.
+8. Find the existing state persistence.
+9. Reuse existing components and utilities.
+
+Do not duplicate existing systems.
+
+Modify only the necessary files.
+
+==================================================
+19. IMPORTANT FUNCTIONALITY RULE
+
+The Home screen is a PRESENTATION/ENTRY layer.
+
+It must NOT modify:
+
+- Legal content
+- Quest engine
+- AI companion
+- Safety logic
+- Guardian consent logic
+- Age-band logic
+- Language logic
+- Progress calculation
+- Avatar data model
+- Existing game world functionality
+
+Only change the initial entry experience and its visual presentation.
+
+==================================================
+20. FINAL VISUAL QUALITY
+
+The final result should feel like:
+
+"An award-winning 3D educational game entrance."
+
+NOT:
+
+"A normal website with a Three.js background."
+
+The user should immediately understand:
+
+"This is Nyaya Nagri — a game world where I will explore and learn my rights."
+
+The screen should be visually close to the attached reference image while remaining native to the existing Nyaya Nagri project.
+
+==================================================
+21. ACCEPTANCE TEST
+
+Before finishing, verify:
+
+[ ] Home appears first for a new user
+[ ] Language screen no longer appears immediately
+[ ] ENTER NYAYA NAGRI works
+[ ] Existing onboarding flow still works
+[ ] Existing language selection works
+[ ] Existing age selection works
+[ ] Existing guardian consent works
+[ ] Existing avatar creation works
+[ ] Existing Get Help button works
+[ ] Existing AI companion is unaffected
+[ ] Existing game world is unaffected
+[ ] Returning users do not unnecessarily repeat onboarding
+[ ] Browser refresh preserves state
+[ ] Mobile layout works
+[ ] Reduced-motion works
+[ ] No console errors
+[ ] No broken routes
+[ ] No duplicate state management
+[ ] Performance remains stable
+
+IMPORTANT:
+Do not stop after creating a visual mockup.
+
+Actually implement the Home screen into the running application and connect it to the existing navigation/state system.
+
+After implementation, test the complete flow from:
+Home → Language → Onboarding → Game World.

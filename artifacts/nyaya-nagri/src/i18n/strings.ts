@@ -298,6 +298,19 @@ export interface UIStrings {
   leaderboardYouTag: string;
   leaderboardNeverPublic: string;
   leaderboardXp: (xp: number) => string;
+
+  // Home / landing screen (entry presentation layer — Task 25)
+  homeTagline: string;
+  homeWelcomeHey: string;
+  homeEnterCta: string;
+  homeJourney: string;
+  homeExplore: string;
+  homeCentralBanner: string;
+  homeLoading: string;
+  homeAbout: string;
+  homeAccessibility: string;
+  homeAboutTitle: string;
+  homeAboutBody: string[];
 }
 
 const EN: UIStrings = {
@@ -660,6 +673,22 @@ const EN: UIStrings = {
   leaderboardNeverPublic:
     'Only your own class group could ever see this board. There is no public or school-wide leaderboard in Nyaya Nagri.',
   leaderboardXp: (xp) => `${xp} XP`,
+
+  homeTagline: 'Know Your Rights. Build Your Future.',
+  homeWelcomeHey: 'Hey!',
+  homeEnterCta: 'Enter Nyaya Nagri',
+  homeJourney: 'Your journey begins here',
+  homeExplore: 'Explore Nyaya Nagri',
+  homeCentralBanner: 'Know Your Rights',
+  homeLoading: 'Loading…',
+  homeAbout: 'About',
+  homeAccessibility: 'Accessibility',
+  homeAboutTitle: 'About Nyaya Nagri',
+  homeAboutBody: [
+    'Nyaya Nagri is a learning city where children aged 8-18 explore the rights that protect them — through stories, quests, and games in English and Hindi.',
+    'It is an awareness and confidence-building tool — not legal advice and not a crisis service. For real help, the red Get Help Now button always shows Childline 1098 and Cyber Crime 155260.',
+    'Everything you do stays on this device: no accounts, no photos, no real names, no personal details.',
+  ],
 };
 
 const HI: UIStrings = {
@@ -1022,6 +1051,22 @@ const HI: UIStrings = {
   leaderboardNeverPublic:
     'यह बोर्ड सिर्फ़ तुम्हारा अपना क्लास ग्रुप ही देख सकता है। न्याय नगरी में कोई पब्लिक या पूरे स्कूल का लीडरबोर्ड नहीं है।',
   leaderboardXp: (xp) => `${xp} XP`,
+
+  homeTagline: 'अपने अधिकार जानो। अपना भविष्य बनाओ।',
+  homeWelcomeHey: 'नमस्ते!',
+  homeEnterCta: 'न्याय नगरी में चलो',
+  homeJourney: 'तुम्हारा सफ़र यहीं से शुरू होता है',
+  homeExplore: 'न्याय नगरी घूमो',
+  homeCentralBanner: 'अपने अधिकार जानो',
+  homeLoading: 'लोड हो रहा है…',
+  homeAbout: 'परिचय',
+  homeAccessibility: 'सुलभता',
+  homeAboutTitle: 'न्याय नगरी के बारे में',
+  homeAboutBody: [
+    'न्याय नगरी एक सीखने का शहर है जहाँ 8-18 साल के बच्चे कहानियों, क्वेस्ट और खेलों के ज़रिए वे अधिकार सीखते हैं जो उनकी रक्षा करते हैं — हिंदी और अंग्रेज़ी में।',
+    'यह जागरूकता और हिम्मत बढ़ाने का साधन है — कानूनी सलाह या आपातकालीन सेवा नहीं। असली मदद के लिए लाल "अभी मदद लो" बटन हमेशा चाइल्डलाइन 1098 और साइबर क्राइम 155260 दिखाता है।',
+    'तुम्हारा सब कुछ इसी डिवाइस पर रहता है: कोई खाता नहीं, कोई फ़ोटो नहीं, कोई असली नाम नहीं, कोई निजी जानकारी नहीं।',
+  ],
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

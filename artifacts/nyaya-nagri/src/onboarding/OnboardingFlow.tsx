@@ -19,10 +19,6 @@
  */
 import React, { useState } from 'react';
 import {
-  Map as MapIcon,
-  MessageCircle,
-  ShieldAlert,
-  Award,
   Check,
   ArrowRight,
   ArrowLeft,
@@ -35,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { AvatarBuilder } from '@/player/AvatarBuilder';
 import { createDefaultAvatar, type PlayerAvatarConfig } from '@/player/avatarConfig';
 import { WelcomeScene } from './WelcomeScene';
+import { HowItWorksContent } from './HowItWorksContent';
 
 const STEP_COUNT = 5;
 
@@ -50,13 +47,6 @@ export function OnboardingFlow() {
     { value: '8-11', desc: t.ageBandDesc811 },
     { value: '12-15', desc: t.ageBandDesc1215 },
     { value: '16-18', desc: t.ageBandDesc1618 },
-  ];
-
-  const introIcons = [
-    <MapIcon key="map" className="w-5 h-5" />,
-    <Award key="award" className="w-5 h-5" />,
-    <MessageCircle key="chat" className="w-5 h-5" />,
-    <ShieldAlert key="shield" className="w-5 h-5" />,
   ];
 
   const setLanguage = (language: Language) => settingsStore.update({ language });
@@ -101,27 +91,10 @@ export function OnboardingFlow() {
           ))}
         </div>
 
-        {/* Step 1 — How it works */}
+        {/* Step 1 — How it works (same shared content the Home screen shows) */}
         {step === 1 && (
           <div className="animate-in fade-in duration-300">
-            <h2 className="font-display font-bold text-2xl md:text-3xl text-slate-800 mb-6 text-center">
-              {t.howItWorksTitle}
-            </h2>
-            <ul className="space-y-4 mb-8">
-              {t.howItWorksPoints.map((point, i) => (
-                <li key={i} className="flex items-start gap-3">
-                  <div
-                    className={cn(
-                      'p-2.5 rounded-xl shrink-0',
-                      i === 3 ? 'bg-red-50 text-red-500' : 'bg-sky-50 text-sky-600',
-                    )}
-                  >
-                    {introIcons[i]}
-                  </div>
-                  <p className="text-slate-700 font-medium leading-relaxed mt-1">{point}</p>
-                </li>
-              ))}
-            </ul>
+            <HowItWorksContent />
           </div>
         )}
 

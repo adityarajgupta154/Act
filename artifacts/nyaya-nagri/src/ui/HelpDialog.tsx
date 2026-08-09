@@ -16,24 +16,51 @@ import { cn } from '@/lib/utils';
  * path. Entries are large, tappable deep links (tel: for one-tap calling on
  * mobile; https for the official reporting portals) — the platform educates
  * and deep-links to real support services, never replaces them (PRD §4.3).
+ *
+ * Task 25 (Home screen): an optional `card` trigger variant additionally
+ * shows the two helpline numbers right on the button. It opens the exact
+ * SAME shared screen — there is still only one help handler in the app.
  */
-export function HelpDialog() {
+export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } = {}) {
   const { helpPulse, helpOpen } = useUIStore();
   const t = useStrings();
 
   return (
     <Dialog.Root open={helpOpen} onOpenChange={(open) => (open ? openHelp() : closeHelp())}>
       <Dialog.Trigger asChild>
-        <button
-          className={cn(
-            "flex items-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-5 py-4 md:px-6 md:py-4 rounded-full shadow-lg transition-transform active:scale-95 duration-200 pointer-events-auto",
-            helpPulse && "animate-pulse ring-4 ring-red-500/50"
-          )}
-          aria-label={t.getHelpNow}
-        >
-          <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
-          <span className="font-display font-bold text-lg md:text-xl tracking-wide hidden sm:inline-block">{t.getHelpNow}</span>
-        </button>
+        {variant === 'pill' ? (
+          <button
+            className={cn(
+              "flex items-center gap-2 bg-red-500 hover:bg-red-600 active:bg-red-700 text-white px-5 py-4 md:px-6 md:py-4 rounded-full shadow-lg transition-transform active:scale-95 duration-200 pointer-events-auto",
+              helpPulse && "animate-pulse ring-4 ring-red-500/50"
+            )}
+            aria-label={t.getHelpNow}
+          >
+            <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
+            <span className="font-display font-bold text-lg md:text-xl tracking-wide hidden sm:inline-block">{t.getHelpNow}</span>
+          </button>
+        ) : (
+          <button
+            className={cn(
+              'pointer-events-auto flex w-full items-center justify-center gap-3 rounded-2xl xl:w-auto',
+              'bg-gradient-to-b from-red-500 to-red-600 text-white px-4 py-2.5 xl:px-5 xl:py-3',
+              'ring-2 ring-white/40 border-b-4 border-red-800 shadow-[0_14px_28px_-12px_rgba(127,29,29,0.9)]',
+              'transition-all duration-150 hover:to-red-500 active:translate-y-0.5 active:border-b-2 touch-manipulation',
+              helpPulse && 'animate-pulse ring-4 ring-red-400/60'
+            )}
+            aria-label={t.getHelpNow}
+          >
+            <span className="bg-white/20 rounded-full p-2 shrink-0">
+              <ShieldAlert className="w-6 h-6 md:w-7 md:h-7" />
+            </span>
+            <span className="flex flex-col items-start text-left leading-tight">
+              <span className="font-display font-bold text-base md:text-lg">{t.getHelpNow}</span>
+              <span className="text-[11px] md:text-xs font-semibold text-white/95">
+                {t.childline} 1098 · {t.cyberCrime} 155260
+              </span>
+            </span>
+          </button>
+        )}
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 animate-in fade-in duration-200" />

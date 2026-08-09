@@ -1,6 +1,6 @@
 # Nyaya Nagri
 
-A gamified 3D legal-literacy platform for children in India (ages 8-18): kids explore a low-poly 3D map of India, complete Rights Quests about their legal rights, and always have one-tap access to real helplines (Childline 1098 / Cyber Crime 155260).
+A gamified 3D legal-literacy platform for children in India (ages 8-18): kids explore a low-poly 3D map of India, complete Rights Quests about their legal rights, and always have one-tap access to real helplines (Childline 1098 / Cyber Crime 155260). The landing page is a static illustrated 2D scene (no Three.js); the 3D world lazy-loads only after ENTER.
 
 ## Run & Operate
 

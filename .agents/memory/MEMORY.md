@@ -1,3 +1,4 @@
 - [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — user pastes Tasks 0-24 one at a time; re-read PRD §9 (+§4 if legal content) before EVERY task; hard safety rules apply forever.
 - [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — api-server curl on own PORT; SEVEN smokes (scripts/ untypechecked); new-level-kind + zone checklists; e2e zone-unlock recipe; HI JSON needs language:'hi'.
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
+- [Nyaya Nagri home plates](nyaya-nagri-home-plates.md) — baked EN/HI signage recipe (pango for Devanagari!), plaque coords, mobile-boy §13 decision, image-tooling quirks (ReadFile previews ignore alpha).

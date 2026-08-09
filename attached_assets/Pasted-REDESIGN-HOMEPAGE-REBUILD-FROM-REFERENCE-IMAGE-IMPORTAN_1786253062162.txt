@@ -1,0 +1,500 @@
+REDESIGN HOMEPAGE — REBUILD FROM REFERENCE IMAGE
+
+IMPORTANT:
+Completely remove the CURRENT homepage visual implementation.
+
+The current homepage is using Three.js / procedural 3D components for the buildings, environment, trees, zones, etc. DO NOT continue using that approach for the homepage.
+
+I want the homepage to visually match the ATTACHED REFERENCE IMAGE.
+
+==================================================
+CORE REQUIREMENT
+==================================================
+
+Rebuild the homepage as a polished 2D visual landing screen that LOOKS like the attached reference image.
+
+DO NOT create the environment using:
+- Three.js 3D objects
+- BoxGeometry
+- SphereGeometry
+- procedural buildings
+- procedural trees
+- 3D meshes
+- 3D zone components
+- canvas-based 3D environment
+
+The homepage should NOT be a 3D scene.
+
+Instead, use the reference image as the visual foundation.
+
+The goal is:
+
+REFERENCE IMAGE
+        ↓
+High-quality visual background/composition
+        +
+HTML/CSS UI overlays
+        +
+Existing application functionality
+
+==================================================
+REFERENCE IMAGE
+==================================================
+
+Use the attached reference image as the PRIMARY visual reference.
+
+Match the reference as closely as possible in:
+
+- overall composition
+- camera perspective
+- visual hierarchy
+- character placement
+- central building placement
+- zone placement
+- colors
+- spacing
+- typography
+- CTA placement
+- UI proportions
+- shadows
+- rounded corners
+- overall premium game aesthetic
+
+Do NOT interpret the image as instructions to build a new 3D world.
+
+It is a VISUAL DESIGN REFERENCE.
+
+==================================================
+1. HOMEPAGE BACKGROUND
+==================================================
+
+Create a single polished visual background that resembles the reference image.
+
+The background should visually contain:
+
+- Grand central "KNOW YOUR RIGHTS" building
+- Nyaya Nagri surrounding buildings
+- Safe Zone
+- Right to Childhood
+- School Rights
+- Justice System
+- Digital Safety
+- Family & Community
+- trees
+- pathways
+- flowers
+- Indian flag
+- sky
+- clouds
+- Nyaya Nagri airship
+- central justice statue
+- Indian-inspired architecture
+
+IMPORTANT:
+
+These should be represented visually as part of the background composition.
+
+Do NOT create each building as a separate interactive 3D component.
+
+==================================================
+2. HOW TO IMPLEMENT THE VISUAL
+==================================================
+
+Preferred implementation:
+
+Use a single high-quality background illustration/image for the environment.
+
+If an existing project asset already contains the correct visual, reuse it.
+
+Otherwise create the homepage composition using:
+
+- a background image
+- layered image assets
+- CSS positioning
+- CSS gradients
+- CSS shadows
+- HTML elements
+
+The environment itself should behave like a static illustrated game landing scene.
+
+The UI should be HTML/CSS on top of it.
+
+This is intentional.
+
+==================================================
+3. PLAYER BOY
+==================================================
+
+Use the boy from the reference design.
+
+The boy should appear in the lower-left area.
+
+Use a 2D image/illustration asset.
+
+DO NOT create the boy using Three.js geometry.
+
+Position him using normal HTML/CSS.
+
+The boy should look toward the Nyaya Nagri city.
+
+He should feel like the player's guide/representative.
+
+Do not use a real person's likeness.
+
+==================================================
+4. CENTRAL BUILDING
+==================================================
+
+The most important visual element is the central:
+
+KNOW YOUR RIGHTS
+
+building.
+
+It should visually dominate the middle of the screen.
+
+Do not create this building procedurally.
+
+It should be part of the background illustration/image.
+
+==================================================
+5. ZONE BUILDINGS
+==================================================
+
+Place the zone landmarks around the central building exactly as suggested by the reference.
+
+Visual labels:
+
+SAFE ZONE
+RIGHT TO CHILDHOOD
+SCHOOL RIGHTS
+JUSTICE SYSTEM
+DIGITAL SAFETY
+FAMILY & COMMUNITY
+
+They are visual elements on the landing screen.
+
+Do NOT make them actual gameplay zones on this page.
+
+The real interactive world begins after onboarding.
+
+==================================================
+6. TOP LEFT BRANDING
+==================================================
+
+Use:
+
+NYAYA
+NAGRI
+
+with the existing Nyaya Nagri logo.
+
+Subtitle:
+
+Know Your Rights. Build Your Future.
+
+Match the reference:
+
+- orange NYAYA
+- navy NAGRI
+- clean bold typography
+- justice emblem
+
+Keep it fixed at the top-left.
+
+==================================================
+7. TOP RIGHT
+==================================================
+
+Create three small pill buttons:
+
+ABOUT
+ACCESSIBILITY
+SETTINGS
+
+Use clean white/cream backgrounds with subtle shadows.
+
+Reuse the existing functionality.
+
+Do NOT create duplicate settings or accessibility logic.
+
+==================================================
+8. WELCOME SPEECH BUBBLE
+==================================================
+
+Place the welcome speech bubble on the lower-left near the boy.
+
+Content:
+
+"Hey! 👋
+
+Welcome to Nyaya Nagri!
+
+A friendly city where you play stories,
+meet a helpful guide, and learn the rights
+that keep every child safe and strong."
+
+Style:
+
+- cream/off-white
+- rounded corners
+- subtle shadow
+- navy text
+- orange accent
+- small speech-bubble pointer
+
+==================================================
+9. MAIN CTA
+==================================================
+
+At the bottom-center create a large:
+
+ENTER NYAYA NAGRI →
+
+button.
+
+This is the PRIMARY CTA.
+
+Style:
+
+- bright Nyaya Nagri orange
+- large pill shape
+- white bold text
+- subtle 3D-style shadow ONLY using CSS
+- slight hover scale
+- arrow icon
+
+Below it:
+
+Your journey begins here
+
+Do NOT use a 3D button component.
+
+Use normal HTML/CSS.
+
+==================================================
+10. SECONDARY BUTTONS
+==================================================
+
+Below the primary CTA:
+
+Explore Nyaya Nagri
+How It Works
+
+Use white/cream pill buttons.
+
+Keep them smaller than the main CTA.
+
+==================================================
+11. GET HELP NOW
+==================================================
+
+Keep the existing safety functionality.
+
+Bottom-right:
+
+GET HELP NOW
+
+Childline 1098
+Cyber Crime 155260
+
+Use the existing support/help modal.
+
+Do NOT change its functionality.
+
+Only redesign its appearance to match the reference.
+
+==================================================
+12. IMPORTANT — NO 3D HOMEPAGE
+==================================================
+
+Remove the current homepage's:
+
+- Three.js environment
+- procedural buildings
+- 3D trees
+- 3D zone components
+- 3D statue
+- 3D terrain
+- 3D homepage objects
+
+The MAIN GAME WORLD can continue using Three.js.
+
+Only the HOMEPAGE should become a static illustrated landing screen.
+
+Architecture should become:
+
+HOME PAGE
+   ↓
+Static visual background
+   +
+HTML/CSS UI
+   ↓
+ENTER NYAYA NAGRI
+   ↓
+Existing language selection
+   ↓
+Existing onboarding
+   ↓
+Existing Three.js game world
+
+==================================================
+13. RESPONSIVE DESIGN
+==================================================
+
+Desktop should closely match the reference image.
+
+For tablet/mobile:
+
+Do not simply shrink the desktop screenshot.
+
+Recompose the layout.
+
+Keep:
+
+- logo
+- welcome message
+- central visual
+- Enter button
+- Get Help Now
+
+fully visible.
+
+Avoid text overlap.
+
+==================================================
+14. PERFORMANCE
+==================================================
+
+Because this homepage is no longer a Three.js scene:
+
+- remove unnecessary 3D rendering
+- do not initialize Three.js for the homepage
+- do not load unnecessary 3D assets
+- use optimized image assets
+- lazy-load the actual Three.js game world only after entering the game
+
+This should make the initial page load faster.
+
+==================================================
+15. NAVIGATION
+==================================================
+
+New user:
+
+HOME
+ ↓
+ENTER NYAYA NAGRI
+ ↓
+LANGUAGE SELECTION
+ ↓
+HOW IT WORKS
+ ↓
+AGE BAND
+ ↓
+GUARDIAN CONSENT
+ ↓
+AVATAR CREATION
+ ↓
+GAME WORLD
+
+Returning user:
+
+HOME
+ ↓
+ENTER NYAYA NAGRI
+ ↓
+EXISTING GAME WORLD
+
+Use the existing persisted onboarding state.
+
+Do not break existing routing.
+
+==================================================
+16. DO NOT BREAK EXISTING SYSTEMS
+==================================================
+
+Do NOT modify or remove:
+
+- language/i18n system
+- age-band system
+- guardian consent
+- avatar system
+- quest engine
+- AI companion
+- progress system
+- safety system
+- Get Help functionality
+- existing Three.js GAME WORLD
+
+Only replace the HOME PAGE visual implementation.
+
+==================================================
+17. IMPLEMENTATION APPROACH
+==================================================
+
+First inspect the current homepage implementation.
+
+Identify and remove the current procedural/Three.js homepage rendering.
+
+Then create a dedicated:
+
+HomePage
+
+component.
+
+Suggested structure:
+
+HomePage
+ ├── HomeBackground
+ ├── BrandHeader
+ ├── WelcomeBubble
+ ├── PrimaryCTA
+ ├── SecondaryActions
+ ├── TopControls
+ └── GetHelpButton
+
+Keep the code modular and clean.
+
+Use CSS for all visual effects.
+
+Do not create unnecessary dependencies.
+
+==================================================
+18. FINAL RESULT
+==================================================
+
+The final homepage should look like the ATTACHED REFERENCE IMAGE.
+
+The user should feel:
+
+"This is a polished animated educational game landing page."
+
+NOT:
+
+"This is a Three.js demo."
+
+The actual 3D Three.js experience should start only after the user completes the onboarding flow.
+
+Most importantly:
+
+REMOVE THE CURRENT HOMEPAGE DESIGN COMPLETELY.
+
+DO NOT MODIFY IT.
+
+REPLACE IT WITH A REFERENCE-IMAGE-BASED STATIC ILLUSTRATED HOMEPAGE.
+
+After implementation, test:
+
+- homepage loading
+- CTA navigation
+- language navigation
+- existing onboarding
+- returning-user flow
+- Get Help
+- About
+- Accessibility
+- Settings
+- responsive layout
+- browser refresh
+- console errors
