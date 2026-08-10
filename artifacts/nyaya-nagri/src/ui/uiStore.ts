@@ -1,5 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { getZone, isZoneUnlocked } from '@/world/zones';
+import { getStoryLevel, isStoryLevelUnlockedIn } from '@/story/storyData';
+import { progressStore } from '@/data/progressStore';
 import type { LevelKind } from '@/quests/schema';
 
 export type UIState = {
@@ -27,6 +29,18 @@ export type UIState = {
   /** Full-screen Map modal (reference redesign) — opened from the minimap. */
   mapOpen: boolean;
   /**
+   * Story Adventure (Aug 2026): id of the story level whose house door the
+   * player is standing at (proximity prompt), else null. Set by WorldScene
+   * exactly like nearbyZoneId.
+   */
+  nearbyStoryId: string | null;
+  /**
+   * The open Story Adventure overlay: level id + starting slide (0 outside
+   * the DEV screenshot seam). Null when no story is open. Movement freezes
+   * while set, like activeZoneId.
+   */
+  activeStory: { id: string; initialSlide: number } | null;
+  /**
    * Task 15: the level currently being played inside the active zone, so
    * the AI companion can greet level entry (like it greets zone entry).
    * Null while on the Level-Select screen or outside a zone.
@@ -53,6 +67,8 @@ let state: UIState = {
   avatarEditOpen: false,
   shopOpen: false,
   mapOpen: false,
+  nearbyStoryId: null,
+  activeStory: null,
   activeLevel: null,
   certificateZoneId: null,
 };
@@ -111,6 +127,24 @@ export function exitZone() {
       uiStore.set({ isTransitioning: false });
     }, 300);
   }, 300);
+}
+
+/**
+ * Story Adventure entry (Aug 2026). Lock rules are enforced HERE too —
+ * exactly like enterZone — so no UI path can open a locked or empty story
+ * level (Level 2 stays a teaser until its slides ship). The overlay itself
+ * animates in; there is no black world-fade for the house door.
+ */
+export function openStory(storyId: string, initialSlide = 0) {
+  if (state.isTransitioning || state.activeZoneId || state.activeStory) return;
+  const level = getStoryLevel(storyId);
+  if (!level || level.slides.length === 0) return;
+  if (!isStoryLevelUnlockedIn(progressStore.getState().storyProgress, storyId)) return;
+  uiStore.set({ activeStory: { id: storyId, initialSlide } });
+}
+
+export function closeStory() {
+  uiStore.set({ activeStory: null });
 }
 
 export function openProgress() {
@@ -181,7 +215,12 @@ export function closeCertificate() {
 // walk the 3D world to a zone gate. Expose zone entry for tests. Stripped
 // from production builds (import.meta.env.DEV is false there).
 if (import.meta.env?.DEV && typeof window !== 'undefined') {
-  (window as unknown as Record<string, unknown>).__nnDebug = { enterZone, exitZone };
+  (window as unknown as Record<string, unknown>).__nnDebug = {
+    enterZone,
+    exitZone,
+    openStory,
+    closeStory,
+  };
 }
 
 export function triggerHelpPulse() {

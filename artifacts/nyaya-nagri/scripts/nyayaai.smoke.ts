@@ -90,10 +90,10 @@ check('idle float animation (subtle, motion-safe)', widget.includes('nyaya-float
 
 console.log('— real-time voice (Gemini Live, ephemeral tokens) —');
 check('voice mode wired (LiveVoiceEngine + tap toggle)', widget.includes('new LiveVoiceEngine') && widget.includes('toggleVoice'));
-check('token minted server-side (useNyayaAiVoiceToken)', widget.includes('useNyayaAiVoiceToken'));
+check('token minted server-side (raw nyayaAiVoiceToken client fn)', widget.includes('nyayaAiVoiceToken({'));
 check(
   'transcript safety guard wired for BOTH roles',
-  widget.includes('useNyayaAiVoiceGuard') &&
+  widget.includes('nyayaAiVoiceGuard(') &&
     voiceEngine.includes("'user'") &&
     voiceEngine.includes("'model'") &&
     voiceEngine.includes('guardText'),
@@ -198,6 +198,48 @@ check(
   !widget.includes('SpeechRecognition') && !widget.includes('webkitSpeechRecognition'),
 );
 check('static mic hint line wired', widget.includes('nyayaAiMicHint'));
+
+console.log('— voice latency (perf spec) —');
+check(
+  'voice API calls bypass react-query (no widget re-render per guard call)',
+  !widget.includes('useNyayaAiVoiceToken') && !widget.includes('useNyayaAiVoiceGuard'),
+);
+const voiceRouteSrc = readFileSync(
+  join(ROOT, '../api-server/src/routes/nyayaai/voice.ts'),
+  'utf8',
+);
+// Exact-value match, not mere presence: a constrained token REJECTS a
+// live.connect config that conflicts with it, so the two silence windows
+// (server constraint vs client VAD_SILENCE_MS) drifting apart would break
+// voice entirely. Same for the sensitivity enum.
+const serverSilence = voiceRouteSrc.match(/silenceDurationMs:\s*(\d+)/)?.[1];
+const clientSilence = voiceEngine.match(/VAD_SILENCE_MS = (\d+)/)?.[1];
+check(
+  `VAD silence window IDENTICAL on both sides (server=${serverSilence ?? '?'} client=${clientSilence ?? '?'})`,
+  serverSilence !== undefined && serverSilence === clientSilence,
+);
+check(
+  'VAD end-of-speech sensitivity HIGH on both sides',
+  voiceRouteSrc.includes('END_SENSITIVITY_HIGH') && voiceEngine.includes('END_SENSITIVITY_HIGH'),
+);
+check(
+  'connect watchdog present (never spins in connecting forever)',
+  voiceEngine.includes('CONNECT_TIMEOUT_MS'),
+);
+check(
+  'connect watchdog armed only AFTER mic grant (permission dialog exempt)',
+  voiceEngine.indexOf('this.connectTimer = setTimeout') > voiceEngine.indexOf("this.mark('mic')"),
+);
+check(
+  'user utterance flushed when model transcript starts (early user-gate)',
+  voiceEngine.indexOf('this.flushUser()') <
+    voiceEngine.indexOf('this.modelBuf += sc.outputTranscription.text'),
+);
+check(
+  'DEV-only latency instrumentation injected by widget (engine never reads env)',
+  voiceEngine.includes('debugLatency') &&
+    widget.includes('debugLatency: import.meta.env?.DEV === true'),
+);
 
 console.log('— mounts: robot is the ONLY floating assistant —');
 check('HUD mounts AvatarWidget (onboarded-gated)', hud.includes('{onboarded && <AvatarWidget />}'));

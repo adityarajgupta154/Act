@@ -1,0 +1,786 @@
+IMPLEMENT A STORY-DRIVEN ADVENTURE LEVEL INSIDE THE EXISTING NYAYA NAGRI GAME.
+
+IMPORTANT:
+Do NOT redesign the existing game/map.
+
+Do NOT replace the current map.
+
+Do NOT remove or break:
+- player movement
+- joystick
+- map
+- existing zones
+- AI assistant
+- HUD
+- progress
+- coins
+- streak
+- existing navigation
+- existing zone logic
+
+Add a NEW interactive Story Adventure experience inside the existing map.
+
+The current map screenshot/reference shows an EMPTY SMALL HOUSE on the lower-left side of the central hub.
+
+That house should become the entrance point for the story adventure.
+
+==================================================
+1. STORY LOCATION
+==================================================
+
+Use the existing empty house shown on the map as:
+
+"Rights Story"
+
+or
+
+"Story Adventure"
+
+Do NOT create another random building.
+
+Use the existing house/location.
+
+When the player approaches the house, detect proximity.
+
+When the player is close enough:
+
+Show an interaction prompt above/near the house:
+
+┌─────────────────────────────┐
+│  📖 Story Adventure         │
+│  Discover a new story       │
+│                             │
+│  [ E ] Enter Story          │
+└─────────────────────────────┘
+
+For mobile/touch:
+
+Show:
+
+[ Tap to Enter ]
+
+For keyboard:
+
+[E] Enter
+
+The interaction prompt should only appear when the player is within the interaction radius.
+
+When the player moves away, the prompt should disappear.
+
+==================================================
+2. ENTERING THE STORY
+==================================================
+
+When the player presses E / taps "Enter Story":
+
+Open the Story Adventure experience.
+
+The story should feel like a polished children's educational adventure game.
+
+Do NOT make it look like a generic website slideshow.
+
+It should feel like part of the Nyaya Nagri game.
+
+Use:
+
+- large story illustration
+- readable caption
+- story progress indicator
+- previous/next controls
+- subtle transitions
+- child-friendly typography
+- polished game UI
+- consistent Nyaya Nagri visual language
+
+==================================================
+3. LEVEL SYSTEM
+==================================================
+
+Create a proper story level architecture.
+
+For now implement:
+
+LEVEL 1
+"Right to Life"
+
+This level contains exactly 5 story slides.
+
+Structure:
+
+Slide 1
+→ Story introduction
+
+Slide 2
+→ Problem introduction
+
+Slide 3
+→ Character interaction
+
+Slide 4
+→ Player decision
+
+Slide 5
+→ Result / reward
+
+After Level 1 is completed:
+
+Reward:
+
+🏆 Right to Life Unlocked
+
+Store the completion state.
+
+The completion must appear in the user's existing progress system.
+
+Do NOT simply display a fake completion message.
+
+Persist the completed state using the project's existing persistence/state system.
+
+==================================================
+4. STORY CHARACTER
+==================================================
+
+The story follows:
+
+Riya
+and
+Aman
+
+Riya is the main protagonist.
+
+Aman is the child she encounters.
+
+The story should feel connected from slide to slide.
+
+Do NOT treat each slide as an unrelated chapter.
+
+Maintain:
+
+- same characters
+- same visual identity
+- same emotional context
+- same story progression
+
+==================================================
+5. SLIDE 1 — RIYA'S JOURNEY STARTS
+==================================================
+
+USE THE PROVIDED STORY IMAGE 1 AS THE MAIN VISUAL.
+
+DO NOT recreate the image.
+
+DO NOT modify the image unnecessarily.
+
+Display the provided image prominently.
+
+Scene:
+
+Riya is returning home from school.
+
+On the way she sees a small village where some children are playing.
+
+Caption:
+
+"School se ghar lautte waqt Riya ek naye gaon ke raste se guzarti hai."
+
+Purpose:
+
+Story introduction.
+
+UI:
+
+--------------------------------
+        STORY 1 / 5
+
+        [IMAGE 1]
+
+"School se ghar lautte waqt Riya
+ek naye gaon ke raste se guzarti hai."
+
+              [ Next → ]
+--------------------------------
+
+Use a subtle slide transition.
+
+==================================================
+6. SLIDE 2 — PROBLEM INTRODUCTION
+==================================================
+
+USE THE PROVIDED STORY IMAGE 2.
+
+Scene:
+
+Riya sees a small child named Aman sitting with his mother.
+
+Aman looks weak and tired.
+
+Caption:
+
+"Riya ki nazar Aman par padti hai. Aman bahut kamzor lag raha tha aur use zaroori care nahi mil pa rahi thi."
+
+Purpose:
+
+Introduce the problem.
+
+UI:
+
+STORY 2 / 5
+
+[IMAGE 2]
+
+Caption
+
+[ Next → ]
+
+Do NOT invent additional dialogue.
+
+==================================================
+7. SLIDE 3 — RIYA TALKS TO AMAN
+==================================================
+
+USE THE PROVIDED STORY IMAGE 3.
+
+Scene:
+
+Riya sits beside Aman and talks to him.
+
+Aman explains that he has been sick for several days and has not been able to visit a doctor.
+
+Caption:
+
+"Riya ne Aman se pucha, 'Tum theek ho? Kya tumhe kisi madad ki zaroorat hai?'"
+
+Purpose:
+
+Create emotional connection.
+
+Keep the story natural and child-friendly.
+
+==================================================
+8. SLIDE 4 — PLAYER CHOICE
+==================================================
+
+USE THE PROVIDED STORY IMAGE 4 AS THE VISUAL REFERENCE/SCENE IMAGE.
+
+This is NOT a normal Next button slide.
+
+This is the actual gameplay decision.
+
+Display:
+
+"Riya ke paas ek decision tha — kya wo Aman ki madad karegi?"
+
+Then show TWO LARGE CHOICE BUTTONS:
+
+❌ Chup chaap aage badh jao
+
+✅ Aman ke liye help bulao
+
+Make the choices visually distinct.
+
+The player must actively select one.
+
+Do NOT automatically proceed.
+
+==================================================
+9. CHOICE LOGIC
+==================================================
+
+Choice A:
+
+"Chup chaap aage badh jao"
+
+This is the incorrect/less helpful decision.
+
+Do NOT punish the child.
+
+Do NOT show "WRONG!" in an aggressive way.
+
+Instead show a gentle educational response:
+
+"Riya agar Aman ko ignore kar de, to use zaroori madad nahi mil paayegi."
+
+Then provide:
+
+"Try Again"
+
+The player should be able to return to the decision.
+
+Do NOT mark Level 1 as completed.
+
+Choice B:
+
+"Aman ke liye help bulao"
+
+This is the correct decision.
+
+Show positive feedback:
+
+"Bilkul! Kisi bachche ko zaroori madad ki zaroorat ho, to kisi trusted adult ya doctor ki help lena important hai."
+
+Then continue to Slide 5.
+
+IMPORTANT:
+The purpose is learning, not punishment.
+
+==================================================
+10. SLIDE 5 — POSITIVE OUTCOME
+==================================================
+
+This is the final result slide.
+
+If there is a provided fifth image, use it.
+
+If no fifth image is provided, create the final result screen using the existing game's visual assets and styling rather than generating an unrelated design.
+
+Scene:
+
+A doctor checks Aman.
+
+Aman feels healthy/better.
+
+Riya is smiling.
+
+Caption:
+
+"Riya ne seekha ki har bacche ko jeene, health care aur zaroori madad ka adhikar hota hai."
+
+Then show:
+
+🏆 RIGHT TO LIFE UNLOCKED
+
+or
+
+🏆 Right to Life Unlocked
+
+Add a polished reward animation.
+
+Example:
+
+- subtle golden glow
+- badge animation
+- stars/sparkles
+- soft celebration
+- no excessive fireworks
+
+==================================================
+11. LEVEL COMPLETION
+==================================================
+
+After Slide 5:
+
+Mark:
+
+Level 1 = COMPLETED
+
+Reward:
+
+Right to Life
+
+Add the completed level to:
+
+My Progress
+
+The existing My Progress system must reflect this.
+
+Example:
+
+MY PROGRESS
+
+✓ Right to Life
+   Completed
+
+Do NOT create a disconnected fake progress screen.
+
+Use the existing progress architecture.
+
+==================================================
+12. FUTURE LEVEL SUPPORT
+==================================================
+
+The architecture MUST support connected future chapters.
+
+After Level 1:
+
+LEVEL 2
+"Right to Health & Care"
+
+Level 2 should continue Aman and Riya's story.
+
+Future story:
+
+Riya discovers that the village has problems with:
+
+- clean water
+- healthcare
+- access to care
+
+IMPORTANT:
+
+Do NOT implement the complete Level 2 story now.
+
+Only make the story architecture ready for it.
+
+Level 2 can remain locked until Level 1 is completed.
+
+==================================================
+13. CONNECTED STORY SYSTEM
+==================================================
+
+Do NOT build each story as a separate hardcoded component.
+
+Create reusable story data.
+
+Example architecture:
+
+storyLevels = [
+  {
+    id: "right-to-life",
+    title: "Right to Life",
+    level: 1,
+    unlocked: true,
+    slides: [...]
+  },
+  {
+    id: "right-to-health",
+    title: "Right to Health & Care",
+    level: 2,
+    unlocked: false,
+    slides: [...]
+  }
+]
+
+Each slide should support:
+
+- id
+- image
+- caption
+- type
+- choices
+- correctChoice
+- nextSlide
+- completionReward
+
+Possible slide types:
+
+INTRO
+STORY
+DIALOGUE
+CHOICE
+RESULT
+
+==================================================
+14. STORY IMAGE HANDLING
+==================================================
+
+The four provided story images are important assets.
+
+Use them directly.
+
+Do NOT:
+
+- crop important characters
+- distort aspect ratio
+- stretch images
+- replace them
+- recreate them using CSS
+- apply excessive filters
+
+Maintain their visual quality.
+
+Use object-fit appropriately.
+
+If aspect ratios differ, place the image inside a polished story frame without destroying the original composition.
+
+==================================================
+15. STORY UI DESIGN
+==================================================
+
+The story screen should visually belong to Nyaya Nagri.
+
+Recommended structure:
+
+TOP:
+
+[ ← ]     Level 1 — Right to Life     1 / 5
+
+CENTER:
+
+┌─────────────────────────────────┐
+│                                 │
+│          STORY IMAGE             │
+│                                 │
+└─────────────────────────────────┘
+
+BOTTOM:
+
+┌─────────────────────────────────┐
+│ Story caption goes here.         │
+│                                 │
+│                         Next →  │
+└─────────────────────────────────┘
+
+For Choice slide:
+
+┌─────────────────────────────────┐
+│        Story image              │
+│                                 │
+│ Riya ke paas ek decision tha... │
+│                                 │
+│ ❌ Chup chaap aage badh jao     │
+│                                 │
+│ ✅ Aman ke liye help bulao      │
+└─────────────────────────────────┘
+
+Use:
+
+- warm white surfaces
+- navy typography
+- orange/yellow accent
+- purple/pink/blue supporting colors
+- rounded cards
+- soft shadows
+- child-friendly typography
+
+Avoid:
+
+- dark theme
+- cyberpunk
+- overly futuristic UI
+- corporate dashboard style
+- excessive gradients
+- excessive animations
+
+==================================================
+16. STORY TRANSITIONS
+==================================================
+
+When moving between slides:
+
+Use subtle:
+
+fade + slight horizontal movement
+
+Example:
+
+Slide 1 → Slide 2
+old image fades out
+new image fades in
+
+Keep transition around 250–400ms.
+
+Do NOT make transitions slow.
+
+==================================================
+17. PLAYER EXPERIENCE
+==================================================
+
+The flow should be:
+
+Player explores map
+        ↓
+Player approaches house
+        ↓
+"Story Adventure — Press E to Enter"
+        ↓
+Player enters
+        ↓
+Level 1 — Right to Life
+        ↓
+Slide 1
+        ↓
+Slide 2
+        ↓
+Slide 3
+        ↓
+Choice
+        ↓
+Correct decision
+        ↓
+Slide 5
+        ↓
+Reward
+        ↓
+Right to Life unlocked
+        ↓
+Progress updated
+        ↓
+Return to map
+
+==================================================
+18. RETURN TO MAP
+==================================================
+
+After completing the story:
+
+Show:
+
+[ Continue Exploring ]
+
+When clicked:
+
+Close story experience.
+
+Return the player to the map.
+
+The house should now visually indicate that the story has been completed.
+
+For example:
+
+✓ Completed
+
+or a subtle completion badge.
+
+Do NOT remove the house.
+
+==================================================
+19. SAVE PROGRESS
+==================================================
+
+The following must persist:
+
+- current story level
+- completed slides if needed
+- Level 1 completion
+- correct choice
+- reward
+- Right to Life unlocked
+
+If the existing game uses localStorage or another persistence system, integrate with it rather than creating unnecessary duplicate storage.
+
+Refreshing the browser must NOT erase completed progress.
+
+==================================================
+20. AUDIO / AI COMPATIBILITY
+==================================================
+
+IMPORTANT:
+
+The project already has an AI voice assistant.
+
+Do NOT break it.
+
+The story architecture should be compatible with future voice narration.
+
+For now:
+
+Do NOT automatically call Gemini for every slide.
+
+Keep the story deterministic.
+
+Later we should be able to add:
+
+"Listen to Story"
+
+and AI narration.
+
+==================================================
+21. RESPONSIVE DESIGN
+==================================================
+
+Desktop:
+
+Large cinematic story panel.
+
+Tablet:
+
+Scaled story panel.
+
+Mobile:
+
+Image on top.
+
+Caption below.
+
+Choices stacked vertically.
+
+Buttons must be easy for children to tap.
+
+Do NOT allow:
+
+- text overflow
+- buttons going outside viewport
+- images getting cropped badly
+- story controls becoming unreachable
+
+==================================================
+22. ACCESSIBILITY
+==================================================
+
+Use:
+
+- readable font sizes
+- strong text contrast
+- large touch targets
+- clear choice labels
+- keyboard support
+- visible focus states
+
+Keyboard:
+
+E = Enter story
+Arrow/Next = next slide
+Escape = close story
+
+==================================================
+23. IMPORTANT GAME DESIGN PRINCIPLE
+==================================================
+
+This is an EDUCATIONAL ADVENTURE.
+
+The child should feel:
+
+"I am helping Riya solve a real situation."
+
+Not:
+
+"I am taking a quiz."
+
+The story should therefore prioritize:
+
+STORY → EMOTION → DECISION → CONSEQUENCE → LEARNING → REWARD
+
+==================================================
+24. FINAL IMPLEMENTATION CHECK
+==================================================
+
+Before finishing, verify:
+
+✓ House exists on current map
+✓ Player can walk toward house
+✓ Enter prompt appears only nearby
+✓ E key works
+✓ Touch interaction works
+✓ Story opens correctly
+✓ 5-slide structure works
+✓ Provided story images are used
+✓ Captions are displayed correctly
+✓ Slide 4 has two choices
+✓ Wrong choice does not complete level
+✓ Correct choice proceeds
+✓ Slide 5 gives positive outcome
+✓ Right to Life reward is unlocked
+✓ My Progress updates
+✓ Completion persists after refresh
+✓ Story can return to map
+✓ Existing game functionality is untouched
+✓ Existing AI assistant is untouched
+✓ Existing map is untouched
+✓ Existing player movement is untouched
+
+MOST IMPORTANT:
+
+Do not build this as a static slideshow.
+
+It must be an actual interactive game feature integrated into the existing Nyaya Nagri world.
+
+The player must physically approach the house,
+enter the story,
+progress through the story,
+make a meaningful choice,
+receive a consequence,
+complete the level,
+receive the Right to Life reward,
+and have the reward reflected in My Progress.
+
+Implement the architecture in a way that Level 2 can continue the exact same Riya + Aman storyline.

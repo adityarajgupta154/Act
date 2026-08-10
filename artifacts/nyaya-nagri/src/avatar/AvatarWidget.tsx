@@ -57,8 +57,8 @@
 import React, { useState, useEffect, useRef, memo } from 'react';
 import {
   useNyayaAiChat,
-  useNyayaAiVoiceToken,
-  useNyayaAiVoiceGuard,
+  nyayaAiVoiceToken,
+  nyayaAiVoiceGuard,
 } from '@workspace/api-client-react';
 import { progressStore } from '@/data/progressStore';
 import { useUIStore, triggerHelpPulse, openHelp } from '@/ui/uiStore';
@@ -167,8 +167,11 @@ export function AvatarWidget() {
   const [retryText, setRetryText] = useState<string | null>(null);
 
   const chatMutation = useNyayaAiChat();
-  const voiceTokenMutation = useNyayaAiVoiceToken();
-  const voiceGuardMutation = useNyayaAiVoiceGuard();
+  // Voice deliberately calls the RAW api-client fns (nyayaAiVoiceToken /
+  // nyayaAiVoiceGuard) instead of react-query hooks: every incremental guard
+  // round-trip during speech would otherwise flip mutation state and
+  // re-render this whole widget over the game canvas (perf spec: voice
+  // networking stays OUT of the React render path; voiceState alone drives UI).
   const messagesEndRef = useRef<HTMLDivElement>(null);
   // Imperative live-voice engine — non-null only while a session runs.
   const voiceEngineRef = useRef<LiveVoiceEngine | null>(null);
@@ -514,18 +517,14 @@ export function AvatarWidget() {
         // The server locks the model + child-safe system prompt (safety
         // rules + approved corpus + this safe game context) INSIDE the
         // single-use ephemeral token; no key or prompt ever reaches us.
-        return await voiceTokenMutation.mutateAsync({
-          data: {
-            language,
-            ageBand: progressStore.getState().ageBand,
-            gameContext: buildGameContext(),
-          },
+        return await nyayaAiVoiceToken({
+          language,
+          ageBand: progressStore.getState().ageBand,
+          gameContext: buildGameContext(),
         });
       },
       guardText: async (text, role) =>
-        voiceGuardMutation.mutateAsync({
-          data: { text: text.slice(0, 2000), role, language },
-        }),
+        nyayaAiVoiceGuard({ text: text.slice(0, 2000), role, language }),
       onState: (s) => setVoiceState(s),
       onUserTranscript: (text) =>
         setMessages((prev) => [...prev, { role: 'user', content: text } as Message]),
@@ -555,7 +554,7 @@ export function AvatarWidget() {
               : bundle.nyayaAiVoiceConnectFail,
         );
       },
-    });
+    }, { debugLatency: import.meta.env?.DEV === true });
     voiceEngineRef.current = engine;
     void engine.start();
   };

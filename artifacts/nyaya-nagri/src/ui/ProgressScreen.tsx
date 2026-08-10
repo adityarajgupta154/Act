@@ -24,8 +24,10 @@ import { ZONES, isZoneUnlockedIn } from '@/world/zones';
 import { getAllQuests, resolveQuest } from '@/quests/registry';
 import { useUIStore, closeProgress, openCertificate } from './uiStore';
 import { useStrings, type UIStrings } from '@/i18n/strings';
+import { useSettings } from '@/data/settingsStore';
+import { STORY_LEVELS, isStoryLevelUnlockedIn } from '@/story/storyData';
 import { cn } from '@/lib/utils';
-import { Star, Lock, MapPin, X, Award, Users, Trophy, Coins, Flame, ScrollText, BadgeCheck, Sparkles, GraduationCap } from 'lucide-react';
+import { Star, Lock, MapPin, X, Award, Users, Trophy, Coins, Flame, ScrollText, BadgeCheck, Sparkles, GraduationCap, BookOpen } from 'lucide-react';
 import { rankForXp, xpToNextRank, TITLE_IDS } from '@/economy/economy';
 import { analyzeProgress } from '@/insights/analyzer';
 
@@ -114,7 +116,11 @@ export function ProgressPanel({
   onViewCertificate?: (zoneId: string) => void;
 }) {
   const t = useStrings();
+  const { language } = useSettings();
   const zones = childZoneStates(progress);
+  // Defensive ?? {} for the same reason as activityLog below: headless
+  // smoke fixtures may cast partial states; the real store always sanitizes.
+  const storyProgress = progress.storyProgress ?? {};
   const completedCount = zones.filter((z) => z.completed).length;
   const badgeCount = Object.values(progress.badges).filter(Boolean).length;
   const impacts = teacherView ? computeZoneImpact(progress) : [];
@@ -231,6 +237,59 @@ export function ProgressPanel({
             </li>
           ))}
         </ul>
+
+        {/* Story Adventures (Aug 2026) — the house story levels. Completion
+            lives in progress.storyProgress, exactly like completedZones. */}
+        <div className="bg-orange-50 rounded-2xl p-5 border border-orange-100 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <BookOpen className="w-5 h-5 text-orange-500" />
+            <h3 className="font-display font-bold text-xl text-slate-800">{t.storyAdventuresHeading}</h3>
+          </div>
+          <ul className="flex flex-col gap-3">
+            {STORY_LEVELS.map((level, i) => {
+              const done = !!storyProgress[level.id];
+              const unlocked = isStoryLevelUnlockedIn(storyProgress, level.id);
+              const prev = i > 0 ? STORY_LEVELS[i - 1] : null;
+              return (
+                <li
+                  key={level.id}
+                  className={cn(
+                    'flex items-center gap-4 p-4 rounded-2xl border-2 bg-white',
+                    done ? 'border-green-100' : unlocked ? 'border-orange-100' : 'border-slate-100 opacity-70',
+                  )}
+                >
+                  <div
+                    className={cn(
+                      'w-11 h-11 rounded-full flex items-center justify-center shrink-0 border-2 border-white shadow-sm',
+                      done ? 'bg-gradient-to-tr from-orange-400 to-amber-300' : unlocked ? 'bg-orange-100' : 'bg-slate-200',
+                    )}
+                  >
+                    {done ? (
+                      <Star className="w-6 h-6 text-white fill-white" />
+                    ) : unlocked ? (
+                      <BookOpen className="w-5 h-5 text-orange-500" />
+                    ) : (
+                      <Lock className="w-5 h-5 text-slate-400" />
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-display font-bold text-lg text-slate-800 leading-tight">
+                      {t.levelN(level.number)} — {level.title[language]}
+                    </p>
+                    <p
+                      className={cn(
+                        'text-sm font-bold',
+                        done ? 'text-green-600' : unlocked ? 'text-orange-500' : 'text-slate-400',
+                      )}
+                    >
+                      {done ? t.zoneComplete : unlocked ? t.zoneReady : prev ? t.storyLockedHint(prev.title[language]) : t.zoneLocked}
+                    </p>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
         {/* Player profile (Task 16) — PRIVATE economy summary: Player Rank
             (deliberately never called just "Level" — that word belongs to

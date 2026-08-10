@@ -526,6 +526,19 @@ export interface UIStrings {
   homeAccessibility: string;
   homeAboutTitle: string;
   homeAboutBody: string[];
+
+  // Story Adventure (Aug 2026) — the house-entrance slide-show levels.
+  // All story CONTENT (captions, choices, feedback) is fixed data in
+  // src/story/storyData.ts (PRD §9.8); these are only the chrome strings.
+  storyAdventure: string;
+  storyEnterCta: string;
+  storyTryAgain: string;
+  storyContinueExploring: string;
+  storyRewardUnlocked: (rewardName: string) => string;
+  storySlideOf: (current: number, total: number) => string;
+  storyAdventuresHeading: string;
+  storyLockedHint: (previousTitle: string) => string;
+  storyExit: string;
 }
 
 const EN: UIStrings = {
@@ -1160,6 +1173,16 @@ const EN: UIStrings = {
     'It is an awareness and confidence-building tool — not legal advice and not a crisis service. For real help, the red Get Help Now button always shows Childline 1098 and Cyber Crime 155260.',
     'Everything you do stays on this device: no accounts, no photos, no real names, no personal details.',
   ],
+
+  storyAdventure: 'Story Adventure',
+  storyEnterCta: 'Press E or Tap to Begin',
+  storyTryAgain: 'Try Again',
+  storyContinueExploring: 'Continue Exploring',
+  storyRewardUnlocked: (rewardName) => `${rewardName} Unlocked!`,
+  storySlideOf: (current, total) => `${current} / ${total}`,
+  storyAdventuresHeading: 'Story Adventures',
+  storyLockedHint: (previousTitle) => `Finish "${previousTitle}" to unlock this story.`,
+  storyExit: 'Leave the story',
 };
 
 const HI: UIStrings = {
@@ -1790,6 +1813,16 @@ const HI: UIStrings = {
     'यह जागरूकता और हिम्मत बढ़ाने का साधन है — कानूनी सलाह या आपातकालीन सेवा नहीं। असली मदद के लिए लाल "अभी मदद लो" बटन हमेशा चाइल्डलाइन 1098 और साइबर क्राइम 155260 दिखाता है।',
     'तुम्हारा सब कुछ इसी डिवाइस पर रहता है: कोई खाता नहीं, कोई फ़ोटो नहीं, कोई असली नाम नहीं, कोई निजी जानकारी नहीं।',
   ],
+
+  storyAdventure: 'कहानी का सफ़र',
+  storyEnterCta: 'E दबाओ या टैप करके शुरू करो',
+  storyTryAgain: 'फिर से कोशिश करो',
+  storyContinueExploring: 'घूमना जारी रखो',
+  storyRewardUnlocked: (rewardName) => `${rewardName} अनलॉक हुआ!`,
+  storySlideOf: (current, total) => `${current} / ${total}`,
+  storyAdventuresHeading: 'कहानी के सफ़र',
+  storyLockedHint: (previousTitle) => `इसे खोलने के लिए पहले "${previousTitle}" पूरी करो।`,
+  storyExit: 'कहानी से बाहर जाओ',
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

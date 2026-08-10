@@ -18,7 +18,8 @@
  */
 import Phaser from 'phaser';
 import { ZONES, getZoneStates } from '../zones';
-import { uiStore, playerPosition, enterZone } from '@/ui/uiStore';
+import { uiStore, playerPosition, enterZone, openStory } from '@/ui/uiStore';
+import { STORY_ENTRANCE, STORY_PROXIMITY_SQ } from '@/story/storyData';
 import { progressStore } from '@/data/progressStore';
 import {
   GRASS_BASE,
@@ -100,7 +101,11 @@ const INNER_TREES: Array<[number, number, number, boolean]> = [
   [22, -7, 0.9, false], [-22, -16, 0.85, true],
 ];
 
-/** The single blue-roof "help house" east of the plaza (decor only). */
+/**
+ * The single blue-roof house east of the plaza — the Story Adventure
+ * entrance (Aug 2026). Position is the reference art's; storyData's
+ * STORY_ENTRANCE must always match this entry.
+ */
 const HOUSES: Array<[number, number, boolean]> = [
   [16, -12, false],
 ];
@@ -130,6 +135,11 @@ export class WorldScene extends Phaser.Scene {
   private unsubProgress: (() => void) | null = null;
   private unsubSettings: (() => void) | null = null;
   private keyHandlers: Array<[string, (e: Event) => void]> = [];
+  /** Story house label + done-tick handles (Aug 2026). */
+  private storyLabelG: Phaser.GameObjects.Graphics | null = null;
+  private storyLabelText: Phaser.GameObjects.Text | null = null;
+  private storyTick: Phaser.GameObjects.Image | null = null;
+  private storyLabelY = 0;
 
   constructor() {
     super('world');
@@ -163,6 +173,7 @@ export class WorldScene extends Phaser.Scene {
     this.avatarHash = puppetHash(progressStore.getState().avatar);
     this.unsubProgress = progressStore.subscribe(() => {
       this.applyZoneStates();
+      this.applyStoryState();
       const nextHash = puppetHash(progressStore.getState().avatar);
       if (nextHash !== this.avatarHash) {
         this.avatarHash = nextHash;
@@ -177,6 +188,11 @@ export class WorldScene extends Phaser.Scene {
       for (const handle of this.monuments) {
         const zone = ZONES.find((z) => z.id === handle.id);
         if (zone) setMonumentLabel(handle, s.zones[zone.id]?.name ?? zone.name);
+      }
+      // The story house name pill follows the language too.
+      if (this.storyLabelText) {
+        this.storyLabelText.setText(s.storyAdventure);
+        this.drawStoryPill();
       }
     });
 
@@ -284,17 +300,22 @@ export class WorldScene extends Phaser.Scene {
       this.addStaticCircle(px(-19), px(rz), 2.2 * U);
     }
 
-    // The blue-roof help house east of the plaza (reference mid-right).
+    // The blue-roof house east of the plaza — now the Story Adventure
+    // entrance (Aug 2026). Kept EXACTLY where the reference art placed it;
+    // the cutout only gains a tap handler, a name pill and a done-tick.
     for (const [ux, uz, flip] of HOUSES) {
       const hx = px(ux);
       const hy = px(uz);
       this.add.ellipse(hx - 8, hy + 6, 150, 40, 0x233318, 0.15).setDepth(5);
-      this.add
+      const house = this.add
         .image(hx, hy, 'decor-house')
         .setOrigin(0.5, 0.9)
         .setFlipX(flip)
         .setDepth(10 + hy * 0.01);
       this.addStaticCircle(hx, hy - 6, 2.0 * U);
+      if (ux === STORY_ENTRANCE.position[0] && uz === STORY_ENTRANCE.position[1]) {
+        this.decorateStoryHouse(house, hx, hy);
+      }
     }
     const plantTree = ([ux, uz, s, useB]: [number, number, number, boolean], i: number) => {
       const tx = px(ux);
@@ -342,6 +363,106 @@ export class WorldScene extends Phaser.Scene {
         .setDepth(5.5)
         .setAlpha(0.95);
     });
+  }
+
+  /* --------------------------- story house ------------------------------ */
+
+  /**
+   * Story Adventure entrance dressing (Aug 2026): the decor house gains a
+   * tap handler, a warm name pill (monument-pill styling) and a green
+   * done-tick once the story is complete. The house cutout itself — the
+   * user's art — is untouched.
+   */
+  private decorateStoryHouse(house: Phaser.GameObjects.Image, hx: number, hy: number) {
+    house.setInteractive({ useHandCursor: true });
+    house.on('pointerdown', () => {
+      // SAME guard chain as monument taps (plus not-already-in-a-story).
+      const { nearbyStoryId, activeZoneId, activeStory, isTransitioning } =
+        uiStore.getState();
+      if (
+        nearbyStoryId !== STORY_ENTRANCE.storyId ||
+        activeZoneId ||
+        activeStory ||
+        isTransitioning
+      ) {
+        return;
+      }
+      // openStory re-checks lock rules; proximity is the only extra gate.
+      openStory(STORY_ENTRANCE.storyId);
+    });
+
+    // Name pill under the door — same Fredoka text + pill recipe as the
+    // monument labels, in the story's warm orange accent.
+    const label = getStrings(settingsStore.getState().language).storyAdventure;
+    this.storyLabelY = hy + 26;
+    this.storyLabelText = this.add
+      .text(hx, this.storyLabelY, label, {
+        fontFamily: 'Fredoka, Nunito, sans-serif',
+        fontSize: '17px',
+        fontStyle: '600',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5)
+      .setResolution(2)
+      .setDepth(501);
+    this.storyLabelG = this.add.graphics().setDepth(500);
+    this.drawStoryPill();
+
+    // Green done-tick beside the roof once the story level is complete.
+    const tickKey = this.ensureStoryTickTexture();
+    this.storyTick = this.add
+      .image(hx + house.displayWidth * 0.3, hy - house.displayHeight * 0.82, tickKey)
+      .setDepth(10 + hy * 0.01 + 0.07)
+      .setVisible(false);
+    this.applyStoryState();
+  }
+
+  /** Redraw the story pill behind its (possibly re-set) label text. */
+  private drawStoryPill() {
+    if (!this.storyLabelG || !this.storyLabelText) return;
+    const w = this.storyLabelText.width + 26;
+    const h = this.storyLabelText.height + 12;
+    const cx = this.storyLabelText.x;
+    const cy = this.storyLabelY;
+    this.storyLabelG.clear();
+    // Soft ground shadow first, then the warm orange pill.
+    this.storyLabelG.fillStyle(0x1c2413, 0.22);
+    this.storyLabelG.fillRoundedRect(cx - w / 2, cy - h / 2 + 2.5, w, h, h / 2);
+    this.storyLabelG.fillStyle(0xea580c, 0.96);
+    this.storyLabelG.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, h / 2);
+  }
+
+  /** Canvas-drawn green tick badge (same pattern as the monument lock). */
+  private ensureStoryTickTexture(): string {
+    const key = 'story-done-tick';
+    if (this.textures.exists(key)) return key;
+    const tex = this.textures.createCanvas(key, 56, 56);
+    if (!tex) return key;
+    const ctx = tex.getContext();
+    ctx.beginPath();
+    ctx.arc(28, 28, 25, 0, Math.PI * 2);
+    ctx.fillStyle = '#16a34a';
+    ctx.fill();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+    ctx.lineWidth = 7;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(16, 29);
+    ctx.lineTo(25, 38);
+    ctx.lineTo(41, 19);
+    ctx.stroke();
+    tex.refresh();
+    return key;
+  }
+
+  /** Show/hide the done-tick from progress (subscribed in create()). */
+  private applyStoryState() {
+    if (!this.storyTick) return;
+    const done = !!progressStore.getState().storyProgress[STORY_ENTRANCE.storyId];
+    this.storyTick.setVisible(done);
   }
 
   private buildMonuments() {
@@ -423,11 +544,17 @@ export class WorldScene extends Phaser.Scene {
       if (isTyping(e)) return;
       setKey(ev.code, true);
       if (ev.code === 'KeyE' && !ev.repeat) {
-        // EXACT interact guard from the 3D Player.tsx.
-        const { nearbyZoneId, activeZoneId, isTransitioning } = uiStore.getState();
-        if (nearbyZoneId && !activeZoneId && !isTransitioning) {
+        // EXACT interact guard from the 3D Player.tsx (+ the story house
+        // door; zone gates keep priority if both could ever apply).
+        const { nearbyZoneId, nearbyStoryId, activeZoneId, activeStory, isTransitioning } =
+          uiStore.getState();
+        if (activeZoneId || activeStory || isTransitioning) return;
+        if (nearbyZoneId) {
           const zoneState = getZoneStates().find((z) => z.id === nearbyZoneId);
           if (zoneState?.unlocked) enterZone(nearbyZoneId);
+        } else if (nearbyStoryId) {
+          // openStory re-checks lock rules; the prompt is only UI sugar.
+          openStory(nearbyStoryId);
         }
       }
     };
@@ -451,9 +578,9 @@ export class WorldScene extends Phaser.Scene {
     if (!this.player) return;
     const body = this.player.body as Phaser.Physics.Arcade.Body;
 
-    // Freeze while inside a zone or during the fade — 3D contract.
-    const { activeZoneId, isTransitioning } = uiStore.getState();
-    if (activeZoneId || isTransitioning) {
+    // Freeze while inside a zone, a story, or during the fade — 3D contract.
+    const { activeZoneId, activeStory, isTransitioning } = uiStore.getState();
+    if (activeZoneId || activeStory || isTransitioning) {
       body.setVelocity(0, 0);
       this.setPuppetFrame(false, deltaMs / 1000);
       return;
@@ -516,6 +643,17 @@ export class WorldScene extends Phaser.Scene {
     }
     if (uiStore.getState().nearbyZoneId !== closest) {
       uiStore.set({ nearbyZoneId: closest });
+    }
+
+    // 5. Story house proximity (Aug 2026) — tighter radius than zones, and
+    // the house sits >11 units from every zone anchor, so this prompt can
+    // never appear together with a zone prompt. Publish-on-change only.
+    const sdx = ux - STORY_ENTRANCE.position[0];
+    const sdz = uz - STORY_ENTRANCE.position[1];
+    const nearStory =
+      sdx * sdx + sdz * sdz < STORY_PROXIMITY_SQ ? STORY_ENTRANCE.storyId : null;
+    if (uiStore.getState().nearbyStoryId !== nearStory) {
+      uiStore.set({ nearbyStoryId: nearStory });
     }
   }
 

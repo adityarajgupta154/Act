@@ -64,6 +64,12 @@ export interface ProgressState {
    */
   levelProgress: Record<string, boolean>;
   /**
+   * Story Adventure completions (Aug 2026), keyed by story level id (e.g.
+   * "right-to-life"). Same boolean-map shape and load-time sanitizing as
+   * completedZones; written only by completeStoryLevel().
+   */
+  storyProgress: Record<string, boolean>;
+  /**
    * Task 15: Practice/Replay attempt counts, keyed "zoneId:levelId".
    * Kept SEPARATE from quizScores on purpose — replays never touch the
    * recorded pre/post analytics scores (Task 9).
@@ -134,6 +140,7 @@ function defaultState(): ProgressState {
     badges: {},
     quizScores: {},
     levelProgress: {},
+    storyProgress: {},
     replayCounts: {},
     preAnswersByQuest: {},
     activityScores: {},
@@ -270,6 +277,7 @@ class LocalStorageAdapter implements StorageAdapter {
           : null,
         levelProgress,
         completedZones,
+        storyProgress: sanitizeRecord(parsed.storyProgress, isBool),
         replayCounts: sanitizeRecord(parsed.replayCounts, isCount),
         preAnswersByQuest: sanitizeRecord(parsed.preAnswersByQuest, isAnswerList),
         activityScores: sanitizeRecord(parsed.activityScores, isScorePair),
@@ -396,6 +404,21 @@ class ProgressStore {
   // complete without passing the final quiz level. Zone completion is now
   // written ONLY by the quest engine's finalization (engine.finalizeLevel /
   // finalizeQuest), which enforce the level and scoring rules.
+
+  /**
+   * Story Adventure completion (Aug 2026, deterministic slide levels).
+   * Reaching the RESULT slide is the only caller — and the only way there
+   * runs through the hard-coded correct choice (PRD §9.8). The reward
+   * badge rides the SAME atomic write, so the badge counter and the house
+   * done-tick always agree. Idempotent: replays never double-award.
+   */
+  completeStoryLevel(storyId: string): void {
+    if (this.state.storyProgress[storyId]) return;
+    this.update({
+      storyProgress: { ...this.state.storyProgress, [storyId]: true },
+      badges: { ...this.state.badges, [`story-${storyId}`]: true },
+    });
+  }
 
   isZoneComplete(zoneId: string): boolean {
     return !!this.state.completedZones[zoneId];

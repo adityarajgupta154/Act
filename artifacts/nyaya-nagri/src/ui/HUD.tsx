@@ -17,10 +17,13 @@ import {
   ChevronLeft,
   ChevronRight,
   BookOpen,
+  BadgeCheck,
 } from 'lucide-react';
-import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, openShop, openMap, enterLevel, clearLevel } from './uiStore';
+import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, openShop, openMap, openStory, enterLevel, clearLevel } from './uiStore';
 import { ProgressOverlay } from './ProgressScreen';
 import { MapOverlay } from './MapScreen';
+import { StoryOverlay } from '@/story/StoryOverlay';
+import { getStoryLevel } from '@/story/storyData';
 import { CertificateOverlay } from '@/certificates/CertificateModal';
 import { SettingsPanel } from './SettingsPanel';
 import { CommunityOverlay } from './CommunityScreen';
@@ -312,6 +315,57 @@ function ProximityPrompt() {
   );
 }
 
+/**
+ * Story Adventure door prompt — mirrors ProximityPrompt exactly. Appears
+ * only while standing at the house (nearbyStoryId) and never fights a zone
+ * prompt: the house sits >11 units from every zone anchor, so the two can
+ * never be non-null together.
+ */
+function StoryPrompt() {
+  const { nearbyStoryId, activeStory } = useUIStore();
+  const { language } = useSettings();
+  const t = useStrings();
+  const [storyProgress, setStoryProgress] = useState(
+    () => progressStore.getState().storyProgress,
+  );
+  useEffect(() => progressStore.subscribe((s) => setStoryProgress(s.storyProgress)), []);
+
+  if (!nearbyStoryId || activeStory) return null;
+  const level = getStoryLevel(nearbyStoryId);
+  if (!level) return null;
+  const done = !!storyProgress[nearbyStoryId];
+
+  return (
+    <div className="bg-white px-6 py-4 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-center gap-3 pointer-events-auto animate-in slide-in-from-bottom-4 duration-200">
+      <div className="flex items-center gap-3">
+        <span className="w-10 h-10 rounded-xl bg-orange-100 text-orange-500 grid place-content-center shrink-0">
+          <BookOpen className="w-5 h-5" />
+        </span>
+        <span className="leading-tight text-left">
+          <span className="block font-display font-bold text-xl text-[#0b2a52]">
+            {t.storyAdventure}
+          </span>
+          <span className="block text-sm font-semibold text-slate-500">
+            {t.levelN(level.number)} — {level.title[language]}
+          </span>
+        </span>
+      </div>
+      {done && (
+        <span className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
+          <BadgeCheck className="w-4 h-4" />
+          {t.levelCompletedTag}
+        </span>
+      )}
+      <button
+        onClick={() => openStory(nearbyStoryId)}
+        className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 py-3 rounded-full font-bold transition-transform active:scale-95 shadow-md flex items-center gap-2 touch-manipulation"
+      >
+        {t.storyEnterCta}
+      </button>
+    </div>
+  );
+}
+
 function ZoneInterior({ zoneId }: { zoneId: string }) {
   // Task 15: which level is being played (null = Level-Select screen).
   const [playing, setPlaying] = useState<{ levelIndex: number; practice: boolean } | null>(null);
@@ -473,9 +527,11 @@ export function HUD() {
             </div>
           </div>
 
-          {/* Bottom Center Prompt */}
+          {/* Bottom Center Prompt (zone gate or story house — the two can
+              never be non-null together, so at most one card shows) */}
           <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 w-max max-w-[90vw]">
             <ProximityPrompt />
+            <StoryPrompt />
           </div>
 
           {/* Reference bottom bar: three quick shortcuts (md+ only — on
@@ -545,6 +601,10 @@ export function HUD() {
       {/* Full-screen Map modal (z-30, reference redesign) — opened from the
           minimap card; Get Help Now (z-50) stays on top */}
       <MapOverlay />
+
+      {/* Story Adventure overlay (z-30, Aug 2026) — the house slide-show;
+          fully deterministic content. Get Help Now (z-50) stays on top */}
+      <StoryOverlay />
 
       {/* Onboarding (z-20, Task 13) — covers the world until the guardian
           consent step completes; Get Help Now (z-50) stays on top even here */}

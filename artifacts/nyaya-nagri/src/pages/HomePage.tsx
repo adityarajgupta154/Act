@@ -29,12 +29,14 @@ function WorldLoading() {
 
 export default function HomePage() {
   // DEV-only screenshot/e2e seam (same spirit as __nnDebug): `?map=open`
-  // boots straight into the world so the headless capture browser — which
-  // cannot click "Enter" — can reach the Map modal. Dead code in production
-  // builds (import.meta.env.DEV is false there).
-  const [entered, setEntered] = useState(
-    () => !!(import.meta.env?.DEV && new URLSearchParams(window.location.search).get('map') === 'open'),
-  );
+  // and `?story=open` boot straight into the world so the headless capture
+  // browser — which cannot click "Enter" — can reach the Map modal / Story
+  // overlay. Dead code in production builds (import.meta.env.DEV is false).
+  const [entered, setEntered] = useState(() => {
+    if (!import.meta.env?.DEV) return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.get('map') === 'open' || params.get('story') === 'open';
+  });
 
   if (!entered) {
     return <HomeScreen onEnter={() => setEntered(true)} />;

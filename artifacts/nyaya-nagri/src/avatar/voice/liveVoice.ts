@@ -39,8 +39,25 @@
  * Privacy: raw audio lives only in this tab's memory while the session runs;
  * nothing is recorded or persisted. stop() releases mic, playback, session,
  * AudioContexts and listeners — closed widget = zero resource use.
+ *
+ * LATENCY (perf spec): the mic/playback graph builds IN PARALLEL with the
+ * token mint + socket connect; VAD end-of-speech is tuned (600ms silence,
+ * mirrored with the token constraint) so the model's turn starts sooner;
+ * the child's utterance is flushed the moment the model's transcript starts
+ * so the holdback usually waits only on the model's own first-slice check;
+ * a connect watchdog guarantees "connecting" can never spin forever; and a
+ * DEV-only instrumentation flag (debugLatency, injected by the widget —
+ * this file never reads env itself) logs tap→listening and per-turn
+ * first-audio/release timings. None of this weakens the holdback gate:
+ * audio still never plays before its verdicts.
  */
-import { GoogleGenAI, Modality, type LiveServerMessage, type Session } from '@google/genai';
+import {
+  EndSensitivity,
+  GoogleGenAI,
+  Modality,
+  type LiveServerMessage,
+  type Session,
+} from '@google/genai';
 
 export type VoiceState = 'connecting' | 'listening' | 'thinking' | 'speaking';
 export type VoiceErrorKind = 'mic-denied' | 'unavailable' | 'connect-failed';
@@ -89,8 +106,19 @@ registerProcessor('nyaya-mic-capture', NyayaMicCapture);
 
 const MIC_SAMPLE_RATE = 16000; // Live API expects 16kHz PCM16 mono in
 const PLAY_SAMPLE_RATE = 24000; // Live API native audio is 24kHz PCM16 mono
-/** Silence gap after the child's words before we show "Thinking..." */
-const THINKING_AFTER_MS = 900;
+/** Silence gap after the child's words before we show "Thinking..." —
+ * aligned just past the VAD end-of-speech window so the label (and the
+ * early user-gate flush it triggers) lands right as the server commits
+ * the end of the utterance. */
+const THINKING_AFTER_MS = 650;
+/**
+ * VAD end-of-speech silence window (ms). MUST stay identical to the value
+ * locked inside the token constraints (api-server voice.ts) — a constrained
+ * ephemeral token rejects a live.connect config that conflicts with it.
+ */
+const VAD_SILENCE_MS = 600;
+/** Watchdog: never let the widget spin in "connecting" forever. */
+const CONNECT_TIMEOUT_MS = 10000;
 /** Debounce for the mid-utterance (incremental) safety checks. */
 const INC_GUARD_DEBOUNCE_MS = 350;
 /**
@@ -180,13 +208,41 @@ export class LiveVoiceEngine {
   private turnEpoch = 0;
   private userEpoch = 0;
 
-  constructor(callbacks: VoiceEngineCallbacks) {
+  /** Bounded "connecting" phase (mint + socket open) — see start(). */
+  private connectTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // DEV-only latency instrumentation (perf spec): timestamps for the session
+  // ramp (tap→listening) and each turn's user-final → first-audio → release
+  // path, plus per-call guard round-trip times. The flag is INJECTED by the
+  // widget in dev builds — this engine never reads env itself (smoke-checked)
+  // — and every hook is a no-op in production.
+  private debug = false;
+  private lat: Record<string, number> = {};
+
+  constructor(callbacks: VoiceEngineCallbacks, opts?: { debugLatency?: boolean }) {
     this.cb = callbacks;
+    this.debug = opts?.debugLatency === true;
+  }
+
+  private mark(key: string): void {
+    if (this.debug) this.lat[key] = performance.now();
+  }
+
+  private latDelta(from: string, to: string): string {
+    const a = this.lat[from];
+    const b = this.lat[to];
+    return a !== undefined && b !== undefined ? `${Math.round(b - a)}ms` : 'n/a';
+  }
+
+  private latLog(msg: string): void {
+    // eslint-disable-next-line no-console -- DEV-only latency diagnostics
+    if (this.debug) console.debug(`[voice-latency] ${msg}`);
   }
 
   async start(): Promise<void> {
     try {
       this.setState('connecting');
+      this.mark('start');
       if (
         typeof AudioWorkletNode === 'undefined' ||
         !navigator.mediaDevices?.getUserMedia
@@ -218,6 +274,17 @@ export class LiveVoiceEngine {
         });
       }
       if (this.disposed) return;
+      this.mark('mic');
+
+      // Watchdog STARTS ONLY NOW — after the mic is granted. It must never
+      // run while the permission dialog is open (a child reading that dialog
+      // is not a network problem). From here on, a mint + connect that
+      // cannot finish within the window fails with the friendly copy
+      // instead of leaving "Connecting..." spinning forever.
+      this.connectTimer = setTimeout(() => {
+        this.connectTimer = null;
+        if (!this.disposed && !this.opened) this.fail('connect-failed');
+      }, CONNECT_TIMEOUT_MS);
 
       // LATENCY: build the mic + playback graph IN PARALLEL with the token
       // mint and socket connect — AudioContext/worklet init (~100-250ms on
@@ -237,6 +304,7 @@ export class LiveVoiceEngine {
         });
       }
       if (this.disposed) return;
+      this.mark('token');
 
       // Ephemeral token acts as the API key; v1alpha is required for tokens.
       const ai = new GoogleGenAI({
@@ -251,10 +319,22 @@ export class LiveVoiceEngine {
           responseModalities: [Modality.AUDIO],
           inputAudioTranscription: {},
           outputAudioTranscription: {},
+          // Same VAD tuning the token locks (see VAD_SILENCE_MS note above).
+          realtimeInputConfig: {
+            automaticActivityDetection: {
+              endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_HIGH,
+              silenceDurationMs: VAD_SILENCE_MS,
+            },
+          },
         },
         callbacks: {
           onopen: () => {
             this.opened = true;
+            this.mark('open');
+            if (this.connectTimer) {
+              clearTimeout(this.connectTimer);
+              this.connectTimer = null;
+            }
             void this.wireMic(micGraphReady);
           },
           onmessage: (m: LiveServerMessage) => this.handleMessage(m),
@@ -288,6 +368,8 @@ export class LiveVoiceEngine {
     this.thinkTimer = null;
     if (this.holdbackTimer) clearTimeout(this.holdbackTimer);
     this.holdbackTimer = null;
+    if (this.connectTimer) clearTimeout(this.connectTimer);
+    this.connectTimer = null;
     for (const role of ['user', 'model'] as GuardRole[]) {
       if (this.incTimer[role]) clearTimeout(this.incTimer[role]!);
       this.incTimer[role] = null;
@@ -380,6 +462,7 @@ export class LiveVoiceEngine {
       this.playCtx = new AudioContext({ sampleRate: PLAY_SAMPLE_RATE });
       await this.playCtx.resume().catch(() => undefined);
       if (this.disposed) return this.releaseHalfBuiltGraph();
+      this.mark('graph');
       return true;
     } catch {
       return false;
@@ -418,6 +501,12 @@ export class LiveVoiceEngine {
     };
     this.micSource.connect(this.micNode);
     this.setState('listening');
+    this.mark('listening');
+    this.latLog(
+      `session: mic ${this.latDelta('start', 'mic')} | graph(parallel) ${this.latDelta('mic', 'graph')} | ` +
+        `token ${this.latDelta('mic', 'token')} | connect ${this.latDelta('token', 'open')} | ` +
+        `tap->listening ${this.latDelta('start', 'listening')}`,
+    );
   }
 
   private handleMessage(msg: LiveServerMessage): void {
@@ -444,6 +533,11 @@ export class LiveVoiceEngine {
       this.scheduleIncrementalGuard('user');
     }
     if (sc.outputTranscription?.text) {
+      // Model reply started → the child's utterance is final. Flushing HERE
+      // (transcript slices usually arrive before the first audio chunk)
+      // starts the user-gate verdict one hop earlier, so the holdback
+      // usually waits only on the model's own first-slice check.
+      this.flushUser();
       this.modelBuf += sc.outputTranscription.text;
       // Check the model's speech WHILE it streams — helpline phrasing stops
       // playback mid-word instead of after the whole turn.
@@ -496,6 +590,7 @@ export class LiveVoiceEngine {
   private enqueueAudio(b64: string): void {
     if (this.disposed) return;
     if (this.audioHoldback) {
+      if (this.pendingAudio.length === 0) this.mark('turnFirstAudio');
       this.pendingAudio.push(b64);
       this.maybeReleaseAudio(); // gates may already be clean
       if (this.audioHoldback) {
@@ -542,6 +637,13 @@ export class LiveVoiceEngine {
     }
     const chunks = this.pendingAudio;
     this.pendingAudio = [];
+    if (chunks.length > 0 && this.debug) {
+      this.mark('turnRelease');
+      this.latLog(
+        `turn: user-final->first-audio ${this.latDelta('userFinal', 'turnFirstAudio')} | ` +
+          `holdback ${this.latDelta('turnFirstAudio', 'turnRelease')}`,
+      );
+    }
     for (const c of chunks) this.playAudioNow(c);
     if (this.turnClosing) this.resetTurnGates();
   }
@@ -565,6 +667,8 @@ export class LiveVoiceEngine {
   /** Arm the holdback for the next model turn (advances the turn epoch). */
   private resetTurnGates(): void {
     this.turnEpoch++;
+    delete this.lat.turnFirstAudio;
+    delete this.lat.turnRelease;
     this.audioHoldback = true;
     this.modelGateClean = false;
     this.turnClosing = false;
@@ -596,6 +700,7 @@ export class LiveVoiceEngine {
     // The child's own words are always shown to them; the guard decides
     // escalation in parallel. Model audio stays held back until this
     // utterance's verdict is clean (see maybeReleaseAudio).
+    this.mark('userFinal');
     this.cb.onUserTranscript(text);
     if (text !== this.lastClean.user) {
       this.userEpoch++;
@@ -744,7 +849,14 @@ export class LiveVoiceEngine {
     for (let attempt = 0; attempt < 2; attempt++) {
       if (this.disposed) return null;
       try {
-        return await this.cb.guardText(text, role);
+        const t0 = this.debug ? performance.now() : 0;
+        const verdict = await this.cb.guardText(text, role);
+        if (this.debug) {
+          this.latLog(
+            `guard[${role}] ${Math.round(performance.now() - t0)}ms (${text.length} chars)`,
+          );
+        }
+        return verdict;
       } catch {
         /* transient network — retry once */
       }

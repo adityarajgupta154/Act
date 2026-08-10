@@ -24,7 +24,7 @@
  *   session, show the canonical text, and pulse Get Help Now.
  */
 import { type IRouter } from "express";
-import { Modality } from "@google/genai";
+import { EndSensitivity, Modality } from "@google/genai";
 import { NyayaAiVoiceTokenBody, NyayaAiVoiceGuardBody } from "@workspace/api-zod";
 import { getGeminiAlpha, isGeminiConfigured } from "@workspace/integrations-gemini-ai";
 import { buildNyayaAiVoiceSystemPrompt } from "./prompt";
@@ -93,6 +93,19 @@ export function registerVoiceRoutes(router: IRouter): void {
               // Keep long conversations alive without unbounded context.
               contextWindowCompression: { slidingWindow: {} },
               temperature: 0.6,
+              // LATENCY: the default end-of-speech silence window makes every
+              // reply feel sluggish. 600ms starts the model's turn noticeably
+              // sooner while still leaving room for a child's normal mid-
+              // sentence pauses (cutting them off would be worse than the
+              // wait). Locked here AND mirrored with identical values in the
+              // client's live.connect config (constrained tokens reject
+              // conflicting fields).
+              realtimeInputConfig: {
+                automaticActivityDetection: {
+                  endOfSpeechSensitivity: EndSensitivity.END_SENSITIVITY_HIGH,
+                  silenceDurationMs: 600,
+                },
+              },
             },
           },
         },

@@ -39,4 +39,13 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('map'
   });
 }
 
+// Dev-only screenshot/e2e seam (same spirit): `?story=open` boots an
+// onboarded child so the Story Adventure overlay — opened by StoryOverlay's
+// own seam effect, optionally at `&slide=N&pick=correct|wrong` — can be
+// photographed headlessly. HomePage skips the landing screen for this param
+// too. Never active in production builds.
+if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('story') === 'open') {
+  progressStore.update({ onboarded: true, ageBand: '12-15' });
+}
+
 createRoot(document.getElementById('root')!).render(<App />);

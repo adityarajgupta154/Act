@@ -31,6 +31,14 @@ Client sends stable zone IDS + counts + capped nickname/lesson title (`src/avata
 - Streamed-audio safety gating (architect-approved after 4 review rounds): playback HOLDBACK — queue each turn's audio until the child's utterance AND the first model-transcript slice both pass the deterministic guard (fast-path check ≈ one round-trip); gate state is EPOCH-scoped per turn/utterance (stale verdicts must never release later audio — including dedupe fast paths); a bounded timer DISCARDS unverifiable audio (never plays raw); incremental re-checks run mid-turn; guard failure fails CLOSED (session ends, friendly message). Raw model text appends only after a clean verdict.
 - Residual limits to disclose, not "fix": a modified client can skip a client-called guard (inherent to direct browser→Google streaming; locked prompt is the first defense), and post-release mid-turn content can play ~debounce+RTT before an incremental verdict stops it.
 
+## Voice latency rules (Aug 2026, optimize AROUND the holdback — never weaken it)
+- VAD end-of-speech: `realtimeInputConfig.automaticActivityDetection` (END_SENSITIVITY_HIGH + silenceDurationMs 600) locked in token constraints AND mirrored byte-identical in the client connect config — drift breaks connect (constrained tokens reject conflicts). nyayaai smoke asserts the exact-value match on both sides.
+- Widget voice calls use RAW orval client fns (`nyayaAiVoiceToken`/`nyayaAiVoiceGuard`), NEVER react-query hooks: each incremental guard call would flip mutation state and re-render the whole widget over the game canvas. `voiceState` alone drives voice UI.
+- Connect watchdog (10s → friendly connect-failed) is armed only AFTER getUserMedia resolves — the permission dialog (a child reading it) must never count against it.
+- `flushUser()` fires on the FIRST outputTranscription slice (model turn started ⇒ utterance final), so the user-gate verdict dispatches before the first audio chunk; holdback release then usually waits only on the model first-slice fast-path.
+- DEV latency logs (`[voice-latency]`): widget injects `debugLatency: import.meta.env?.DEV === true`; the engine never reads env itself (smoke-enforced). All marks are no-ops when off.
+- Token prefetch at widget-open was considered and REJECTED: uses:1 tokens burn unused, and the game context locked at mint goes stale.
+
 ## Build/codegen quirks
 - orval@8 emits zod-v4 syntax (`zod.int()`) for OpenAPI `type: integer`, which breaks against installed zod 3.25 — **use `type: number` + min/max in openapi.yaml**.
 - Gemini/Anthropic SDKs matching build.mjs external globs must be direct api-server package.json deps or the esbuild bundle fails at runtime.
