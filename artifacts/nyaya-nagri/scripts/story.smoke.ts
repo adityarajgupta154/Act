@@ -263,6 +263,18 @@ assert(
   overlay.includes("get('story') !== 'open'") || overlay.includes("get('story') === 'open'"),
   'DEV screenshot seam ?story=open present in the overlay',
 );
+// Single button ownership (question-screen fix): the bottom bar owns the ONE
+// right-side action — exactly one Next render site, exactly one Try Again,
+// driven by actionState. The feedback card must stay text-only.
+assert(overlay.includes('actionState'), 'bottom-bar action is driven by actionState');
+assert(
+  overlay.split('{t.next}').length - 1 === 1,
+  'exactly ONE Next button render site (no duplicate Next)',
+);
+assert(
+  overlay.split('{t.storyTryAgain}').length - 1 === 1,
+  'exactly ONE Try Again render site (no duplicate Try Again)',
+);
 
 const store = read('../src/data/progressStore.ts');
 assert(

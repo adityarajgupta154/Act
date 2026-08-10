@@ -1,0 +1,227 @@
+Fix the Story Adventure Question Screen UI and navigation layout.
+
+IMPORTANT:
+Do NOT redesign the entire page.
+Do NOT change the existing visual theme, colors, typography, story content, images, AI assistant, or overall layout.
+Only fix the question-answer interaction and bottom navigation/button positioning.
+
+CURRENT PROBLEM:
+- After selecting an answer, "Try Again" is appearing inside/around the feedback card.
+- A separate "Next" button is also appearing inside the feedback area.
+- Another global "Next" button already exists at the bottom.
+- Because multiple action buttons are being rendered, they overlap each other.
+- In some states, the bottom buttons are partially hidden behind the feedback card.
+- The page can also create unnecessary vertical overflow.
+
+REQUIRED BEHAVIOR:
+
+1. ANSWER NOT SELECTED YET
+Show:
+- Question
+- Answer option 1
+- Answer option 2
+- Bottom navigation:
+  - Back button on the left
+  - Progress indicators in the center
+  - ONE disabled Next button on the right
+
+Do NOT show Try Again.
+
+2. WRONG ANSWER SELECTED
+Example:
+User selects:
+"Chup chaap aage badh jao"
+
+Then:
+- Highlight the selected wrong answer with the existing error/warning visual style.
+- Show ONE feedback/explanation card below the answers.
+- Feedback text should explain why the answer is not the best choice.
+- Show ONE "Try Again" button inside the feedback/action area.
+- Do NOT show any Next button inside the feedback card.
+- The GLOBAL bottom navigation must NOT show another Next button in this state.
+- Bottom area should contain:
+  Back | Progress | Try Again
+
+The Try Again button must have its own clean space and must never overlap the feedback card.
+
+3. CORRECT ANSWER SELECTED
+Example:
+User selects:
+"Aman ke liye help bulao"
+
+Then:
+- Highlight the selected answer with the existing success/green style.
+- Show ONE feedback/explanation card below the answers.
+- Show the explanation.
+- Show ONE Next button.
+- Do NOT show Try Again.
+- Bottom navigation should contain:
+  Back | Progress | Next
+
+IMPORTANT:
+There must NEVER be two Next buttons visible at the same time.
+
+4. BUTTON OWNERSHIP / COMPONENT STRUCTURE
+
+Create a single bottom action/navigation area.
+
+Do NOT render navigation buttons from multiple components.
+
+Use a single conditional action state:
+
+actionState:
+- "idle"
+- "wrong"
+- "correct"
+
+Behavior:
+
+idle:
+Back + Progress + disabled Next
+
+wrong:
+Back + Progress + Try Again
+
+correct:
+Back + Progress + Next
+
+There must be exactly ONE right-side action button.
+
+Do not render a Next button both inside the feedback component and inside the bottom navigation.
+
+Do not render Try Again both inside the feedback component and bottom navigation.
+
+Choose ONE location for the action button.
+Prefer putting the action button in the GLOBAL bottom navigation so the layout remains consistent.
+
+5. FIX OVERLAPPING
+
+The feedback card and bottom navigation must occupy separate layout regions.
+
+Use a proper vertical layout:
+
+Question
+↓
+Answer Options
+↓
+Feedback Card (only after selection)
+↓
+Flexible spacing
+↓
+Bottom Navigation
+
+The bottom navigation should NOT use absolute positioning over the feedback card.
+
+If fixed/sticky positioning is required, reserve enough bottom padding in the content container so content never goes underneath the navigation.
+
+Example:
+
+.story-content {
+  padding-bottom: 110px;
+}
+
+.bottom-navigation {
+  position: sticky;
+  bottom: 0;
+}
+
+OR use a normal flex-column layout if that is more stable.
+
+Do NOT use negative margins to solve the overlap.
+
+6. RESPONSIVE BEHAVIOR
+
+The layout must work correctly on:
+- Desktop
+- Laptop
+- Smaller screens
+
+The action buttons must never overlap:
+- feedback card
+- progress dots
+- Back button
+- AI assistant
+- Get Help Now button
+
+If the content becomes taller, the page may scroll naturally, but the buttons must remain visually separated and usable.
+
+7. REMOVE DUPLICATE BUTTONS
+
+Search the entire Story Adventure / Level Question component for:
+- Next
+- Try Again
+- handleNext
+- feedback actions
+- navigation actions
+
+Remove any duplicate rendering.
+
+There should be only ONE source of truth for the right-side action button.
+
+Do not simply hide one button with CSS.
+Fix the React/component rendering logic so duplicate buttons are not created.
+
+8. STATE RESET
+
+When "Try Again" is clicked:
+- Clear the selected answer.
+- Clear the feedback state.
+- Return to idle state.
+- Remove wrong-answer highlighting.
+- Show the two normal answer options again.
+- Show only the disabled Next button in the bottom navigation.
+
+When the correct answer is selected:
+- Keep the selected answer highlighted.
+- Show feedback.
+- Enable the single Next button.
+
+9. NEXT BUTTON
+
+The Next button should only become available after the correct answer has been selected.
+
+Clicking Next should:
+- Move to the next story slide/question.
+- Reset the question state for the next slide.
+- Never duplicate the navigation controls.
+
+10. VISUAL DESIGN
+
+Match the existing Nyaya Nagri design exactly:
+- Cream/off-white background
+- Dark navy typography
+- Orange primary action
+- Green success state
+- Soft rounded cards
+- Soft shadows
+- Child-friendly educational game aesthetic
+- Existing spacing and typography
+
+Do not introduce a new design system.
+
+FINAL REQUIREMENT:
+
+After implementing the fix, test ALL three states:
+
+STATE A:
+No answer selected
+→ Back | Progress | Disabled Next
+
+STATE B:
+Wrong answer selected
+→ Back | Progress | Try Again
+
+STATE C:
+Correct answer selected
+→ Back | Progress | Next
+
+At every state:
+- exactly ONE right-side action button
+- zero overlapping buttons
+- zero duplicate Next buttons
+- zero duplicate Try Again buttons
+- feedback card never overlaps navigation
+- no button appears behind another element
+
+Do not stop after making a visual CSS patch.
+Verify the actual React rendering/state logic and make sure duplicate buttons cannot be rendered.

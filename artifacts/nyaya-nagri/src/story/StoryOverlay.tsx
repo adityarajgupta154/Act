@@ -6,7 +6,10 @@
  * captions, choices, correct answer and all feedback are fixed data
  * (PRD §9.8 / spec §20). A wrong choice gets gentle, blame-free feedback
  * and a Try Again loop — there is no fail state and no completion without
- * the correct choice (PRD §9.6).
+ * the correct choice (PRD §9.6). The bottom bar OWNS the single right-side
+ * action (idle = disabled Next, wrong = Try Again, correct = Next, via
+ * actionState); the feedback card is text-only, so duplicate or
+ * overlapping action buttons cannot render.
  *
  * Slides show the child's own uploaded artwork once it ships; while a
  * slide's `image` is null the soft placeholder frame renders instead (art
@@ -80,6 +83,11 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
   // Forward is GATED on the choice slide until the correct pick is made —
   // the only path to the result slide runs through the right choice.
   const canNext = index < total - 1 && (slide.type !== 'CHOICE' || picked?.correct === true);
+  // Single source of truth for the ONE right-side action in the bottom bar
+  // (task rule: never two Next buttons, never a duplicated Try Again):
+  // idle → disabled Next, wrong → Try Again, correct → enabled Next.
+  const actionState: 'idle' | 'wrong' | 'correct' =
+    slide.type !== 'CHOICE' || !picked ? 'idle' : picked.correct ? 'correct' : 'wrong';
 
   const goto = (next: number, d: 'fwd' | 'back') => {
     setDir(d);
@@ -135,7 +143,7 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
         {slide.type === 'RESULT' ? (
           <div
             key={index}
-            className="flex-1 min-h-0 flex flex-col items-center justify-center gap-5 md:gap-6 text-center py-6 animate-in fade-in slide-in-from-right-6 duration-300"
+            className="flex-1 flex flex-col items-center justify-center gap-5 md:gap-6 text-center py-6 animate-in fade-in slide-in-from-right-6 duration-300"
           >
             {/* Reward moment — subtle glow + sparkles, no fireworks. Built
                 from existing game styling; the optional 5th illustration
@@ -190,7 +198,10 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
           <div
             key={index}
             className={cn(
-              'flex-1 min-h-0 flex flex-col gap-4 md:gap-5 animate-in fade-in duration-300',
+              // Natural min-height (no min-h-0): when the slide content is
+              // taller than the viewport, the outer column scrolls instead of
+              // the body painting over the bottom bar (overlap fix).
+              'flex-1 flex flex-col gap-4 md:gap-5 animate-in fade-in duration-300',
               dir === 'fwd' ? 'slide-in-from-right-6' : 'slide-in-from-left-6',
             )}
           >
@@ -232,8 +243,9 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
               </p>
             </div>
 
-            {/* Decision — two large, distinct options; gentle feedback +
-                Try Again on the wrong pick, Next only after the right one */}
+            {/* Decision — two large, distinct options. The feedback card
+                below is TEXT-ONLY: the Try Again / Next action lives solely
+                in the global bottom bar (single button ownership). */}
             {slide.type === 'CHOICE' && (
               <div className="flex flex-col gap-3 w-full max-w-xl mx-auto shrink-0">
                 {choices.map((c) => {
@@ -273,24 +285,6 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
                     >
                       {picked.feedback[language]}
                     </p>
-                    <div className="mt-3 flex justify-center">
-                      {picked.correct ? (
-                        <button
-                          onClick={() => goto(index + 1, 'fwd')}
-                          className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-full font-bold shadow-md flex items-center gap-2 transition-transform active:scale-95 touch-manipulation"
-                        >
-                          {t.next}
-                          <ArrowRight className="w-4 h-4" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => setPickedId(null)}
-                          className="bg-white border-2 border-amber-300 text-amber-700 px-6 py-3 rounded-full font-bold shadow-sm transition-transform active:scale-95 touch-manipulation"
-                        >
-                          {t.storyTryAgain}
-                        </button>
-                      )}
-                    </div>
                   </div>
                 )}
               </div>
@@ -298,9 +292,11 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
           </div>
         )}
 
-        {/* Bottom bar: back, progress dots, next (hidden on the result) */}
+        {/* Bottom bar (hidden on the result): back, progress dots, and the
+            ONE right-side action driven by actionState. pr on phones keeps
+            the action clear of the floating Get Help Now shield. */}
         {slide.type !== 'RESULT' && (
-          <div className="flex items-center justify-between gap-3 pt-4 shrink-0">
+          <div className="flex items-center justify-between gap-3 pt-4 pr-14 md:pr-0 shrink-0">
             <button
               onClick={() => goto(index - 1, 'back')}
               disabled={index === 0}
@@ -327,19 +323,28 @@ function StoryPlayer({ level, initialSlide }: { level: StoryLevelDef; initialSli
                 />
               ))}
             </div>
-            <button
-              onClick={() => goto(index + 1, 'fwd')}
-              disabled={!canNext}
-              className={cn(
-                'flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-transform touch-manipulation',
-                canNext
-                  ? 'bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white shadow-md active:scale-95'
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed',
-              )}
-            >
-              {t.next}
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            {actionState === 'wrong' ? (
+              <button
+                onClick={() => setPickedId(null)}
+                className="px-5 py-3 rounded-full font-bold whitespace-nowrap bg-white border-2 border-amber-300 text-amber-700 shadow-sm transition-transform active:scale-95 touch-manipulation"
+              >
+                {t.storyTryAgain}
+              </button>
+            ) : (
+              <button
+                onClick={() => goto(index + 1, 'fwd')}
+                disabled={!canNext}
+                className={cn(
+                  'flex items-center gap-2 px-6 py-3 rounded-full font-bold transition-transform touch-manipulation',
+                  canNext
+                    ? 'bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white shadow-md active:scale-95'
+                    : 'bg-slate-100 text-slate-400 cursor-not-allowed',
+                )}
+              >
+                {t.next}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            )}
           </div>
         )}
       </div>

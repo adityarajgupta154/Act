@@ -18,3 +18,8 @@ description: How to reproduce a supplied reference frame across desktop viewport
 
 ## Measuring build-vs-reference edges
 Compare edges with the SAME pixel detector run on BOTH images, and prefer the gold RIM over the cream face: gradient faces (light→dark cream) drop below a strict cream threshold partway down, under-reporting the bottom edge by 10vh+; light top rims need looser gold thresholds (g<175 missed #f2cd7e). Print ALL detector runs in a column and pick the border run adjacent to the face — first/last gets contaminated by pavement/props.
+
+## Floating safety cluster clearance (phones)
+The Get Help Now shield + mascot float fixed at the bottom-right corner ABOVE every overlay (z-order). Any full-screen overlay that puts a control in its bottom-right corner must reserve ~56-64px right clearance at phone widths (e.g. `pr-14 md:pr-0` on the bar) or the control gets painted under the shield.
+**Why:** Story overlay's bottom-nav Next was partially hidden behind the shield at 402px; user task explicitly forbids overlap with the assistant/help buttons.
+**How to apply:** any new overlay/bottom bar with a right-aligned action — add phone-width right padding; desktop centered columns clear it naturally.

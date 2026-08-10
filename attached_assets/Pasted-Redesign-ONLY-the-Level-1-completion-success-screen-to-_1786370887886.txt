@@ -1,0 +1,254 @@
+Redesign ONLY the Level 1 completion/success screen to closely match the provided reference image.
+
+REFERENCE:
+Use the attached/generated reference image as the PRIMARY visual reference for this screen.
+The target is the bright, polished, child-friendly educational game completion screen shown in the reference.
+
+IMPORTANT:
+Do not redesign the rest of the application.
+Do not change the map, game world, navigation, AI assistant, or other screens.
+Only modify the Level 1 — Right to Life completion screen.
+
+CURRENT SCREEN:
+The current completion screen has a very small story image at the top, which makes the screen feel empty and weak.
+
+MAIN GOAL:
+Make the story image the HERO element of the completion screen.
+
+LAYOUT:
+
+1. TOP HEADER
+Keep:
+- Close X button at top-left
+- "Level 1 — Right to Life" centered
+- "5 / 5" progress badge at top-right
+
+Use the same existing typography and visual language.
+
+2. LARGE HERO STORY IMAGE
+
+Replace the current tiny image with the SAME story image already used in Level 1:
+
+The image showing:
+- Riya
+- Aman
+- Aman's mother
+- Doctor examining Aman
+- Rural health clinic
+
+Do NOT generate a new image.
+Do NOT crop important characters.
+Use the existing project image asset.
+
+Make it a large horizontal hero card.
+
+Recommended desktop dimensions:
+- width: approximately 850–950px
+- height: approximately 450–520px
+- max-width: 90vw
+- aspect-ratio around 16/9
+
+Use:
+- border-radius: 28px
+- white 5–7px border
+- soft shadow
+- object-fit: cover
+- object-position: center
+
+The image should visually dominate the screen.
+
+Do not make the image a tiny square thumbnail.
+
+3. HERO IMAGE DECORATION
+
+Add subtle celebratory decorations around the hero image:
+- small sparkle/star shapes
+- subtle leaf motifs
+- tiny educational icons if already available in the project
+
+Keep them subtle.
+Do not make the screen cluttered.
+
+4. UNLOCKED BADGE
+
+Place the golden achievement/badge element immediately below the hero image.
+
+Use the existing achievement/badge icon if available.
+
+Make it visually connected to the image:
+- gold/orange circular badge
+- subtle glow
+- small decorative leaves/sparkles around it
+
+Text:
+
+"Right to Life Unlocked!"
+
+This should be the main success heading.
+
+Use:
+- dark navy
+- bold rounded typography
+- large font size
+- centered alignment
+
+5. LEARNING SUMMARY
+
+Below the unlocked heading, create a clean white rounded information card.
+
+Text:
+
+"Riya ne seekha ki har bacche ko jeene, health care aur zaroori madad ka adhikar hota hai."
+
+Card:
+- white background
+- rounded corners
+- subtle shadow
+- comfortable padding
+- centered text
+
+Add a small green check icon on the left if it fits naturally.
+
+6. CONTINUE BUTTON
+
+Below the summary card, add ONE primary CTA:
+
+"Continue Exploring →"
+
+Style:
+- orange primary color
+- rounded pill/button
+- large enough for children to tap
+- subtle shadow
+- centered
+
+Do NOT create multiple Continue buttons.
+
+7. EXISTING FLOATING UI
+
+Keep the existing:
+- AI assistant button
+- "Get Help Now" button
+
+Position them exactly like the existing application so they do not overlap the hero image, achievement, summary card, or Continue button.
+
+8. PAGE HEIGHT / SCROLL
+
+The entire completion screen should fit naturally within the viewport on desktop.
+
+Do NOT force content into a tiny area.
+
+If the viewport is smaller:
+- allow natural vertical scrolling
+- never overlap elements
+- never hide the CTA
+- never crop the hero image badly
+
+Use a proper responsive flex/column layout.
+
+Suggested structure:
+
+CompletionScreen
+ ├── Header
+ ├── HeroImageCard
+ ├── AchievementBadge
+ ├── UnlockedTitle
+ ├── LearningSummaryCard
+ ├── ContinueButton
+ └── FloatingControls
+
+9. VISUAL STYLE
+
+Match the existing Nyaya Nagri visual identity:
+
+- warm cream/off-white background
+- dark navy text
+- orange/golden achievement elements
+- white cards
+- soft shadows
+- large rounded corners
+- friendly educational game aesthetic
+- premium but child-friendly
+- clean spacing
+- subtle celebration effects
+
+Do NOT use:
+- dark theme
+- neon colors
+- futuristic cyberpunk styling
+- excessive gradients
+- excessive animations
+- unnecessary glassmorphism
+
+10. RESPONSIVENESS
+
+Desktop:
+Hero image should be large and prominent.
+
+Laptop:
+Scale hero image proportionally while maintaining readable text and CTA.
+
+Tablet/mobile:
+Hero image becomes responsive:
+width: 100%
+height: auto
+aspect ratio maintained
+
+Do not distort the image.
+
+11. IMPORTANT — EXISTING FUNCTIONALITY
+
+Do NOT break:
+- Level completion logic
+- 5/5 progress state
+- Continue Exploring functionality
+- AI assistant
+- Get Help Now
+- achievement/unlock logic
+- story progression
+
+Only change the visual layout of this completion screen.
+
+12. REMOVE CURRENT BAD LAYOUT
+
+Specifically remove the current design where:
+- story image appears as a tiny square thumbnail
+- huge empty space surrounds the image
+- achievement is too far away from the story
+- completion content feels disconnected
+
+The final composition should visually read as:
+
+HEADER
+        ↓
+LARGE STORY HERO IMAGE
+        ↓
+GOLD ACHIEVEMENT
+        ↓
+RIGHT TO LIFE UNLOCKED!
+        ↓
+LEARNING SUMMARY
+        ↓
+CONTINUE EXPLORING
+
+13. FINAL QUALITY CHECK
+
+After implementation, compare the result against the provided reference image.
+
+Check:
+- Hero image is large
+- Hero image is the visual focal point
+- Image is not distorted
+- Achievement is directly connected to the image
+- Heading has strong visual hierarchy
+- Summary card is properly spaced
+- Continue button is clearly visible
+- No elements overlap
+- AI assistant does not overlap content
+- Get Help Now does not overlap content
+- No duplicate buttons
+- No unnecessary empty space
+
+IMPORTANT:
+Do not stop after making a rough approximation.
+Inspect the rendered screen and refine spacing, sizing, alignment, image dimensions, shadows, border radius, and typography until the result closely matches the provided reference design.
