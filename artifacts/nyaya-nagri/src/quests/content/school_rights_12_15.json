@@ -5,6 +5,18 @@
   "title": "The Empty Bench",
   "scenes": [
     {
+      "sceneId": "intro1",
+      "narration": "Welcome to School Rights Lane. This story is about Sana, your classmate. Her bench has been empty for two days, and today she is finally back — but she does not look happy to return.",
+      "next": "intro2",
+      "choices": []
+    },
+    {
+      "sceneId": "intro2",
+      "narration": "Money trouble at home. A teacher who humiliates her in front of the class. Sana thinks she just has to accept all of it — but the law says otherwise. In this story, you will walk beside her and learn exactly what protects her seat, and her dignity, at school.",
+      "next": "scene1",
+      "choices": []
+    },
+    {
       "sceneId": "scene1",
       "narration": "Sana's bench has been empty for two days. When she finally returns, she tells you the truth at break: money is tight at home, and her parents are thinking of taking her out after Class 7. And honestly? Part of her is relieved, because one teacher keeps humiliating her in front of the whole class, mocking her answers and calling her 'hopeless'. What is the right first move?",
       "choices": [
@@ -152,20 +164,22 @@
       "levelId": "level1",
       "kind": "story",
       "sceneIds": [
-        "scene1",
-        "scene2"
+        "intro1",
+        "intro2"
       ],
-      "entryScene": "scene1"
+      "entryScene": "intro1"
     },
     {
       "levelId": "level2",
       "kind": "decision",
       "sceneIds": [
+        "scene1",
+        "scene2",
         "scene3",
         "scene4",
         "scene5"
       ],
-      "entryScene": "scene3"
+      "entryScene": "scene1"
     },
     {
       "levelId": "level_memory",

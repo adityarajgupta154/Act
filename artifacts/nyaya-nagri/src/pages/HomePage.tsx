@@ -28,7 +28,13 @@ function WorldLoading() {
 }
 
 export default function HomePage() {
-  const [entered, setEntered] = useState(false);
+  // DEV-only screenshot/e2e seam (same spirit as __nnDebug): `?map=open`
+  // boots straight into the world so the headless capture browser — which
+  // cannot click "Enter" — can reach the Map modal. Dead code in production
+  // builds (import.meta.env.DEV is false there).
+  const [entered, setEntered] = useState(
+    () => !!(import.meta.env?.DEV && new URLSearchParams(window.location.search).get('map') === 'open'),
+  );
 
   if (!entered) {
     return <HomeScreen onEnter={() => setEntered(true)} />;

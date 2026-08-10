@@ -17,6 +17,14 @@ import { progressStore } from '@/data/progressStore';
 import { isActivityKind, type Quest, type QuestLevel, type ChoiceOutcome } from './schema';
 import { getRecap, type RecapItem } from './recaps';
 import {
+  buildActivityEvent,
+  buildQuizEvent,
+  buildRecapEvent,
+  buildSceneChoiceEvent,
+  flushActivityEvents,
+} from '@/insights/track';
+import type { ActivityEvent } from '@/insights/types';
+import {
   advanceStreak,
   awardForLevel,
   newlyUnlockedTitles,
@@ -88,6 +96,18 @@ export interface QuestSession {
    * first-try correct placements, scenario is 1/0 for the single decision.
    */
   activityResult: { score: number; total: number } | null;
+  /**
+   * Insights: when the item currently on screen appeared (ms epoch) — the
+   * responseTime source. Refreshed by every transition that shows a new
+   * question/scene. Never rendered; never persisted with the session.
+   */
+  questionShownAt: number;
+  /**
+   * Insights: activity events accumulated PURELY during the session and
+   * flushed ONLY by finalizeQuest()/finalizeLevel() — the engine's existing
+   * single side-effect points. An abandoned session records nothing.
+   */
+  pendingEvents: ActivityEvent[];
 }
 
 export function startQuest(quest: Quest): QuestSession {
@@ -107,6 +127,8 @@ export function startQuest(quest: Quest): QuestSession {
     levelIndex: null,
     practice: false,
     activityResult: null,
+    questionShownAt: Date.now(),
+    pendingEvents: [],
   };
 }
 
@@ -119,17 +141,18 @@ export function getSessionLevel(session: QuestSession): QuestLevel | null {
 
 /**
  * Task 15: start a single LEVEL of a quest.
- * - Level 1 (story) begins with the silent pre-quiz (the literacy baseline
- *   must still be measured BEFORE any content is seen), then its scenes.
- * - Decision levels are scenes only, starting at the level's entry scene.
- * - The quiz level is the checkpoint: post-quiz + adaptive recap. It gets
- *   the pre-quiz answers recorded when Level 1 finished (priorPreAnswers)
- *   so the recap logic behaves exactly as in the classic flow.
- * - practice: replay of a completed level — the pre-quiz is skipped for
- *   story levels (the baseline is already recorded and must never be
- *   re-measured or overwritten).
+ * - Task 26: quiz-style UI must NEVER be the first thing a child sees when
+ *   entering a zone. Story and decision levels start directly in their
+ *   scenes at the level's entry scene — the silent pre-quiz baseline no
+ *   longer runs in level sessions. (Classic full-quest sessions started via
+ *   startQuest() keep the pre/post measurement pair for PRD §5.) Saves that
+ *   already hold a baseline keep working: the quiz level still receives
+ *   priorPreAnswers and the adaptive recap adapts to them.
+ * - The quiz level is the LAST level only — the checkpoint whose passing
+ *   completes the zone (post-quiz + adaptive recap).
+ * - practice: replay of a completed level — never writes scores/progress.
  * - Task 18: activity levels (memory/hidden/sorting/scenario) go straight
- *   to the 'activity' phase — they never touch the pre-quiz baseline.
+ *   to the 'activity' phase.
  */
 export function startLevel(
   quest: Quest,
@@ -151,10 +174,7 @@ export function startLevel(
   if (isActivityKind(level.kind)) {
     return { ...base, phase: 'activity' };
   }
-  const isFirstPlayOfStory = level.kind === 'story' && !practice;
-  return isFirstPlayOfStory
-    ? base // pre-quiz first, scenes follow (entry scene set on transition)
-    : { ...base, phase: 'scenes', currentSceneId: level.entryScene ?? null };
+  return { ...base, phase: 'scenes', currentSceneId: level.entryScene ?? null };
 }
 
 export function scoreAnswers(quest: Quest, answers: number[]): number {
@@ -182,6 +202,10 @@ export function answerQuizQuestion(
     // Silent: record only, never reveal correctness (that is the point of
     // the baseline measurement).
     const preAnswers = [...session.preAnswers, optionIndex];
+    const pendingEvents = [
+      ...session.pendingEvents,
+      buildQuizEvent(session, question, quizIndex, optionIndex, 'quiz-pre'),
+    ];
     // Level sessions start their scenes at the level's entry scene;
     // full-quest sessions start at the first scene (unchanged).
     const entryScene =
@@ -190,11 +214,19 @@ export function answerQuizQuestion(
       ? {
           ...session,
           preAnswers,
+          pendingEvents,
           phase: 'scenes',
           quizIndex: 0,
           currentSceneId: entryScene,
+          questionShownAt: Date.now(),
         }
-      : { ...session, preAnswers, quizIndex: quizIndex + 1 };
+      : {
+          ...session,
+          preAnswers,
+          pendingEvents,
+          quizIndex: quizIndex + 1,
+          questionShownAt: Date.now(),
+        };
   }
 
   // post-quiz: show correctness + explanation; advance on acknowledge.
@@ -202,6 +234,10 @@ export function answerQuizQuestion(
   return {
     ...session,
     postAnswers,
+    pendingEvents: [
+      ...session.pendingEvents,
+      buildQuizEvent(session, question, quizIndex, optionIndex, 'quiz-post'),
+    ],
     lastQuizFeedback: {
       correct: optionIndex === question.correctIndex,
       explanation: question.explanation,
@@ -216,6 +252,11 @@ export function answerQuizQuestion(
  */
 export function buildRecapQueue(session: QuestSession): number[] {
   const { quest, preAnswers } = session;
+  // Task 26: level sessions no longer run a pre-quiz, so a quiz level may
+  // arrive with NO baseline at all. No baseline -> no recap (the recap
+  // exists to revisit a measured-weak baseline, not to punish its absence).
+  // Saves holding a baseline from the older flow still adapt as before.
+  if (preAnswers.length === 0) return [];
   const total = quest.quizQuestions.length;
   const preScore = scoreAnswers(quest, preAnswers);
   if (preScore >= total * RECAP_TRIGGER_RATIO) return [];
@@ -233,13 +274,25 @@ export function acknowledgeQuizFeedback(session: QuestSession): QuestSession {
   if (session.phase !== 'post-quiz' || !session.lastQuizFeedback) return session;
   const isLast = session.quizIndex === session.quest.quizQuestions.length - 1;
   if (!isLast) {
-    return { ...session, lastQuizFeedback: null, quizIndex: session.quizIndex + 1 };
+    return {
+      ...session,
+      lastQuizFeedback: null,
+      quizIndex: session.quizIndex + 1,
+      questionShownAt: Date.now(),
+    };
   }
   // Adaptive step: a very low pre-quiz baseline earns a friendly revisit of
   // those concepts before the quest wraps up; otherwise proceed directly.
   const recapQueue = buildRecapQueue(session);
   return recapQueue.length > 0
-    ? { ...session, lastQuizFeedback: null, phase: 'recap', recapQueue, recapIndex: 0 }
+    ? {
+        ...session,
+        lastQuizFeedback: null,
+        phase: 'recap',
+        recapQueue,
+        recapIndex: 0,
+        questionShownAt: Date.now(),
+      }
     : { ...session, lastQuizFeedback: null, phase: 'complete' };
 }
 
@@ -259,8 +312,13 @@ export function answerRecapQuestion(
   if (session.phase !== 'recap' || session.recapFeedback) return session;
   const item = getActiveRecap(session);
   if (!item || optionIndex < 0 || optionIndex >= item.options.length) return session;
+  const questionIndex = session.recapQueue[session.recapIndex] ?? session.recapIndex;
   return {
     ...session,
+    pendingEvents: [
+      ...session.pendingEvents,
+      buildRecapEvent(session, item, questionIndex, optionIndex),
+    ],
     recapFeedback: {
       correct: optionIndex === item.correctIndex,
       explanation: item.explanation,
@@ -278,7 +336,12 @@ export function acknowledgeRecapFeedback(session: QuestSession): QuestSession {
   const isLast = session.recapIndex === session.recapQueue.length - 1;
   return isLast
     ? { ...session, recapFeedback: null, phase: 'complete' }
-    : { ...session, recapFeedback: null, recapIndex: session.recapIndex + 1 };
+    : {
+        ...session,
+        recapFeedback: null,
+        recapIndex: session.recapIndex + 1,
+        questionShownAt: Date.now(),
+      };
 }
 
 export function getCurrentScene(session: QuestSession) {
@@ -295,8 +358,25 @@ export function chooseSceneOption(
   const choice = scene?.choices[choiceIndex];
   if (!scene || !choice) return session;
 
+  // Insights: neutral choices are navigation, not learning measurement.
+  const correctIdx = scene.choices.findIndex((c) => c.outcome === 'correct');
+  const pendingEvents =
+    choice.outcome === 'neutral'
+      ? session.pendingEvents
+      : [
+          ...session.pendingEvents,
+          buildSceneChoiceEvent(
+            session,
+            scene.sceneId,
+            choiceIndex,
+            correctIdx >= 0 ? correctIdx : null,
+            choice.outcome === 'correct',
+          ),
+        ];
+
   return {
     ...session,
+    pendingEvents,
     pendingFeedback: {
       outcome: choice.outcome,
       feedback: choice.feedback,
@@ -323,7 +403,12 @@ export function acknowledgeSceneFeedback(session: QuestSession): QuestSession {
   const staysInLevel = !level || (next && level.sceneIds?.includes(next));
 
   if (nextExists && staysInLevel) {
-    return { ...session, pendingFeedback: null, currentSceneId: next! };
+    return {
+      ...session,
+      pendingFeedback: null,
+      currentSceneId: next!,
+      questionShownAt: Date.now(),
+    };
   }
   if (level) {
     // Scene levels end here — the quiz only lives in the quiz level.
@@ -335,6 +420,39 @@ export function acknowledgeSceneFeedback(session: QuestSession): QuestSession {
     currentSceneId: null,
     phase: 'post-quiz',
     quizIndex: 0,
+    questionShownAt: Date.now(),
+  };
+}
+
+/**
+ * Task 26: advance past a narration-only scene (zero choices — the pure
+ * story panels of a story level). Mirrors acknowledgeSceneFeedback's
+ * border logic: `next` within the level → next panel; crossing the level
+ * border (or no `next`) → the level completes — the next scene belongs to
+ * the next level and is never shown early. Classic full-quest sessions
+ * fall through to the post-quiz exactly like a finished choice path.
+ */
+export function continueScene(session: QuestSession): QuestSession {
+  if (session.phase !== 'scenes' || session.pendingFeedback) return session;
+  const scene = getCurrentScene(session);
+  if (!scene || scene.choices.length > 0) return session;
+  const next = scene.next;
+  const nextExists = next && session.quest.scenes.some((s) => s.sceneId === next);
+  const level = getSessionLevel(session);
+  const staysInLevel = !level || (next && level.sceneIds?.includes(next));
+
+  if (nextExists && staysInLevel) {
+    return { ...session, currentSceneId: next!, questionShownAt: Date.now() };
+  }
+  if (level) {
+    return { ...session, currentSceneId: null, phase: 'complete' };
+  }
+  return {
+    ...session,
+    currentSceneId: null,
+    phase: 'post-quiz',
+    quizIndex: 0,
+    questionShownAt: Date.now(),
   };
 }
 
@@ -367,6 +485,8 @@ export function finalizeQuest(session: QuestSession): QuestResult {
     badges: { ...state.badges, [badgeId]: true },
     completedZones: { ...state.completedZones, [quest.zoneId]: true },
   });
+  // Insights: the session's tracked events land only on this recorded path.
+  flushActivityEvents(session.pendingEvents, { practice: false, retryCount: 0 });
 
   return {
     questId: quest.questId,
@@ -412,10 +532,15 @@ export function completeActivity(session: QuestSession, score: number): QuestSes
   if (!level || !isActivityKind(level.kind)) return session;
   const total = activityTotal(level);
   const clamped = Math.max(0, Math.min(total, Math.floor(score)));
+  const finalScore = Number.isFinite(clamped) ? clamped : 0;
   return {
     ...session,
     phase: 'complete',
-    activityResult: { score: Number.isFinite(clamped) ? clamped : 0, total },
+    activityResult: { score: finalScore, total },
+    pendingEvents: [
+      ...session.pendingEvents,
+      buildActivityEvent(session, level.levelId, finalScore, total),
+    ],
   };
 }
 
@@ -479,6 +604,12 @@ export function finalizeLevel(session: QuestSession): LevelResult {
       // but NEVER awards XP/Coins (no practice grinding, Task 16).
       streak: advanceStreak(state.streak, todayString()),
     });
+    // Insights: practice runs ARE tracked (persistence/retry signals), but
+    // flagged practice:true so the analyzer never mixes them into accuracy.
+    flushActivityEvents(session.pendingEvents, {
+      practice: true,
+      retryCount: (state.replayCounts[key] ?? 0) + 1,
+    });
     return {
       questId: quest.questId,
       zoneId: quest.zoneId,
@@ -502,9 +633,10 @@ export function finalizeLevel(session: QuestSession): LevelResult {
     levelProgress: { ...state.levelProgress, [key]: true },
   };
 
-  if (level.kind === 'story') {
-    // Baseline measured before any content — stored for the quiz level's
-    // adaptive recap and the Task 9 literacy-delta analytics.
+  if (level.kind === 'story' && session.preAnswers.length > 0) {
+    // Legacy baseline path: Task 26 level sessions never run a pre-quiz, so
+    // this writes only for sessions that actually measured one. It must
+    // never fabricate a pre score of 0 out of no data.
     const preScore = scoreAnswers(quest, session.preAnswers);
     patch.preAnswersByQuest = {
       ...state.preAnswersByQuest,
@@ -531,7 +663,11 @@ export function finalizeLevel(session: QuestSession): LevelResult {
   if (isQuizLevel) {
     // The quiz level is validated to be LAST — passing it completes the
     // zone (Task 1 lock rules unlock the next zone off completedZones).
-    const preScore = existing?.pre ?? scoreAnswers(quest, session.preAnswers);
+    // Task 26: with no measured baseline anywhere, pre stays null — the
+    // literacy delta simply has no pre value (never a fabricated 0).
+    const preScore =
+      existing?.pre ??
+      (session.preAnswers.length > 0 ? scoreAnswers(quest, session.preAnswers) : null);
     badgeId = `${quest.zoneId}_star`;
     zoneCompleted = true;
     patch.quizScores = {
@@ -561,6 +697,9 @@ export function finalizeLevel(session: QuestSession): LevelResult {
   }
 
   progressStore.update(patch);
+  // Insights: flush AFTER the progress write so the appended events see the
+  // final replay counts and the log rides the same save.
+  flushActivityEvents(session.pendingEvents, { practice: false, retryCount: 0 });
   return {
     questId: quest.questId,
     zoneId: quest.zoneId,

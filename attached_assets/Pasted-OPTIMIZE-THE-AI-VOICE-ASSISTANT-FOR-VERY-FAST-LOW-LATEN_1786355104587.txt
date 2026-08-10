@@ -1,0 +1,448 @@
+OPTIMIZE THE AI VOICE ASSISTANT FOR VERY FAST, LOW-LATENCY CONVERSATION.
+
+IMPORTANT:
+The current AI assistant feels slow. There is noticeable delay between:
+User speaks → speech recognition → AI processing → AI response → voice playback.
+
+I want the assistant to feel like a real-time conversational voice assistant.
+
+DO NOT redesign the UI.
+DO NOT change the AI assistant's visual design.
+DO NOT remove existing functionality.
+
+ONLY optimize the voice interaction pipeline and response latency.
+
+==================================================
+1. FIRST AUDIT THE CURRENT VOICE PIPELINE
+==================================================
+
+Inspect the existing implementation and identify:
+
+- microphone input handling
+- speech recognition / speech-to-text
+- Gemini API request
+- prompt construction
+- response parsing
+- text-to-speech
+- audio playback
+- loading states
+- unnecessary API calls
+- duplicate requests
+- sequential operations that can run in parallel
+- unnecessary React re-renders
+
+Find exactly where the latency is coming from before modifying the implementation.
+
+==================================================
+2. STREAM GEMINI RESPONSE
+==================================================
+
+Do NOT wait for the complete Gemini response before starting processing.
+
+Use Gemini streaming response if supported by the current SDK/API setup.
+
+Desired flow:
+
+User speaks
+    ↓
+Speech recognition
+    ↓
+Immediately send request
+    ↓
+Gemini starts streaming
+    ↓
+Receive partial text
+    ↓
+Start preparing speech immediately
+    ↓
+Play audio progressively
+
+The user should NOT have to wait for the entire answer to be generated.
+
+==================================================
+3. REDUCE RESPONSE LENGTH
+==================================================
+
+The assistant is designed for children and educational interaction.
+
+Do NOT generate unnecessarily long responses.
+
+Default response style:
+
+- 1–3 short sentences
+- simple language
+- direct answer
+- conversational tone
+- no unnecessary explanation
+- no repeated information
+
+Example:
+
+BAD:
+"That's a really interesting question. Let me explain this concept in detail..."
+
+GOOD:
+"Yes! A child has the right to education. Every child should get a chance to learn."
+
+The AI should answer naturally without unnecessary filler.
+
+==================================================
+4. INTERRUPTIBLE CONVERSATION
+==================================================
+
+Implement barge-in support.
+
+If the user starts speaking while the AI is talking:
+
+1. Immediately stop current audio playback.
+2. Cancel/ignore the unfinished AI response.
+3. Start listening to the user.
+4. Send the new request.
+
+The AI must NOT continue speaking over the user.
+
+This is extremely important for making the assistant feel real-time.
+
+==================================================
+5. DO NOT WAIT FOR UNNECESSARY OPERATIONS
+==================================================
+
+Audit the code for patterns like:
+
+await operationA()
+await operationB()
+await operationC()
+
+when operations are independent.
+
+Use parallel execution where safe:
+
+Promise.all()
+
+Do NOT introduce race conditions.
+
+Only make operations parallel when they are actually independent.
+
+==================================================
+6. SPEECH RECOGNITION OPTIMIZATION
+==================================================
+
+Speech recognition should start immediately when the user activates the assistant.
+
+Avoid unnecessary:
+
+- delays
+- setTimeout
+- debounce delays
+- artificial loading periods
+- repeated initialization
+- microphone permission checks on every message
+
+Keep the speech recognition instance reusable when possible.
+
+Detect end-of-speech quickly but avoid cutting the user off.
+
+==================================================
+7. AUDIO RESPONSE OPTIMIZATION
+==================================================
+
+The biggest priority is reducing:
+
+"AI generated text → waiting → complete audio → playback"
+
+Instead:
+
+Gemini response
+     ↓
+text chunks
+     ↓
+TTS preparation
+     ↓
+audio playback
+
+If the current TTS provider supports streaming audio, use it.
+
+If streaming TTS is not available, split the response into short natural chunks and start generating audio for the first chunk while later text is still being processed.
+
+Do NOT wait unnecessarily for the entire response.
+
+==================================================
+8. AUDIO PRELOADING / BUFFERING
+==================================================
+
+Implement a small audio queue.
+
+Example:
+
+Chunk 1 → playing
+Chunk 2 → generating/buffering
+Chunk 3 → waiting
+
+This should make speech playback continuous.
+
+Avoid noticeable gaps between sentences.
+
+Do NOT preload huge amounts of audio.
+
+Keep the buffer small to minimize memory usage and latency.
+
+==================================================
+9. GEMINI REQUEST OPTIMIZATION
+==================================================
+
+Reduce unnecessary prompt size.
+
+The system prompt should contain only information necessary for the current conversation.
+
+Do NOT send the entire game state repeatedly if it has not changed.
+
+Do NOT send unnecessary website content on every request.
+
+Cache static knowledge/configuration where appropriate.
+
+Keep dynamic context small.
+
+==================================================
+10. CONVERSATION MEMORY
+==================================================
+
+Do NOT send the entire conversation history indefinitely.
+
+Implement a lightweight conversation context strategy.
+
+Keep:
+
+- recent conversation turns
+- important user context
+- current game/zone context
+- relevant learning context
+
+Remove redundant old messages when safe.
+
+This will reduce token processing and response latency.
+
+==================================================
+11. KNOWLEDGE / INDIA CODE
+==================================================
+
+The assistant may use India Code and project-specific legal-learning information.
+
+Do NOT fetch the website on every voice question.
+
+Do NOT make a fresh network request for static information unless necessary.
+
+Use cached/indexed knowledge where the existing architecture supports it.
+
+For questions that actually require current source verification, fetch only when necessary.
+
+==================================================
+12. LOADING EXPERIENCE
+==================================================
+
+Do NOT show a long generic spinner.
+
+Instead, make the assistant feel alive.
+
+During processing:
+
+- assistant avatar subtly animates
+- listening state → listening animation
+- thinking state → very short thinking animation
+- speaking state → speaking animation
+
+The UI should immediately react to user interaction.
+
+There should never be a period where the assistant looks frozen.
+
+==================================================
+13. OPTIMIZE REACT PERFORMANCE
+==================================================
+
+Inspect unnecessary React renders.
+
+Use appropriate:
+
+- useMemo
+- useCallback
+- React.memo
+- refs
+- state isolation
+
+Do NOT put rapidly changing audio/recognition state into global state unless necessary.
+
+Avoid re-rendering the entire game whenever:
+
+- microphone state changes
+- AI starts speaking
+- audio progress changes
+- speech recognition receives partial text
+
+Voice state should be isolated from the game rendering system.
+
+==================================================
+14. GAME PERFORMANCE
+==================================================
+
+The game itself must remain smooth while the AI is working.
+
+The AI assistant must NOT cause:
+
+- FPS drops
+- map lag
+- player movement lag
+- unnecessary canvas redraws
+- excessive React renders
+
+If the game uses Three.js / Canvas / WebGL, isolate AI UI updates from the game rendering loop.
+
+==================================================
+15. ERROR HANDLING
+==================================================
+
+If Gemini takes too long:
+
+Do NOT leave the user waiting indefinitely.
+
+Set a reasonable timeout.
+
+If the request fails:
+
+Give a short natural fallback such as:
+
+"Sorry, I didn't catch that. Can you say it again?"
+
+Do not expose API errors to the child.
+
+==================================================
+16. API KEY SECURITY
+==================================================
+
+IMPORTANT:
+
+Do NOT expose the Gemini API key in frontend/client-side source code.
+
+Move the Gemini API call behind a secure backend/server endpoint if the current implementation exposes the key.
+
+Use environment variables.
+
+Example:
+
+GEMINI_API_KEY
+
+Never hardcode the API key.
+
+==================================================
+17. TARGET EXPERIENCE
+==================================================
+
+The target experience should feel like:
+
+User:
+"What is my right to education?"
+
+Assistant should respond almost immediately:
+
+"Every child has the right to learn and go to school."
+
+Then voice playback should begin as soon as possible.
+
+Avoid:
+
+User speaks
+↓
+3–5 second silence
+↓
+loading animation
+↓
+full response generated
+↓
+audio starts
+
+Instead aim for:
+
+User stops speaking
+↓
+short processing delay
+↓
+AI starts responding
+↓
+voice starts immediately
+↓
+remaining response streams naturally
+
+==================================================
+18. MEASURE LATENCY
+==================================================
+
+Add development-only performance measurements.
+
+Measure:
+
+1. speech end → API request
+2. API request → first Gemini token
+3. first Gemini token → first TTS audio
+4. first audio → playback
+5. total response time
+
+Log these timings in development mode.
+
+Example:
+
+Voice latency:
+STT: 120ms
+Gemini first token: 450ms
+TTS first audio: 300ms
+Playback start: 780ms
+
+Use these measurements to identify the actual bottleneck.
+
+Remove verbose performance logs from production.
+
+==================================================
+19. IMPORTANT: DO NOT FAKE SPEED
+==================================================
+
+Do NOT simply:
+
+- reduce loading animation
+- hide the spinner
+- show fake "thinking"
+- hardcode responses
+- create fake instant responses
+
+The actual voice pipeline must become faster.
+
+==================================================
+20. FINAL ACCEPTANCE TEST
+==================================================
+
+After implementation test at least:
+
+✓ normal question
+✓ short question
+✓ long question
+✓ user interrupts AI
+✓ user asks follow-up
+✓ microphone permission
+✓ Gemini API failure
+✓ slow network
+✓ repeated questions
+✓ moving around the game while AI responds
+
+The assistant should remain responsive.
+
+FINAL GOAL:
+
+Make the AI assistant feel like a REAL-TIME voice companion rather than a chatbot that generates an answer and then speaks it.
+
+Prioritize:
+LOW LATENCY
+STREAMING
+INTERRUPTION SUPPORT
+FAST FIRST RESPONSE
+SMOOTH AUDIO
+LOW REACT RERENDERING
+SMOOTH GAME PERFORMANCE
+
+Do not stop after making superficial UI changes.
+Inspect the complete voice pipeline and fix the actual latency bottlenecks.

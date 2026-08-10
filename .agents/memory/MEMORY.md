@@ -1,6 +1,12 @@
 - [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — user pastes Tasks 0-24 one at a time; re-read PRD §9 (+§4 if legal content) before EVERY task; hard safety rules apply forever.
-- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — SEVEN smokes; api-server curl on own PORT; zone/level checklists; e2e unlock recipe; HI JSON language:'hi'; 2D world screenshots OK (Canvas fallback).
+- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — TEN smokes + api safety smoke; curl api on own PORT; zone/level checklists; e2e unlock recipe; `?map=open` seam; literal-grep rot rule; HI JSON language:'hi'.
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
 - [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — art is USER-SUPPLIED, verbatim; extra elements = cutouts of their refs; signs at 40-48% vh (overlays above/below); pango for Devanagari baking.
 - [Reference-frame layout](nyaya-nagri-reference-layout.md) — measure the frame as vh fractions; 100dvh not %, panel min-h in vh + flex-1 rows; vh coefficient rules short screens, rem cap rules tall.
-- [Nyaya Nagri world perf](nyaya-nagri-world-perf.md) — decor via drei Instances (frustumCulled=false) + castShadow on main hulls only; ~150 individual casters broke the low-end budget.
+- [GitHub push setup](github-push-setup.md) — push via x-access-token credential helper with $GITHUB_PERSONAL_ACCESS_TOKEN ($ACT backup); platform gitPush dead end (connected account lacks write access).
+- [Nyaya Nagri certificates](nyaya-nagri-certificates.md) — derived-state reconcile at both store ingresses + boot write-back; doc inline-hex only; Devanagari faces explicitly loaded pre-capture.
+- [Level-flow rollout](nyaya-nagri-level-flow-rollout.md) — zone3 is the approved reference; 6 zones await user OK; narration-intro transform recipe + save-compat + validator rules inside.
+- [Nyaya AI assistant](nyaya-nagri-nyayaai.md) — ONE assistant; text gemini-3.5-flash, Live voice 2.5-flash-native-audio (ephemeral tokens, playback holdback, fail-closed guard); corpus never holds helpline digits.
+- [Nyaya streaming chat](nyaya-nagri-streaming-chat.md) — NDJSON twin route gates the ACCUMULATED reply BEFORE each delta forward; shared prepareChat stops gate drift; client newest-wins epoch+abort; lazy headers.
+- [Agent platform quirks](agent-platform-quirks.md) — durable scope has no setTimeout (wrap in impure fn); zombie testing subagent can wedge the 1-slot pool — disclose and move on.
+- [Nyaya insights system](nyaya-nagri-insights.md) — evidence gates count MEASURED sessions only; AI-cache fingerprint covers EVERY summarized input; cache keyed lang:audience; local-PIN gate = user-approved deviation.

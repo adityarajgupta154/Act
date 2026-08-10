@@ -45,6 +45,11 @@ const sample: ProgressState = {
   titles: { zone1_guardian: true },
   leaderboardOptIn: false,
   sessionId: 'nn-testsample-0001',
+  certificates: {
+    zone1: { certificateId: 'NYN-SAF-2026-TESTA1', completedAt: '2026-08-01T10:00:00.000Z' },
+    zone2: { certificateId: 'NYN-CHD-2026-TESTB2', completedAt: '2026-08-02T10:00:00.000Z' },
+    zone3: { certificateId: 'NYN-SCH-2026-TESTC3', completedAt: '2026-08-03T10:00:00.000Z' },
+  },
   extras: {},
 };
 
@@ -94,7 +99,13 @@ assert(!teacherHtml.toLowerCase().includes('scene') && !teacherHtml.toLowerCase(
   'teacher view contains no scenario/choice content');
 
 // --- Empty state ---
-const fresh: ProgressState = { ...sample, completedZones: {}, badges: {}, quizScores: {} };
+const fresh: ProgressState = {
+  ...sample,
+  completedZones: {},
+  badges: {},
+  quizScores: {},
+  certificates: {},
+};
 const freshChild = renderToStaticMarkup(
   <ProgressPanel progress={fresh} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
 );
@@ -111,3 +122,20 @@ for (const [name, html] of [['child', childHtml], ['teacher', teacherHtml]] as c
 }
 
 console.log('\nAll dashboard render smoke tests passed.');
+
+// --- Task 27: certificates section renders from real records only ---
+{
+  const certHtml = renderToStaticMarkup(
+    <ProgressPanel progress={sample} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
+  );
+  assert(certHtml.includes('Certificates'), 'certificates heading renders');
+  assert((certHtml.match(/View Certificate/g) ?? []).length === 3,
+    'exactly three earned certificate cards (zone1-3)');
+  assert(certHtml.includes('NYN-SAF-2026-TESTA1'), 'certificate id shown on the card');
+  assert(certHtml.includes('Certificates to Earn'), 'locked certificates section renders');
+  const freshCertHtml = renderToStaticMarkup(
+    <ProgressPanel progress={fresh} teacherView={false} onToggleTeacherView={noop} onClose={noop} />,
+  );
+  assert(!freshCertHtml.includes('View Certificate'), 'fresh save shows NO earned certificates');
+  console.log('ok - certificate section render checks passed');
+}

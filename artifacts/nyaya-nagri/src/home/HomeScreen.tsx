@@ -27,6 +27,7 @@ import { useStrings } from '@/i18n/strings';
 import { SettingsPanel } from '@/ui/SettingsPanel';
 import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
 import { HelpDialog } from '@/ui/HelpDialog';
+import { AvatarWidget } from '@/avatar/AvatarWidget';
 import { HowItWorksContent } from '@/onboarding/HowItWorksContent';
 import { HomeBackground } from './HomeBackground';
 import { BrandHeader } from './BrandHeader';
@@ -53,6 +54,14 @@ export function HomeScreen({ onEnter }: { onEnter: () => void }) {
       <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2.5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:gap-4 md:p-5 md:pb-[5%] xl:gap-5 xl:pb-[7%]">
         <PrimaryCta onEnter={onEnter} />
         <SecondaryActions onExplore={onEnter} onHowItWorks={() => setHowOpen(true)} />
+
+        {/* Nyaya AI — the game's ONE assistant (robot guide, Gemini brain),
+            reachable straight from Home. Mobile: right-aligned row just above
+            the help bar (in-flow, never covers the CTAs). Desktop: floats
+            above the pinned Get Help card. */}
+        <div className="flex w-full justify-end pt-1 md:absolute md:bottom-44 md:right-5 md:w-auto md:pt-0 xl:bottom-48 xl:right-6">
+          <AvatarWidget />
+        </div>
 
         {/* Get Help Now — same shared help screen (PRD §9.1), card shows the
             numbers. IMAGE 4 + brief §13: from `md` up this is a COMPACT

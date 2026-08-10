@@ -4,6 +4,9 @@
  * three age bands, through the full state machine and asserts scores, badges,
  * and sequential unlocks, plus the standing content rules from Task 4 onward
  * (Childline 1098 present, no emojis).
+ * Task 26: scene walks handle narration-only scenes (zero choices) via
+ * continueScene — the classic full-quest pre/post measurement path itself
+ * is unchanged.
  */
 import { resolveQuest } from '../src/quests/registry';
 import {
@@ -12,6 +15,7 @@ import {
   acknowledgeQuizFeedback,
   chooseSceneOption,
   acknowledgeSceneFeedback,
+  continueScene,
   getCurrentScene,
   finalizeQuest,
   buildRecapQueue,
@@ -87,11 +91,16 @@ for (const zoneId of CONTENT_ZONES) {
     }
     assert(s.phase === 'scenes', `${quest!.questId} pre-quiz done -> scenes`);
 
-    // Scenes: always pick the correct choice, follow branches to the end.
+    // Scenes: narration panels Continue through; decisions pick the correct
+    // choice; follow branches to the end.
     let steps = 0;
     while (s.phase === 'scenes' && steps++ < 25) {
       const scene = getCurrentScene(s);
       assert(!!scene, `${quest!.questId} active scene exists`);
+      if (scene!.choices.length === 0) {
+        s = continueScene(s); // Task 26: narration-only panel
+        continue;
+      }
       const idx = scene!.choices.findIndex((c) => c.outcome === 'correct');
       assert(idx >= 0, `${quest!.questId}/${scene!.sceneId} has a correct choice`);
       s = chooseSceneOption(s, idx);
@@ -164,6 +173,10 @@ function walkToPostQuiz(quest: Quest, preAnswerFor: (qi: number) => number): Que
   let steps = 0;
   while (s.phase === 'scenes' && steps++ < 25) {
     const scene = getCurrentScene(s)!;
+    if (scene.choices.length === 0) {
+      s = continueScene(s); // Task 26: narration-only panel
+      continue;
+    }
     const idx = scene.choices.findIndex((c) => c.outcome === 'correct');
     s = chooseSceneOption(s, idx);
     s = acknowledgeSceneFeedback(s);
@@ -247,6 +260,10 @@ for (const zoneId of ALL_ZONES) {
         `${en.questId}/${enScene.sceneId} hi choice count matches`,
       );
       assert(
+        (hiScene.next ?? null) === (enScene.next ?? null),
+        `${en.questId}/${enScene.sceneId} hi narration next matches`,
+      );
+      assert(
         (hiScene.stageLabel !== undefined) === (enScene.stageLabel !== undefined),
         `${en.questId}/${enScene.sceneId} hi stageLabel presence matches`,
       );
@@ -299,6 +316,10 @@ for (const zoneId of ALL_ZONES) {
     let hsSteps = 0;
     while (hs.phase === 'scenes' && hsSteps++ < 25) {
       const scene = getCurrentScene(hs)!;
+      if (scene.choices.length === 0) {
+        hs = continueScene(hs); // Task 26: narration-only panel
+        continue;
+      }
       hs = chooseSceneOption(hs, scene.choices.findIndex((c) => c.outcome === 'correct'));
       hs = acknowledgeSceneFeedback(hs);
     }

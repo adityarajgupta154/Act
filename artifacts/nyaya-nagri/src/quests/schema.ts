@@ -57,6 +57,15 @@ export interface QuestScene {
    * 8-11 quests). Always rendered with a "this is a role-play" disclaimer.
    */
   persona?: ScenePersona;
+  /**
+   * Task 26: narration-only scenes. When `choices` is EMPTY the scene is a
+   * pure story panel — the player shows a single Continue button instead of
+   * a decision list, and `next` names the scene it advances to (omit `next`
+   * to end the scene flow, allowed only at the end of the last scene level).
+   * A scene must never carry BOTH choices and `next` — validateQuest
+   * rejects that as ambiguous.
+   */
+  next?: string;
   choices: QuestChoice[];
 }
 
@@ -264,8 +273,18 @@ export function validateQuest(q: Quest): Quest {
     throw new Error(`Quest ${q.questId}: duplicate sceneIds`);
   }
   for (const scene of q.scenes) {
-    if (!scene.choices.length) {
-      throw new Error(`Quest ${q.questId}/${scene.sceneId}: no choices`);
+    // Task 26: scenes are EITHER decision scenes (>= 1 choice) or
+    // narration-only story panels (zero choices, advanced by `next`).
+    // Carrying both would make the advance path ambiguous.
+    if (scene.choices.length > 0 && scene.next) {
+      throw new Error(
+        `Quest ${q.questId}/${scene.sceneId}: has both choices and "next" — pick one`,
+      );
+    }
+    if (scene.next && !sceneIds.has(scene.next)) {
+      throw new Error(
+        `Quest ${q.questId}/${scene.sceneId}: next "${scene.next}" does not exist`,
+      );
     }
     for (const c of scene.choices) {
       if (c.nextScene && !sceneIds.has(c.nextScene)) {
@@ -440,9 +459,14 @@ function validateActivityLevel(q: Quest, level: QuestLevel): void {
  *
  * Task 18: activity levels (memory/hidden/sorting/scenario) are additive —
  * they carry their own static content, consume NO scenes, and are ignored
- * by the scene-partition rules below. The quiz stays the single, final
- * checkpoint, and level 1 stays a story level so the silent pre-quiz
- * baseline is still measured before any content is seen.
+ * by the scene-partition rules below.
+ *
+ * Task 26: the quiz stays the single, FINAL checkpoint (passing it is what
+ * completes the zone), and level 1 stays a story level — a zone always
+ * opens with narrative, never with quiz-style UI. Narration-only scenes
+ * (zero choices) advance via `next`, which obeys exactly the same link
+ * rules as choice links: stay inside the level or jump to the next scene
+ * level's entry; dead-ends are legal only in the last scene level.
  */
 export function validateLevels(q: Quest): void {
   const ctx = `Quest ${q.questId} levels`;
@@ -456,7 +480,9 @@ export function validateLevels(q: Quest): void {
   const ids = new Set(q.levels.map((l) => l.levelId));
   if (ids.size !== q.levels.length) throw new Error(`${ctx}: duplicate levelIds`);
   if (q.levels[0].kind !== 'story') {
-    throw new Error(`${ctx}: level 1 must be a story level (pre-quiz baseline first)`);
+    throw new Error(
+      `${ctx}: level 1 must be a story level (a zone opens with narrative, never a quiz)`,
+    );
   }
 
   for (const level of q.levels) {
@@ -495,24 +521,72 @@ export function validateLevels(q: Quest): void {
     throw new Error(`${ctx}: level 1 must start at the quest's first scene`);
   }
   // Links may only stay inside a level or jump to the NEXT level's entry.
+  // Task 26: narration-only scenes advance via scene.next, which follows
+  // exactly the same rules as choice links (dead-ends only in the last
+  // scene level, no escaping the level except to the next entry).
   sceneLevels.forEach((level, li) => {
     const inLevel = new Set(level.sceneIds);
     const nextEntry = sceneLevels[li + 1]?.entryScene ?? null;
-    for (const scene of q.scenes.filter((s) => inLevel.has(s.sceneId))) {
-      for (const c of scene.choices) {
-        if (!c.nextScene) {
-          if (li !== sceneLevels.length - 1) {
-            throw new Error(
-              `${ctx}/${level.levelId}/${scene.sceneId}: dead-ends before the last scene level`,
-            );
-          }
-          continue;
-        }
-        if (!inLevel.has(c.nextScene) && c.nextScene !== nextEntry) {
+    const isLastSceneLevel = li === sceneLevels.length - 1;
+    const checkLink = (sceneId: string, target: string | undefined) => {
+      if (!target) {
+        if (!isLastSceneLevel) {
           throw new Error(
-            `${ctx}/${level.levelId}/${scene.sceneId}: link to "${c.nextScene}" escapes the level`,
+            `${ctx}/${level.levelId}/${sceneId}: dead-ends before the last scene level`,
           );
         }
+        return;
+      }
+      if (!inLevel.has(target) && target !== nextEntry) {
+        throw new Error(
+          `${ctx}/${level.levelId}/${sceneId}: link to "${target}" escapes the level`,
+        );
+      }
+    };
+    for (const scene of q.scenes.filter((s) => inLevel.has(s.sceneId))) {
+      if (scene.choices.length === 0) {
+        checkLink(scene.sceneId, scene.next);
+        continue;
+      }
+      for (const c of scene.choices) checkLink(scene.sceneId, c.nextScene);
+    }
+
+    // Task 26 (review): graph integrity. Narration `next` must move FORWARD
+    // through the level's declared scene order — a self-cycle or backward
+    // narration link would trap a child on the same Continue panel forever.
+    // (Choice links keep their historical in-level freedom.)
+    const order = new Map((level.sceneIds ?? []).map((id, i) => [id, i]));
+    for (const scene of q.scenes.filter((s) => inLevel.has(s.sceneId))) {
+      if (scene.choices.length === 0 && scene.next && inLevel.has(scene.next)) {
+        if ((order.get(scene.next) ?? -1) <= (order.get(scene.sceneId) ?? -1)) {
+          throw new Error(
+            `${ctx}/${level.levelId}/${scene.sceneId}: narration next "${scene.next}" does not move forward`,
+          );
+        }
+      }
+    }
+
+    // Every declared scene must be reachable from the level's entry by
+    // following in-level links (choices + narration next) — content that
+    // validation admits must actually be showable to the child.
+    const reachable = new Set<string>();
+    const queue = level.entryScene ? [level.entryScene] : [];
+    while (queue.length) {
+      const id = queue.pop()!;
+      if (!inLevel.has(id) || reachable.has(id)) continue;
+      reachable.add(id);
+      const sc = q.scenes.find((s) => s.sceneId === id);
+      if (!sc) continue;
+      const targets = sc.choices.length === 0
+        ? (sc.next ? [sc.next] : [])
+        : sc.choices.map((c) => c.nextScene).filter((x): x is string => !!x);
+      for (const tgt of targets) if (inLevel.has(tgt)) queue.push(tgt);
+    }
+    for (const id of level.sceneIds ?? []) {
+      if (!reachable.has(id)) {
+        throw new Error(
+          `${ctx}/${level.levelId}: scene "${id}" is unreachable from the level entry`,
+        );
       }
     }
   });
@@ -552,6 +626,10 @@ export function validateTranslationParity(source: Quest, translated: Quest): Que
     }
     if (trScene.choices.length !== srcScene.choices.length) {
       throw new Error(`${ctx}/${srcScene.sceneId}: choice count differs`);
+    }
+    // Task 26: narration advance must mirror exactly (branching parity).
+    if ((trScene.next ?? null) !== (srcScene.next ?? null)) {
+      throw new Error(`${ctx}/${srcScene.sceneId}: narration "next" differs from source`);
     }
     srcScene.choices.forEach((srcChoice, cIdx) => {
       const trChoice = trScene.choices[cIdx];

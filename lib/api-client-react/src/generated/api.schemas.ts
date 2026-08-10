@@ -5,58 +5,6 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-export type AvatarChatInputAgeBand = typeof AvatarChatInputAgeBand[keyof typeof AvatarChatInputAgeBand];
-
-
-export const AvatarChatInputAgeBand = {
-  '8-11': '8-11',
-  '12-15': '12-15',
-  '16-18': '16-18',
-} as const;
-
-/**
- * Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change.
- */
-export type AvatarChatInputLanguage = typeof AvatarChatInputLanguage[keyof typeof AvatarChatInputLanguage];
-
-
-export const AvatarChatInputLanguage = {
-  en: 'en',
-  hi: 'hi',
-} as const;
-
-export type AvatarChatTurnRole = typeof AvatarChatTurnRole[keyof typeof AvatarChatTurnRole];
-
-
-export const AvatarChatTurnRole = {
-  user: 'user',
-  assistant: 'assistant',
-} as const;
-
-export interface AvatarChatTurn {
-  role: AvatarChatTurnRole;
-  /** @maxLength 2000 */
-  content: string;
-}
-
-export interface AvatarChatInput {
-  /**
-     * @minLength 1
-     * @maxLength 500
-     */
-  message: string;
-  ageBand: AvatarChatInputAgeBand;
-  /** Current zone id for topic scoping (e.g. zone1) */
-  zoneId?: string;
-  /** Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change. */
-  language?: AvatarChatInputLanguage;
-  /**
-     * Recent turns kept client-side only (never persisted)
-     * @maxItems 12
-     */
-  history?: AvatarChatTurn[];
-}
-
 /**
  * Which role-play persona is being interviewed
  */
@@ -93,6 +41,20 @@ export const PersonaChatInputLanguage = {
   hi: 'hi',
 } as const;
 
+export type AvatarChatTurnRole = typeof AvatarChatTurnRole[keyof typeof AvatarChatTurnRole];
+
+
+export const AvatarChatTurnRole = {
+  user: 'user',
+  assistant: 'assistant',
+} as const;
+
+export interface AvatarChatTurn {
+  role: AvatarChatTurnRole;
+  /** @maxLength 2000 */
+  content: string;
+}
+
 export interface PersonaChatInput {
   /**
      * @minLength 1
@@ -112,6 +74,211 @@ export interface PersonaChatInput {
   history?: AvatarChatTurn[];
 }
 
+/**
+ * Optional — Nyaya AI is reachable from the Home screen before onboarding, where no age band exists yet. When present it only tunes tone; it never changes the allowed facts.
+ */
+export type NyayaAiChatInputAgeBand = typeof NyayaAiChatInputAgeBand[keyof typeof NyayaAiChatInputAgeBand];
+
+
+export const NyayaAiChatInputAgeBand = {
+  '8-11': '8-11',
+  '12-15': '12-15',
+  '16-18': '16-18',
+} as const;
+
+/**
+ * App UI language (defaults to en). Replies follow the CHILD's own message language (English / Hindi / Hinglish / Gujarati); this value is the fallback for mixed/unclear input and for canonical safety text. Safety behaviour is identical in every language; helpline digits never change.
+ */
+export type NyayaAiChatInputLanguage = typeof NyayaAiChatInputLanguage[keyof typeof NyayaAiChatInputLanguage];
+
+
+export const NyayaAiChatInputLanguage = {
+  en: 'en',
+  hi: 'hi',
+} as const;
+
+/**
+ * Session-over-session accuracy direction (evidence-gated)
+ */
+export type NyayaAiGameContextLearnTrend = typeof NyayaAiGameContextLearnTrend[keyof typeof NyayaAiGameContextLearnTrend];
+
+
+export const NyayaAiGameContextLearnTrend = {
+  improving: 'improving',
+  steady: 'steady',
+  declining: 'declining',
+} as const;
+
+/**
+ * Safe, app-generated game state for personalization (PRD §9 data minimization: stable zone IDS — mapped to names server-side — plus capped counts and the fun game nickname; never any real-world PII).
+ */
+export interface NyayaAiGameContext {
+  /**
+     * Fun made-up game nickname (never a real name)
+     * @maxLength 24
+     */
+  nickname?: string;
+  /**
+     * Zone the player is inside (e.g. zone3)
+     * @maxLength 16
+     */
+  currentZoneId?: string;
+  /**
+     * Nearest zone on the map when not inside one
+     * @maxLength 16
+     */
+  nearbyZoneId?: string;
+  /**
+     * @maxItems 8
+     * @items.maxLength 16
+     */
+  completedZoneIds?: string[];
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  progressPct?: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  badgeCount?: number;
+  /** @maxLength 120 */
+  currentLessonTitle?: string;
+  /**
+     * @minimum 1
+     * @maximum 20
+     */
+  currentLevelNumber?: number;
+  /**
+     * Total recorded quiz/recap answers (learning-insights log). Lets Nyaya AI answer "How am I doing?" from real stats only.
+     * @minimum 0
+     * @maximum 100000
+     */
+  learnQuestionsAnswered?: number;
+  /**
+     * Overall recorded-answer accuracy — the client sends it only when the analyzer's minimum-evidence gate passed.
+     * @minimum 0
+     * @maximum 100
+     */
+  learnAccuracyPct?: number;
+  /** Session-over-session accuracy direction (evidence-gated) */
+  learnTrend?: NyayaAiGameContextLearnTrend;
+  /**
+     * Zone with the strongest evidenced accuracy label
+     * @maxLength 16
+     */
+  strongZoneId?: string;
+  /**
+     * Zone the deterministic analyzer suggests practicing
+     * @maxLength 16
+     */
+  practiceZoneId?: string;
+}
+
+export interface NyayaAiChatInput {
+  /**
+     * @minLength 1
+     * @maxLength 500
+     */
+  message: string;
+  /** Optional — Nyaya AI is reachable from the Home screen before onboarding, where no age band exists yet. When present it only tunes tone; it never changes the allowed facts. */
+  ageBand?: NyayaAiChatInputAgeBand;
+  /** App UI language (defaults to en). Replies follow the CHILD's own message language (English / Hindi / Hinglish / Gujarati); this value is the fallback for mixed/unclear input and for canonical safety text. Safety behaviour is identical in every language; helpline digits never change. */
+  language?: NyayaAiChatInputLanguage;
+  /**
+     * Recent turns kept client-side only (never persisted)
+     * @maxItems 12
+     */
+  history?: AvatarChatTurn[];
+  gameContext?: NyayaAiGameContext;
+}
+
+/**
+ * App UI language (defaults to en). The Live session follows the language the child actually SPEAKS; this is the fallback for mixed/unclear speech and for canonical safety text.
+ */
+export type NyayaAiVoiceTokenInputLanguage = typeof NyayaAiVoiceTokenInputLanguage[keyof typeof NyayaAiVoiceTokenInputLanguage];
+
+
+export const NyayaAiVoiceTokenInputLanguage = {
+  en: 'en',
+  hi: 'hi',
+} as const;
+
+/**
+ * Optional tone tuning only; never changes allowed facts
+ */
+export type NyayaAiVoiceTokenInputAgeBand = typeof NyayaAiVoiceTokenInputAgeBand[keyof typeof NyayaAiVoiceTokenInputAgeBand];
+
+
+export const NyayaAiVoiceTokenInputAgeBand = {
+  '8-11': '8-11',
+  '12-15': '12-15',
+  '16-18': '16-18',
+} as const;
+
+/**
+ * Everything is optional: voice chat is reachable from the Home screen before onboarding (no age band yet, empty context).
+ */
+export interface NyayaAiVoiceTokenInput {
+  /** App UI language (defaults to en). The Live session follows the language the child actually SPEAKS; this is the fallback for mixed/unclear speech and for canonical safety text. */
+  language?: NyayaAiVoiceTokenInputLanguage;
+  /** Optional tone tuning only; never changes allowed facts */
+  ageBand?: NyayaAiVoiceTokenInputAgeBand;
+  gameContext?: NyayaAiGameContext;
+}
+
+export interface NyayaAiVoiceTokenReply {
+  /** Ephemeral token name the browser connects with */
+  token: string;
+  /** Live model the token is locked to */
+  model: string;
+  /** ISO time by which the session must be STARTED */
+  expiresAt: string;
+}
+
+/**
+ * user = the child's speech, model = Nyaya AI's speech
+ */
+export type NyayaAiVoiceGuardInputRole = typeof NyayaAiVoiceGuardInputRole[keyof typeof NyayaAiVoiceGuardInputRole];
+
+
+export const NyayaAiVoiceGuardInputRole = {
+  user: 'user',
+  model: 'model',
+} as const;
+
+/**
+ * Canonical safety text language fallback (default en)
+ */
+export type NyayaAiVoiceGuardInputLanguage = typeof NyayaAiVoiceGuardInputLanguage[keyof typeof NyayaAiVoiceGuardInputLanguage];
+
+
+export const NyayaAiVoiceGuardInputLanguage = {
+  en: 'en',
+  hi: 'hi',
+} as const;
+
+export interface NyayaAiVoiceGuardInput {
+  /**
+     * One finished transcript utterance to check
+     * @minLength 1
+     * @maxLength 2000
+     */
+  text: string;
+  /** user = the child's speech, model = Nyaya AI's speech */
+  role: NyayaAiVoiceGuardInputRole;
+  /** Canonical safety text language fallback (default en) */
+  language?: NyayaAiVoiceGuardInputLanguage;
+}
+
+export interface NyayaAiVoiceGuardReply {
+  /** True when the deterministic safety gate fired */
+  escalated: boolean;
+  /** Canonical hard-coded escalation text (present when escalated). */
+  reply?: string;
+}
+
 export interface AvatarChatReply {
   reply: string;
   /** True when the safety escalation path produced the reply */
@@ -124,5 +291,229 @@ export interface AvatarError {
 
 export interface HealthStatus {
   status: string;
+}
+
+export type InsightsTopicStatLabel = typeof InsightsTopicStatLabel[keyof typeof InsightsTopicStatLabel];
+
+
+export const InsightsTopicStatLabel = {
+  strong: 'strong',
+  developing: 'developing',
+  'needs-practice': 'needs-practice',
+  insufficient: 'insufficient',
+} as const;
+
+/**
+ * Per-topic aggregate from the client-side deterministic analyzer. Stable zone ids only — mapped to display names server-side.
+ */
+export interface InsightsTopicStat {
+  /** @maxLength 16 */
+  zoneId: string;
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  attempts: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  accuracyPct?: number;
+  label: InsightsTopicStatLabel;
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  practiceAttempts?: number;
+  /**
+     * @minimum 0
+     * @maximum 10000
+     */
+  sessions?: number;
+  /**
+     * @minimum -100
+     * @maximum 100
+     */
+  trendDeltaPct?: number;
+}
+
+export interface InsightsTrendPoint {
+  /**
+     * @minimum 1
+     * @maximum 100000
+     */
+  session: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  accuracyPct: number;
+  /**
+     * @minimum 1
+     * @maximum 1000
+     */
+  attempts: number;
+}
+
+export type InsightsAnalyzeInputLanguage = typeof InsightsAnalyzeInputLanguage[keyof typeof InsightsAnalyzeInputLanguage];
+
+
+export const InsightsAnalyzeInputLanguage = {
+  en: 'en',
+  hi: 'hi',
+} as const;
+
+/**
+ * Tunes register only (teacher slightly more instructional)
+ */
+export type InsightsAnalyzeInputAudience = typeof InsightsAnalyzeInputAudience[keyof typeof InsightsAnalyzeInputAudience];
+
+
+export const InsightsAnalyzeInputAudience = {
+  teacher: 'teacher',
+  parent: 'parent',
+} as const;
+
+export type InsightsAnalyzeInputTotals = {
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  questionsAnswered: number;
+  /**
+     * @minimum 0
+     * @maximum 10000
+     */
+  sessions: number;
+  /**
+     * @minimum 0
+     * @maximum 10000
+     */
+  activeDays?: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  accuracyPct?: number;
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  timeSpentMinutes?: number;
+  /**
+     * @minimum 0
+     * @maximum 20
+     */
+  zonesCompleted?: number;
+  /**
+     * @minimum 1
+     * @maximum 20
+     */
+  zonesTotal?: number;
+  /**
+     * @minimum 0
+     * @maximum 1000
+     */
+  levelsDone?: number;
+  /**
+     * @minimum 0
+     * @maximum 99
+     */
+  badges?: number;
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  practiceReplays?: number;
+  /**
+     * @minimum 0
+     * @maximum 10000
+     */
+  streakDays?: number;
+};
+
+export type InsightsAnalyzeInputTrendDirection = typeof InsightsAnalyzeInputTrendDirection[keyof typeof InsightsAnalyzeInputTrendDirection];
+
+
+export const InsightsAnalyzeInputTrendDirection = {
+  improving: 'improving',
+  steady: 'steady',
+  declining: 'declining',
+  insufficient: 'insufficient',
+} as const;
+
+export type InsightsAnalyzeInputBehaviorEngagement = typeof InsightsAnalyzeInputBehaviorEngagement[keyof typeof InsightsAnalyzeInputBehaviorEngagement];
+
+
+export const InsightsAnalyzeInputBehaviorEngagement = {
+  good: 'good',
+  building: 'building',
+  low: 'low',
+} as const;
+
+export type InsightsAnalyzeInputBehavior = {
+  /**
+     * @minimum 0
+     * @maximum 100000
+     */
+  recapCount?: number;
+  /**
+     * @minimum 0
+     * @maximum 100
+     */
+  continuesAfterIncorrectPct?: number;
+  engagement?: InsightsAnalyzeInputBehaviorEngagement;
+};
+
+/**
+ * Compact anonymous aggregates for the AI narrative (DPDP data minimization — no raw events, no identifiers, no free text).
+ */
+export interface InsightsAnalyzeInput {
+  language?: InsightsAnalyzeInputLanguage;
+  /** Tunes register only (teacher slightly more instructional) */
+  audience?: InsightsAnalyzeInputAudience;
+  totals: InsightsAnalyzeInputTotals;
+  /** @maxItems 10 */
+  topics: InsightsTopicStat[];
+  /** @maxItems 12 */
+  trendSeries?: InsightsTrendPoint[];
+  trendDirection?: InsightsAnalyzeInputTrendDirection;
+  behavior?: InsightsAnalyzeInputBehavior;
+}
+
+export interface InsightsAiItem {
+  /** @maxLength 400 */
+  text: string;
+  /** @maxLength 16 */
+  zoneId?: string;
+}
+
+export type InsightsAnalyzeReplyConfidence = typeof InsightsAnalyzeReplyConfidence[keyof typeof InsightsAnalyzeReplyConfidence];
+
+
+export const InsightsAnalyzeReplyConfidence = {
+  high: 'high',
+  medium: 'medium',
+  low: 'low',
+} as const;
+
+/**
+ * Banned-terms-filtered AI narrative. The disclaimer is server-fixed text, never model output.
+ */
+export interface InsightsAnalyzeReply {
+  /** @maxItems 4 */
+  strengths: InsightsAiItem[];
+  /** @maxItems 4 */
+  practiceAreas: InsightsAiItem[];
+  /** @maxLength 400 */
+  trendComment?: string;
+  /** @maxItems 4 */
+  recommendations: InsightsAiItem[];
+  /** @maxLength 400 */
+  encouragement: string;
+  confidence: InsightsAnalyzeReplyConfidence;
+  disclaimer: string;
+  /** True when the banned-terms filter dropped model text */
+  filtered?: boolean;
 }
 

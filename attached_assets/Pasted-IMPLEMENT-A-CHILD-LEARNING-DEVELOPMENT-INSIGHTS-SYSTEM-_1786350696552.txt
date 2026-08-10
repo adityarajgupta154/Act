@@ -1,0 +1,621 @@
+IMPLEMENT A CHILD LEARNING & DEVELOPMENT INSIGHTS SYSTEM
+FOR NYAYA NAGRI
+
+IMPORTANT:
+Do not redesign the existing game UI.
+Do not break existing gameplay, zones, avatar, AI assistant, map, progress system, or certificates.
+
+Build this as an additional analytics and reporting layer on top of the existing Nyaya Nagri game.
+
+==================================================
+1. DATA SOURCES
+==================================================
+
+Use these sources as reference material:
+
+SOURCE 1:
+India Code
+https://www.indiacode.nic.in/
+
+Use India Code as the primary legal/reference source for:
+- Indian laws
+- Acts
+- Sections
+- Rules
+- Regulations
+- Notifications
+- Orders
+- legal rights-related information
+
+SOURCE 2:
+Verywell Mind – Overview of Child Psychology and Development
+https://www.verywellmind.com/what-is-child-psychology-2795067
+
+Use this as background/reference for:
+- cognitive development
+- emotional development
+- social development
+- self-awareness
+- self-regulation
+- empathy
+- social interaction
+- learning behavior
+- environmental/contextual influences
+
+Do NOT treat either source as a diagnostic system.
+
+Do NOT claim that these sources can diagnose a child's psychological condition.
+
+==================================================
+2. CHILD ACTIVITY TRACKING
+==================================================
+
+Create a structured activity tracking system.
+
+Track ONLY information necessary for educational progress.
+
+For every learning activity/question, record:
+
+- questionId
+- zoneId
+- topic
+- difficulty
+- selectedAnswer
+- correctAnswer
+- isCorrect
+- attempts
+- responseTime
+- hintsUsed
+- completed
+- timestamp
+- score
+- retryCount
+
+Track zone-level progress:
+
+- zone completion percentage
+- questions attempted
+- questions correct
+- questions incorrect
+- average score
+- average response time
+- number of retries
+- hints used
+- completed activities
+- badges earned
+- certificates earned
+
+==================================================
+3. LEARNING PATTERN ANALYSIS
+==================================================
+
+The AI should analyze patterns over time instead of judging the child from a single answer.
+
+For example:
+
+If the child repeatedly struggles with a particular topic:
+
+"Repeated difficulty observed in Digital Safety questions."
+
+If the child improves:
+
+"Performance improved from 55% to 78% over recent attempts."
+
+If the child needs repeated hints:
+
+"This topic may benefit from additional explanation and practice."
+
+If response time is increasing:
+
+"Recent activities show longer completion times."
+
+Do NOT say:
+
+"You have anxiety."
+"You have ADHD."
+"You have depression."
+"You have a psychological problem."
+"You have low intelligence."
+"You have a specific mental disorder."
+
+Never make medical, psychological, psychiatric, personality, or intelligence diagnoses.
+
+==================================================
+4. DEVELOPMENTAL INSIGHTS
+==================================================
+
+Create NON-DIAGNOSTIC learning-development indicators.
+
+Possible indicators:
+
+COGNITIVE LEARNING
+- understanding of concepts
+- recall
+- reasoning
+- problem solving
+- consistency
+- improvement over time
+
+LEARNING BEHAVIOR
+- persistence
+- retry behavior
+- use of hints
+- completion consistency
+- engagement
+
+SELF-REGULATION SIGNALS
+- ability to continue after an incorrect answer
+- repeated attempts
+- completion consistency
+- ability to follow instructions
+
+SOCIAL/COMMUNITY LEARNING
+- understanding of fairness
+- cooperation-related scenarios
+- empathy-related scenario responses
+- understanding of rights and responsibilities
+
+IMPORTANT:
+These are GAME-BASED LEARNING INDICATORS only.
+
+Never present them as psychological diagnoses.
+
+Use language such as:
+
+"Learning signal"
+"Observed pattern"
+"Game-based indicator"
+"Progress trend"
+"Area for practice"
+
+==================================================
+5. AI ANALYSIS ENGINE
+==================================================
+
+Create an AI analysis service.
+
+Input:
+
+{
+  childId,
+  recentActivities,
+  zoneProgress,
+  historicalPerformance,
+  completedZones,
+  incorrectQuestions,
+  responseTimes,
+  hintsUsed,
+  retries,
+  badges,
+  certificates
+}
+
+The AI should generate:
+
+A. Learning strengths
+B. Areas needing practice
+C. Topic-wise performance
+D. Improvement trends
+E. Engagement patterns
+F. Recommended activities
+G. Suggested revision topics
+H. Positive encouragement
+
+Example:
+
+"Strength:
+The learner consistently performs well in Family & Community Shield."
+
+"Practice area:
+Digital Safety questions involving online privacy have a lower accuracy rate."
+
+"Progress:
+Accuracy improved from 62% to 81% across recent attempts."
+
+"Recommendation:
+Try the Digital Safety practice activity again with guided hints."
+
+==================================================
+6. DO NOT ANALYZE SINGLE EVENTS
+==================================================
+
+Never generate an insight based on one wrong answer.
+
+Use multiple observations over time.
+
+For example:
+
+Minimum recommended evidence:
+- several questions
+- multiple attempts
+- multiple sessions where possible
+
+If insufficient data exists, say:
+
+"Not enough activity data yet to identify a meaningful learning pattern."
+
+==================================================
+7. TEACHER DASHBOARD
+==================================================
+
+Create a Teacher Progress Dashboard.
+
+Teacher should be able to see:
+
+Student list
+
+For each student:
+
+- nickname/name as permitted
+- overall progress
+- completed zones
+- current zone
+- average score
+- accuracy
+- improvement trend
+- badges
+- certificates
+- topic strengths
+- topics needing practice
+- recent activity
+- time spent learning
+- hints used
+- retry patterns
+
+Add visualizations:
+
+- progress chart
+- accuracy chart
+- zone completion chart
+- topic performance chart
+- improvement timeline
+
+Use clear labels.
+
+Example:
+
+"Strong"
+"Developing"
+"Needs Practice"
+
+Avoid negative labels such as:
+
+"Weak child"
+"Poor learner"
+"Psychologically abnormal"
+
+==================================================
+8. PARENT/GUARDIAN DASHBOARD
+==================================================
+
+Create a separate Parent/Guardian view.
+
+Show:
+
+Child Progress
+----------------
+Overall Progress: 74%
+
+Zones Completed:
+4 / 8
+
+Current Learning Focus:
+Digital Safety
+
+Strengths:
+✓ Rights awareness
+✓ Scenario-based reasoning
+✓ Consistent participation
+
+Needs Practice:
+• Online privacy
+• Safe sharing of information
+
+Recent Improvement:
++14% accuracy
+
+Recommended:
+"Complete the Digital Safety practice activity."
+
+Keep the dashboard understandable to non-technical parents.
+
+==================================================
+9. REPORT GENERATION
+==================================================
+
+Allow Teacher/Parent to generate a detailed report.
+
+Report sections:
+
+1. Student Overview
+2. Learning Summary
+3. Zone Progress
+4. Question Performance
+5. Topic Performance
+6. Strengths
+7. Areas for Practice
+8. Improvement Timeline
+9. Engagement Summary
+10. Recommended Activities
+11. Badges
+12. Certificates
+13. AI-generated learning insights
+14. Disclaimer
+
+Include charts and clean visual summaries.
+
+==================================================
+10. REPORT LANGUAGE
+==================================================
+
+Use supportive language.
+
+GOOD:
+
+"The learner is showing steady improvement."
+
+"Recent attempts suggest stronger understanding of this topic."
+
+"The learner may benefit from additional practice."
+
+"More activity is needed before identifying a meaningful trend."
+
+BAD:
+
+"The child is psychologically weak."
+
+"The child has anxiety."
+
+"The child has a learning disorder."
+
+"The child has poor mental health."
+
+Never generate these types of statements.
+
+==================================================
+11. AI CONFIDENCE
+==================================================
+
+Every AI insight should have a confidence level:
+
+HIGH
+MEDIUM
+LOW
+
+Example:
+
+"Repeated difficulty with online privacy concepts."
+Confidence: HIGH
+
+Reason:
+"Observed across 12 questions over 3 sessions."
+
+If there is insufficient evidence:
+
+Confidence: LOW
+
+"Insufficient data for a reliable trend."
+
+==================================================
+12. SOURCE TRACEABILITY
+==================================================
+
+When an AI explanation involves Indian law:
+
+Show:
+
+Source:
+India Code
+
+Relevant:
+Act / Section / Rule
+
+Do not hallucinate legal sections.
+
+If the exact legal source cannot be verified:
+
+"Legal source could not be verified."
+
+Do not invent laws or sections.
+
+For child-development explanations:
+
+Clearly distinguish:
+
+"Developmental reference"
+
+from
+
+"Observed game behavior."
+
+==================================================
+13. PRIVACY & CHILD SAFETY
+==================================================
+
+Because this system handles children's data:
+
+- minimize collected data
+- do not collect unnecessary personal information
+- do not collect real names unless explicitly required and consented
+- do not collect photos unless absolutely necessary
+- do not expose children's reports publicly
+- enforce role-based access
+- Teacher can only access authorized students
+- Parent/Guardian can only access authorized child
+- Child cannot access private teacher/parent analytics
+- protect stored progress data
+- use secure authentication
+- never expose API keys in frontend code
+
+Store only the minimum information necessary for the feature.
+
+==================================================
+14. REPORT ACCESS CONTROL
+==================================================
+
+Roles:
+
+CHILD
+- own progress
+- own badges
+- own certificates
+
+PARENT/GUARDIAN
+- authorized child's progress
+- reports
+- recommendations
+- certificates
+
+TEACHER
+- authorized students
+- class-level analytics
+- individual reports
+
+ADMIN
+- system-level management
+
+Implement proper authorization on the backend.
+
+Do NOT rely only on frontend hiding.
+
+==================================================
+15. AI ASSISTANT INTEGRATION
+==================================================
+
+Integrate this analytics system with the existing Nyaya Nagri AI assistant.
+
+The assistant should be able to answer questions such as:
+
+"How am I doing?"
+
+"What should I practice?"
+
+"Which zone did I complete?"
+
+"What am I good at?"
+
+"What should I learn next?"
+
+For parents:
+
+"How is my child's progress?"
+
+"Which topics need more practice?"
+
+"Has the child improved recently?"
+
+For teachers:
+
+"Which students need additional practice?"
+
+"Which topic has the lowest class accuracy?"
+
+IMPORTANT:
+
+The AI assistant must not diagnose psychological or medical conditions.
+
+Instead say:
+
+"I can provide game-based learning insights, but this activity cannot determine a child's psychological or medical condition."
+
+==================================================
+16. DASHBOARD INSIGHT EXAMPLE
+==================================================
+
+Generate something like:
+
+--------------------------------
+LEARNING INSIGHTS
+--------------------------------
+
+Overall Progress
+████████░░ 78%
+
+Learning Strengths
+✓ Rights awareness
+✓ Scenario reasoning
+✓ Consistent participation
+
+Developing Areas
+• Digital privacy
+• Online safety scenarios
+
+Recent Trend
+62% → 69% → 74% → 81%
+
+Engagement
+Good
+
+Recommended Next Step
+Complete "Digital Safety – Safe Sharing"
+
+AI Confidence
+High
+
+Evidence:
+14 questions across 3 sessions
+
+--------------------------------
+
+==================================================
+17. IMPORTANT IMPLEMENTATION RULE
+==================================================
+
+Before coding:
+
+1. Inspect the existing project.
+2. Identify the current question/quiz data model.
+3. Identify how zones are stored.
+4. Identify how player progress is stored.
+5. Identify the existing My Progress page.
+6. Identify the existing teacher/parent pages if present.
+7. Identify the current Gemini AI integration.
+8. Reuse the existing architecture wherever possible.
+
+Do NOT create duplicate progress systems.
+
+Extend the existing data model.
+
+==================================================
+18. PERFORMANCE
+==================================================
+
+Do not call Gemini after every single click.
+
+Record activity locally/backend first.
+
+Analyze in batches:
+
+- after a zone completion
+- after a session
+- when opening the progress dashboard
+- when a teacher/parent requests a report
+
+Cache generated reports where appropriate.
+
+Do not repeatedly send the entire child history to Gemini.
+
+Send only the relevant summarized data.
+
+==================================================
+19. FINAL REQUIREMENT
+==================================================
+
+The final system should make Nyaya Nagri feel like an intelligent educational platform that understands:
+
+WHAT THE CHILD LEARNED
+WHAT THE CHILD IS GOOD AT
+WHERE THE CHILD NEEDS PRACTICE
+HOW THE CHILD IS IMPROVING
+WHAT THEY SHOULD DO NEXT
+
+But it must NOT claim to know or diagnose:
+
+WHY THE CHILD behaves a certain way psychologically
+mental health conditions
+psychiatric conditions
+personality disorders
+intelligence
+clinical developmental disorders
+
+The system should provide evidence-based, game-derived learning insights that teachers and parents can use to support the child's learning.

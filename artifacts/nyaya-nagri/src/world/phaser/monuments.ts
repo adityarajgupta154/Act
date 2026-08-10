@@ -1,30 +1,22 @@
 /**
- * Nyaya Nagri — zone monument sprites for the Phaser world (Task 25 STEP 3).
+ * Nyaya Nagri — zone monument sprites for the Phaser world.
  *
- * STATE CONTRACT (unchanged from the 3D markers): `unlocked` drives the
- * color vs two-gray desaturated look, locked zones show the floating red
- * padlock, unlocked zones show the pulsing gold ring. Completed zones
- * render like unlocked ones — exactly the two visual states the 3D world
- * had. Tapping a monument is guarded by the SAME rule as the E key /
- * proximity prompt (nearby + unlocked + not already inside a zone).
+ * Reference-art rebuild (Aug 2026 "same to same" round): every monument is
+ * a painterly cutout from the child's own reference painting (feathered
+ * vignette carrying its grass halo), rendered at NATIVE size — 1 crop px =
+ * 1 world px, because the reference frame depicts the village at the same
+ * scale the world uses (U = 40 px/unit).
  *
- * Zone 0 uses the generated painterly sprite (PoC art round); zones 1-6
- * use programmatic placeholder monuments that keep each zone's silhouette
- * identity from the 3D world (obelisk/crystal/school/courthouse/screen/
- * shield) until their art is approved and generated.
+ * STATE CONTRACT (visual-only change agreed in this round): LOCKED zones
+ * keep their full-color art and show the red padlock badge sitting on the
+ * monument's lower body — exactly like the reference frame — instead of
+ * the old two-gray desaturation. UNLOCKED zones lose the padlock and gain
+ * the pulsing gold ring; completed zones render like unlocked ones. The
+ * tap guard chain (nearby + unlocked + not inside a zone) is unchanged.
  */
 import Phaser from 'phaser';
 import type { ZoneDef } from '../zones';
-import {
-  GOLD,
-  LOCK_RED,
-  NAVY,
-  PEDESTAL,
-  STONE,
-  STONE_DARK,
-  U,
-  px,
-} from './const';
+import { GOLD, LOCK_RED, U, px } from './const';
 
 type Ctx = CanvasRenderingContext2D;
 
@@ -49,15 +41,6 @@ function outlineLast(ctx: Ctx) {
   ctx.stroke();
 }
 
-function poly(ctx: Ctx, pts: [number, number][], fill: string) {
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.fillStyle = fill;
-  ctx.fill();
-}
-
 function dot(ctx: Ctx, x: number, y: number, r: number, fill: string) {
   ctx.beginPath();
   ctx.arc(x, y, r, 0, Math.PI * 2);
@@ -65,166 +48,82 @@ function dot(ctx: Ctx, x: number, y: number, r: number, fill: string) {
   ctx.fill();
 }
 
-/** Gold scales-of-justice glyph on a navy disc (shared emblem). */
-function scalesEmblem(ctx: Ctx, cx: number, cy: number, r: number) {
-  dot(ctx, cx, cy, r, NAVY);
-  outlineLast(ctx);
-  ctx.strokeStyle = GOLD;
-  ctx.lineWidth = Math.max(2, r * 0.14);
-  ctx.lineCap = 'round';
-  ctx.beginPath();
-  ctx.moveTo(cx, cy - r * 0.55);
-  ctx.lineTo(cx, cy + r * 0.55);
-  ctx.moveTo(cx - r * 0.6, cy - r * 0.3);
-  ctx.lineTo(cx + r * 0.6, cy - r * 0.3);
-  ctx.stroke();
-  poly(ctx, [
-    [cx - r * 0.6, cy - r * 0.22],
-    [cx - r * 0.82, cy + r * 0.18],
-    [cx - r * 0.38, cy + r * 0.18],
-  ], GOLD);
-  poly(ctx, [
-    [cx + r * 0.6, cy - r * 0.22],
-    [cx + r * 0.38, cy + r * 0.18],
-    [cx + r * 0.82, cy + r * 0.18],
-  ], GOLD);
-}
+/* ------------------------------ zone art -------------------------------- */
 
-/** Shared stepped pedestal at the placeholder base (y 168..214). */
-function pedestal(ctx: Ctx) {
-  rr(ctx, 22, 196, 96, 18, 8, PEDESTAL);
-  outlineLast(ctx);
-  rr(ctx, 32, 182, 76, 18, 7, '#dde2ea');
-  outlineLast(ctx);
-  rr(ctx, 42, 168, 56, 18, 6, PEDESTAL);
-  outlineLast(ctx);
-}
-
-/* --------------------- per-zone placeholder motifs ---------------------- */
-/* 140x220 canvas, baseline ~y 214. Silhouettes echo the 3D markers.       */
-
-const MOTIFS: Record<string, (ctx: Ctx) => void> = {
-  zone1: (ctx) => {
-    poly(ctx, [[54, 172], [86, 172], [78, 52], [62, 52]], STONE);
-    outlineLast(ctx);
-    poly(ctx, [[60, 54], [80, 54], [70, 28]], STONE_DARK);
-    outlineLast(ctx);
-    scalesEmblem(ctx, 70, 108, 20);
-  },
-  zone2: (ctx) => {
-    poly(ctx, [[70, 30], [102, 92], [70, 154], [38, 92]], '#a855f7');
-    outlineLast(ctx);
-    poly(ctx, [[70, 48], [92, 92], [70, 136], [48, 92]], '#c084fc');
-    poly(ctx, [[30, 132], [44, 156], [30, 178], [17, 156]], '#c084fc');
-    outlineLast(ctx);
-    poly(ctx, [[110, 140], [121, 158], [110, 176], [99, 158]], '#c084fc');
-    outlineLast(ctx);
-  },
-  zone3: (ctx) => {
-    rr(ctx, 30, 96, 80, 74, 6, '#f2e3c9');
-    outlineLast(ctx);
-    poly(ctx, [[20, 98], [120, 98], [70, 46]], '#e0704f');
-    outlineLast(ctx);
-    rr(ctx, 60, 128, 20, 42, 4, NAVY);
-    rr(ctx, 38, 112, 16, 16, 3, '#7dd3fc');
-    outlineLast(ctx);
-    rr(ctx, 86, 112, 16, 16, 3, '#7dd3fc');
-    outlineLast(ctx);
-    dot(ctx, 70, 60, 6, GOLD);
-    outlineLast(ctx);
-  },
-  zone4: (ctx) => {
-    rr(ctx, 36, 78, 68, 86, 4, STONE);
-    poly(ctx, [[24, 78], [116, 78], [70, 44]], STONE_DARK);
-    outlineLast(ctx);
-    rr(ctx, 26, 74, 88, 12, 4, '#e8ebf2');
-    outlineLast(ctx);
-    for (const cx of [36, 56, 76, 96]) {
-      rr(ctx, cx, 88, 10, 80, 4, '#e8ebf2');
-      outlineLast(ctx);
-    }
-    scalesEmblem(ctx, 70, 62, 13);
-  },
-  zone5: (ctx) => {
-    rr(ctx, 40, 58, 60, 112, 8, STONE);
-    outlineLast(ctx);
-    rr(ctx, 48, 68, 44, 62, 5, '#4fc3f7');
-    outlineLast(ctx);
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3.5;
-    ctx.lineCap = 'round';
-    ctx.beginPath();
-    ctx.arc(70, 112, 13, Math.PI * 1.15, Math.PI * 1.85);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.arc(70, 112, 7, Math.PI * 1.15, Math.PI * 1.85);
-    ctx.stroke();
-    dot(ctx, 70, 110, 3, '#ffffff');
-  },
-  zone6: (ctx) => {
-    rr(ctx, 40, 76, 60, 94, 6, STONE);
-    outlineLast(ctx);
-    ctx.beginPath();
-    ctx.arc(70, 78, 30, Math.PI, Math.PI * 2);
-    ctx.closePath();
-    ctx.fillStyle = STONE;
-    ctx.fill();
-    outlineLast(ctx);
-    rr(ctx, 52, 88, 36, 34, 4, NAVY);
-    poly(ctx, [[52, 118], [88, 118], [70, 140]], NAVY);
-    rr(ctx, 50, 84, 40, 7, 3, GOLD);
-    outlineLast(ctx);
-    dot(ctx, 64, 102, 6, '#ffffff');
-    dot(ctx, 76, 102, 6, '#ffffff');
-    poly(ctx, [[58, 105], [82, 105], [70, 122]], '#ffffff');
-  },
+/**
+ * zoneId -> reference cutout (Phaser texture key + native crop size).
+ * Thematic mapping from the canon PRD zone names to the reference
+ * monuments: golden pedestal = the constitution book (Know Yourself),
+ * cottage = a safe home (Safe Zone), crystal = precious childhood,
+ * wishing well = the well of knowledge (School Rights), obelisk carries
+ * the scales of justice (Justice System Simulator), the heart stone =
+ * kindness online (Digital Safety), and the people-shield slab = the
+ * community that protects (Family & Community Shield).
+ */
+const ZONE_ART: Record<string, { key: string; w: number; h: number }> = {
+  zone0: { key: 'monument-pedestal', w: 170, h: 240 },
+  zone1: { key: 'monument-cottage', w: 177, h: 169 },
+  zone2: { key: 'monument-crystal', w: 158, h: 186 },
+  zone3: { key: 'monument-well', w: 200, h: 159 },
+  zone4: { key: 'monument-obelisk', w: 169, h: 270 },
+  zone5: { key: 'monument-kindness', w: 168, h: 226 },
+  zone6: { key: 'monument-shield', w: 176, h: 196 },
 };
 
-/* ----------------------------- textures --------------------------------- */
+/**
+ * Zone label pill colors, matched to the reference frame's pills (deep
+ * jewel tones on white text). zone0's plaza pedestal carries no pill —
+ * the objective banner already names it.
+ */
+const LABEL_COLORS: Record<string, number> = {
+  zone1: 0xb45410, // cottage — warm ochre
+  zone2: 0x7b2fb5, // crystal — purple
+  zone3: 0x6d28a8, // well — violet
+  zone4: 0x5b21b6, // obelisk — royal purple
+  zone5: 0xc02867, // heart stone — magenta
+  zone6: 0x1f3a63, // shield — navy
+};
 
-/** Bakes a grayscale sibling of any loaded texture (locked state). */
-export function ensureGrayTexture(scene: Phaser.Scene, srcKey: string, grayKey: string): void {
-  if (scene.textures.exists(grayKey)) return;
-  const src = scene.textures.get(srcKey).getSourceImage() as
-    | HTMLImageElement
-    | HTMLCanvasElement;
-  const tex = scene.textures.createCanvas(grayKey, src.width, src.height);
-  if (!tex) return;
-  const ctx = tex.getContext();
-  ctx.filter = 'grayscale(1) brightness(1.07)';
-  ctx.drawImage(src, 0, 0);
-  ctx.filter = 'none';
-  tex.refresh();
+/** Ring monuments standing on a gray cobble pad in the reference (all but
+ * the plaza pedestal and the grass-set cottage). */
+const PAD_ZONES = new Set(['zone2', 'zone3', 'zone4', 'zone5', 'zone6']);
+
+/** Draws/redraws the rounded label pill behind a monument's name text. */
+function drawLabelPill(
+  g: Phaser.GameObjects.Graphics,
+  text: Phaser.GameObjects.Text,
+  cx: number,
+  cy: number,
+  color: number,
+): void {
+  const w = text.width + 26;
+  const h = text.height + 12;
+  g.clear();
+  g.fillStyle(0x1c2413, 0.22);
+  g.fillRoundedRect(cx - w / 2, cy - h / 2 + 2.5, w, h, h / 2);
+  g.fillStyle(color, 0.96);
+  g.fillRoundedRect(cx - w / 2, cy - h / 2, w, h, h / 2);
 }
 
-function ensurePlaceholderTexture(scene: Phaser.Scene, zoneId: string): string {
-  const key = `monument-${zoneId}`;
-  if (scene.textures.exists(key)) return key;
-  const tex = scene.textures.createCanvas(key, 140, 220);
-  if (!tex) return key;
-  const ctx = tex.getContext();
-  pedestal(ctx);
-  MOTIFS[zoneId]?.(ctx);
-  tex.refresh();
-  return key;
-}
-
-/** Small floating padlock sprite (locked state), baked once. */
+/** Padlock badge (locked state) in the reference style: white shackle,
+ * red rounded body, small keyhole. Baked once. */
 function ensureLockTexture(scene: Phaser.Scene): string {
   const key = 'lock-icon';
   if (scene.textures.exists(key)) return key;
   const tex = scene.textures.createCanvas(key, 48, 58);
   if (!tex) return key;
   const ctx = tex.getContext();
-  ctx.strokeStyle = '#cfd6df';
+  ctx.strokeStyle = '#f4f6f9';
   ctx.lineWidth = 7;
   ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.arc(24, 22, 12, Math.PI, Math.PI * 2);
   ctx.stroke();
-  rr(ctx, 4, 22, 40, 32, 7, LOCK_RED);
+  rr(ctx, 4, 22, 40, 32, 9, LOCK_RED);
   outlineLast(ctx);
-  dot(ctx, 24, 36, 4.5, GOLD);
+  dot(ctx, 24, 35, 5, '#ffffff');
+  rr(ctx, 21.5, 37, 5, 9, 2.5, '#ffffff');
+  void GOLD; // palette imported for future accents; keyhole is white like the reference
   tex.refresh();
   return key;
 }
@@ -236,46 +135,54 @@ export interface MonumentHandle {
   sprite: Phaser.GameObjects.Image;
   ring: Phaser.GameObjects.Ellipse;
   lock: Phaser.GameObjects.Image;
-  colorKey: string;
-  grayKey: string;
+  /** Label pill parts (null for zone0 — the plaza carries no pill). */
+  labelG: Phaser.GameObjects.Graphics | null;
+  labelText: Phaser.GameObjects.Text | null;
+  labelColor: number;
+  labelY: number;
   displayW: number;
   displayH: number;
 }
 
 /**
- * Creates one zone monument: sprite + shadow + gold ring + padlock +
- * static collision circle (STEP 5 — new, deliberate behavior) + tap
- * handler. Returns the handle used by applyMonumentState.
+ * Creates one zone monument: cutout sprite + baked shadow + gold ring +
+ * padlock badge + static collision circle + tap handler. Returns the
+ * handle used by applyMonumentState.
  */
 export function createMonument(
   scene: Phaser.Scene,
   zone: ZoneDef,
   colliders: Phaser.GameObjects.Zone[],
   onTap: (zoneId: string) => void,
+  label: string,
 ): MonumentHandle {
   const cx = px(zone.position[0]);
   const cy = px(zone.position[1]);
-  const isZone0 = zone.id === 'zone0';
-
-  const colorKey = isZone0 ? 'zone0-monument' : ensurePlaceholderTexture(scene, zone.id);
-  const grayKey = `${colorKey}-gray`;
-  ensureGrayTexture(scene, colorKey, grayKey);
+  const art = ZONE_ART[zone.id] ?? ZONE_ART.zone0;
   const lockKey = ensureLockTexture(scene);
+  const hasPad = PAD_ZONES.has(zone.id);
+
+  // Gray cobble pad under the ring monuments (reference frame look).
+  if (hasPad) {
+    const padW = art.w * 1.5;
+    scene.add
+      .image(cx, cy - 2, 'stone-pad')
+      .setDisplaySize(padW, padW * 0.46)
+      .setDepth(0.92);
+  }
 
   // Baked ground shadow (sun upper-right -> shadow lower-left).
   scene.add
-    .ellipse(cx - 10, cy + 8, isZone0 ? 190 : 150, isZone0 ? 56 : 46, 0x233318, 0.16)
+    .ellipse(cx - 10, cy + 8, art.w * 0.92, art.w * 0.27, 0x233318, 0.16)
     .setDepth(5);
 
-  const sprite = scene.add.image(cx, cy, colorKey).setOrigin(0.5, 0.94);
-  const displayW = isZone0 ? 215 : 140;
-  const displayH = isZone0 ? 215 : 220;
-  sprite.setDisplaySize(displayW, displayH);
+  // Native-size cutout: the vignette's grass halo blends into the plate.
+  const sprite = scene.add.image(cx, cy, art.key).setOrigin(0.5, 0.94);
   sprite.setDepth(10 + cy * 0.01);
   sprite.setInteractive({ useHandCursor: true });
   sprite.on('pointerdown', () => onTap(zone.id));
 
-  const ring = scene.add.ellipse(cx, cy + 4, 330, 148);
+  const ring = scene.add.ellipse(cx, cy + 2, art.w * 1.35, art.w * 0.62);
   ring.setStrokeStyle(9, 0xfcd34d, 0.55);
   ring.setDepth(6);
   scene.tweens.add({
@@ -288,31 +195,77 @@ export function createMonument(
     ease: 'Sine.easeInOut',
   });
 
-  const lock = scene.add.image(cx, cy - displayH - 26, lockKey);
+  // The padlock sits at the monument's base — on the front of its pad —
+  // like the new reference frame, with a gentle bob.
+  const lock = scene.add.image(cx, cy - 10, lockKey);
   lock.setDepth(10 + cy * 0.01 + 0.06);
   scene.tweens.add({
     targets: lock,
-    y: lock.y + 10,
+    y: lock.y + 4,
     duration: 900,
     yoyo: true,
     repeat: -1,
     ease: 'Sine.easeInOut',
   });
 
-  // Collision body (STEP 5): a solid circle around the monument base.
+  // Reference-style name pill floating under the monument (skipped for
+  // zone0 — the plaza pedestal is named by the objective banner instead).
+  const labelColor = LABEL_COLORS[zone.id];
+  const labelY = hasPad ? cy - 2 + art.w * 0.345 + 24 : cy + 52;
+  let labelG: Phaser.GameObjects.Graphics | null = null;
+  let labelText: Phaser.GameObjects.Text | null = null;
+  if (labelColor !== undefined) {
+    labelText = scene.add
+      .text(cx, labelY, label, {
+        fontFamily: 'Fredoka, Nunito, sans-serif',
+        fontSize: '17px',
+        fontStyle: '600',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5)
+      .setResolution(2)
+      .setDepth(501);
+    labelG = scene.add.graphics().setDepth(500);
+    drawLabelPill(labelG, labelText, cx, labelY, labelColor);
+  }
+
+  // Collision body: a solid circle around the monument base (unchanged).
   const r = 2.3 * U;
   const zoneBody = scene.add.zone(cx, cy, r * 2, r * 2);
   scene.physics.add.existing(zoneBody, true);
   (zoneBody.body as Phaser.Physics.Arcade.StaticBody).setCircle(r);
   colliders.push(zoneBody);
 
-  return { id: zone.id, sprite, ring, lock, colorKey, grayKey, displayW, displayH };
+  return {
+    id: zone.id,
+    sprite,
+    ring,
+    lock,
+    labelG,
+    labelText,
+    labelColor: labelColor ?? 0,
+    labelY,
+    displayW: art.w,
+    displayH: art.h,
+  };
 }
 
-/** Applies the lock/unlock visual state — same contract as the 3D world. */
+/** Applies the lock/unlock visual state — full-color art either way;
+ * locked = padlock badge, unlocked = pulsing gold ring. */
 export function applyMonumentState(handle: MonumentHandle, unlocked: boolean): void {
-  handle.sprite.setTexture(unlocked ? handle.colorKey : handle.grayKey);
-  handle.sprite.setDisplaySize(handle.displayW, handle.displayH);
   handle.ring.setVisible(unlocked);
   handle.lock.setVisible(!unlocked);
+}
+
+/** Swaps the label text (language switch) and refits its pill. */
+export function setMonumentLabel(handle: MonumentHandle, label: string): void {
+  if (!handle.labelText || !handle.labelG) return;
+  handle.labelText.setText(label);
+  drawLabelPill(
+    handle.labelG,
+    handle.labelText,
+    handle.labelText.x,
+    handle.labelY,
+    handle.labelColor,
+  );
 }

@@ -1,0 +1,508 @@
+IMPORTANT: THIS IS A VISUAL REPLICATION + UI/UX IMPLEMENTATION TASK.
+
+I have provided:
+1. Three screenshots of my CURRENT project/game screens.
+2. One REFERENCE IMAGE showing the EXACT visual direction and target design.
+
+Your task is to redesign my existing 2D game map screen so that it matches the REFERENCE IMAGE as closely as technically possible.
+
+DO NOT interpret this as a general redesign request.
+DO NOT create your own variation.
+DO NOT "take inspiration" from the reference.
+The REFERENCE IMAGE is the PRIMARY VISUAL SPECIFICATION.
+
+==================================================
+CORE REQUIREMENT
+==================================================
+
+I want the final implemented screen to visually match the reference image as closely as possible.
+
+Target:
+REFERENCE IMAGE ≈ FINAL IMPLEMENTATION
+
+Match the reference at the level of:
+- Overall composition
+- Camera/view framing
+- Map layout
+- Terrain
+- Paths
+- Buildings
+- Landmarks
+- Trees
+- Bushes
+- Flowers
+- Water
+- Character placement
+- Character scale
+- Character direction
+- UI positioning
+- UI dimensions
+- UI spacing
+- Typography
+- Font sizes
+- Font weights
+- Icons
+- Colors
+- Borders
+- Corner radius
+- Shadows
+- Transparency
+- Gradients
+- Button styling
+- HUD hierarchy
+- Minimap
+- Navigation controls
+- Bottom navigation
+- Help button
+- Top notification
+- Logo area
+- Player information
+- Progress indicators
+- Overall visual balance
+
+Do not simplify these details unless technically unavoidable.
+
+==================================================
+IMPORTANT: THIS IS A 2D GAME
+==================================================
+
+This is an actual 2D game interface, not a static webpage.
+
+Therefore:
+
+- Keep the existing game engine/gameplay architecture.
+- Do NOT replace the game with a static image.
+- Do NOT use the reference screenshot itself as the game background.
+- Recreate the visual environment using actual 2D game assets, sprites, layers, tiles, DOM/UI overlays, canvas elements, or the existing rendering system used by the project.
+- The player must remain interactive.
+- The camera/map must remain interactive.
+- Existing movement must continue working.
+- Existing game interactions must continue working.
+- Existing game progression/state must continue working.
+
+The reference image is a visual target, NOT an image to simply place behind the game.
+
+==================================================
+USE MY EXISTING PROJECT
+==================================================
+
+First inspect the complete existing implementation.
+
+Understand:
+- Current game engine
+- Rendering system
+- Map/world implementation
+- Player movement
+- Camera system
+- UI components
+- State management
+- Assets
+- Existing routes/screens
+- Existing interactions
+- Existing responsive behavior
+
+Do NOT unnecessarily rewrite working game logic.
+
+Preserve existing functionality unless a change is required to achieve the target visual design.
+
+==================================================
+REFERENCE IMAGE ANALYSIS
+==================================================
+
+Before changing code, carefully analyze the reference image.
+
+Break it into visual layers:
+
+LAYER 1 — WORLD
+- Grass/terrain
+- Paths
+- Trees
+- Bushes
+- Flowers
+- Rocks
+- Water
+- Buildings
+- Decorative objects
+- Central area
+- Interactive locations
+- Environmental depth
+
+LAYER 2 — PLAYER
+- Character appearance
+- Character scale
+- Character position
+- Character orientation
+- Character shadow
+- Character visibility against terrain
+
+LAYER 3 — GAME OBJECTS
+- Location markers
+- Locked/unlocked locations
+- Justice/legal-themed objects
+- Quest/start marker
+- Decorative landmarks
+
+LAYER 4 — HUD
+- Nyaya Nagri logo
+- Player profile
+- Rank
+- Coins
+- Streak
+- Progress
+- Rights Community
+- Top objective/quest card
+- Settings
+- Minimap
+- Bottom navigation
+- Help button
+- Joystick/navigation control
+- Assistant button
+
+LAYER 5 — VISUAL POLISH
+- Shadows
+- Soft highlights
+- Depth
+- Blur
+- Layering
+- Contrast
+- Spacing
+- Color harmony
+- Edge treatment
+- Micro-interactions
+
+Implement all relevant layers.
+
+==================================================
+DO NOT COPY THE CURRENT DESIGN
+==================================================
+
+The three screenshots I provided show my CURRENT implementation.
+
+Use them ONLY to understand:
+- existing functionality
+- existing game structure
+- current interactions
+- existing content
+- player state
+- map behavior
+
+Do NOT preserve their current visual styling if it conflicts with the reference.
+
+The reference image takes priority for visual design.
+
+==================================================
+EXACT UI POSITIONING
+==================================================
+
+Do not randomly place UI elements.
+
+Recreate the reference layout proportionally.
+
+For every major element determine:
+
+- X position
+- Y position
+- Width
+- Height
+- Padding
+- Margin
+- Border radius
+- Font size
+- Icon size
+- Gap
+- Alignment
+- Shadow
+- Opacity
+
+The UI should maintain the same visual hierarchy as the reference.
+
+The left-side player HUD should feel like one cohesive vertical system.
+
+The minimap should occupy approximately the same visual area and position as the reference.
+
+The bottom navigation should have the same visual weight and placement.
+
+The "Get Help Now" CTA should be visually prominent and positioned consistently with the reference.
+
+==================================================
+WORLD / MAP VISUAL
+==================================================
+
+The world should NOT look like a generic green background.
+
+Create a rich, colorful, polished 2D game environment similar to the reference:
+
+- Layered grass
+- Soft terrain variation
+- Dense vegetation
+- Organic paths
+- Small flowers
+- Trees with depth
+- Decorative rocks
+- Small structures
+- Legal/justice-themed landmarks
+- Central hub
+- Interactive locations
+- Environmental details
+
+Avoid:
+- Flat empty green backgrounds
+- Random object placement
+- Generic CSS shapes
+- Placeholder rectangles
+- Primitive-looking assets
+- Excessive empty space
+- Unrelated fantasy objects
+
+The map should feel like ONE cohesive game world.
+
+==================================================
+VISUAL STYLE
+==================================================
+
+Target style:
+
+- Premium children's educational game
+- Friendly
+- Colorful
+- Playful
+- Polished
+- Soft 2D/isometric-inspired game art
+- High visual clarity
+- Warm natural environment
+- Modern game HUD
+- Educational but fun
+
+Do NOT make it:
+- Cyberpunk
+- Futuristic
+- Dark
+- Corporate SaaS
+- Flat dashboard
+- Generic web app
+- Overly childish
+- Visually noisy
+
+==================================================
+TYPOGRAPHY
+==================================================
+
+Match the reference typography as closely as possible.
+
+Use a rounded, friendly, highly readable font.
+
+Maintain:
+- Heading hierarchy
+- Button typography
+- Label typography
+- Font weights
+- Letter spacing
+- Line heights
+
+Do not use arbitrary fonts just because they are available.
+
+If the exact font is unavailable, choose the closest possible alternative.
+
+==================================================
+COLORS
+==================================================
+
+Extract the visual color relationships from the reference.
+
+Prioritize:
+- Natural greens
+- Warm path colors
+- Navy/dark blue
+- White UI surfaces
+- Orange accents
+- Blue secondary accents
+- Red emergency/help CTA
+- Purple/blue location accents where appropriate
+
+Do not randomly change the palette.
+
+The entire screen should feel like one designed product.
+
+==================================================
+FUNCTIONALITY
+==================================================
+
+Visual redesign must NOT break functionality.
+
+Keep working:
+
+- Player movement
+- Joystick/input
+- Camera movement
+- Map navigation
+- Location interaction
+- Quest/start interaction
+- Locked/unlocked states
+- Player data
+- Rank
+- Coins
+- Streak
+- Progress
+- Navigation buttons
+- Help button
+- Assistant button
+- Minimap
+- Existing game state
+- Existing routes/screens
+- Existing responsive behavior
+
+If an existing feature is visually represented differently in the reference, keep the underlying functionality and adapt its UI.
+
+==================================================
+RESPONSIVE DESIGN
+==================================================
+
+The reference is desktop/game viewport oriented, but the implementation must remain usable across different viewport sizes.
+
+Do not simply scale the entire UI blindly.
+
+Maintain:
+- relative proportions
+- safe areas
+- readable text
+- playable game area
+- accessible controls
+
+==================================================
+CRITICAL VISUAL QA LOOP
+==================================================
+
+THIS PART IS MANDATORY.
+
+Do NOT consider the task finished immediately after coding.
+
+After implementing the redesign:
+
+1. Run the application.
+2. Open the actual game screen.
+3. Take a screenshot of the implemented result.
+4. Compare it directly against the provided REFERENCE IMAGE.
+5. Identify visual differences.
+6. Fix those differences.
+7. Run again.
+8. Take another screenshot.
+9. Compare again.
+10. Repeat the process.
+
+Continue this loop until the implementation is visually as close to the reference as technically possible.
+
+Do NOT stop after the first implementation.
+
+Do NOT say:
+"Looks good."
+"Close enough."
+"Similar."
+"Done."
+
+Only stop when the major visual discrepancies have been eliminated.
+
+==================================================
+VISUAL COMPARISON CHECKLIST
+==================================================
+
+After every screenshot comparison, inspect:
+
+[ ] Overall composition
+[ ] Map framing
+[ ] Camera position
+[ ] World scale
+[ ] Player scale
+[ ] Player position
+[ ] Player orientation
+[ ] Central landmark position
+[ ] Path geometry
+[ ] Building placement
+[ ] Tree density
+[ ] Bush density
+[ ] Flower density
+[ ] Terrain variation
+[ ] Shadows
+[ ] Lighting
+[ ] World depth
+[ ] Left HUD position
+[ ] Left HUD width
+[ ] Left HUD spacing
+[ ] Profile card
+[ ] Rank card
+[ ] Coin card
+[ ] Streak card
+[ ] Progress card
+[ ] Rights Community card
+[ ] Top objective card
+[ ] Settings button
+[ ] Minimap size
+[ ] Minimap position
+[ ] Bottom navigation
+[ ] Joystick
+[ ] Assistant button
+[ ] Get Help Now button
+[ ] Icon sizes
+[ ] Typography
+[ ] Font weight
+[ ] Colors
+[ ] Border radius
+[ ] Shadows
+[ ] Padding
+[ ] Alignment
+[ ] Visual hierarchy
+[ ] Empty-space balance
+[ ] Overall polish
+
+Fix the highest-impact differences first.
+
+==================================================
+IMPORTANT AGENT BEHAVIOR
+==================================================
+
+Do not ask me for confirmation for every small change.
+
+Make reasonable implementation decisions yourself based on the reference.
+
+Do not replace the reference with your own design opinion.
+
+Do not remove existing functionality just to make the screen visually easier to build.
+
+Do not use placeholder assets when a proper implementation can be created.
+
+Do not finish the task merely because the code compiles.
+
+Compilation is NOT the success criterion.
+
+Visual fidelity + working gameplay is the success criterion.
+
+==================================================
+FINAL ACCEPTANCE CRITERIA
+==================================================
+
+The task is complete only when:
+
+1. The game still works.
+2. Player movement works.
+3. Existing game interactions work.
+4. The map is visually redesigned.
+5. The UI matches the reference composition.
+6. The visual hierarchy matches the reference.
+7. Major dimensions and spacing match.
+8. Colors and typography are closely matched.
+9. The world feels like the same visual system as the reference.
+10. No obvious placeholder/generic UI remains.
+11. You have actually inspected the rendered result.
+12. You have performed multiple screenshot → comparison → correction iterations.
+
+Treat the reference image as the DESIGN SOURCE OF TRUTH.
+
+Do not stop at "similar".
+Aim for pixel-level visual fidelity wherever technically possible.
+
+BEGIN BY INSPECTING THE EXISTING PROJECT AND THE PROVIDED REFERENCE IMAGE.
+THEN IMPLEMENT.
+THEN TEST.
+THEN SCREENSHOT.
+THEN COMPARE.
+THEN FIX.
+REPEAT UNTIL THE VISUAL RESULT IS AS CLOSE TO THE REFERENCE AS POSSIBLE.

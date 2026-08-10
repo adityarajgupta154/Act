@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
   QuestSession, startLevel, answerQuizQuestion, acknowledgeQuizFeedback,
-  chooseSceneOption, acknowledgeSceneFeedback, finalizeLevel, getCurrentScene,
+  chooseSceneOption, acknowledgeSceneFeedback, continueScene, finalizeLevel, getCurrentScene,
   getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback,
   getSessionLevel, completeActivity,
   type LevelResult,
@@ -13,7 +13,7 @@ import { HiddenObjectLevel } from './activities/HiddenObjectLevel';
 import { SortingLevel } from './activities/SortingLevel';
 import { ScenarioLevel } from './activities/ScenarioLevel';
 import { AuthoritiesLevel } from './activities/AuthoritiesLevel';
-import { exitZone, openHelp } from '@/ui/uiStore';
+import { exitZone, openCertificate, openHelp } from '@/ui/uiStore';
 import { isSafetyReminderZone } from '@/ui/safetyReminder';
 import { cn } from '@/lib/utils';
 import { CheckCircle2, XCircle, ArrowRight, Star, Lightbulb, ShieldCheck, RotateCcw } from 'lucide-react';
@@ -208,6 +208,24 @@ export function QuestPlayer({
               {t.titleUnlocked(t.titleNames[id] ?? id)}
             </p>
           ))}
+
+          {/* Task 27: the certificate was issued in the SAME store update
+              that marked the zone complete. A quiet professional note —
+              deliberately not another confetti moment (brief: subtle). */}
+          <div className="bg-[#FBF8EF] border border-[#E7CE8F] rounded-xl px-5 py-4 mb-6 text-left flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="min-w-0 flex-1">
+              <p className="font-bold text-slate-800">{t.certificateUnlockedToast}</p>
+              <p className="text-sm text-slate-600 font-medium">
+                {t.certificateUnlockedBody(t.zones[quest.zoneId]?.name ?? quest.zoneId)}
+              </p>
+            </div>
+            <button
+              onClick={() => openCertificate(quest.zoneId)}
+              className="shrink-0 bg-[#14306E] hover:bg-[#1d3f8c] text-white px-4 py-2.5 rounded-full font-bold text-sm transition-colors touch-manipulation"
+            >
+              {t.viewCertificate}
+            </button>
+          </div>
 
           {nextZoneName && (
             <p className="text-lg text-slate-600 font-medium mb-8 bg-sky-50 py-3 px-6 rounded-xl inline-block border border-sky-100">
@@ -528,7 +546,19 @@ export function QuestPlayer({
             />
           )}
 
-          {!feedback ? (
+          {scene.choices.length === 0 ? (
+            /* Task 26: narration-only story panel — no decisions here, just
+               one Continue that walks to the next panel (or completes the
+               level at the border). */
+            <div className="flex justify-end mt-auto">
+              <button
+                onClick={() => setSession(continueScene(session))}
+                className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-md flex items-center gap-2 transition-transform active:scale-95 touch-manipulation"
+              >
+                {t.continueLabel} <ArrowRight className="w-5 h-5" />
+              </button>
+            </div>
+          ) : !feedback ? (
             <div className="flex flex-col gap-3 mt-auto">
               <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">{t.whatWillYouDo}</h3>
               {scene.choices.map((choice, idx) => (

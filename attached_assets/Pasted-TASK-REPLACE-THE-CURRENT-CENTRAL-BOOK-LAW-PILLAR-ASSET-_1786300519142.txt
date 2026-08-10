@@ -1,0 +1,338 @@
+TASK: REPLACE THE CURRENT CENTRAL BOOK/LAW PILLAR ASSET WITH THE PROVIDED REFERENCE ASSET.
+
+I have already provided the main reference screenshot for the complete game map.
+
+I am also providing a separate reference image of the correct central golden book pillar.
+
+IMPORTANT:
+The separate pillar image is the SOURCE OF TRUTH for this specific game object.
+
+Do NOT redesign, reinterpret, simplify, recolor, or generate a different pillar.
+
+==================================================
+1. REMOVE CURRENT PILLAR
+==================================================
+
+Find the current central pillar/book monument currently visible in the game map.
+
+Completely remove/disable the existing pillar asset.
+
+Do NOT keep any part of the old pillar underneath the new one.
+
+Remove:
+- old pillar model/sprite
+- old book
+- old pedestal
+- old scales icon
+- old glow
+- old decorative geometry
+- old shadow if it belongs specifically to the old asset
+
+There must be only ONE central pillar after implementation.
+
+==================================================
+2. USE THE PROVIDED PILLAR REFERENCE
+==================================================
+
+Use the provided separate pillar image as the exact visual reference.
+
+The target asset has:
+
+- Golden tiered pedestal
+- Open golden/cream book at the top
+- Detailed book pages
+- Golden trim
+- Dark circular center medallion
+- Golden scales-of-justice symbol
+- Multiple circular pedestal layers
+- Warm golden highlights
+- Clean game-art edges
+- Small golden sparkle effects around the object
+- Symmetrical front-facing composition
+
+Preserve these visual characteristics.
+
+DO NOT replace it with:
+- a generic statue
+- a generic book
+- a grey pillar
+- a simple CSS shape
+- a low-detail icon
+- a placeholder
+- the previous pillar
+
+==================================================
+3. IMPORTANT — TRANSPARENT ASSET
+==================================================
+
+The provided pillar asset is intended to work as a standalone game object.
+
+Treat the transparent area around the pillar as transparent.
+
+Do NOT create:
+- white rectangle
+- black rectangle
+- green rectangle
+- image background
+- visible checkerboard background
+- square image container
+
+Only the pillar artwork itself should appear inside the game world.
+
+==================================================
+4. MATCH THE MAIN REFERENCE SCREEN
+==================================================
+
+The main reference screenshot I provided is still the SOURCE OF TRUTH for the game's overall composition.
+
+Use the separate pillar image only for the pillar itself.
+
+Therefore:
+
+MAIN REFERENCE SCREEN:
+→ determines position, scale, environment, surrounding paths, UI, lighting and overall composition.
+
+PILLAR REFERENCE IMAGE:
+→ determines the exact appearance of the central book pillar.
+
+Do NOT change the rest of the map unnecessarily.
+
+==================================================
+5. POSITION
+==================================================
+
+Place the new pillar at EXACTLY the same logical location where the central pillar exists in the main reference image.
+
+It should sit at the center of the circular intersection/hub.
+
+The paths should visually lead toward the pillar.
+
+The pillar must feel physically integrated into the world rather than pasted on top.
+
+Make sure:
+- it is centered correctly
+- it sits on the ground
+- it does not float
+- it does not sink into the ground
+- it does not overlap the UI
+- it does not block the player incorrectly
+- it does not break collision/navigation
+
+==================================================
+6. SCALE
+==================================================
+
+Match the pillar's visual scale to the main reference image.
+
+Do NOT simply use the image's native dimensions.
+
+Adjust its in-game scale so that:
+
+- book width
+- pillar height
+- pedestal width
+- visual footprint
+
+match the reference composition.
+
+Compare the result visually with the main reference screenshot.
+
+If it is too large:
+→ reduce scale.
+
+If it is too small:
+→ increase scale.
+
+Do this based on the rendered game screenshot, not assumptions.
+
+==================================================
+7. DEPTH / LAYERING
+==================================================
+
+The pillar must have proper 2D game depth.
+
+It should appear naturally placed on the map.
+
+Correct the rendering order so that:
+
+GROUND
+↓
+PATH
+↓
+ENVIRONMENT
+↓
+PILLAR BASE
+↓
+PILLAR
+↓
+PLAYER / foreground elements where appropriate
+↓
+HUD
+
+Do not allow the pillar to appear behind the terrain incorrectly.
+
+Do not allow the player to visually disappear behind the entire pillar if the reference does not show that behavior.
+
+==================================================
+8. SHADOW
+==================================================
+
+The pillar should have a subtle grounded shadow.
+
+The shadow should communicate that the object is standing on the ground.
+
+Do NOT use a giant dark CSS shadow.
+
+Prefer a soft game-style ground shadow.
+
+If the provided asset already contains suitable shading, avoid adding excessive additional shadow.
+
+==================================================
+9. GLOW / SPARKLES
+==================================================
+
+Keep the golden sparkle effect around the book/pillar only if it matches the reference.
+
+The sparkle effect should:
+
+- remain subtle
+- feel magical
+- match the golden asset
+- not overpower the map
+- not look like a neon effect
+
+Do not add random particles.
+
+==================================================
+10. GAME FUNCTIONALITY
+==================================================
+
+Replacing the visual asset must NOT break functionality.
+
+Preserve:
+
+- player movement
+- collision
+- map navigation
+- central hub interaction
+- quest/start interaction
+- camera movement
+- minimap
+- existing game state
+- progress system
+- location interaction
+
+If the old pillar had an interaction trigger, transfer that trigger to the new pillar's logical position.
+
+The visual asset replacement must not remove functionality.
+
+==================================================
+11. RESPONSIVE SCALING
+==================================================
+
+The pillar must remain correctly positioned and scaled when:
+
+- viewport size changes
+- browser window changes
+- camera zoom changes
+- game canvas scales
+
+Do NOT hardcode a pixel position that only works at one resolution.
+
+Use the game's existing world/camera coordinate system.
+
+==================================================
+12. VISUAL QA — MANDATORY
+==================================================
+
+After implementing:
+
+1. Run the game.
+2. Navigate to the map containing the central pillar.
+3. Take a screenshot.
+4. Compare it with the provided main reference screenshot.
+5. Compare the pillar itself against the separate pillar reference image.
+6. Identify differences.
+7. Fix them.
+8. Run again.
+9. Screenshot again.
+10. Repeat until the pillar visually matches the reference as closely as possible.
+
+Check specifically:
+
+[ ] Current pillar completely removed
+[ ] New pillar is the correct asset
+[ ] No old pillar visible underneath
+[ ] No image background visible
+[ ] Correct transparency
+[ ] Correct position
+[ ] Correct scale
+[ ] Correct rotation
+[ ] Correct perspective/orientation
+[ ] Correct ground placement
+[ ] Correct shadow
+[ ] Correct golden colors
+[ ] Correct book appearance
+[ ] Correct scales-of-justice emblem
+[ ] Correct pedestal proportions
+[ ] Correct sparkle placement
+[ ] Correct layering
+[ ] Correct collision
+[ ] Correct interaction
+[ ] Correct relationship with surrounding paths
+[ ] Correct relationship with player
+[ ] Correct visual balance
+
+==================================================
+13. DO NOT STOP AFTER CODING
+==================================================
+
+Do NOT consider this task complete just because:
+
+- the code compiles
+- the image loads
+- the pillar appears
+- the game starts
+
+The success criterion is VISUAL FIDELITY.
+
+You must inspect the actual rendered result.
+
+If the pillar looks different from the provided reference, continue adjusting it.
+
+Do not say "looks close enough".
+
+Fix obvious differences.
+
+==================================================
+FINAL RULE
+==================================================
+
+Do not modify the entire map design during this task.
+
+This task is specifically:
+
+CURRENT CENTRAL PILLAR
+        ↓
+REMOVE
+        ↓
+PROVIDED GOLDEN BOOK PILLAR
+        ↓
+IMPLEMENT IN SAME LOCATION
+        ↓
+MATCH MAIN REFERENCE SCREEN
+        ↓
+TEST
+        ↓
+SCREENSHOT
+        ↓
+COMPARE
+        ↓
+FIX
+        ↓
+REPEAT
+
+The separate pillar reference controls the pillar's appearance.
+The main map reference controls its placement and integration.
+
+Implement this replacement now.

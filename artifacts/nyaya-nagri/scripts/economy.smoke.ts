@@ -64,7 +64,7 @@ async function main() {
   const { progressStore } = await import('../src/data/progressStore');
   const {
     startLevel, answerQuizQuestion, acknowledgeQuizFeedback,
-    chooseSceneOption, acknowledgeSceneFeedback, getCurrentScene, finalizeLevel,
+    chooseSceneOption, acknowledgeSceneFeedback, continueScene, getCurrentScene, finalizeLevel,
     getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback, levelKey,
     completeActivity, activityTotal,
   } = await import('../src/quests/engine');
@@ -235,7 +235,11 @@ async function main() {
   const playScenes = (session: QuestSession): QuestSession => {
     let s = session;
     while (s.phase === 'scenes') {
-      getCurrentScene(s)!;
+      const scene = getCurrentScene(s)!;
+      if (scene.choices.length === 0) {
+        s = continueScene(s); // Task 26: narration-only panel
+        continue;
+      }
       s = chooseSceneOption(s, 0);
       s = acknowledgeSceneFeedback(s);
     }

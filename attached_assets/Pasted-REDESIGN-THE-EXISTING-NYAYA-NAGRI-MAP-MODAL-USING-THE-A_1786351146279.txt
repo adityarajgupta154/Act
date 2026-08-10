@@ -1,0 +1,645 @@
+REDESIGN THE EXISTING NYAYA NAGRI MAP MODAL USING THE ATTACHED REFERENCE IMAGE AS THE PRIMARY VISUAL REFERENCE.
+
+IMPORTANT:
+The attached image is the exact design reference.
+
+I want the existing Map UI to be redesigned to closely match this reference in:
+- overall composition
+- layout
+- spacing
+- proportions
+- colors
+- typography
+- cards
+- map node arrangement
+- icons
+- paths
+- shadows
+- borders
+- corner radius
+- visual hierarchy
+- background treatment
+- animations/interactions
+
+Do NOT create a generic map UI.
+Do NOT improvise a different design.
+Use the attached reference image as the source of truth for the visual design.
+
+==================================================
+1. FIRST INSPECT THE EXISTING PROJECT
+==================================================
+
+Before changing anything:
+
+1. Inspect the existing map implementation.
+2. Find the current Map component/modal.
+3. Find the current zone data.
+4. Find how player position is stored.
+5. Find how zone completion/unlocking is stored.
+6. Find the existing zone names and icons.
+7. Find the existing map button that opens this modal.
+8. Find the existing responsive behavior.
+
+DO NOT create a second map system.
+
+Modify the existing Map component.
+
+Preserve all existing functionality.
+
+==================================================
+2. MAP MODAL STRUCTURE
+==================================================
+
+The new Map should open as a large centered modal/card over the existing game world.
+
+Reference composition:
+
+---------------------------------------
+BACKGROUND GAME WORLD
+       ↓ blurred/dimmed
+
+        ┌───────────────────────────┐
+        │ ✦   MAP   ✦              │
+        │                           │
+        │ Your journey across       │
+        │ Nyaya Nagri               │
+        │                           │
+        │ ┌───────────────────────┐ │
+        │ │                       │ │
+        │ │     MAP CONTENT       │ │
+        │ │                       │ │
+        │ └───────────────────────┘ │
+        │                           │
+        │       LEGEND              │
+        └───────────────────────────┘
+---------------------------------------
+
+The modal should feel like a premium children's educational game UI.
+
+==================================================
+3. OUTER MAP CARD
+==================================================
+
+Create a large white/off-white rounded card.
+
+Characteristics:
+
+- very large rounded corners
+- clean white surface
+- subtle soft shadow
+- thin light border
+- centered horizontally and vertically
+- approximately 85–90% viewport width on desktop
+- approximately 85–92% viewport height
+- maintain comfortable margins
+- no harsh black borders
+
+Use a polished game UI aesthetic.
+
+The card should feel similar to a premium mobile/tablet educational game.
+
+==================================================
+4. HEADER
+==================================================
+
+At the top center:
+
+Small blue map/location icon.
+
+Then:
+
+MAP
+
+Large dark navy heading.
+
+Around the heading use subtle decorative sparkle/star elements.
+
+Below the heading add a small rounded subtitle pill:
+
+"Your journey across Nyaya Nagri"
+
+The subtitle should be:
+
+- light gray/white background
+- thin gray border
+- muted blue-gray text
+- rounded pill shape
+
+Keep the header centered.
+
+==================================================
+5. MAP CONTENT AREA
+==================================================
+
+Inside the modal create a large light-green map canvas.
+
+The map canvas should have:
+
+- very light pastel green background
+- rounded corners
+- subtle inner border
+- subtle depth
+- small decorative trees
+- tiny rocks
+- small environmental decorations
+
+Do NOT make the background too detailed.
+
+The focus should remain on the zone nodes and paths.
+
+==================================================
+6. CENTRAL HUB
+==================================================
+
+At the exact center create the CURRENT HUB.
+
+Use the existing golden book/pillar asset from the project if available.
+
+IMPORTANT:
+Do NOT recreate the pillar using CSS.
+
+Use the actual existing golden book pillar asset.
+
+The central hub should be:
+
+- large circular golden node
+- golden/yellow gradient
+- soft glow
+- subtle white outline
+- soft shadow
+- book icon clearly visible
+- visually dominant
+
+This represents:
+
+CURRENT HUB
+
+The central hub should be the visual anchor of the entire map.
+
+==================================================
+7. PLAYER LOCATION
+==================================================
+
+Use the existing player/avatar asset.
+
+Place the player marker on the map exactly according to the user's current zone/location.
+
+The player marker should appear inside a circular badge:
+
+- white outer ring
+- blue accent
+- subtle shadow
+- avatar centered
+
+Add a small label:
+
+"You are here"
+
+Position it near the player marker.
+
+Do NOT hardcode the player position.
+
+It must update dynamically based on the actual game state.
+
+==================================================
+8. ZONE NODES
+==================================================
+
+Arrange the zones radially around the central hub, following the reference image.
+
+The reference has six surrounding destinations.
+
+Use the project's actual zone data.
+
+Example structure:
+
+TOP LEFT:
+Right to Childhood
+
+TOP CENTER:
+Family & Community Shield
+
+TOP RIGHT:
+Justice System Simulator
+
+RIGHT:
+School Rights
+
+BOTTOM RIGHT:
+Help Others
+
+BOTTOM LEFT:
+Digital Safety
+
+BOTTOM:
+Safe Zone
+
+IMPORTANT:
+
+Use the actual zone names/data already present in the project.
+
+Do NOT invent duplicate zones.
+
+If the project has a different number of zones, adapt the layout while preserving the same visual concept.
+
+==================================================
+9. ZONE NODE DESIGN
+==================================================
+
+Each zone should be represented by a large circular node.
+
+Node structure:
+
+        ┌─────────────┐
+        │             │
+        │   ICON      │
+        │             │
+        └─────────────┘
+              ↓
+        Zone Name Label
+
+Node style:
+
+- circular
+- white outer ring
+- soft shadow
+- colored inner circle
+- large clean icon
+- polished 2D game illustration style
+
+Use different accent colors for different categories.
+
+Suggested visual language:
+
+Purple:
+Rights / Justice
+
+Pink:
+Community / Help
+
+Green:
+Safe Zone
+
+Blue:
+Education / School
+
+Gray:
+Justice System
+
+Keep colors harmonious and consistent.
+
+==================================================
+10. ZONE LABELS
+==================================================
+
+Each zone should have a small floating white rounded label.
+
+Examples:
+
+"Right to Childhood"
+
+"Family & Community Shield"
+
+"Justice System Simulator"
+
+"School Rights"
+
+"Help Others"
+
+"Digital Safety"
+
+"Safe Zone"
+
+Typography:
+
+- bold
+- dark navy
+- child-friendly rounded font
+- highly readable
+
+Labels should never overlap the nodes.
+
+Use smart positioning based on node location.
+
+==================================================
+11. PATH SYSTEM
+==================================================
+
+Create clean paths connecting the central hub to each zone.
+
+Paths should look like:
+
+- warm beige/golden stone paths
+- soft highlights
+- subtle shadows
+- rounded edges
+- visually consistent with the game world
+
+The path should connect:
+
+CENTRAL HUB → each zone.
+
+Do NOT use thin technical lines.
+
+Do NOT use a standard graph/network appearance.
+
+It should look like a children's adventure map.
+
+For locked zones, the path can be slightly muted.
+
+For unlocked/current routes, use slightly brighter path treatment.
+
+==================================================
+12. LOCKED / UNLOCKED STATES
+==================================================
+
+Preserve the existing zone state logic.
+
+Locked zone:
+
+- slightly desaturated node
+- lock icon
+- muted path
+- optional small lock badge
+
+Unlocked zone:
+
+- full color
+- brighter icon
+- subtle glow
+
+Completed zone:
+
+- full color
+- green completion indicator/check
+- optional subtle sparkle
+
+Current zone:
+
+- stronger glow
+- blue outline
+- "You are here" or "Current" indicator
+
+DO NOT change the underlying unlock/completion logic.
+
+Only redesign how the state is displayed.
+
+==================================================
+13. LEGEND
+==================================================
+
+At the bottom of the map canvas create a clean horizontal legend.
+
+Reference structure:
+
+[ avatar ] You
+
+[ golden hub ] Current Hub
+
+[ path ] Path
+
+Use small icons and labels.
+
+Design:
+
+- white rounded container
+- subtle border
+- soft shadow
+- evenly spaced sections
+- clean vertical dividers
+
+Keep it visually lightweight.
+
+==================================================
+14. MAP BACKGROUND
+==================================================
+
+The map background should visually belong to Nyaya Nagri.
+
+Use:
+
+- pastel green terrain
+- small trees
+- tiny bushes
+- occasional rocks
+- very subtle decorative elements
+
+Do NOT use a realistic Google Maps style.
+
+Do NOT use satellite imagery.
+
+Do NOT use a technical/minimal map.
+
+It must look like an in-game adventure map.
+
+==================================================
+15. BACKGROUND WHEN MODAL OPENS
+==================================================
+
+When the Map modal opens:
+
+Keep the actual game world visible behind it.
+
+Apply:
+
+- dark translucent overlay
+- subtle blur
+- reduced brightness
+
+Do NOT completely replace the game world with a solid background.
+
+This should clearly feel like a modal overlay.
+
+==================================================
+16. ANIMATIONS
+==================================================
+
+Add subtle premium animations.
+
+When opening:
+
+- modal fades in
+- slight scale from 0.96 → 1
+- map content softly fades in
+- zone nodes appear with subtle stagger
+
+For the current zone:
+
+- gentle pulse
+- subtle glow
+
+For unlocked nodes:
+
+- very subtle floating effect
+
+For completed nodes:
+
+- tiny sparkle animation
+
+Do NOT over-animate.
+
+Do NOT use flashy neon effects.
+
+==================================================
+17. INTERACTION
+==================================================
+
+Clicking/tapping a zone node should preserve the existing behavior.
+
+If zone is unlocked:
+
+Open the existing zone/learning experience.
+
+If locked:
+
+Show the existing locked-state behavior.
+
+If completed:
+
+Show completion/progress information if that already exists.
+
+The Map is primarily a navigation/progress visualization.
+
+==================================================
+18. RESPONSIVE DESIGN
+==================================================
+
+Desktop:
+Large centered map modal.
+
+Tablet:
+Scale the map proportionally.
+
+Mobile:
+Convert the map into a scrollable/zoomable layout if necessary.
+
+Do NOT allow:
+
+- labels overlapping
+- nodes being cut off
+- central hub disappearing
+- legend going outside viewport
+- buttons becoming unreachable
+
+==================================================
+19. VISUAL QUALITY
+==================================================
+
+The final result should feel like:
+
+"Duolingo + polished children's adventure game + premium educational game"
+
+NOT:
+
+- corporate dashboard
+- generic web map
+- developer UI
+- Google Maps
+- futuristic interface
+- cyberpunk
+- overly flat design
+
+Use:
+
+- soft shadows
+- rounded surfaces
+- friendly typography
+- rich but controlled colors
+- clear hierarchy
+- playful educational visuals
+
+==================================================
+20. IMPORTANT ASSET RULE
+==================================================
+
+Reuse the project's existing assets wherever possible.
+
+Especially:
+
+- player avatar
+- zone icons
+- golden book/pillar
+- game illustrations
+- Nyaya Nagri branding
+
+Do not create fake placeholder icons if real project assets already exist.
+
+==================================================
+21. DATA-DRIVEN IMPLEMENTATION
+==================================================
+
+Map nodes must be generated from zone data.
+
+Example:
+
+zones = [
+  {
+    id: "...",
+    name: "Right to Childhood",
+    icon: "...",
+    color: "...",
+    position: "...",
+    unlocked: true,
+    completed: false
+  }
+]
+
+Do NOT hardcode separate UI logic for every zone.
+
+The map should automatically reflect:
+
+- unlocked zones
+- locked zones
+- completed zones
+- current zone
+- player position
+
+==================================================
+22. FINAL QUALITY CHECK
+==================================================
+
+After implementation, compare the result against the attached reference image.
+
+Check:
+
+✓ Overall modal proportions
+✓ Header placement
+✓ Map canvas size
+✓ Central hub position
+✓ Zone node positions
+✓ Path geometry
+✓ Label placement
+✓ Typography hierarchy
+✓ Colors
+✓ Shadows
+✓ Rounded corners
+✓ Legend
+✓ Player marker
+✓ Decorative elements
+✓ Responsive behavior
+
+If anything looks visually inconsistent with the reference, refine it.
+
+Do not stop at a functional implementation.
+
+The goal is a polished, production-quality map UI.
+
+==================================================
+FINAL INSTRUCTION
+==================================================
+
+The attached reference image is the PRIMARY VISUAL SOURCE OF TRUTH.
+
+Match its visual language as closely as possible while keeping Nyaya Nagri's existing:
+- game state
+- zone data
+- player state
+- unlock logic
+- completion logic
+- navigation
+- assets
+- functionality
+
+Do not rebuild the game.
+
+Only replace/refactor the existing Map UI to achieve this design.

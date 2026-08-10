@@ -10,11 +10,197 @@ servers:
 tags:
   - name: health
     description: Health operations
-  - name: avatar
-    description: AI Avatar Companion (Adhikar Didi/Bhaiya) chat operations
   - name: persona
     description: AI Role-Play Persona interviews (Task 17, PRD §7.4)
+  - name: nyaya-ai
+    description: Nyaya AI — the game's single Gemini-powered assistant (Your Rights Guide)
+  - name: insights
+    description: >
+      Learning & development insights — non-diagnostic AI narrative over
+      client-computed aggregates (never raw events, never PII)
 paths:
+  /nyaya-ai/chat:
+    post:
+      operationId: nyayaAiChat
+      tags: [nyaya-ai]
+      summary: Ask Nyaya AI (Your Rights Guide)
+      description: >
+        Stateless chat with Nyaya Nagri's ONE AI assistant. Gemini-powered
+        and retrieval-grounded: specific legal facts come only from a
+        pre-approved corpus of PRD §4 act summaries whose public source is
+        India Code (indiacode.nic.in) — the model never invents acts or
+        sections. Understands safe game context (current zone, completed
+        zones, progress, badges, current lesson) passed as stable ids and
+        capped strings. Enforces the identical safety contract as the
+        persona route: deterministic distress escalation before any AI call
+        (English, Hindi, Hinglish, and Gujarati lexicon), PII ingress
+        redaction, untrusted history quoting, and the fail-closed helpline
+        output gate. Replies follow the child's own language (English /
+        Hindi / Hinglish / Gujarati). Educational legal information, never
+        professional legal advice; no conversation data is persisted.
+        Requires the server-side GEMINI_API_KEY secret — the key never
+        reaches the client.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NyayaAiChatInput"
+      responses:
+        "200":
+          description: Nyaya AI reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarChatReply"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "502":
+          description: Upstream AI error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "503":
+          description: GEMINI_API_KEY is not configured on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+  /nyaya-ai/chat-stream:
+    post:
+      operationId: nyayaAiChatStream
+      tags: [nyaya-ai]
+      summary: Ask Nyaya AI — low-latency streaming twin (NDJSON)
+      description: >
+        Streaming variant of /nyaya-ai/chat with the IDENTICAL deterministic
+        safety contract (shared preparation code server-side). The response
+        body is NDJSON — one JSON event per line:
+        {"type":"delta","text":"..."} is a gated increment of the reply (the
+        fail-closed helpline output gate runs over the ACCUMULATED reply
+        BEFORE each increment is forwarded, so no ungated text ever reaches
+        the client); {"type":"escalated","reply":"..."} carries the canonical
+        hard-coded escalation text and the client replaces the whole partial
+        reply with it; {"type":"done"} ends a clean reply; {"type":"error"}
+        means the upstream died mid-reply (the client keeps the partial text
+        and offers a retry). Failures before the first event use plain HTTP
+        statuses. Consumed by a small hand-written streaming reader in the
+        web client — the generated JSON client cannot parse NDJSON.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NyayaAiChatInput"
+      responses:
+        "200":
+          description: NDJSON event stream (application/x-ndjson)
+          content:
+            application/x-ndjson:
+              schema:
+                type: string
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "502":
+          description: Upstream AI error before any output
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "503":
+          description: GEMINI_API_KEY is not configured on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+  /nyaya-ai/voice-token:
+    post:
+      operationId: nyayaAiVoiceToken
+      tags: [nyaya-ai]
+      summary: Mint an ephemeral Gemini Live session token for voice chat
+      description: >
+        Real-time voice conversation support. Returns a short-lived,
+        single-use ephemeral token that the browser uses to open a Gemini
+        Live API WebSocket directly with Google — the GEMINI_API_KEY secret
+        never leaves the server. The token is constraint-locked at mint
+        time: model, child-friendly voice, transcription settings and the
+        ENTIRE system instruction (safety rules + the pre-approved India
+        Code corpus + safe game context) are fixed server-side and cannot
+        be altered by the client. No audio or transcripts are ever stored
+        server-side.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NyayaAiVoiceTokenInput"
+      responses:
+        "200":
+          description: Ephemeral Live session token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NyayaAiVoiceTokenReply"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "502":
+          description: Upstream AI error (token could not be minted)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "503":
+          description: GEMINI_API_KEY is not configured on the server
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+  /nyaya-ai/voice-guard:
+    post:
+      operationId: nyayaAiVoiceGuard
+      tags: [nyaya-ai]
+      summary: Deterministic safety gate for live voice transcripts
+      description: >
+        Voice-mode twin of the text pipeline's deterministic gates, using
+        the SAME shared safety module. The client streams Live API
+        transcripts here — both the child's speech (role user) and the
+        model's spoken reply (role model). When escalated=true the client
+        must stop audio playback, end the Live session, show the returned
+        canonical helpline text (hard-coded server-side, never
+        model-generated) and pulse the shared Get Help Now button. Fully
+        deterministic (no AI call), so it works even without
+        GEMINI_API_KEY.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/NyayaAiVoiceGuardInput"
+      responses:
+        "200":
+          description: Guard verdict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NyayaAiVoiceGuardReply"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
   /persona/chat:
     post:
       operationId: personaChat
@@ -54,28 +240,38 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/AvatarError"
-  /avatar/chat:
+  /insights/analyze:
     post:
-      operationId: avatarChat
-      tags: [avatar]
-      summary: Send a message to the AI avatar companion
+      operationId: insightsAnalyze
+      tags: [insights]
+      summary: AI narrative for the learning-insights dashboards
       description: >
-        Stateless chat with the child's AI guide. The server builds the
-        age-band-scoped system prompt and enforces all safety guardrails.
-        No conversation data is persisted (data minimization by design).
+        Stateless narrative layer over the CLIENT-side deterministic
+        learning analyzer. The request carries compact anonymous aggregates
+        only (per-topic accuracy labels, session trend buckets, engagement
+        signals) — never raw events, free text, nicknames, or any PII
+        (DPDP data minimization). The model only rephrases the given
+        numbers into supportive, growth-oriented observations; a
+        deterministic banned-terms filter then drops any psychological /
+        medical / diagnostic phrasing (the NON-DIAGNOSTIC guarantee is
+        enforced in code, not just by the prompt), and the server attaches
+        the fixed non-diagnostic disclaimer. Called in batch — once per
+        dashboard visit when the activity fingerprint changed; the client
+        caches the narrative (never per-click AI calls). Requires the
+        server-side GEMINI_API_KEY secret.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/AvatarChatInput"
+              $ref: "#/components/schemas/InsightsAnalyzeInput"
       responses:
         "200":
-          description: Avatar reply
+          description: Filtered AI narrative plus fixed disclaimer
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/AvatarChatReply"
+                $ref: "#/components/schemas/InsightsAnalyzeReply"
         "400":
           description: Invalid request
           content:
@@ -84,6 +280,12 @@ paths:
                 $ref: "#/components/schemas/AvatarError"
         "502":
           description: Upstream AI error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AvatarError"
+        "503":
+          description: GEMINI_API_KEY is not configured on the server
           content:
             application/json:
               schema:
@@ -103,35 +305,6 @@ paths:
                 $ref: "#/components/schemas/HealthStatus"
 components:
   schemas:
-    AvatarChatInput:
-      type: object
-      properties:
-        message:
-          type: string
-          minLength: 1
-          maxLength: 500
-        ageBand:
-          type: string
-          enum: ["8-11", "12-15", "16-18"]
-        zoneId:
-          type: string
-          description: Current zone id for topic scoping (e.g. zone1)
-        language:
-          type: string
-          enum: [en, hi]
-          description: >
-            Reply language selected on the device (defaults to en). Safety
-            behaviour is identical in every language; helpline digits never
-            change.
-        history:
-          type: array
-          maxItems: 12
-          description: Recent turns kept client-side only (never persisted)
-          items:
-            $ref: "#/components/schemas/AvatarChatTurn"
-      required:
-        - message
-        - ageBand
     PersonaChatInput:
       type: object
       properties:
@@ -166,6 +339,171 @@ components:
         - message
         - personaId
         - ageBand
+    NyayaAiChatInput:
+      type: object
+      properties:
+        message:
+          type: string
+          minLength: 1
+          maxLength: 500
+        ageBand:
+          type: string
+          enum: ["8-11", "12-15", "16-18"]
+          description: >
+            Optional — Nyaya AI is reachable from the Home screen before
+            onboarding, where no age band exists yet. When present it only
+            tunes tone; it never changes the allowed facts.
+        language:
+          type: string
+          enum: [en, hi]
+          description: >
+            App UI language (defaults to en). Replies follow the CHILD's own
+            message language (English / Hindi / Hinglish / Gujarati); this
+            value is the fallback for mixed/unclear input and for canonical
+            safety text. Safety behaviour is identical in every language;
+            helpline digits never change.
+        history:
+          type: array
+          maxItems: 12
+          description: Recent turns kept client-side only (never persisted)
+          items:
+            $ref: "#/components/schemas/AvatarChatTurn"
+        gameContext:
+          $ref: "#/components/schemas/NyayaAiGameContext"
+      required:
+        - message
+    NyayaAiGameContext:
+      type: object
+      description: >
+        Safe, app-generated game state for personalization (PRD §9 data
+        minimization: stable zone IDS — mapped to names server-side — plus
+        capped counts and the fun game nickname; never any real-world PII).
+      properties:
+        nickname:
+          type: string
+          maxLength: 24
+          description: Fun made-up game nickname (never a real name)
+        currentZoneId:
+          type: string
+          maxLength: 16
+          description: Zone the player is inside (e.g. zone3)
+        nearbyZoneId:
+          type: string
+          maxLength: 16
+          description: Nearest zone on the map when not inside one
+        completedZoneIds:
+          type: array
+          maxItems: 8
+          items:
+            type: string
+            maxLength: 16
+        progressPct:
+          type: number
+          minimum: 0
+          maximum: 100
+        badgeCount:
+          type: number
+          minimum: 0
+          maximum: 99
+        currentLessonTitle:
+          type: string
+          maxLength: 120
+        currentLevelNumber:
+          type: number
+          minimum: 1
+          maximum: 20
+        learnQuestionsAnswered:
+          type: number
+          minimum: 0
+          maximum: 100000
+          description: >
+            Total recorded quiz/recap answers (learning-insights log). Lets
+            Nyaya AI answer "How am I doing?" from real stats only.
+        learnAccuracyPct:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: >
+            Overall recorded-answer accuracy — the client sends it only
+            when the analyzer's minimum-evidence gate passed.
+        learnTrend:
+          type: string
+          enum: [improving, steady, declining]
+          description: Session-over-session accuracy direction (evidence-gated)
+        strongZoneId:
+          type: string
+          maxLength: 16
+          description: Zone with the strongest evidenced accuracy label
+        practiceZoneId:
+          type: string
+          maxLength: 16
+          description: Zone the deterministic analyzer suggests practicing
+    NyayaAiVoiceTokenInput:
+      type: object
+      description: >
+        Everything is optional: voice chat is reachable from the Home
+        screen before onboarding (no age band yet, empty context).
+      properties:
+        language:
+          type: string
+          enum: [en, hi]
+          description: >
+            App UI language (defaults to en). The Live session follows the
+            language the child actually SPEAKS; this is the fallback for
+            mixed/unclear speech and for canonical safety text.
+        ageBand:
+          type: string
+          enum: ["8-11", "12-15", "16-18"]
+          description: Optional tone tuning only; never changes allowed facts
+        gameContext:
+          $ref: "#/components/schemas/NyayaAiGameContext"
+    NyayaAiVoiceTokenReply:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Ephemeral token name the browser connects with
+        model:
+          type: string
+          description: Live model the token is locked to
+        expiresAt:
+          type: string
+          description: ISO time by which the session must be STARTED
+      required:
+        - token
+        - model
+        - expiresAt
+    NyayaAiVoiceGuardInput:
+      type: object
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+          description: One finished transcript utterance to check
+        role:
+          type: string
+          enum: [user, model]
+          description: user = the child's speech, model = Nyaya AI's speech
+        language:
+          type: string
+          enum: [en, hi]
+          description: Canonical safety text language fallback (default en)
+      required:
+        - text
+        - role
+    NyayaAiVoiceGuardReply:
+      type: object
+      properties:
+        escalated:
+          type: boolean
+          description: True when the deterministic safety gate fired
+        reply:
+          type: string
+          description: >
+            Canonical hard-coded escalation text (present when escalated).
+      required:
+        - escalated
     AvatarChatTurn:
       type: object
       properties:
@@ -203,4 +541,205 @@ components:
           type: string
       required:
         - status
+    InsightsTopicStat:
+      type: object
+      description: >
+        Per-topic aggregate from the client-side deterministic analyzer.
+        Stable zone ids only — mapped to display names server-side.
+      properties:
+        zoneId:
+          type: string
+          maxLength: 16
+        attempts:
+          type: number
+          minimum: 0
+          maximum: 100000
+        accuracyPct:
+          type: number
+          minimum: 0
+          maximum: 100
+        label:
+          type: string
+          enum: [strong, developing, needs-practice, insufficient]
+        practiceAttempts:
+          type: number
+          minimum: 0
+          maximum: 100000
+        sessions:
+          type: number
+          minimum: 0
+          maximum: 10000
+        trendDeltaPct:
+          type: number
+          minimum: -100
+          maximum: 100
+      required:
+        - zoneId
+        - attempts
+        - label
+    InsightsTrendPoint:
+      type: object
+      properties:
+        session:
+          type: number
+          minimum: 1
+          maximum: 100000
+        accuracyPct:
+          type: number
+          minimum: 0
+          maximum: 100
+        attempts:
+          type: number
+          minimum: 1
+          maximum: 1000
+      required:
+        - session
+        - accuracyPct
+        - attempts
+    InsightsAnalyzeInput:
+      type: object
+      description: >
+        Compact anonymous aggregates for the AI narrative (DPDP data
+        minimization — no raw events, no identifiers, no free text).
+      properties:
+        language:
+          type: string
+          enum: [en, hi]
+        audience:
+          type: string
+          enum: [teacher, parent]
+          description: Tunes register only (teacher slightly more instructional)
+        totals:
+          type: object
+          properties:
+            questionsAnswered:
+              type: number
+              minimum: 0
+              maximum: 100000
+            sessions:
+              type: number
+              minimum: 0
+              maximum: 10000
+            activeDays:
+              type: number
+              minimum: 0
+              maximum: 10000
+            accuracyPct:
+              type: number
+              minimum: 0
+              maximum: 100
+            timeSpentMinutes:
+              type: number
+              minimum: 0
+              maximum: 100000
+            zonesCompleted:
+              type: number
+              minimum: 0
+              maximum: 20
+            zonesTotal:
+              type: number
+              minimum: 1
+              maximum: 20
+            levelsDone:
+              type: number
+              minimum: 0
+              maximum: 1000
+            badges:
+              type: number
+              minimum: 0
+              maximum: 99
+            practiceReplays:
+              type: number
+              minimum: 0
+              maximum: 100000
+            streakDays:
+              type: number
+              minimum: 0
+              maximum: 10000
+          required:
+            - questionsAnswered
+            - sessions
+        topics:
+          type: array
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/InsightsTopicStat"
+        trendSeries:
+          type: array
+          maxItems: 12
+          items:
+            $ref: "#/components/schemas/InsightsTrendPoint"
+        trendDirection:
+          type: string
+          enum: [improving, steady, declining, insufficient]
+        behavior:
+          type: object
+          properties:
+            recapCount:
+              type: number
+              minimum: 0
+              maximum: 100000
+            continuesAfterIncorrectPct:
+              type: number
+              minimum: 0
+              maximum: 100
+            engagement:
+              type: string
+              enum: [good, building, low]
+      required:
+        - totals
+        - topics
+    InsightsAiItem:
+      type: object
+      properties:
+        text:
+          type: string
+          maxLength: 400
+        zoneId:
+          type: string
+          maxLength: 16
+      required:
+        - text
+    InsightsAnalyzeReply:
+      type: object
+      description: >
+        Banned-terms-filtered AI narrative. The disclaimer is server-fixed
+        text, never model output.
+      properties:
+        strengths:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/InsightsAiItem"
+        practiceAreas:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/InsightsAiItem"
+        trendComment:
+          type: string
+          maxLength: 400
+        recommendations:
+          type: array
+          maxItems: 4
+          items:
+            $ref: "#/components/schemas/InsightsAiItem"
+        encouragement:
+          type: string
+          maxLength: 400
+        confidence:
+          type: string
+          enum: [high, medium, low]
+        disclaimer:
+          type: string
+        filtered:
+          type: boolean
+          description: True when the banned-terms filter dropped model text
+      required:
+        - strengths
+        - practiceAreas
+        - recommendations
+        - encouragement
+        - confidence
+        - disclaimer
 

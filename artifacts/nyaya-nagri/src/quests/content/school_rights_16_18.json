@@ -5,6 +5,18 @@
   "title": "After Fourteen",
   "scenes": [
     {
+      "sceneId": "intro1",
+      "narration": "Welcome to School Rights Lane. Aarav is 16, in Class 11. His cousin Nikhil has just finished Class 8, turned 14 — and is full of one big, dangerous idea: that the law is done with his education.",
+      "next": "intro2",
+      "choices": []
+    },
+    {
+      "sceneId": "intro2",
+      "narration": "Is school really 'over' at 14? What actually ends there — and what quietly continues all the way to 18? In this story, you will follow the two cousins as they untangle the biggest myth about studying after fourteen.",
+      "next": "scene1",
+      "choices": []
+    },
+    {
       "sceneId": "scene1",
       "narration": "Aarav is 16, in Class 11. His cousin Nikhil, who just finished Class 8 and turned 14, drops a bombshell over dinner: 'The free-school law only covers kids till 14, right? So legally, school is basically over for me. No more guarantees, no more rights.' Is Nikhil reading the situation correctly?",
       "choices": [
@@ -156,20 +168,61 @@
       "levelId": "level1",
       "kind": "story",
       "sceneIds": [
-        "scene1",
-        "scene2"
+        "intro1",
+        "intro2"
       ],
-      "entryScene": "scene1"
+      "entryScene": "intro1"
     },
     {
       "levelId": "level2",
       "kind": "decision",
       "sceneIds": [
+        "scene1",
+        "scene2",
         "scene3",
         "scene4",
         "scene5"
       ],
-      "entryScene": "scene3"
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level_sorting",
+      "kind": "sorting",
+      "sorting": {
+        "intro": "Aarav and Nikhil mapped the years after fourteen. Now sort these secondary-school situations: which are safe and normal, which belong with a trusted adult or the grievance ladder, and which call for Childline 1098 right now?",
+        "cards": [
+          {
+            "text": "A Class 9 student applies for a state scholarship to continue studying.",
+            "bucket": "safe",
+            "feedback": "Exactly the move. After 14 the RTE guarantee ends, but government schools, state schemes, and scholarships keep education available."
+          },
+          {
+            "text": "A 15-year-old is offered a job with night shifts that run past midnight.",
+            "bucket": "tell",
+            "feedback": "Adolescent work rules ban work between 7 p.m. and 8 a.m., and those limits cannot be signed away. A trusted adult should know about this offer."
+          },
+          {
+            "text": "A staff member screams abuse at students and once grabbed a boy roughly.",
+            "bucket": "tell",
+            "feedback": "Cruelty by an adult in charge is an offence under the Juvenile Justice Act, whatever the class. Take it up the ladder: principal, school management, district education authorities, child rights commissions."
+          },
+          {
+            "text": "A student is in danger right now and no safe adult is around.",
+            "bucket": "emergency",
+            "feedback": "Childline 1098 is for every child under 18, any time, day or night. In immediate danger, call first."
+          },
+          {
+            "text": "A 16-year-old keeps studying at a government secondary school.",
+            "bucket": "safe",
+            "feedback": "Right. No law pushes anyone out of education after 14 — government secondary schools stay open to him."
+          },
+          {
+            "text": "A serious school grievance is about to be posted on social media instead of being reported.",
+            "bucket": "tell",
+            "feedback": "The ladder works better: teacher, principal, school management, district education authorities, and the child rights commissions — with Childline 1098 available any time."
+          }
+        ]
+      }
     },
     {
       "levelId": "level3",

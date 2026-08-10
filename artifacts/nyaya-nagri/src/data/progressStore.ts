@@ -22,6 +22,17 @@ import {
   todayString,
   type DailyStreak,
 } from '@/economy/economy';
+import {
+  reconcileCertificates,
+  type CertificateRecord,
+} from '@/certificates/certificates';
+import {
+  defaultInsightsMeta,
+  sanitizeActivityLog,
+  sanitizeInsightsMeta,
+  type ActivityEvent,
+  type InsightsMeta,
+} from '@/insights/types';
 
 export type AgeBand = '8-11' | '12-15' | '16-18';
 
@@ -89,8 +100,22 @@ export interface ProgressState {
    * scopes to the child's own classroom group; no global board exists.
    */
   leaderboardOptIn: boolean;
+  /**
+   * Task 27: zone completion certificates - DERIVED from completedZones
+   * (engine-only write path) and reconciled at every ingress: stable
+   * certificate id + first-completion date only, never any name (PRD 9.4).
+   */
+  certificates: Record<string, CertificateRecord>;
   /** Pseudonymous session id — never a real name or any PII. */
   sessionId: string;
+  /**
+   * Learning-insights activity log (capped rolling window). Option indices
+   * and derived stats ONLY — never free text or PII. Rides the same
+   * consent-gated persistence as everything else (see src/insights/types).
+   */
+  activityLog: ActivityEvent[];
+  /** Insights bookkeeping + cached AI narrative (spec §18 batching). */
+  insightsMeta: InsightsMeta;
   /** Arbitrary key-value slot for future tasks (settings, avatar config, etc.). */
   extras: Record<string, unknown>;
 }
@@ -118,7 +143,10 @@ function defaultState(): ProgressState {
     streak: { count: 0, lastDay: null },
     titles: {},
     leaderboardOptIn: false,
+    certificates: {},
     sessionId: generateSessionId(),
+    activityLog: [],
+    insightsMeta: defaultInsightsMeta(),
     extras: {},
   };
 }
@@ -251,6 +279,17 @@ class LocalStorageAdapter implements StorageAdapter {
         streak: sanitizeStreak(parsed.streak),
         titles: economy.titles,
         leaderboardOptIn: parsed.leaderboardOptIn === true,
+        // Task 27 ingress: certificates the recorded completions justify -
+        // forged entries dropped, legacy completed zones backfilled.
+        certificates: reconcileCertificates(
+          parsed.certificates,
+          completedZones,
+          new Date().toISOString(),
+        ),
+        // Insights ingress: malformed/hand-edited events are dropped, the
+        // rolling cap is re-enforced, and the AI cache must be shape-valid.
+        activityLog: sanitizeActivityLog(parsed.activityLog),
+        insightsMeta: sanitizeInsightsMeta(parsed.insightsMeta),
       };
     } catch {
       return null;
@@ -287,7 +326,16 @@ class ProgressStore {
 
   constructor(adapter: StorageAdapter = new InMemoryAdapter()) {
     this.adapter = adapter;
-    this.state = this.adapter.load() ?? defaultState();
+    const loaded = this.adapter.load();
+    this.state = loaded ?? defaultState();
+    // Task 27 architect round: load() REPAIRS saved state in memory
+    // (backfilled certificates, clamped economy, sanitized maps) but never
+    // wrote the repaired state back - so a legacy save would be issued a
+    // brand-new certificate id/date on EVERY reload until some unrelated
+    // update() happened to persist one. Persisting the canonical state at
+    // boot makes the first backfill durable. No-op for fresh sessions, and
+    // the pre-consent in-memory adapter keeps device storage untouched.
+    if (loaded) this.adapter.save(this.state);
   }
 
   /** Read-only snapshot of the current state. */
@@ -297,7 +345,19 @@ class ProgressStore {
 
   /** Merge a partial update, notify subscribers, and auto-save. */
   update(patch: Partial<ProgressState>): void {
-    this.state = { ...this.state, ...patch };
+    const next = { ...this.state, ...patch };
+    // Task 27: certificates are derived from zone completion - reconciled in
+    // the SAME update that changes completedZones, so the engine marking a
+    // zone complete and its certificate issue are one atomic write (the
+    // saved completion moment IS the certificate date, stable forever).
+    if (patch.completedZones) {
+      next.certificates = reconcileCertificates(
+        next.certificates,
+        next.completedZones,
+        new Date().toISOString(),
+      );
+    }
+    this.state = next;
     this.save();
     this.listeners.forEach((l) => l(this.state));
   }

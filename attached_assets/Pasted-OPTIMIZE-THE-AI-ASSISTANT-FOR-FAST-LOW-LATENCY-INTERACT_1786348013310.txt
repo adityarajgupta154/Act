@@ -1,0 +1,174 @@
+OPTIMIZE THE AI ASSISTANT FOR FAST, LOW-LATENCY INTERACTION
+
+The AI assistant currently feels slow: it sometimes has noticeable delay before responding, voice responses can lag, and the interaction does not feel real-time.
+
+DO NOT redesign the UI.
+DO NOT remove any existing AI assistant functionality.
+DO NOT change the game's existing visual design.
+Only optimize the AI assistant's response pipeline and performance.
+
+GOAL:
+Make the AI assistant feel fast, responsive, and close to real-time.
+
+1. REDUCE RESPONSE LATENCY
+- Start processing the user's request immediately.
+- Do not wait for unnecessary UI operations, animations, database calls, or unrelated API requests.
+- Avoid sequential API calls when they can safely run in parallel.
+- Keep the AI request payload minimal.
+- Do not send the entire game state, entire conversation history, or unnecessary website content with every request.
+- Send only the context required for the current question.
+
+2. USE STREAMING RESPONSES
+If the Gemini API/model being used supports streaming:
+- Use streaming generation instead of waiting for the complete response.
+- Display the first generated text immediately.
+- Render tokens/chunks progressively.
+- Do not wait for the complete AI response before updating the UI.
+
+The user should see the assistant beginning to respond as soon as possible.
+
+3. VOICE RESPONSE OPTIMIZATION
+The assistant should support natural voice interaction without noticeable delay.
+
+Pipeline should be:
+
+User speaks
+→ speech recognition
+→ immediately send transcript to Gemini
+→ stream Gemini response
+→ start text display immediately
+→ start voice generation/playback as early as possible
+→ continue playing while the remaining response is generated
+
+Do NOT wait for the complete response before starting the voice response if the available voice API supports incremental/streaming playback.
+
+4. SPEECH RECOGNITION
+- Start listening immediately when the user activates the assistant.
+- Use browser/native speech recognition where appropriate.
+- Detect the end of speech quickly.
+- Avoid excessive silence timeout.
+- Avoid repeatedly initializing the speech recognition engine.
+- Keep the microphone/listening state persistent when appropriate instead of recreating it unnecessarily.
+
+5. GEMINI API OPTIMIZATION
+- Reuse the existing Gemini client/configuration instead of creating a new client for every message.
+- Keep system instructions concise and optimized.
+- Do not resend large static instructions unnecessarily if the SDK/API supports reusable configuration.
+- Keep temperature and generation settings appropriate for short assistant responses.
+- Set a reasonable maximum output length so the assistant does not generate unnecessarily long answers.
+- Prefer concise answers for voice interaction.
+
+6. CACHE STATIC KNOWLEDGE
+The assistant uses Indian legal/right-related information.
+
+Do NOT fetch or process the entire India Code website for every user question.
+
+Instead:
+- Keep static/legal knowledge separate from the live conversation.
+- Cache frequently used information.
+- Only retrieve/search relevant legal information when required.
+- Never repeatedly download the same source for every request.
+
+7. PREVENT UI LAG
+The AI assistant must not block the main game thread.
+
+- Move expensive processing away from the main UI thread where possible.
+- Avoid unnecessary React re-renders.
+- Memoize stable components.
+- Do not update the entire game state on every streamed token.
+- Throttle/debounce visual updates where appropriate.
+- Keep the 2D/3D game rendering smooth while the AI is processing.
+
+8. LOADING UX
+Do not show a long generic loading spinner.
+
+Instead, immediately show a lightweight state such as:
+
+"Listening..."
+→ "Thinking..."
+→ "Speaking..."
+
+The transition should happen quickly.
+
+If the first response chunk arrives, immediately change from "Thinking..." to the response state.
+
+9. ERROR HANDLING
+If Gemini takes too long or fails:
+- Do not freeze the assistant.
+- Show a small retry option.
+- Handle API timeout gracefully.
+- Prevent duplicate requests.
+- Prevent multiple simultaneous Gemini requests from the same user action.
+
+10. REQUEST CANCELLATION
+If the user starts a new question while the previous response is still generating:
+- Cancel/abort the previous request when possible.
+- Stop the previous voice playback.
+- Immediately prioritize the newest user request.
+
+11. CONVERSATION MEMORY
+Do not send the entire conversation history on every request.
+
+Maintain a compact conversation context:
+- recent user question
+- recent assistant response
+- important user/game context only
+
+Trim old irrelevant messages.
+
+12. GAME CONTEXT
+The assistant should still understand the current game context, including:
+- current player name/nickname
+- current zone
+- completed zones
+- current progress
+- badges
+- coins
+- current mission
+- relevant legal/right topic
+
+But only send the fields required for the current request.
+
+13. PERFORMANCE TARGETS
+
+Aim for:
+
+- Voice input recognition: as fast as the browser/API allows
+- Request start: immediately after speech ends
+- First AI text chunk: ideally under ~1 second when network/model conditions allow
+- Voice playback: start as soon as usable response audio is available
+- No unnecessary waiting for complete response
+- No noticeable game FPS/UI degradation
+- No unnecessary API calls
+
+Do NOT fake these timings or use artificial delays.
+
+14. IMPORTANT
+Before modifying the implementation:
+
+1. Inspect the existing AI assistant code.
+2. Identify exactly where latency is coming from.
+3. Check:
+   - speech recognition
+   - Gemini API request
+   - response generation
+   - text rendering
+   - text-to-speech/voice generation
+   - API calls
+   - unnecessary re-renders
+   - network requests
+4. Fix the actual bottleneck instead of blindly rewriting the assistant.
+
+After implementation:
+- Test multiple voice questions.
+- Test short and long questions.
+- Test rapid consecutive questions.
+- Test when the network is slower.
+- Test that the game remains responsive.
+- Test that voice playback does not overlap.
+- Test that the assistant still understands the Nyaya Nagri game context.
+
+IMPORTANT:
+Do not sacrifice answer quality, legal accuracy, or existing functionality just to make the assistant faster.
+
+The final result should feel like a responsive in-game AI companion rather than a chatbot that pauses for a long time before responding.

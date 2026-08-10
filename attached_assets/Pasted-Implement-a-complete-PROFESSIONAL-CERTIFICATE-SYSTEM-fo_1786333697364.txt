@@ -1,0 +1,466 @@
+Implement a complete PROFESSIONAL CERTIFICATE SYSTEM for the Nyaya Nagri game.
+
+GOAL:
+Whenever a player completely finishes a learning zone, automatically generate and unlock a professional certificate for that specific zone. The certificate must appear inside "My Progress" and the player must be able to view and download it.
+
+IMPORTANT:
+Do NOT create a fake/static certificate screen.
+This must be connected to the actual zone completion/progress system.
+
+==================================================
+1. ZONE COMPLETION → CERTIFICATE UNLOCK
+==================================================
+
+Use the existing zone/progress system.
+
+For every learning zone, determine whether the player has actually completed ALL required activities/content for that zone.
+
+Example zones can include:
+- Know Yourself / Right to Childhood
+- School Rights
+- Family & Community Shield
+- Justice System Simulator
+- Digital Safety
+- Any other zones already present in the project
+
+Do NOT hardcode a certificate as completed.
+
+Certificate should unlock ONLY when:
+
+zoneProgress.completed === true
+
+or when all required activities/tasks/lessons for that zone are completed according to the existing project logic.
+
+When a zone becomes fully completed:
+→ mark certificate as unlocked
+→ save certificate information
+→ make it visible inside My Progress
+
+The certificate must NOT unlock merely because the user visits the zone.
+
+==================================================
+2. CERTIFICATE DATA
+==================================================
+
+Create a structured certificate object for every completed zone.
+
+Example:
+
+{
+  id: "digital-safety-certificate",
+  zoneId: "digital-safety",
+  title: "Certificate of Completion",
+  zoneName: "Digital Safety",
+  recipientName: "Aditya",
+  completedAt: "...",
+  certificateId: "...",
+  unlocked: true
+}
+
+Use the player's existing game nickname/profile name.
+
+IMPORTANT:
+The user's real personal information should NOT be requested just for the certificate.
+
+Use the existing player name/nickname already stored in the game.
+
+If the player changes their game nickname, make sure the certificate displays the appropriate current/stored player name according to the existing profile logic.
+
+==================================================
+3. MY PROGRESS
+==================================================
+
+Upgrade the existing "My Progress" section.
+
+Add a dedicated:
+
+"Certificates"
+
+section/card.
+
+Show:
+
+CERTIFICATES
+────────────────────────
+
+[Certificate Card]
+Digital Safety
+Certificate of Completion
+✓ Completed
+[View Certificate]
+
+[Certificate Card]
+School Rights
+Certificate of Completion
+✓ Completed
+[View Certificate]
+
+Locked/uncompleted zones should NOT appear as earned certificates.
+
+You can optionally show locked certificates separately:
+
+"Certificates to Earn"
+
+with a locked state and progress indicator.
+
+Example:
+
+🔒 Family & Community Shield
+Complete the zone to unlock your certificate.
+
+==================================================
+4. PROFESSIONAL CERTIFICATE DESIGN
+==================================================
+
+The certificate itself must look like a REAL professional educational certificate.
+
+Do NOT make it look like a basic web card.
+
+Design direction:
+
+- Premium educational certificate
+- Clean white/ivory paper background
+- Elegant navy blue + gold visual identity
+- Nyaya Nagri branding
+- Subtle legal/scales-of-justice visual elements
+- Thin decorative gold border
+- Professional typography hierarchy
+- Large "Certificate of Completion"
+- Recipient name should be the visual focal point
+- Zone/course title clearly displayed
+- Professional spacing and alignment
+- Subtle ornamental corners
+- Elegant seal/badge
+- Digital signature area
+- Certificate ID
+- Completion date
+- High-quality print-ready appearance
+
+The design should feel like something a student would genuinely want to download and share.
+
+Avoid:
+- childish UI
+- excessive gradients
+- neon colors
+- excessive rounded cards
+- gaming-style certificate
+- clutter
+- emojis
+- oversized decorative elements
+
+The certificate should feel premium while still belonging to the friendly Nyaya Nagri brand.
+
+==================================================
+5. CERTIFICATE CONTENT
+==================================================
+
+Use a structure similar to:
+
+NYAYA NAGRI
+
+CERTIFICATE OF COMPLETION
+
+This certificate is proudly presented to
+
+[PLAYER NAME]
+
+for successfully completing
+
+[ZONE NAME]
+
+and demonstrating completion of the learning activities
+and challenges within this Nyaya Nagri learning zone.
+
+Completed on:
+[DATE]
+
+Certificate ID:
+[UNIQUE ID]
+
+                     __________________
+                     Nyaya Nagri
+
+                     Learning & Rights
+                     Education Platform
+
+Include the Nyaya Nagri logo/branding already used in the project.
+
+Do not invent an external institution, university, government authority,
+or official accreditation.
+
+==================================================
+6. CERTIFICATE ID
+==================================================
+
+Generate a unique certificate ID for every certificate.
+
+Example format:
+
+NYN-DIG-2026-A8F42C
+
+or another clean unique format.
+
+The ID should remain stable after generation.
+
+If the user refreshes the page or returns later, the same certificate ID
+must still be shown.
+
+Do NOT generate a new ID every time the certificate is opened.
+
+==================================================
+7. COMPLETION DATE
+==================================================
+
+When the zone is completed for the first time:
+
+save the completion timestamp.
+
+Use that saved timestamp as the certificate completion date.
+
+Opening the certificate later must NOT change the completion date.
+
+Format it professionally, for example:
+
+10 August 2026
+
+==================================================
+8. CERTIFICATE PREVIEW
+==================================================
+
+When the user clicks:
+
+"View Certificate"
+
+open a dedicated certificate preview.
+
+The certificate should appear centered on screen.
+
+Desktop:
+- large certificate preview
+- professional modal/page layout
+- enough whitespace around certificate
+- clear controls
+
+Mobile:
+- responsive certificate preview
+- allow scrolling/zooming if necessary
+- maintain certificate proportions
+
+Controls:
+
+[Download Certificate]
+[Close / Back]
+
+Do NOT make the certificate preview look like a normal game popup.
+
+==================================================
+9. DOWNLOAD FUNCTIONALITY
+==================================================
+
+The user must be able to download the certificate.
+
+Preferred result:
+
+A high-quality PDF certificate.
+
+Filename example:
+
+Nyaya-Nagri-Digital-Safety-Certificate.pdf
+
+The downloaded PDF should contain:
+- Nyaya Nagri branding
+- recipient name
+- zone name
+- completion date
+- certificate ID
+- certificate design
+- professional border/decorations
+- signature/seal area
+
+Make sure the PDF is actually downloadable and not just a screenshot.
+
+If the current architecture makes PDF generation difficult, implement a reliable
+client-side certificate generation approach while preserving the professional
+print quality.
+
+The downloaded certificate should be suitable for:
+- saving
+- printing
+- sharing
+
+==================================================
+10. CERTIFICATE STATE PERSISTENCE
+==================================================
+
+Persist earned certificates using the project's existing persistence system.
+
+If the project currently uses localStorage, integrate with the existing localStorage
+architecture instead of introducing an unnecessary backend.
+
+If the project already has a database/backend, use the existing persistence layer.
+
+The certificate must survive:
+- page refresh
+- browser restart
+- returning to the game
+
+Do NOT duplicate certificates after refresh.
+
+==================================================
+11. MULTIPLE ZONES
+==================================================
+
+The system must support multiple certificates.
+
+Example:
+
+Zone 1 completed
+→ Certificate 1 unlocked
+
+Zone 2 completed
+→ Certificate 2 unlocked
+
+Zone 3 completed
+→ Certificate 3 unlocked
+
+Each certificate must be independent.
+
+Do NOT replace the previous certificate when a new zone is completed.
+
+My Progress should show the complete certificate collection.
+
+Example:
+
+MY CERTIFICATES
+
+✓ Know Yourself
+✓ School Rights
+✓ Family & Community Shield
+🔒 Justice System Simulator
+🔒 Digital Safety
+
+==================================================
+12. PROGRESS INTEGRATION
+==================================================
+
+Connect the certificate system to the existing progress calculations.
+
+For example:
+
+Zone progress:
+7 / 7 activities completed
+→ 100%
+→ Zone completed
+→ Certificate unlocked
+
+Do NOT create a separate fake progress calculation that conflicts with the existing game.
+
+Use the existing source of truth for zone completion.
+
+==================================================
+13. ANIMATION / UX
+==================================================
+
+When a certificate is newly unlocked:
+
+show a subtle professional celebration.
+
+Example:
+
+🎓 Certificate Unlocked!
+
+"Congratulations! You completed Digital Safety."
+
+[View Certificate]
+
+Keep the animation short and polished.
+
+Do NOT use excessive confetti or distracting effects.
+
+After the user dismisses it, the certificate remains permanently available in My Progress.
+
+==================================================
+14. SECURITY / DATA INTEGRITY
+==================================================
+
+Do not allow the certificate to be unlocked simply by clicking a button.
+
+The unlock condition must come from actual zone completion.
+
+Prevent duplicate certificates.
+
+Use deterministic zone IDs.
+
+Use stable certificate IDs.
+
+==================================================
+15. RESPONSIVE DESIGN
+==================================================
+
+The entire system must work on:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+The certificate itself should maintain an appropriate aspect ratio.
+
+The My Progress certificate cards should adapt cleanly to smaller screens.
+
+==================================================
+16. IMPORTANT IMPLEMENTATION RULE
+==================================================
+
+Before changing anything:
+
+1. Inspect the existing project.
+2. Find the existing zone definitions.
+3. Find how zone completion is currently calculated.
+4. Find the existing My Progress implementation.
+5. Find the existing player profile/nickname state.
+6. Find the existing persistence mechanism.
+7. Integrate the certificate system into those existing systems.
+
+Do NOT create duplicate progress logic.
+
+Do NOT rewrite unrelated parts of the game.
+
+Do NOT change the existing game map or gameplay.
+
+Only implement the certificate/progress functionality required here.
+
+==================================================
+17. FINAL QA
+==================================================
+
+After implementation, test the complete flow:
+
+1. Start with an incomplete zone.
+2. Confirm certificate is NOT available.
+3. Complete every required activity.
+4. Confirm zone reaches 100%.
+5. Confirm certificate unlocks automatically.
+6. Confirm certificate appears in My Progress.
+7. Confirm player name is correct.
+8. Open certificate preview.
+9. Verify professional certificate design.
+10. Verify certificate ID.
+11. Verify completion date.
+12. Download PDF.
+13. Open downloaded PDF and verify all content.
+14. Refresh the game.
+15. Confirm certificate is still available.
+16. Confirm certificate ID/date remain unchanged.
+17. Complete another zone.
+18. Confirm the first certificate remains and a second certificate is added.
+
+Do not stop after creating the UI.
+The entire flow must be functional end-to-end.
+
+IMPORTANT FINAL REQUIREMENT:
+The certificate system should feel like a real achievement/reward system inside
+Nyaya Nagri, not like a temporary demo component.
+
+Keep the existing Nyaya Nagri visual identity, but make the actual certificate
+design significantly more premium and professional than the normal game UI.

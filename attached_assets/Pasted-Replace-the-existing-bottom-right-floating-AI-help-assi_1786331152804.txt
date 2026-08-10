@@ -1,0 +1,66 @@
+Replace the existing bottom-right floating AI/help assistant icon in the game UI with the new reference asset I provided.
+
+IMPORTANT:
+- Use the provided new robot icon as the EXACT visual reference.
+- Remove the current assistant/robot icon completely.
+- Do NOT redesign, recreate, simplify, or reinterpret the new icon.
+- Preserve the provided icon's exact appearance, proportions, colors, face, orange top section, circular frame, highlights, shadows, and overall 3D style.
+- The new asset has a transparent background. Keep the background transparent.
+- Do not add any square/rectangular background behind it.
+
+PLACEMENT:
+- Keep it at the same bottom-right location where the current assistant icon exists.
+- Maintain a comfortable margin from the right and bottom edges.
+- The icon should remain a floating circular UI element above the game world.
+- Match the existing game's UI scale and visual hierarchy.
+- It should be clearly visible but should NOT be oversized.
+- Preserve responsive positioning across desktop and different screen sizes.
+
+SIZING:
+- Use a consistent circular size approximately matching the current assistant button.
+- Keep the icon perfectly circular and centered.
+- Do not stretch, squash, crop, or distort the asset.
+- Maintain its original aspect ratio.
+
+INTERACTION:
+- Keep the existing assistant/help button functionality exactly as it currently works.
+- Only replace the visual asset.
+- Clicking/tapping the new robot icon must trigger the same existing assistant interaction.
+- Do not change any existing game logic, navigation, state management, or chat functionality.
+
+VISUAL INTEGRATION:
+- The icon should look naturally integrated into the existing Nyaya Nagri game.
+- Preserve the existing game's bright, friendly, child-safe visual language.
+- Do not add unnecessary animations.
+- If the existing assistant button already has hover/press behavior, preserve that behavior.
+- Make sure the new icon remains crisp and high quality.
+
+DO NOT MODIFY:
+- Game map
+- Character
+- Buildings
+- Paths
+- Environment
+- Left-side HUD
+- Top navigation
+- Minimap
+- Bottom navigation
+- Get Help Now button
+- Colors or typography of other UI elements
+- Existing assistant functionality
+
+IMPLEMENTATION:
+1. Locate the existing assistant/help icon component.
+2. Replace only its visual asset with the provided reference image.
+3. Keep the existing component structure and functionality wherever possible.
+4. Use the asset as an image with transparent background rather than recreating it with CSS.
+5. Make sure the image is loaded efficiently and does not negatively affect game performance.
+6. Verify desktop and responsive layouts after implementation.
+7. Remove any old icon asset/import that is no longer required.
+
+FINAL REQUIREMENT:
+The final result should look like the SAME existing Nyaya Nagri game, with ONLY the bottom-right assistant icon replaced by the new provided robot design.
+
+Do not make unrelated changes.
+Do not refactor unrelated code.
+Do not change the game's existing visual design.

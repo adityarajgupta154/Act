@@ -13,8 +13,10 @@
  * lashes, and female outfit silhouettes (kurti with flared hem, A-line
  * dress) — never just the boy recolored.
  */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Accessory, PlayerAvatarConfig } from './avatarConfig';
+import { sanitizeAvatar } from './avatarConfig';
+import { progressStore } from '@/data/progressStore';
 
 const HAIR = '#3B2A20';
 
@@ -282,4 +284,14 @@ export function PlayerAvatar({
       )}
     </svg>
   );
+}
+
+/**
+ * The child's cosmetic player avatar (null until built) — live view over
+ * the progress store. Shared by the HUD chip, minimap and the Map modal.
+ */
+export function usePlayerAvatarConfig() {
+  const [avatar, setAvatar] = useState(() => sanitizeAvatar(progressStore.getState().avatar));
+  useEffect(() => progressStore.subscribe((s) => setAvatar(sanitizeAvatar(s.avatar))), []);
+  return avatar;
 }

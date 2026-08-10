@@ -15,15 +15,17 @@ The project is a pnpm monorepo with two relevant packages:
 | Package | What it is | Dev command |
 | --- | --- | --- |
 | `artifacts/nyaya-nagri` | React + Vite + React Three Fiber frontend | `pnpm --filter @workspace/nyaya-nagri run dev` |
-| `artifacts/api-server` | Express 5 backend (safety-gated AI chat: companion + role-play personas) | `pnpm --filter @workspace/api-server run dev` |
+| `artifacts/api-server` | Express 5 backend (safety-gated AI chat: Nyaya AI assistant + role-play personas) | `pnpm --filter @workspace/api-server run dev` |
 
 1. `pnpm install` at the repo root.
 2. Start both dev servers (on Replit these run as workflows automatically).
 3. Open the frontend preview (served at `/`). The frontend proxies
-   `api/avatar/chat` and `api/persona/chat` to the API server.
-4. The AI chat requires Anthropic access via Replit AI Integrations
-   (`AI_INTEGRATIONS_ANTHROPIC_API_KEY` / `_BASE_URL`). Without it the guides
-   return their safe fallback message — everything else works offline.
+   `api/nyaya-ai/chat` and `api/persona/chat` to the API server.
+4. Nyaya AI (the in-game assistant) requires the `GEMINI_API_KEY` secret; the
+   role-play personas require Anthropic access via Replit AI Integrations
+   (`AI_INTEGRATIONS_ANTHROPIC_API_KEY` / `_BASE_URL`). Without keys the
+   assistants return their safe fallback message — everything else works
+   offline.
 
 ### Smoke tests (no browser needed)
 
@@ -88,7 +90,7 @@ artifacts/nyaya-nagri/
     ui/                      HUD, Get Help dialog, settings, progress dashboard, overlays
     world/                   R3F low-poly city, 7 zone markers, player controller, minimap
   plus shared components/, hooks/, lib/, pages/
-artifacts/api-server/        Express 5: POST /api/avatar/chat + POST /api/persona/chat,
+artifacts/api-server/        Express 5: POST /api/nyaya-ai/chat + POST /api/persona/chat,
                              one shared fail-closed safety pipeline (input distress gate,
                              PII redaction, output helpline gate) for every AI surface
 ```

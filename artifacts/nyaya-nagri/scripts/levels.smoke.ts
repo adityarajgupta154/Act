@@ -8,8 +8,10 @@
  *  - sequential lock/unlock inside a zone; the zone completes (and the next
  *    zone unlocks, Task 1 rules untouched) ONLY when the final quiz level
  *    is passed;
- *  - the silent pre-quiz baseline still happens FIRST (level 1) and the
- *    adaptive recap still works across sessions (Task 9);
+ *  - Task 26: a zone opens with pure NARRATIVE — no level session ever
+ *    starts in a quiz phase; quiz UI exists ONLY in the final quiz level.
+ *    With no measured baseline the quiz stores pre=null (never a fake 0)
+ *    and triggers no recap; old saves holding a baseline still recap;
  *  - Practice/Replay never overwrites recorded scores (replays counted
  *    separately);
  *  - pre-Task-15 saves (zone complete, no level entries) show all levels
@@ -63,7 +65,7 @@ async function main() {
   const { resolveQuest, getAllQuests } = await import('../src/quests/registry');
   const {
     startLevel, startQuest, answerQuizQuestion, acknowledgeQuizFeedback,
-    chooseSceneOption, acknowledgeSceneFeedback, getCurrentScene, finalizeLevel,
+    chooseSceneOption, acknowledgeSceneFeedback, continueScene, getCurrentScene, finalizeLevel,
     getActiveRecap, answerRecapQuestion, acknowledgeRecapFeedback,
     levelKey, completeActivity, activityTotal,
   } = await import('../src/quests/engine');
@@ -108,9 +110,13 @@ async function main() {
   // ---------- 1. Every quest (EN + HI) has a valid level structure ----------
   // Task 18: four quests carry ONE extra activity level between the decision
   // and the quiz; Task 20 adds the zone6 "Meet the Authorities" hub to all
-  // three family_shield quests. Every other quest keeps the 3-level shape.
+  // three family_shield quests. Task 26 gives the remaining School Rights
+  // bands (8-11, 16-18) a sorting mini-game, so every zone3 quest runs the
+  // full 4-level flow: story -> decision -> mini-game -> quiz.
   const ACTIVITY_BY_QUEST: Record<string, { levelId: string; kind: string }> = {
+    school_rights_8_11: { levelId: 'level_sorting', kind: 'sorting' },
     school_rights_12_15: { levelId: 'level_memory', kind: 'memory' },
+    school_rights_16_18: { levelId: 'level_sorting', kind: 'sorting' },
     right_childhood_8_11: { levelId: 'level_hidden', kind: 'hidden' },
     digital_safety_12_15: { levelId: 'level_sorting', kind: 'sorting' },
     safe_zone_16_18: { levelId: 'level_scenario', kind: 'scenario' },
@@ -161,6 +167,10 @@ async function main() {
     while (s.phase === 'scenes') {
       const scene = getCurrentScene(s)!;
       seen.push(scene.sceneId);
+      if (scene.choices.length === 0) {
+        s = continueScene(s); // Task 26: narration panel — Continue only
+        continue;
+      }
       s = chooseSceneOption(s, 0);
       s = acknowledgeSceneFeedback(s);
     }
@@ -199,12 +209,10 @@ async function main() {
       assert(!isLevelUnlocked(quest, li), `${zoneId}: L${li + 1} locked initially`);
     }
 
-    // --- Level 1 (story): silent pre-quiz FIRST, then only L1 scenes ---
+    // --- Level 1 (story): pure narrative, straight into scenes (Task 26) ---
     let s = startLevel(quest, 0);
-    assert(s.phase === 'pre-quiz', `${zoneId}/L1 starts with the silent pre-quiz`);
-    s = answerAll(s, (i) => wrongIndex(quest, i)); // all wrong -> baseline 0
     assert(s.phase === 'scenes' && s.currentSceneId === quest.levels[0].entryScene,
-      `${zoneId}/L1 scenes start at the level entry`);
+      `${zoneId}/L1 starts DIRECTLY in its scenes (no quiz UI, no baseline)`);
     const seen1: string[] = [];
     s = playScenes(s, seen1);
     assert(s.phase === 'complete', `${zoneId}/L1 completes at the level border`);
@@ -216,10 +224,10 @@ async function main() {
     assert(r.recorded && !r.zoneCompleted, `${zoneId}/L1 recorded, zone NOT complete`);
     const st1 = progressStore.getState();
     assert(st1.levelProgress[levelKey(zoneId, 'level1')] === true, `${zoneId}/L1 progress stored`);
-    assert(st1.quizScores[quest.questId]?.pre === 0 && st1.quizScores[quest.questId]?.post === null,
-      `${zoneId}: pre baseline recorded (0), post still null`);
-    assert(getPriorPreAnswers(quest.questId).length === quest.quizQuestions.length,
-      `${zoneId}: pre-quiz answers stored for the recap`);
+    assert(st1.quizScores[quest.questId] === undefined,
+      `${zoneId}: NO quiz-score entry after L1 (no baseline measured)`);
+    assert(getPriorPreAnswers(quest.questId).length === 0,
+      `${zoneId}: no stored pre-quiz answers after L1 (Task 26)`);
     assert(!st1.completedZones[zoneId], `${zoneId} not complete after L1`);
 
     // --- Level 2 (decision): remaining scenes only ---
@@ -263,26 +271,20 @@ async function main() {
       if (next) assert(!isZoneUnlocked(next), `${next} still locked before the quiz level`);
     }
 
-    // --- Final level (quiz): post-quiz + adaptive recap, completes the zone ---
+    // --- Final level (quiz): the ONLY quiz UI, completes the zone ---
     s = startLevel(quest, nLevels - 1, { priorPreAnswers: getPriorPreAnswers(quest.questId) });
-    assert(s.phase === 'post-quiz', `${zoneId}/L3 is the quiz checkpoint`);
+    assert(s.phase === 'post-quiz', `${zoneId}/L${nLevels} is the quiz checkpoint`);
     s = answerAll(s, (i) => quest.quizQuestions[i].correctIndex); // all correct
-    // Baseline was 0 (< half) -> the recap must trigger, exactly as before.
-    assert(s.phase === 'recap' && s.recapQueue.length > 0,
-      `${zoneId}/L3 adaptive recap triggers from the L1 baseline`);
-    while (s.phase === 'recap') {
-      const item = getActiveRecap(s)!;
-      s = answerRecapQuestion(s, item.correctIndex);
-      s = acknowledgeRecapFeedback(s);
-    }
-    assert(s.phase === 'complete', `${zoneId}/L3 completes after the recap`);
+    // Task 26: no baseline was measured in this flow -> NO recap may run.
+    assert(s.phase === 'complete',
+      `${zoneId}/L${nLevels} completes with NO recap (no baseline measured)`);
     r = finalizeLevel(s);
     assert(r.recorded && r.zoneCompleted && r.badgeId === `${zoneId}_star`,
-      `${zoneId}/L3 completes the ZONE and awards the badge`);
+      `${zoneId}/L${nLevels} completes the ZONE and awards the badge`);
     const st3 = progressStore.getState();
-    assert(st3.quizScores[quest.questId]?.pre === 0 &&
+    assert(st3.quizScores[quest.questId]?.pre === null &&
       st3.quizScores[quest.questId]?.post === quest.quizQuestions.length,
-      `${zoneId}: recorded scores pre=0, post=full`);
+      `${zoneId}: recorded scores pre=null (no fake 0), post=full`);
     assert(st3.completedZones[zoneId] === true, `${zoneId} complete after final level`);
     if (next) assert(isZoneUnlocked(next), `${next} unlocks ONLY now (Task 1 rules intact)`);
     assert(
@@ -291,15 +293,31 @@ async function main() {
     );
   }
 
+  // ---------- 2b. Task 26: quiz UI can NEVER open a non-quiz level ----------
+  {
+    let violations = 0;
+    let checkedLevels = 0;
+    for (const q of getAllQuests()) {
+      for (const [li, lvl] of q.levels.entries()) {
+        if (lvl.kind === 'quiz') continue;
+        const phase = startLevel(q, li).phase;
+        checkedLevels++;
+        if (phase === 'pre-quiz' || phase === 'post-quiz') violations++;
+      }
+    }
+    assert(violations === 0 && checkedLevels >= 40,
+      `no non-quiz level ever starts in a quiz phase (${checkedLevels} levels checked)`);
+  }
+
   // ---------- 3. Practice/Replay never touches recorded analytics ----------
   {
     const quest = resolveQuest('zone1', '8-11', 'en')!;
     const before = JSON.stringify(progressStore.getState().quizScores);
     const beforePre = JSON.stringify(progressStore.getState().preAnswersByQuest);
 
-    // Practice a story level: pre-quiz must be SKIPPED (baseline stays).
+    // Practice a story level: same pure-narrative start as a first play.
     let s = startLevel(quest, 0, { practice: true });
-    assert(s.phase === 'scenes', 'practice of L1 skips the pre-quiz (baseline preserved)');
+    assert(s.phase === 'scenes', 'practice of L1 starts in scenes (no quiz UI)');
     s = playScenes(s, []);
     let r = finalizeLevel(s);
     assert(!r.recorded, 'practice result is marked not-recorded');
@@ -420,6 +438,42 @@ async function main() {
     t.levels[2].entryScene = 'scene1';
     rejects(t, 'activity level carrying sceneIds rejected');
 
+    // Task 26: a scene carrying BOTH choices and a narration `next` is
+    // ambiguous and must be rejected at quest validation (registry load).
+    {
+      const tq = clone(memQ);
+      tq.scenes.find((sc) => sc.choices.length > 0)!.next = tq.scenes[0].sceneId;
+      let threwBoth = false;
+      try { validateLevels(tq); } catch { threwBoth = true; }
+      // validateLevels only checks links; the both-choices-and-next rule
+      // lives in validateQuest — enforce via the schema module directly.
+      const { validateQuest } = await import('../src/quests/schema');
+      if (!threwBoth) {
+        try { validateQuest(tq); } catch { threwBoth = true; }
+      }
+      assert(threwBoth, 'scene with BOTH choices and narration next rejected');
+    }
+
+    // Task 26 (review): narration graph integrity — self-cycles, backward
+    // links, and unreachable scenes must all be rejected, or a child could
+    // be trapped on the same Continue panel forever.
+    {
+      const base = resolveQuest('zone3', '8-11', 'en')!;
+      const selfCycle = clone(base);
+      selfCycle.scenes.find((sc) => sc.sceneId === 'intro1')!.next = 'intro1';
+      rejects(selfCycle, 'narration self-cycle (intro1 -> intro1) rejected');
+
+      const backward = clone(base);
+      backward.scenes.find((sc) => sc.sceneId === 'intro2')!.next = 'intro1';
+      rejects(backward, 'backward narration link (intro2 -> intro1) rejected');
+
+      const skip = clone(base);
+      // intro1 jumps STRAIGHT to the next level's entry — legal as a link,
+      // but it strands intro2 as unreachable content.
+      skip.scenes.find((sc) => sc.sceneId === 'intro1')!.next = 'scene1';
+      rejects(skip, 'level with an unreachable scene (intro2 stranded) rejected');
+    }
+
     // Parity: HI must mirror EN structure exactly (bucket order included).
     const sortHi = resolveQuest('zone5', '12-15', 'hi')!;
     validateTranslationParity(sortQ, sortHi); // the real twins must pass
@@ -429,6 +483,54 @@ async function main() {
     let threwP = false;
     try { validateTranslationParity(sortQ, th); } catch { threwP = true; }
     assert(threwP, 'translation parity rejects a bucket-sequence mismatch');
+
+    // Task 26: parity also pins narration `next` — a translated intro that
+    // rewires the panel chain must be rejected.
+    const introEn = resolveQuest('zone3', '8-11', 'en')!;
+    const introHi = resolveQuest('zone3', '8-11', 'hi')!;
+    validateTranslationParity(introEn, introHi);
+    assert(true, 'translation parity accepts the real HI School Rights twin');
+    const th2 = clone(introHi);
+    const narr = th2.scenes.find((sc) => sc.choices.length === 0 && sc.next)!;
+    narr.next = narr.sceneId; // rewire to itself
+    let threwN = false;
+    try { validateTranslationParity(introEn, th2); } catch { threwN = true; }
+    assert(threwN, 'translation parity rejects a narration next mismatch');
+  }
+
+  // ---------- 3d. Task 26 back-compat: old saves with a baseline still recap ----------
+  {
+    resetProgress();
+    const quest = resolveQuest('zone1', '12-15', 'en')!;
+    const allWrong = quest.quizQuestions.map((q) => (q.correctIndex === 0 ? 1 : 0));
+    // Simulate a pre-Task-26 save: baseline measured (all wrong), story +
+    // decision levels done, quiz still pending.
+    progressStore.update({
+      preAnswersByQuest: { [quest.questId]: allWrong },
+      quizScores: { [quest.questId]: { pre: 0, post: null } },
+      levelProgress: {
+        [levelKey('zone1', quest.levels[0].levelId)]: true,
+        [levelKey('zone1', quest.levels[1].levelId)]: true,
+      },
+    });
+    let s = startLevel(quest, quest.levels.length - 1, {
+      priorPreAnswers: getPriorPreAnswers(quest.questId),
+    });
+    s = answerAll(s, (i) => quest.quizQuestions[i].correctIndex);
+    assert(s.phase === 'recap' && s.recapQueue.length > 0,
+      'old save with stored baseline STILL triggers the adaptive recap');
+    while (s.phase === 'recap') {
+      const item = getActiveRecap(s)!;
+      s = answerRecapQuestion(s, item.correctIndex);
+      s = acknowledgeRecapFeedback(s);
+    }
+    assert(s.phase === 'complete', 'back-compat recap path completes');
+    const r = finalizeLevel(s);
+    assert(r.recorded && r.zoneCompleted, 'back-compat quiz still completes the zone');
+    const sc = progressStore.getState().quizScores[quest.questId];
+    assert(sc?.pre === 0 && sc?.post === quest.quizQuestions.length,
+      'back-compat: stored pre=0 preserved (not nulled), post recorded');
+    resetProgress();
   }
 
   // ---------- 4. Pre-Task-15 saves: completed zone => all levels complete ----------
@@ -462,12 +564,13 @@ async function main() {
     const quest = resolveQuest('zone3', '12-15', 'en')!;
     let s = startQuest(quest);
     assert(s.levelIndex === null && !s.practice, 'full-quest session is unscoped');
+    assert(s.phase === 'pre-quiz', 'classic full-quest mode STILL starts with the silent pre-quiz');
     s = answerAll(s, (i) => quest.quizQuestions[i].correctIndex);
     const seen: string[] = [];
     s = playScenes(s, seen);
     assert(s.phase === 'post-quiz', 'full-quest mode still runs scenes -> post-quiz');
     assert(JSON.stringify(seen) === JSON.stringify(quest.scenes.map((x) => x.sceneId)),
-      'full-quest mode still walks every scene');
+      'full-quest mode still walks every scene (narration intros included)');
   }
 
   // ---------- 5b. Review fixes: no bypass write path, strict partition ----------

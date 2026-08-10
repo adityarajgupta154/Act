@@ -1,0 +1,25 @@
+TASK 26 — Fix Zone Entry Flow: Remove Direct-to-Quiz, Restore Proper Level Progression
+
+CRITICAL BUG: Currently, tapping any zone building on the world map skips directly to a quiz screen. This is WRONG and breaks the core gamified experience defined in the PRD. Re-read PRD_NyayaNagri_MASTER.md §7.1 (Level-Based Progression System) and §7.5 (Mini-Game Variety Pack) fully before starting this task.
+
+REQUIRED FLOW (must replace the current direct-to-quiz behavior for every zone):
+Tapping a zone building → opens the Level-Select screen (a node/path map showing 4 levels: locked/unlocked/completed states, exactly as specified in PRD §7.1) → the child then enters Level 1, plays through it, and only unlocks Level 2 after completing Level 1, and so on. The quiz is ONLY Level 4 (the final "boss" level) — it must never be the first or only thing that happens when entering a zone.
+
+For EACH of the 7 zones (Zone 0–6), implement this exact 4-level structure using content and framing that's true to that zone's existing legal content (from PRD §4) — do not invent new legal facts, only restructure/present what already exists in the quest JSON from earlier tasks:
+
+- LEVEL 1 — Story/Narration: A short illustrated scene (2-4 panels or a single animated scene) with the AI avatar or an in-story character introducing the zone's real-life scenario in age-appropriate language. Purely narrative, no choices yet, ends with a "Continue" button into Level 2.
+
+- LEVEL 2 — Branching Decision Scenario: Present the child with the scenario from Level 1 continuing, now with 2-3 clickable choices at a decision point. Each choice shows an immediate consequence/feedback screen (this is the core "game" mechanic — reuse the branching quest engine logic that should already exist from Task 3/4-8; if it was built but not wired into this flow, wire it in here). End with a "Continue" button into Level 3.
+
+- LEVEL 3 — Mini-Game: Pick the single most fitting mini-game type for this zone's content from the four types already specified in PRD §7.5 (Memory Cards, Hidden Object [8-11 band only], Puzzle/Sorting, Scenario Selection). Build/wire in the specific mini-game instance for this zone using real content from that zone (e.g. for "School Rights," a Puzzle/Sorting game sorting scenario cards into "Right" vs "Violation" categories). For the Justice System Simulator zone specifically (12-15 and 16-18 bands), use the AI Role-Play Persona system (Judge/Police, from Task 17) as this level instead of a mini-game, if that's a better narrative fit — confirm with the existing PRD content for that zone. End with a "Continue" button into Level 4.
+
+- LEVEL 4 — Quiz: The existing quiz content (already built from earlier tasks) stays exactly as-is here — this is the only place it should appear. Completing it with a passing score marks the zone complete and unlocks the next zone, per the existing zone-lock logic.
+
+IMPLEMENTATION NOTES:
+1. Reuse existing components wherever they already exist — if branching-decision logic, mini-game components, or the quiz screen were already built in earlier tasks but just not wired into this sequential flow, the fix here is primarily FLOW/WIRING, not building everything from scratch. Audit what already exists in the codebase before writing new code.
+2. The Level-Select screen (locked/unlocked/completed node map) must actually gate progression — a child must not be able to jump straight to Level 4 by tapping ahead; Level 2 stays locked until Level 1 is marked complete, and so on.
+3. Keep every existing safety rule intact through this change: Get Help Now button must remain visible on every one of these new level screens, no new PII collection, sensitive content in Level 1/2 stays non-graphic per PRD §9.
+4. Do this one zone at a time — start with "School Rights" (the zone in the bug report) as the reference implementation, show me the full Level 1 → 2 → 3 → 4 flow working correctly, and only after I confirm it looks right, apply the same pattern to the remaining 6 zones.
+5. Preserve all existing visual/art style, HUD, avatar, and world-map rendering exactly as it currently is — this task only fixes the zone-entry interaction flow, not any visuals.
+
+After building the "School Rights" reference flow, report back: (a) which of the 4 levels reused existing components vs needed new ones, (b) a walkthrough of what the child now experiences tapping that building, and (c) confirm the Level-Select lock/unlock gating actually works (try to skip ahead and confirm it's blocked).

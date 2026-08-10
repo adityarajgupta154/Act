@@ -18,15 +18,16 @@
  * The persistent "Get Help Now" button (z-50) stays visible above this
  * overlay, as on every other screen.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { progressStore, type ProgressState } from '@/data/progressStore';
 import { ZONES, isZoneUnlockedIn } from '@/world/zones';
-import { getAllQuests } from '@/quests/registry';
-import { useUIStore, closeProgress } from './uiStore';
+import { getAllQuests, resolveQuest } from '@/quests/registry';
+import { useUIStore, closeProgress, openCertificate } from './uiStore';
 import { useStrings, type UIStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
-import { Star, Lock, MapPin, X, Award, Users, Trophy, Coins, Flame } from 'lucide-react';
+import { Star, Lock, MapPin, X, Award, Users, Trophy, Coins, Flame, ScrollText, BadgeCheck, Sparkles, GraduationCap } from 'lucide-react';
 import { rankForXp, xpToNextRank, TITLE_IDS } from '@/economy/economy';
+import { analyzeProgress } from '@/insights/analyzer';
 
 /** Aggregated pre/post literacy percentages for one zone (teacher view). */
 export interface ZoneImpact {
@@ -103,11 +104,14 @@ export function ProgressPanel({
   teacherView,
   onToggleTeacherView,
   onClose,
+  onViewCertificate,
 }: {
   progress: ProgressState;
   teacherView: boolean;
   onToggleTeacherView: () => void;
   onClose: () => void;
+  /** Optional so the headless dashboard smoke can render without a viewer. */
+  onViewCertificate?: (zoneId: string) => void;
 }) {
   const t = useStrings();
   const zones = childZoneStates(progress);
@@ -118,6 +122,43 @@ export function ProgressPanel({
     impacts.length > 0
       ? Math.round(impacts.reduce((sum, i) => sum + i.deltaPts, 0) / impacts.length)
       : 0;
+
+  // Child-facing mini glimpse: evidence-gated, encouragement-only templates
+  // (insMini* strings contain no percentages and no judgement words).
+  const miniLines = useMemo(() => {
+    // Defensive: headless smoke fixtures (and only they) may cast partial
+    // states without the insights fields; the real store always sanitizes.
+    if (!Array.isArray(progress.activityLog)) return [] as string[];
+    const analysis = analyzeProgress(progress);
+    if (!analysis.evidence.hasMinimumData) return [] as string[];
+    const lines: string[] = [t.insMiniAnswered(analysis.evidence.totalMeasured)];
+    const strong = analysis.strengths.find((f) => f.id === 'strength-topic' && f.zoneId);
+    if (strong?.zoneId) {
+      lines.push(t.insMiniStrong(t.zones[strong.zoneId]?.name ?? strong.zoneId));
+    }
+    const practice = analysis.practiceAreas.find((f) => f.zoneId);
+    if (practice?.zoneId) {
+      lines.push(t.insMiniPractice(t.zones[practice.zoneId]?.name ?? practice.zoneId));
+    }
+    lines.push(t.insMiniKeepGoing);
+    return lines;
+  }, [progress, t]);
+
+  // Task 27: certificates — earned (records exist ONLY for zones the
+  // reconciler could justify from completedZones) and still-to-earn with a
+  // gentle levels-done count from the existing levelProgress source.
+  const earnedCerts = ZONES.filter((z) => progress.certificates[z.id]).map((zone) => ({
+    zone,
+    record: progress.certificates[zone.id],
+  }));
+  const lockedCertZones = ZONES.filter((z) => !progress.certificates[z.id]).map((zone) => {
+    const quest = resolveQuest(zone.id, progress.ageBand, 'en');
+    const total = quest ? quest.levels.length : null;
+    const done = quest
+      ? quest.levels.filter((lv) => progress.levelProgress[`${zone.id}:${lv.levelId}`]).length
+      : 0;
+    return { zone, done, total };
+  });
 
   return (
     <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto flex flex-col max-h-[85vh]">
@@ -259,6 +300,81 @@ export function ProgressPanel({
           <p className="text-xs text-slate-500 font-medium mt-2">{t.titlesPrivateNote}</p>
         </div>
 
+        {/* Task 27: certificate collection — earned cards + zones to earn */}
+        <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100 mb-6">
+          <div className="flex items-center gap-2 mb-3">
+            <ScrollText className="w-5 h-5 text-amber-600" />
+            <h3 className="font-display font-bold text-xl text-slate-800">{t.certificatesHeading}</h3>
+          </div>
+          {earnedCerts.length > 0 && (
+            <ul className="grid gap-3 sm:grid-cols-2 mb-1">
+              {earnedCerts.map(({ zone, record }) => (
+                <li key={zone.id} className="bg-white rounded-xl border-2 border-[#E7CE8F] p-4 flex flex-col">
+                  <p className="font-display font-bold text-lg text-slate-800 leading-tight">
+                    {t.zones[zone.id]?.name ?? zone.name}
+                  </p>
+                  <p className="text-sm text-slate-500 font-medium">{t.certificateOfCompletion}</p>
+                  <p className="mt-1 inline-flex items-center gap-1.5 text-sm font-bold text-green-600">
+                    <BadgeCheck className="w-4 h-4" />
+                    {t.certificateCompletedTag}
+                  </p>
+                  <p className="text-[11px] text-slate-400 font-bold mt-1 tracking-wider">
+                    {record.certificateId}
+                  </p>
+                  <button
+                    onClick={() => onViewCertificate?.(zone.id)}
+                    className="mt-3 bg-[#14306E] hover:bg-[#1d3f8c] text-white px-4 py-2 rounded-full font-bold text-sm transition-colors touch-manipulation self-start"
+                  >
+                    {t.viewCertificate}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+          {lockedCertZones.length > 0 && (
+            <>
+              <p className="font-bold text-slate-600 text-sm mt-3 mb-2">{t.certificatesEarnHeading}</p>
+              <ul className="flex flex-col gap-2">
+                {lockedCertZones.map(({ zone, done, total }) => (
+                  <li
+                    key={zone.id}
+                    className="flex items-center gap-3 bg-white rounded-xl border border-slate-100 px-4 py-2.5"
+                  >
+                    <Lock className="w-4 h-4 text-slate-400 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-bold text-slate-700 leading-tight">
+                        {t.zones[zone.id]?.name ?? zone.name}
+                      </p>
+                      <p className="text-xs text-slate-500 font-medium">{t.certificateLockedHint}</p>
+                    </div>
+                    {total !== null && (
+                      <span className="text-xs font-bold text-slate-500 shrink-0">
+                        {t.certificateLevelsDone(done, total)}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+
+          {/* Child-facing learning glimpse — encouragement only, no scores */}
+          <div className="mt-5 bg-indigo-50 rounded-2xl p-5 border border-indigo-100">
+            <h3 className="font-bold text-slate-700 mb-2 flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-indigo-500" /> {t.insMiniTitle}
+            </h3>
+            {miniLines.length === 0 ? (
+              <p className="text-slate-600 font-medium leading-relaxed">{t.insMiniEmpty}</p>
+            ) : (
+              <ul className="space-y-1.5 text-slate-600 font-medium leading-relaxed">
+                {miniLines.map((line, i) => (
+                  <li key={i}>{line}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+
         {/* Teacher/Parent opt-in section — clearly separated and labelled */}
         <div className="border-t-2 border-slate-100 pt-5">
           <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -344,6 +460,28 @@ export function ProgressPanel({
               <p className="text-xs text-slate-400 font-medium">
                 {t.sessionIdLabel} {progress.sessionId}
               </p>
+
+              <a
+                // Optional-chained so the headless smoke (tsx, no Vite) can
+                // render; in the browser Vite always provides env.BASE_URL.
+                href={`${import.meta.env?.BASE_URL ?? '/'}adults`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 flex items-center gap-3 bg-white rounded-xl p-4 border-2 border-indigo-100 hover:border-indigo-300 transition-colors touch-manipulation"
+              >
+                <GraduationCap className="w-5 h-5 text-indigo-500 shrink-0" />
+                <span className="min-w-0">
+                  <span className="block font-bold text-slate-700 text-sm">
+                    {t.adultAreaLink}
+                  </span>
+                  <span className="block text-xs text-slate-400 font-medium leading-snug mt-0.5">
+                    {t.adultAreaLinkSub}
+                  </span>
+                </span>
+              </a>
+              <p className="mt-4 text-xs text-slate-400 font-medium leading-relaxed">
+                {t.insDisclaimer}
+              </p>
             </div>
           )}
         </div>
@@ -373,6 +511,7 @@ export function ProgressOverlay() {
         teacherView={teacherView}
         onToggleTeacherView={() => setTeacherView((v) => !v)}
         onClose={closeProgress}
+        onViewCertificate={openCertificate}
       />
     </div>
   );

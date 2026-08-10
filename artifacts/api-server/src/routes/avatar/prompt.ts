@@ -9,7 +9,7 @@
 
 export type AgeBand = '8-11' | '12-15' | '16-18';
 
-const AGE_TONES: Record<AgeBand, string> = {
+export const AGE_TONES: Record<AgeBand, string> = {
   '8-11':
     'The child is 8-11 years old. Use very simple, warm, playful language. Short sentences. Concrete everyday examples (school, playground, home). Be gentle and encouraging, like a kind older sister/brother telling a story.',
   '12-15':
@@ -23,7 +23,7 @@ const AGE_TONES: Record<AgeBand, string> = {
  * client is never trusted for topic scoping). Real approved quest content
  * replaces these in later tasks.
  */
-const ZONE_TOPICS: Record<string, { name: string; scope: string }> = {
+export const ZONE_TOPICS: Record<string, { name: string; scope: string }> = {
   zone0: {
     name: 'Know Yourself',
     scope:

@@ -1,0 +1,650 @@
+I want you to implement and fully integrate ONE AI assistant into my existing Nyaya Nagri game.
+
+IMPORTANT:
+Before making changes, inspect the existing project architecture, UI components, game state, zone system, player profile, and current AI/help assistant implementation.
+
+Do NOT rebuild the application from scratch.
+
+========================================================
+1. REMOVE THE DUPLICATE AI ASSISTANT
+========================================================
+
+There are currently TWO AI/help assistant visuals in the game:
+
+1. The green circular scales-of-justice assistant icon.
+2. The orange/white futuristic robot AI assistant icon.
+
+REMOVE THE GREEN SCALES-OF-JUSTICE AI ASSISTANT COMPLETELY.
+
+KEEP ONLY THE ORANGE/WHITE ROBOT AI ASSISTANT.
+
+The robot assistant reference image I provided must be the ONLY persistent AI assistant button in the game.
+
+Do not show both assistants anywhere.
+
+Search the entire project for:
+- duplicate assistant components
+- old assistant icons
+- scales icon
+- old floating help widget
+- duplicate chatbot buttons
+- duplicate AI trigger logic
+
+Remove/deactivate only the duplicate assistant UI and its redundant logic.
+
+Do NOT remove the actual "Get Help Now" emergency/safety button.
+That is a separate feature and must remain unchanged.
+
+========================================================
+2. ROBOT ASSISTANT DESIGN
+========================================================
+
+Use the provided orange/white robot image as the exact visual asset.
+
+Do not recreate the robot using CSS.
+
+Do not redesign the robot.
+
+Do not replace it with another icon.
+
+Use the provided transparent asset directly.
+
+The robot should appear as a floating circular AI assistant button.
+
+Position:
+- bottom-right
+- above/near the existing game UI
+- responsive
+- never cover important gameplay controls
+- maintain safe spacing from "Get Help Now"
+
+The robot should have:
+- subtle hover animation
+- subtle press feedback
+- optional very small idle floating animation
+
+Keep animations smooth and child-friendly.
+
+Do not add excessive glow/neon effects.
+
+========================================================
+3. NAME THE ASSISTANT
+========================================================
+
+Give the assistant a simple in-game identity:
+
+"Nyaya AI"
+
+Subtitle:
+
+"Your Rights Guide"
+
+The assistant should feel like a friendly guide inside Nyaya Nagri.
+
+Tone:
+- friendly
+- patient
+- child-safe
+- educational
+- simple
+- encouraging
+- trustworthy
+
+It should NOT sound like a lawyer representing the user.
+
+It should explain concepts rather than pretending to provide professional legal representation.
+
+========================================================
+4. GEMINI AI INTEGRATION
+========================================================
+
+Integrate Gemini as the intelligence layer.
+
+Use the current official Google GenAI SDK and current Gemini API architecture rather than outdated/legacy Gemini libraries.
+
+IMPORTANT SECURITY REQUIREMENT:
+
+NEVER hardcode the Gemini API key inside:
+- React components
+- frontend JavaScript
+- client-side environment variables exposed to the browser
+- Git repository
+- public source code
+
+Use a secure server-side environment variable:
+
+GEMINI_API_KEY
+
+The frontend should communicate with my backend/server endpoint.
+
+Example architecture:
+
+Game UI
+   ↓
+Nyaya AI frontend component
+   ↓
+/api/nyaya-ai
+   ↓
+Gemini API
+   ↓
+Nyaya AI response
+   ↓
+Frontend
+   ↓
+Text + Voice response
+
+Use the project's existing backend if one exists.
+
+If there is no suitable backend endpoint, create a minimal secure server endpoint without rewriting the rest of the application.
+
+Do not expose the API key to the browser.
+
+========================================================
+5. VOICE ASSISTANT
+========================================================
+
+The robot assistant must support VOICE interaction.
+
+User flow:
+
+User taps robot
+        ↓
+AI assistant panel opens
+        ↓
+User taps microphone
+        ↓
+User speaks
+        ↓
+Speech is converted to text
+        ↓
+Gemini processes the question
+        ↓
+Nyaya AI generates response
+        ↓
+Response appears as text
+        ↓
+Response is spoken aloud using browser/device speech synthesis or an appropriate voice solution
+
+Also support normal text input.
+
+UI should contain:
+
+[🎤 Ask by Voice]
+
+and
+
+[Type your question...]
+
+Do not make voice interaction mandatory.
+
+If microphone permission is denied:
+- gracefully fall back to text input
+- explain that microphone access is needed for voice input
+- do not break the assistant
+
+========================================================
+6. INDIA CODE AS THE PRIMARY LEGAL SOURCE
+========================================================
+
+Use the official India Code website as the primary authoritative source for legal content:
+
+https://www.indiacode.nic.in/
+
+India Code contains Central enactments, State/UT legislation and subordinate legislation.
+
+IMPORTANT:
+Do NOT claim that Gemini has been permanently "trained" on the entire India Code website.
+
+Instead, implement a retrieval-grounded approach.
+
+When the user asks a legal/right-related question:
+
+1. Identify the relevant topic.
+2. Retrieve relevant information from India Code / approved legal source content.
+3. Give that information to Gemini as context.
+4. Ask Gemini to answer ONLY using supported retrieved material where factual legal claims are involved.
+5. If relevant source material cannot be found, say so clearly.
+
+The system should NOT blindly hallucinate legal sections.
+
+========================================================
+7. LEGAL KNOWLEDGE / RAG ARCHITECTURE
+========================================================
+
+Implement the assistant as a lightweight RAG-style system.
+
+Conceptually:
+
+User Question
+      ↓
+Intent Detection
+      ↓
+Relevant Nyaya Nagri Zone
+      ↓
+Legal Topic Search
+      ↓
+India Code / trusted legal source
+      ↓
+Relevant passages
+      ↓
+Gemini
+      ↓
+Child-friendly explanation
+
+For example:
+
+User:
+"What is my right to education?"
+
+System:
+- identify topic = education
+- identify zone = School Rights / Right to Childhood
+- retrieve relevant legal content
+- provide source context to Gemini
+- generate simple explanation
+
+Do NOT send the entire India Code website to Gemini on every request.
+
+Retrieve only relevant content.
+
+========================================================
+8. SOURCE-BASED ANSWERS
+========================================================
+
+For factual legal answers, the assistant should internally distinguish:
+
+SOURCE
+EXPLANATION
+GUIDANCE
+
+Example response:
+
+"According to the relevant law, children have certain protections related to education.
+
+In simple words:
+This means...
+
+📚 Source:
+[Act / provision name]
+
+If you're learning this in Nyaya Nagri, this connects to:
+School Rights"
+
+The exact source should only be shown when the retrieved source actually supports the statement.
+
+Never invent:
+- Act names
+- Section numbers
+- legal rights
+- penalties
+- government schemes
+- court decisions
+
+========================================================
+9. NYAYA NAGRI GAME CONTEXT
+========================================================
+
+The AI must understand that this is NOT a generic legal chatbot.
+
+It is an educational companion for the Nyaya Nagri game.
+
+The game teaches users about:
+- personal rights
+- child rights
+- education rights
+- digital safety
+- family/community
+- justice
+- helping others
+- legal awareness
+
+The assistant should understand the existing game zones.
+
+When appropriate, it should connect a question to the relevant zone.
+
+Example:
+
+User:
+"Online mujhe koi threaten kar raha hai."
+
+Assistant:
+"That can be serious. Don't share personal information or meet the person. You can tell a trusted adult and use the safety/help options available in Nyaya Nagri."
+
+Then, if relevant:
+"This is related to the Digital Safety zone."
+
+Do not give dangerous or inappropriate instructions.
+
+========================================================
+10. AGE-APPROPRIATE RESPONSES
+========================================================
+
+Nyaya Nagri is designed for young users.
+
+Therefore:
+
+Use simple language.
+
+Prefer:
+"Your right means..."
+instead of:
+"Pursuant to the statutory framework..."
+
+Avoid unnecessary legal jargon.
+
+If legal terminology is necessary:
+- explain the term
+- provide a simple example
+
+Example:
+
+"Constitution means the main set of rules that guides how the country is governed."
+
+Do not scare children with unnecessarily severe language.
+
+========================================================
+11. CHILD SAFETY
+========================================================
+
+The assistant must follow a strict child-safe conversational policy.
+
+Never:
+- ask for unnecessary personal information
+- ask for home address
+- ask for phone number
+- ask for school details
+- ask for passwords
+- encourage meeting strangers
+- encourage sharing private photos
+- provide sexual content
+- encourage illegal activity
+- impersonate police/lawyers/government officials
+
+If a child describes an unsafe situation:
+
+1. Stay calm.
+2. Encourage them to talk to a trusted adult.
+3. Recommend the appropriate built-in Nyaya Nagri safety/help feature.
+4. Avoid collecting unnecessary personal information.
+
+========================================================
+12. EMERGENCY / GET HELP NOW
+========================================================
+
+The existing "Get Help Now" button is separate from Nyaya AI.
+
+Do NOT replace it.
+
+Nyaya AI can guide the user toward the emergency/help feature when appropriate.
+
+For example:
+
+"If you feel unsafe right now, please use the Get Help Now option and tell a trusted adult."
+
+Do not fabricate emergency numbers.
+
+Use only numbers that are explicitly configured in the application's existing safety configuration.
+
+========================================================
+13. PERSONALIZATION
+========================================================
+
+Nyaya AI should know the current game context.
+
+Pass safe game-state information to Gemini, such as:
+
+{
+  playerNickname,
+  currentZone,
+  completedZones,
+  currentProgress,
+  earnedBadges,
+  language,
+  currentLesson
+}
+
+Do NOT send unnecessary personal data.
+
+The assistant can say:
+
+"You're currently exploring Digital Safety."
+
+or:
+
+"You've completed 3 zones. Great progress!"
+
+But do not expose hidden internal data.
+
+========================================================
+14. LANGUAGE SUPPORT
+========================================================
+
+Support the languages already available in Nyaya Nagri.
+
+At minimum, design the architecture to support:
+
+English
+Hindi
+Hinglish
+
+If the user asks in Hindi/Hinglish, respond naturally in Hindi/Hinglish.
+
+Example:
+
+User:
+"Article 21 kya hota hai?"
+
+Assistant:
+"Article 21 life aur personal liberty se related fundamental right ko protect karta hai. Simple words mein..."
+
+Avoid awkward literal translations.
+
+========================================================
+15. VOICE LANGUAGE
+========================================================
+
+For voice responses:
+
+- detect or use the selected language
+- speak English naturally in English
+- speak Hindi naturally in Hindi
+- speak Hinglish naturally where appropriate
+
+If the browser's speech synthesis voice does not support the requested language:
+- gracefully fall back to the closest available voice
+- still show the written response
+
+========================================================
+16. CHAT UI
+========================================================
+
+Create a polished Nyaya AI panel.
+
+Design:
+
+White/light background
+Soft blue accents
+Nyaya Nagri orange/gold accents
+Rounded but not excessive
+Friendly educational appearance
+
+Header:
+
+[Robot]
+Nyaya AI
+Your Rights Guide
+
+Body:
+
+"Hi! I'm Nyaya AI 👋
+Ask me anything about your rights or what you're learning in Nyaya Nagri."
+
+Quick prompts:
+
+"What are my rights?"
+"Explain this zone"
+"What should I do online?"
+"Why is this important?"
+"Explain in simple words"
+
+Bottom:
+
+[🎤] [Type your question...] [Send]
+
+The robot image should remain visible in the assistant header/avatar.
+
+========================================================
+17. GAME-AWARE AI ACTIONS
+========================================================
+
+If the architecture allows it, add safe read-only tools/functions for Gemini.
+
+Possible functions:
+
+getCurrentZone()
+getPlayerProgress()
+getCompletedZones()
+getCurrentLesson()
+getAvailableHelpOptions()
+
+Gemini can use these to answer context-aware questions.
+
+Example:
+
+User:
+"Which zone should I complete next?"
+
+Assistant:
+"Your next available learning zone is Digital Safety."
+
+But Gemini should NOT directly modify:
+- coins
+- progress
+- certificates
+- badges
+- player profile
+- game state
+
+unless the application explicitly exposes a safe validated action.
+
+========================================================
+18. DO NOT HALLUCINATE GAME INFORMATION
+========================================================
+
+If Gemini does not know something about the game:
+
+Say:
+
+"I'm not sure about that part yet. You can open the relevant zone or ask me about the lesson you're currently learning."
+
+Do not invent game mechanics.
+
+========================================================
+19. RATE LIMIT / ERROR HANDLING
+========================================================
+
+Handle:
+
+429
+503
+network failure
+API timeout
+invalid API key
+microphone denied
+speech recognition unavailable
+
+Graceful UI:
+
+"Nyaya AI is taking a short break. Please try again."
+
+Do not show raw API errors to children.
+
+Add retry handling with sensible exponential backoff where appropriate.
+
+========================================================
+20. API KEY
+========================================================
+
+I have provided a Gemini API key separately.
+
+DO NOT paste the key into source code.
+
+Configure it as:
+
+GEMINI_API_KEY
+
+through Replit Secrets / environment variables.
+
+If the key I previously provided has already appeared in source code, remove it immediately and replace it with the environment variable.
+
+IMPORTANT:
+The previously exposed key should be considered compromised.
+Use a newly generated/restricted key.
+
+========================================================
+21. PERFORMANCE
+========================================================
+
+Do not initialize Gemini unnecessarily.
+
+Do not make API calls while the user is simply moving around the game.
+
+Only call Gemini when the user:
+- opens the assistant if an initial greeting requires generation
+- sends a question
+- speaks a question
+
+Keep the assistant lightweight.
+
+========================================================
+22. FINAL TESTING
+========================================================
+
+Test all of these:
+
+✓ Only ONE AI assistant icon exists.
+✓ Green scales assistant is completely removed.
+✓ Orange/white robot remains.
+✓ Robot opens Nyaya AI.
+✓ Text chat works.
+✓ Microphone works when permission is granted.
+✓ Voice input converts to text.
+✓ Gemini generates response.
+✓ Response is displayed.
+✓ Response can be spoken aloud.
+✓ Hindi works.
+✓ English works.
+✓ Hinglish works.
+✓ India Code-grounded legal questions work.
+✓ Unsupported legal claims are not invented.
+✓ Current zone context is recognized.
+✓ Player progress context works.
+✓ API key is NOT visible in frontend source.
+✓ API key is stored in Replit Secrets/environment variables.
+✓ Existing Get Help Now button remains unchanged.
+✓ Existing game map/gameplay remains unchanged.
+✓ Mobile/responsive assistant works.
+✓ API errors are handled gracefully.
+
+========================================================
+FINAL REQUIREMENT
+========================================================
+
+Do not just create a chatbot UI.
+
+Build a REAL Nyaya AI assistant integrated into the existing Nyaya Nagri game.
+
+It should combine:
+
+1. Gemini intelligence
+2. Voice interaction
+3. India Code-grounded legal knowledge
+4. Nyaya Nagri game context
+5. Child-friendly explanations
+6. Safe responses
+7. Current player progress/zone awareness
+8. Professional robot assistant UI
+
+The assistant should feel like a natural part of Nyaya Nagri rather than a generic Gemini chatbot.
+
+Before finishing, inspect the complete application and verify that there is exactly ONE AI assistant implementation and ONE visible robot assistant.

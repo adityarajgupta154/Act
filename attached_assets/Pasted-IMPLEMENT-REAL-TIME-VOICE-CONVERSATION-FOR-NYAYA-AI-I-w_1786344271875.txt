@@ -1,0 +1,603 @@
+IMPLEMENT REAL-TIME VOICE CONVERSATION FOR NYAYA AI
+
+I want Nyaya AI to behave like a REAL voice assistant, not a normal
+chatbot with a microphone button.
+
+The user should be able to:
+
+1. Tap the Nyaya AI robot.
+2. Start speaking naturally.
+3. Gemini should listen continuously.
+4. Gemini should understand the user's speech.
+5. Gemini should generate a response.
+6. The response should be spoken aloud naturally through the robot assistant.
+7. The user should be able to interrupt Gemini while it is speaking.
+8. The conversation should continue naturally without requiring the user
+   to press a Send button after every sentence.
+
+==================================================
+USE GEMINI LIVE API
+==================================================
+
+Use Google's current Gemini Live API for real-time bidirectional
+voice interaction.
+
+Do NOT implement this as:
+
+Speech-to-Text
+→ normal Gemini request
+→ Text-to-Speech
+
+That approach is NOT the desired experience.
+
+Use the Gemini Live API/WebSocket architecture for a persistent
+real-time audio conversation.
+
+The architecture should be:
+
+Browser microphone
+        ↓
+Live API session
+        ↓
+Gemini
+        ↓
+Native audio response
+        ↓
+Browser audio playback
+
+Use the official @google/genai SDK/current Live API implementation.
+
+==================================================
+VOICE MODEL
+==================================================
+
+Use the currently supported Gemini Live voice model available in the
+project/account.
+
+Prefer the current low-latency Live model rather than an old
+generateContent-only model.
+
+The assistant should use native AUDIO response modality.
+
+Configure a friendly, warm, clear voice suitable for a child-focused
+educational application.
+
+The voice should sound:
+
+- friendly
+- calm
+- natural
+- encouraging
+- conversational
+- not robotic
+- not overly dramatic
+
+==================================================
+MICROPHONE
+==================================================
+
+When the user opens Nyaya AI:
+
+Show:
+
+"Hi! I'm Nyaya AI 👋"
+
+Then:
+
+"Tap the microphone and talk to me."
+
+Add a large microphone control.
+
+States:
+
+IDLE
+🎤 Tap to talk
+
+LISTENING
+🎤 Listening...
+
+PROCESSING
+✨ Thinking...
+
+SPEAKING
+🔊 Nyaya AI is speaking...
+
+==================================================
+CONTINUOUS CONVERSATION
+==================================================
+
+Once the user starts the voice session:
+
+DO NOT require a Send button.
+
+Example:
+
+User:
+"What is my right to education?"
+
+Gemini:
+"Your right to education means..."
+
+User:
+"Can you explain that more simply?"
+
+Gemini:
+"Sure! It means..."
+
+User:
+"Does this apply to me?"
+
+Gemini:
+"Yes..."
+
+This should feel like a real conversation.
+
+Maintain conversational context within the active Live API session.
+
+==================================================
+VOICE ACTIVITY DETECTION
+==================================================
+
+Enable Voice Activity Detection.
+
+The assistant should automatically detect when the user starts and
+stops speaking.
+
+The user should NOT have to manually press:
+
+Start recording
+Stop recording
+
+for every sentence.
+
+When the user pauses:
+→ Gemini should understand that the turn is complete.
+
+==================================================
+INTERRUPTION
+==================================================
+
+This is VERY IMPORTANT.
+
+If Nyaya AI is speaking:
+
+"Your right means that..."
+
+and the user says:
+
+"Wait, what does that mean?"
+
+Nyaya AI must immediately stop/interrupt the current response
+and listen to the user.
+
+Do NOT force the user to wait until the AI finishes speaking.
+
+Use Live API interruption/VAD behavior.
+
+When an interruption occurs:
+
+1. Stop current audio playback.
+2. Preserve the conversation context already received.
+3. Process the new user speech.
+4. Respond to the new question.
+
+==================================================
+AUDIO FORMAT
+==================================================
+
+Follow the official Gemini Live API audio requirements.
+
+Capture microphone audio as:
+
+16-bit PCM
+16 kHz
+little-endian
+
+Send audio chunks continuously to the Live API.
+
+Receive Gemini's native audio response.
+
+Live API audio output is 24 kHz PCM.
+
+Implement proper audio buffering/playback so there are no:
+
+- clicks
+- gaps
+- distorted audio
+- overlapping responses
+- audio corruption
+
+==================================================
+AUDIO PLAYBACK
+==================================================
+
+Use Web Audio API / AudioContext appropriately.
+
+Create a reliable audio playback queue.
+
+When Gemini sends multiple audio chunks:
+
+chunk 1
+chunk 2
+chunk 3
+chunk 4
+
+play them continuously in order.
+
+Do NOT create a new Audio element for every chunk.
+
+Avoid gaps between chunks.
+
+When interrupted:
+
+clear pending audio chunks immediately.
+
+==================================================
+LIVE TRANSCRIPT
+==================================================
+
+Show the conversation visually as well.
+
+Example:
+
+🤖 Nyaya AI
+"Hi! What would you like to learn?"
+
+👦 Aditya
+"What is digital safety?"
+
+🤖 Nyaya AI
+"Digital safety means..."
+
+Display live transcription when available.
+
+Use the Live API's input/output transcription capabilities.
+
+The transcript should update naturally while the conversation happens.
+
+==================================================
+ROBOT UI
+==================================================
+
+Use the existing orange/white robot assistant image.
+
+Do NOT use the old green scales assistant.
+
+There must be exactly ONE AI assistant.
+
+When listening:
+
+- subtle animated ring around robot
+- microphone/listening indicator
+- small "Listening..." label
+
+When speaking:
+
+- subtle audio-wave animation around robot
+- small "Speaking..." label
+
+When idle:
+
+- normal robot icon
+
+Do NOT distort the robot image.
+
+Do NOT replace the robot asset.
+
+==================================================
+NYAYA AI PERSONALITY
+==================================================
+
+System instruction:
+
+"You are Nyaya AI, the friendly rights-learning companion inside
+Nyaya Nagri.
+
+You help children understand rights, laws, safety, responsibilities,
+and the learning activities inside Nyaya Nagri.
+
+Speak naturally and conversationally.
+
+Use simple language.
+
+If the user speaks Hindi, respond in Hindi.
+
+If the user speaks Hinglish, respond naturally in Hinglish.
+
+If the user speaks English, respond in English.
+
+Never pretend to be a lawyer, police officer, government official,
+or legal representative.
+
+You are an educational guide.
+
+Never ask for unnecessary personal information.
+
+Never ask for:
+- password
+- phone number
+- home address
+- school address
+- private photographs
+- sensitive personal information
+
+When explaining law, prioritize authoritative retrieved legal content
+provided by the application's knowledge system.
+
+If you do not have enough reliable information, say that clearly
+instead of inventing a legal answer.
+
+Keep responses concise enough for natural voice conversation.
+
+Do not give extremely long speeches unless the user explicitly asks
+for a detailed explanation."
+
+==================================================
+NYAYA NAGRI CONTEXT
+==================================================
+
+Pass safe game context into the Live API session.
+
+Example:
+
+{
+  playerNickname,
+  currentZone,
+  currentLesson,
+  completedZones,
+  playerProgress,
+  language
+}
+
+Example:
+
+currentZone:
+"Digital Safety"
+
+Then if the user says:
+
+"What should I learn here?"
+
+Nyaya AI understands that "here" refers to Digital Safety.
+
+==================================================
+INDIA CODE KNOWLEDGE
+==================================================
+
+Keep the existing India Code retrieval/RAG system.
+
+DO NOT attempt to put the entire India Code website into the Live
+session context.
+
+For legal questions:
+
+User voice
+   ↓
+Detect legal topic
+   ↓
+Retrieve relevant India Code content
+   ↓
+Provide relevant source context
+   ↓
+Gemini Live response
+
+Never hallucinate:
+- section numbers
+- Acts
+- legal penalties
+- rights
+- government schemes
+
+If the relevant source cannot be retrieved:
+
+"I don't have enough reliable information to answer that accurately."
+
+==================================================
+VOICE LANGUAGE
+==================================================
+
+Support:
+
+English
+Hindi
+Hinglish
+
+Examples:
+
+User:
+"Article 21 kya hai?"
+
+AI:
+"Article 21 life aur personal liberty se related fundamental right
+hai. Simple words mein, iska matlab..."
+
+User:
+"What is digital safety?"
+
+AI:
+"Digital safety means keeping yourself and your information safe
+while using the internet."
+
+The voice should naturally speak the selected language.
+
+==================================================
+SESSION MANAGEMENT
+==================================================
+
+Create a Live API session when the user starts voice interaction.
+
+Do NOT create a new Gemini session for every sentence.
+
+Maintain the session while the user is actively using Nyaya AI.
+
+When the user closes the assistant:
+
+- stop microphone
+- stop audio playback
+- close/clean up the session
+- release AudioContext resources
+- remove event listeners
+
+When the user opens it again:
+
+create a fresh session.
+
+==================================================
+CONNECTION STATES
+==================================================
+
+Handle:
+
+CONNECTING
+CONNECTED
+LISTENING
+THINKING
+SPEAKING
+INTERRUPTED
+DISCONNECTED
+ERROR
+
+Show friendly UI feedback.
+
+Never show raw WebSocket/API errors to the user.
+
+For example:
+
+Instead of:
+"WebSocket code 1008"
+
+show:
+
+"Nyaya AI couldn't connect right now. Please try again."
+
+==================================================
+PERMISSION HANDLING
+==================================================
+
+If microphone permission is denied:
+
+Show:
+
+"Microphone access is needed for voice chat.
+You can allow microphone access in your browser settings,
+or use text chat instead."
+
+Do NOT crash the game.
+
+Text chat should remain available as fallback.
+
+==================================================
+SECURITY
+==================================================
+
+DO NOT expose the Gemini API key in frontend code.
+
+Do not hardcode:
+
+GEMINI_API_KEY = "..."
+
+Use Replit Secrets/environment variables.
+
+For browser/client-to-server Live API authentication,
+use the appropriate secure authentication approach supported
+by the current Gemini Live API, such as ephemeral tokens where
+required.
+
+Never commit the API key to Git.
+
+==================================================
+PERFORMANCE
+==================================================
+
+This is a game.
+
+Voice AI must NOT continuously consume resources when the user
+is not using the assistant.
+
+Only activate:
+
+- microphone
+- Live API WebSocket
+- audio processing
+
+when the user explicitly starts the voice assistant.
+
+When closed, release everything.
+
+==================================================
+FALLBACK
+==================================================
+
+If Live API voice mode cannot connect:
+
+Automatically keep:
+
+TEXT CHAT
+
+available.
+
+Show:
+
+"Voice chat is temporarily unavailable.
+You can still chat with Nyaya AI."
+
+Do not break the game.
+
+==================================================
+FINAL UX
+==================================================
+
+The final experience should feel like:
+
+User taps robot
+      ↓
+Robot wakes up
+      ↓
+"Hi! I'm Nyaya AI. What would you like to know?"
+      ↓
+User speaks
+      ↓
+Robot listens
+      ↓
+Gemini understands
+      ↓
+Robot answers naturally with voice
+      ↓
+User can interrupt
+      ↓
+Robot listens again
+      ↓
+Conversation continues
+
+It should feel like a real conversational AI character
+inside the Nyaya Nagri game.
+
+==================================================
+FINAL TEST
+==================================================
+
+Test this exact conversation:
+
+1. Open Nyaya AI.
+2. Tap microphone.
+3. Say:
+   "What is a right?"
+4. Confirm Gemini understands speech.
+5. Confirm robot responds with AUDIO.
+6. Say:
+   "Explain it simply."
+7. Confirm context is maintained.
+8. While robot is speaking, interrupt:
+   "Wait, give me an example."
+9. Confirm robot stops speaking.
+10. Confirm it listens to the new question.
+11. Confirm it responds with voice.
+12. Try Hindi.
+13. Try Hinglish.
+14. Close assistant.
+15. Confirm microphone stops.
+16. Reopen assistant.
+17. Confirm a new clean voice session starts.
+
+Do not finish implementation until the complete
+voice-to-voice conversation works reliably.

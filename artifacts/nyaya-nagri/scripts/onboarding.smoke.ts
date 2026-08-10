@@ -380,12 +380,26 @@ function walk(dir: string): string[] {
   });
 }
 const allSrcFiles = walk(SRC).filter((p) => /\.(ts|tsx)$/.test(p));
+// The Live-Voice engine (approved Nyaya AI voice feature) is the ONE
+// permitted getUserMedia caller — MICROPHONE only. The photo/camera ban
+// stays absolute everywhere else, and the engine itself is asserted
+// audio-only just below (no `video:` key, no ImageCapture).
+const VOICE_ENGINE_SUFFIX = join('avatar', 'voice', 'liveVoice.ts');
 for (const bad of ['type="file"', 'getUserMedia', 'capture=', 'ImageCapture']) {
   assert(
-    allSrcFiles.every((p) => !readFileSync(p, 'utf8').includes(bad)),
+    allSrcFiles.every(
+      (p) =>
+        (bad === 'getUserMedia' && p.endsWith(VOICE_ENGINE_SUFFIX)) ||
+        !readFileSync(p, 'utf8').includes(bad),
+    ),
     `no ${bad} anywhere in src (no photo upload / camera access)`,
   );
 }
+const voiceEngineSrc = readFileSync(join(SRC, 'avatar', 'voice', 'liveVoice.ts'), 'utf8');
+assert(
+  !/video\s*:/.test(voiceEngineSrc) && !voiceEngineSrc.includes('ImageCapture'),
+  'voice engine getUserMedia is AUDIO-ONLY (no video key, no ImageCapture)',
+);
 
 // Cosmetic only: quest engine + content resolution never touch the avatar.
 for (const rel of [['quests', 'engine.ts'], ['quests', 'registry.ts']]) {

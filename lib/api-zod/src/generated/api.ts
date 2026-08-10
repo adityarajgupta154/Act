@@ -9,6 +9,232 @@ import * as zod from 'zod';
 
 
 /**
+ * Stateless chat with Nyaya Nagri's ONE AI assistant. Gemini-powered and retrieval-grounded: specific legal facts come only from a pre-approved corpus of PRD §4 act summaries whose public source is India Code (indiacode.nic.in) — the model never invents acts or sections. Understands safe game context (current zone, completed zones, progress, badges, current lesson) passed as stable ids and capped strings. Enforces the identical safety contract as the persona route: deterministic distress escalation before any AI call (English, Hindi, Hinglish, and Gujarati lexicon), PII ingress redaction, untrusted history quoting, and the fail-closed helpline output gate. Replies follow the child's own language (English / Hindi / Hinglish / Gujarati). Educational legal information, never professional legal advice; no conversation data is persisted. Requires the server-side GEMINI_API_KEY secret — the key never reaches the client.
+ * @summary Ask Nyaya AI (Your Rights Guide)
+ */
+export const nyayaAiChatBodyMessageMax = 500;
+
+export const nyayaAiChatBodyHistoryItemContentMax = 2000;
+
+export const nyayaAiChatBodyHistoryMax = 12;
+
+export const nyayaAiChatBodyGameContextNicknameMax = 24;
+
+export const nyayaAiChatBodyGameContextCurrentZoneIdMax = 16;
+
+export const nyayaAiChatBodyGameContextNearbyZoneIdMax = 16;
+
+export const nyayaAiChatBodyGameContextCompletedZoneIdsItemMax = 16;
+
+export const nyayaAiChatBodyGameContextCompletedZoneIdsMax = 8;
+
+export const nyayaAiChatBodyGameContextProgressPctMin = 0;
+export const nyayaAiChatBodyGameContextProgressPctMax = 100;
+
+export const nyayaAiChatBodyGameContextBadgeCountMin = 0;
+export const nyayaAiChatBodyGameContextBadgeCountMax = 99;
+
+export const nyayaAiChatBodyGameContextCurrentLessonTitleMax = 120;
+
+export const nyayaAiChatBodyGameContextCurrentLevelNumberMax = 20;
+
+export const nyayaAiChatBodyGameContextLearnQuestionsAnsweredMin = 0;
+export const nyayaAiChatBodyGameContextLearnQuestionsAnsweredMax = 100000;
+
+export const nyayaAiChatBodyGameContextLearnAccuracyPctMin = 0;
+export const nyayaAiChatBodyGameContextLearnAccuracyPctMax = 100;
+
+export const nyayaAiChatBodyGameContextStrongZoneIdMax = 16;
+
+export const nyayaAiChatBodyGameContextPracticeZoneIdMax = 16;
+
+
+
+export const NyayaAiChatBody = zod.object({
+  "message": zod.string().min(1).max(nyayaAiChatBodyMessageMax),
+  "ageBand": zod.enum(['8-11', '12-15', '16-18']).optional().describe('Optional — Nyaya AI is reachable from the Home screen before onboarding, where no age band exists yet. When present it only tunes tone; it never changes the allowed facts.\n'),
+  "language": zod.enum(['en', 'hi']).optional().describe('App UI language (defaults to en). Replies follow the CHILD\'s own message language (English \/ Hindi \/ Hinglish \/ Gujarati); this value is the fallback for mixed\/unclear input and for canonical safety text. Safety behaviour is identical in every language; helpline digits never change.\n'),
+  "history": zod.array(zod.object({
+  "role": zod.enum(['user', 'assistant']),
+  "content": zod.string().max(nyayaAiChatBodyHistoryItemContentMax)
+})).max(nyayaAiChatBodyHistoryMax).optional().describe('Recent turns kept client-side only (never persisted)'),
+  "gameContext": zod.object({
+  "nickname": zod.string().max(nyayaAiChatBodyGameContextNicknameMax).optional().describe('Fun made-up game nickname (never a real name)'),
+  "currentZoneId": zod.string().max(nyayaAiChatBodyGameContextCurrentZoneIdMax).optional().describe('Zone the player is inside (e.g. zone3)'),
+  "nearbyZoneId": zod.string().max(nyayaAiChatBodyGameContextNearbyZoneIdMax).optional().describe('Nearest zone on the map when not inside one'),
+  "completedZoneIds": zod.array(zod.string().max(nyayaAiChatBodyGameContextCompletedZoneIdsItemMax)).max(nyayaAiChatBodyGameContextCompletedZoneIdsMax).optional(),
+  "progressPct": zod.number().min(nyayaAiChatBodyGameContextProgressPctMin).max(nyayaAiChatBodyGameContextProgressPctMax).optional(),
+  "badgeCount": zod.number().min(nyayaAiChatBodyGameContextBadgeCountMin).max(nyayaAiChatBodyGameContextBadgeCountMax).optional(),
+  "currentLessonTitle": zod.string().max(nyayaAiChatBodyGameContextCurrentLessonTitleMax).optional(),
+  "currentLevelNumber": zod.number().min(1).max(nyayaAiChatBodyGameContextCurrentLevelNumberMax).optional(),
+  "learnQuestionsAnswered": zod.number().min(nyayaAiChatBodyGameContextLearnQuestionsAnsweredMin).max(nyayaAiChatBodyGameContextLearnQuestionsAnsweredMax).optional().describe('Total recorded quiz\/recap answers (learning-insights log). Lets Nyaya AI answer \"How am I doing?\" from real stats only.\n'),
+  "learnAccuracyPct": zod.number().min(nyayaAiChatBodyGameContextLearnAccuracyPctMin).max(nyayaAiChatBodyGameContextLearnAccuracyPctMax).optional().describe('Overall recorded-answer accuracy — the client sends it only when the analyzer\'s minimum-evidence gate passed.\n'),
+  "learnTrend": zod.enum(['improving', 'steady', 'declining']).optional().describe('Session-over-session accuracy direction (evidence-gated)'),
+  "strongZoneId": zod.string().max(nyayaAiChatBodyGameContextStrongZoneIdMax).optional().describe('Zone with the strongest evidenced accuracy label'),
+  "practiceZoneId": zod.string().max(nyayaAiChatBodyGameContextPracticeZoneIdMax).optional().describe('Zone the deterministic analyzer suggests practicing')
+}).optional().describe('Safe, app-generated game state for personalization (PRD §9 data minimization: stable zone IDS — mapped to names server-side — plus capped counts and the fun game nickname; never any real-world PII).\n')
+})
+
+export const NyayaAiChatResponse = zod.object({
+  "reply": zod.string(),
+  "escalated": zod.boolean().describe('True when the safety escalation path produced the reply')
+})
+
+
+/**
+ * Streaming variant of /nyaya-ai/chat with the IDENTICAL deterministic safety contract (shared preparation code server-side). The response body is NDJSON — one JSON event per line: {"type":"delta","text":"..."} is a gated increment of the reply (the fail-closed helpline output gate runs over the ACCUMULATED reply BEFORE each increment is forwarded, so no ungated text ever reaches the client); {"type":"escalated","reply":"..."} carries the canonical hard-coded escalation text and the client replaces the whole partial reply with it; {"type":"done"} ends a clean reply; {"type":"error"} means the upstream died mid-reply (the client keeps the partial text and offers a retry). Failures before the first event use plain HTTP statuses. Consumed by a small hand-written streaming reader in the web client — the generated JSON client cannot parse NDJSON.
+ * @summary Ask Nyaya AI — low-latency streaming twin (NDJSON)
+ */
+export const nyayaAiChatStreamBodyMessageMax = 500;
+
+export const nyayaAiChatStreamBodyHistoryItemContentMax = 2000;
+
+export const nyayaAiChatStreamBodyHistoryMax = 12;
+
+export const nyayaAiChatStreamBodyGameContextNicknameMax = 24;
+
+export const nyayaAiChatStreamBodyGameContextCurrentZoneIdMax = 16;
+
+export const nyayaAiChatStreamBodyGameContextNearbyZoneIdMax = 16;
+
+export const nyayaAiChatStreamBodyGameContextCompletedZoneIdsItemMax = 16;
+
+export const nyayaAiChatStreamBodyGameContextCompletedZoneIdsMax = 8;
+
+export const nyayaAiChatStreamBodyGameContextProgressPctMin = 0;
+export const nyayaAiChatStreamBodyGameContextProgressPctMax = 100;
+
+export const nyayaAiChatStreamBodyGameContextBadgeCountMin = 0;
+export const nyayaAiChatStreamBodyGameContextBadgeCountMax = 99;
+
+export const nyayaAiChatStreamBodyGameContextCurrentLessonTitleMax = 120;
+
+export const nyayaAiChatStreamBodyGameContextCurrentLevelNumberMax = 20;
+
+export const nyayaAiChatStreamBodyGameContextLearnQuestionsAnsweredMin = 0;
+export const nyayaAiChatStreamBodyGameContextLearnQuestionsAnsweredMax = 100000;
+
+export const nyayaAiChatStreamBodyGameContextLearnAccuracyPctMin = 0;
+export const nyayaAiChatStreamBodyGameContextLearnAccuracyPctMax = 100;
+
+export const nyayaAiChatStreamBodyGameContextStrongZoneIdMax = 16;
+
+export const nyayaAiChatStreamBodyGameContextPracticeZoneIdMax = 16;
+
+
+
+export const NyayaAiChatStreamBody = zod.object({
+  "message": zod.string().min(1).max(nyayaAiChatStreamBodyMessageMax),
+  "ageBand": zod.enum(['8-11', '12-15', '16-18']).optional().describe('Optional — Nyaya AI is reachable from the Home screen before onboarding, where no age band exists yet. When present it only tunes tone; it never changes the allowed facts.\n'),
+  "language": zod.enum(['en', 'hi']).optional().describe('App UI language (defaults to en). Replies follow the CHILD\'s own message language (English \/ Hindi \/ Hinglish \/ Gujarati); this value is the fallback for mixed\/unclear input and for canonical safety text. Safety behaviour is identical in every language; helpline digits never change.\n'),
+  "history": zod.array(zod.object({
+  "role": zod.enum(['user', 'assistant']),
+  "content": zod.string().max(nyayaAiChatStreamBodyHistoryItemContentMax)
+})).max(nyayaAiChatStreamBodyHistoryMax).optional().describe('Recent turns kept client-side only (never persisted)'),
+  "gameContext": zod.object({
+  "nickname": zod.string().max(nyayaAiChatStreamBodyGameContextNicknameMax).optional().describe('Fun made-up game nickname (never a real name)'),
+  "currentZoneId": zod.string().max(nyayaAiChatStreamBodyGameContextCurrentZoneIdMax).optional().describe('Zone the player is inside (e.g. zone3)'),
+  "nearbyZoneId": zod.string().max(nyayaAiChatStreamBodyGameContextNearbyZoneIdMax).optional().describe('Nearest zone on the map when not inside one'),
+  "completedZoneIds": zod.array(zod.string().max(nyayaAiChatStreamBodyGameContextCompletedZoneIdsItemMax)).max(nyayaAiChatStreamBodyGameContextCompletedZoneIdsMax).optional(),
+  "progressPct": zod.number().min(nyayaAiChatStreamBodyGameContextProgressPctMin).max(nyayaAiChatStreamBodyGameContextProgressPctMax).optional(),
+  "badgeCount": zod.number().min(nyayaAiChatStreamBodyGameContextBadgeCountMin).max(nyayaAiChatStreamBodyGameContextBadgeCountMax).optional(),
+  "currentLessonTitle": zod.string().max(nyayaAiChatStreamBodyGameContextCurrentLessonTitleMax).optional(),
+  "currentLevelNumber": zod.number().min(1).max(nyayaAiChatStreamBodyGameContextCurrentLevelNumberMax).optional(),
+  "learnQuestionsAnswered": zod.number().min(nyayaAiChatStreamBodyGameContextLearnQuestionsAnsweredMin).max(nyayaAiChatStreamBodyGameContextLearnQuestionsAnsweredMax).optional().describe('Total recorded quiz\/recap answers (learning-insights log). Lets Nyaya AI answer \"How am I doing?\" from real stats only.\n'),
+  "learnAccuracyPct": zod.number().min(nyayaAiChatStreamBodyGameContextLearnAccuracyPctMin).max(nyayaAiChatStreamBodyGameContextLearnAccuracyPctMax).optional().describe('Overall recorded-answer accuracy — the client sends it only when the analyzer\'s minimum-evidence gate passed.\n'),
+  "learnTrend": zod.enum(['improving', 'steady', 'declining']).optional().describe('Session-over-session accuracy direction (evidence-gated)'),
+  "strongZoneId": zod.string().max(nyayaAiChatStreamBodyGameContextStrongZoneIdMax).optional().describe('Zone with the strongest evidenced accuracy label'),
+  "practiceZoneId": zod.string().max(nyayaAiChatStreamBodyGameContextPracticeZoneIdMax).optional().describe('Zone the deterministic analyzer suggests practicing')
+}).optional().describe('Safe, app-generated game state for personalization (PRD §9 data minimization: stable zone IDS — mapped to names server-side — plus capped counts and the fun game nickname; never any real-world PII).\n')
+})
+
+export const NyayaAiChatStreamResponse = zod.unknown()
+
+
+/**
+ * Real-time voice conversation support. Returns a short-lived, single-use ephemeral token that the browser uses to open a Gemini Live API WebSocket directly with Google — the GEMINI_API_KEY secret never leaves the server. The token is constraint-locked at mint time: model, child-friendly voice, transcription settings and the ENTIRE system instruction (safety rules + the pre-approved India Code corpus + safe game context) are fixed server-side and cannot be altered by the client. No audio or transcripts are ever stored server-side.
+ * @summary Mint an ephemeral Gemini Live session token for voice chat
+ */
+export const nyayaAiVoiceTokenBodyGameContextNicknameMax = 24;
+
+export const nyayaAiVoiceTokenBodyGameContextCurrentZoneIdMax = 16;
+
+export const nyayaAiVoiceTokenBodyGameContextNearbyZoneIdMax = 16;
+
+export const nyayaAiVoiceTokenBodyGameContextCompletedZoneIdsItemMax = 16;
+
+export const nyayaAiVoiceTokenBodyGameContextCompletedZoneIdsMax = 8;
+
+export const nyayaAiVoiceTokenBodyGameContextProgressPctMin = 0;
+export const nyayaAiVoiceTokenBodyGameContextProgressPctMax = 100;
+
+export const nyayaAiVoiceTokenBodyGameContextBadgeCountMin = 0;
+export const nyayaAiVoiceTokenBodyGameContextBadgeCountMax = 99;
+
+export const nyayaAiVoiceTokenBodyGameContextCurrentLessonTitleMax = 120;
+
+export const nyayaAiVoiceTokenBodyGameContextCurrentLevelNumberMax = 20;
+
+export const nyayaAiVoiceTokenBodyGameContextLearnQuestionsAnsweredMin = 0;
+export const nyayaAiVoiceTokenBodyGameContextLearnQuestionsAnsweredMax = 100000;
+
+export const nyayaAiVoiceTokenBodyGameContextLearnAccuracyPctMin = 0;
+export const nyayaAiVoiceTokenBodyGameContextLearnAccuracyPctMax = 100;
+
+export const nyayaAiVoiceTokenBodyGameContextStrongZoneIdMax = 16;
+
+export const nyayaAiVoiceTokenBodyGameContextPracticeZoneIdMax = 16;
+
+
+
+export const NyayaAiVoiceTokenBody = zod.object({
+  "language": zod.enum(['en', 'hi']).optional().describe('App UI language (defaults to en). The Live session follows the language the child actually SPEAKS; this is the fallback for mixed\/unclear speech and for canonical safety text.\n'),
+  "ageBand": zod.enum(['8-11', '12-15', '16-18']).optional().describe('Optional tone tuning only; never changes allowed facts'),
+  "gameContext": zod.object({
+  "nickname": zod.string().max(nyayaAiVoiceTokenBodyGameContextNicknameMax).optional().describe('Fun made-up game nickname (never a real name)'),
+  "currentZoneId": zod.string().max(nyayaAiVoiceTokenBodyGameContextCurrentZoneIdMax).optional().describe('Zone the player is inside (e.g. zone3)'),
+  "nearbyZoneId": zod.string().max(nyayaAiVoiceTokenBodyGameContextNearbyZoneIdMax).optional().describe('Nearest zone on the map when not inside one'),
+  "completedZoneIds": zod.array(zod.string().max(nyayaAiVoiceTokenBodyGameContextCompletedZoneIdsItemMax)).max(nyayaAiVoiceTokenBodyGameContextCompletedZoneIdsMax).optional(),
+  "progressPct": zod.number().min(nyayaAiVoiceTokenBodyGameContextProgressPctMin).max(nyayaAiVoiceTokenBodyGameContextProgressPctMax).optional(),
+  "badgeCount": zod.number().min(nyayaAiVoiceTokenBodyGameContextBadgeCountMin).max(nyayaAiVoiceTokenBodyGameContextBadgeCountMax).optional(),
+  "currentLessonTitle": zod.string().max(nyayaAiVoiceTokenBodyGameContextCurrentLessonTitleMax).optional(),
+  "currentLevelNumber": zod.number().min(1).max(nyayaAiVoiceTokenBodyGameContextCurrentLevelNumberMax).optional(),
+  "learnQuestionsAnswered": zod.number().min(nyayaAiVoiceTokenBodyGameContextLearnQuestionsAnsweredMin).max(nyayaAiVoiceTokenBodyGameContextLearnQuestionsAnsweredMax).optional().describe('Total recorded quiz\/recap answers (learning-insights log). Lets Nyaya AI answer \"How am I doing?\" from real stats only.\n'),
+  "learnAccuracyPct": zod.number().min(nyayaAiVoiceTokenBodyGameContextLearnAccuracyPctMin).max(nyayaAiVoiceTokenBodyGameContextLearnAccuracyPctMax).optional().describe('Overall recorded-answer accuracy — the client sends it only when the analyzer\'s minimum-evidence gate passed.\n'),
+  "learnTrend": zod.enum(['improving', 'steady', 'declining']).optional().describe('Session-over-session accuracy direction (evidence-gated)'),
+  "strongZoneId": zod.string().max(nyayaAiVoiceTokenBodyGameContextStrongZoneIdMax).optional().describe('Zone with the strongest evidenced accuracy label'),
+  "practiceZoneId": zod.string().max(nyayaAiVoiceTokenBodyGameContextPracticeZoneIdMax).optional().describe('Zone the deterministic analyzer suggests practicing')
+}).optional().describe('Safe, app-generated game state for personalization (PRD §9 data minimization: stable zone IDS — mapped to names server-side — plus capped counts and the fun game nickname; never any real-world PII).\n')
+}).describe('Everything is optional: voice chat is reachable from the Home screen before onboarding (no age band yet, empty context).\n')
+
+export const NyayaAiVoiceTokenResponse = zod.object({
+  "token": zod.string().describe('Ephemeral token name the browser connects with'),
+  "model": zod.string().describe('Live model the token is locked to'),
+  "expiresAt": zod.string().describe('ISO time by which the session must be STARTED')
+})
+
+
+/**
+ * Voice-mode twin of the text pipeline's deterministic gates, using the SAME shared safety module. The client streams Live API transcripts here — both the child's speech (role user) and the model's spoken reply (role model). When escalated=true the client must stop audio playback, end the Live session, show the returned canonical helpline text (hard-coded server-side, never model-generated) and pulse the shared Get Help Now button. Fully deterministic (no AI call), so it works even without GEMINI_API_KEY.
+ * @summary Deterministic safety gate for live voice transcripts
+ */
+export const nyayaAiVoiceGuardBodyTextMax = 2000;
+
+
+
+export const NyayaAiVoiceGuardBody = zod.object({
+  "text": zod.string().min(1).max(nyayaAiVoiceGuardBodyTextMax).describe('One finished transcript utterance to check'),
+  "role": zod.enum(['user', 'model']).describe('user = the child\'s speech, model = Nyaya AI\'s speech'),
+  "language": zod.enum(['en', 'hi']).optional().describe('Canonical safety text language fallback (default en)')
+})
+
+export const NyayaAiVoiceGuardResponse = zod.object({
+  "escalated": zod.boolean().describe('True when the deterministic safety gate fired'),
+  "reply": zod.string().optional().describe('Canonical hard-coded escalation text (present when escalated).\n')
+})
+
+
+/**
  * Stateless interview with a clearly-labelled role-play persona (police officer, lawyer, teacher, judge, parent/guardian). The server owns every persona's narrowly-scoped system prompt and enforces the full Task 2 safety contract per persona: deterministic distress escalation before any AI call, no PII, no advice beyond pre-approved facts, fail-closed helpline output gate. Personas are only available to the 12-15 and 16-18 age bands; no conversation data is persisted.
  * @summary Ask a question to an in-scene role-play persona
  */
@@ -38,32 +264,158 @@ export const PersonaChatResponse = zod.object({
 
 
 /**
- * Stateless chat with the child's AI guide. The server builds the age-band-scoped system prompt and enforces all safety guardrails. No conversation data is persisted (data minimization by design).
- * @summary Send a message to the AI avatar companion
+ * Stateless narrative layer over the CLIENT-side deterministic learning analyzer. The request carries compact anonymous aggregates only (per-topic accuracy labels, session trend buckets, engagement signals) — never raw events, free text, nicknames, or any PII (DPDP data minimization). The model only rephrases the given numbers into supportive, growth-oriented observations; a deterministic banned-terms filter then drops any psychological / medical / diagnostic phrasing (the NON-DIAGNOSTIC guarantee is enforced in code, not just by the prompt), and the server attaches the fixed non-diagnostic disclaimer. Called in batch — once per dashboard visit when the activity fingerprint changed; the client caches the narrative (never per-click AI calls). Requires the server-side GEMINI_API_KEY secret.
+ * @summary AI narrative for the learning-insights dashboards
  */
-export const avatarChatBodyMessageMax = 500;
+export const insightsAnalyzeBodyTotalsQuestionsAnsweredMin = 0;
+export const insightsAnalyzeBodyTotalsQuestionsAnsweredMax = 100000;
 
-export const avatarChatBodyHistoryItemContentMax = 2000;
+export const insightsAnalyzeBodyTotalsSessionsMin = 0;
+export const insightsAnalyzeBodyTotalsSessionsMax = 10000;
 
-export const avatarChatBodyHistoryMax = 12;
+export const insightsAnalyzeBodyTotalsActiveDaysMin = 0;
+export const insightsAnalyzeBodyTotalsActiveDaysMax = 10000;
+
+export const insightsAnalyzeBodyTotalsAccuracyPctMin = 0;
+export const insightsAnalyzeBodyTotalsAccuracyPctMax = 100;
+
+export const insightsAnalyzeBodyTotalsTimeSpentMinutesMin = 0;
+export const insightsAnalyzeBodyTotalsTimeSpentMinutesMax = 100000;
+
+export const insightsAnalyzeBodyTotalsZonesCompletedMin = 0;
+export const insightsAnalyzeBodyTotalsZonesCompletedMax = 20;
+
+export const insightsAnalyzeBodyTotalsZonesTotalMax = 20;
+
+export const insightsAnalyzeBodyTotalsLevelsDoneMin = 0;
+export const insightsAnalyzeBodyTotalsLevelsDoneMax = 1000;
+
+export const insightsAnalyzeBodyTotalsBadgesMin = 0;
+export const insightsAnalyzeBodyTotalsBadgesMax = 99;
+
+export const insightsAnalyzeBodyTotalsPracticeReplaysMin = 0;
+export const insightsAnalyzeBodyTotalsPracticeReplaysMax = 100000;
+
+export const insightsAnalyzeBodyTotalsStreakDaysMin = 0;
+export const insightsAnalyzeBodyTotalsStreakDaysMax = 10000;
+
+export const insightsAnalyzeBodyTopicsItemZoneIdMax = 16;
+
+export const insightsAnalyzeBodyTopicsItemAttemptsMin = 0;
+export const insightsAnalyzeBodyTopicsItemAttemptsMax = 100000;
+
+export const insightsAnalyzeBodyTopicsItemAccuracyPctMin = 0;
+export const insightsAnalyzeBodyTopicsItemAccuracyPctMax = 100;
+
+export const insightsAnalyzeBodyTopicsItemPracticeAttemptsMin = 0;
+export const insightsAnalyzeBodyTopicsItemPracticeAttemptsMax = 100000;
+
+export const insightsAnalyzeBodyTopicsItemSessionsMin = 0;
+export const insightsAnalyzeBodyTopicsItemSessionsMax = 10000;
+
+export const insightsAnalyzeBodyTopicsItemTrendDeltaPctMin = -100;
+export const insightsAnalyzeBodyTopicsItemTrendDeltaPctMax = 100;
+
+export const insightsAnalyzeBodyTopicsMax = 10;
+
+export const insightsAnalyzeBodyTrendSeriesItemSessionMax = 100000;
+
+export const insightsAnalyzeBodyTrendSeriesItemAccuracyPctMin = 0;
+export const insightsAnalyzeBodyTrendSeriesItemAccuracyPctMax = 100;
+
+export const insightsAnalyzeBodyTrendSeriesItemAttemptsMax = 1000;
+
+export const insightsAnalyzeBodyTrendSeriesMax = 12;
+
+export const insightsAnalyzeBodyBehaviorRecapCountMin = 0;
+export const insightsAnalyzeBodyBehaviorRecapCountMax = 100000;
+
+export const insightsAnalyzeBodyBehaviorContinuesAfterIncorrectPctMin = 0;
+export const insightsAnalyzeBodyBehaviorContinuesAfterIncorrectPctMax = 100;
 
 
 
-export const AvatarChatBody = zod.object({
-  "message": zod.string().min(1).max(avatarChatBodyMessageMax),
-  "ageBand": zod.enum(['8-11', '12-15', '16-18']),
-  "zoneId": zod.string().optional().describe('Current zone id for topic scoping (e.g. zone1)'),
-  "language": zod.enum(['en', 'hi']).optional().describe('Reply language selected on the device (defaults to en). Safety behaviour is identical in every language; helpline digits never change.\n'),
-  "history": zod.array(zod.object({
-  "role": zod.enum(['user', 'assistant']),
-  "content": zod.string().max(avatarChatBodyHistoryItemContentMax)
-})).max(avatarChatBodyHistoryMax).optional().describe('Recent turns kept client-side only (never persisted)')
-})
+export const InsightsAnalyzeBody = zod.object({
+  "language": zod.enum(['en', 'hi']).optional(),
+  "audience": zod.enum(['teacher', 'parent']).optional().describe('Tunes register only (teacher slightly more instructional)'),
+  "totals": zod.object({
+  "questionsAnswered": zod.number().min(insightsAnalyzeBodyTotalsQuestionsAnsweredMin).max(insightsAnalyzeBodyTotalsQuestionsAnsweredMax),
+  "sessions": zod.number().min(insightsAnalyzeBodyTotalsSessionsMin).max(insightsAnalyzeBodyTotalsSessionsMax),
+  "activeDays": zod.number().min(insightsAnalyzeBodyTotalsActiveDaysMin).max(insightsAnalyzeBodyTotalsActiveDaysMax).optional(),
+  "accuracyPct": zod.number().min(insightsAnalyzeBodyTotalsAccuracyPctMin).max(insightsAnalyzeBodyTotalsAccuracyPctMax).optional(),
+  "timeSpentMinutes": zod.number().min(insightsAnalyzeBodyTotalsTimeSpentMinutesMin).max(insightsAnalyzeBodyTotalsTimeSpentMinutesMax).optional(),
+  "zonesCompleted": zod.number().min(insightsAnalyzeBodyTotalsZonesCompletedMin).max(insightsAnalyzeBodyTotalsZonesCompletedMax).optional(),
+  "zonesTotal": zod.number().min(1).max(insightsAnalyzeBodyTotalsZonesTotalMax).optional(),
+  "levelsDone": zod.number().min(insightsAnalyzeBodyTotalsLevelsDoneMin).max(insightsAnalyzeBodyTotalsLevelsDoneMax).optional(),
+  "badges": zod.number().min(insightsAnalyzeBodyTotalsBadgesMin).max(insightsAnalyzeBodyTotalsBadgesMax).optional(),
+  "practiceReplays": zod.number().min(insightsAnalyzeBodyTotalsPracticeReplaysMin).max(insightsAnalyzeBodyTotalsPracticeReplaysMax).optional(),
+  "streakDays": zod.number().min(insightsAnalyzeBodyTotalsStreakDaysMin).max(insightsAnalyzeBodyTotalsStreakDaysMax).optional()
+}),
+  "topics": zod.array(zod.object({
+  "zoneId": zod.string().max(insightsAnalyzeBodyTopicsItemZoneIdMax),
+  "attempts": zod.number().min(insightsAnalyzeBodyTopicsItemAttemptsMin).max(insightsAnalyzeBodyTopicsItemAttemptsMax),
+  "accuracyPct": zod.number().min(insightsAnalyzeBodyTopicsItemAccuracyPctMin).max(insightsAnalyzeBodyTopicsItemAccuracyPctMax).optional(),
+  "label": zod.enum(['strong', 'developing', 'needs-practice', 'insufficient']),
+  "practiceAttempts": zod.number().min(insightsAnalyzeBodyTopicsItemPracticeAttemptsMin).max(insightsAnalyzeBodyTopicsItemPracticeAttemptsMax).optional(),
+  "sessions": zod.number().min(insightsAnalyzeBodyTopicsItemSessionsMin).max(insightsAnalyzeBodyTopicsItemSessionsMax).optional(),
+  "trendDeltaPct": zod.number().min(insightsAnalyzeBodyTopicsItemTrendDeltaPctMin).max(insightsAnalyzeBodyTopicsItemTrendDeltaPctMax).optional()
+}).describe('Per-topic aggregate from the client-side deterministic analyzer. Stable zone ids only — mapped to display names server-side.\n')).max(insightsAnalyzeBodyTopicsMax),
+  "trendSeries": zod.array(zod.object({
+  "session": zod.number().min(1).max(insightsAnalyzeBodyTrendSeriesItemSessionMax),
+  "accuracyPct": zod.number().min(insightsAnalyzeBodyTrendSeriesItemAccuracyPctMin).max(insightsAnalyzeBodyTrendSeriesItemAccuracyPctMax),
+  "attempts": zod.number().min(1).max(insightsAnalyzeBodyTrendSeriesItemAttemptsMax)
+})).max(insightsAnalyzeBodyTrendSeriesMax).optional(),
+  "trendDirection": zod.enum(['improving', 'steady', 'declining', 'insufficient']).optional(),
+  "behavior": zod.object({
+  "recapCount": zod.number().min(insightsAnalyzeBodyBehaviorRecapCountMin).max(insightsAnalyzeBodyBehaviorRecapCountMax).optional(),
+  "continuesAfterIncorrectPct": zod.number().min(insightsAnalyzeBodyBehaviorContinuesAfterIncorrectPctMin).max(insightsAnalyzeBodyBehaviorContinuesAfterIncorrectPctMax).optional(),
+  "engagement": zod.enum(['good', 'building', 'low']).optional()
+}).optional()
+}).describe('Compact anonymous aggregates for the AI narrative (DPDP data minimization — no raw events, no identifiers, no free text).\n')
 
-export const AvatarChatResponse = zod.object({
-  "reply": zod.string(),
-  "escalated": zod.boolean().describe('True when the safety escalation path produced the reply')
-})
+export const insightsAnalyzeResponseStrengthsItemTextMax = 400;
+
+export const insightsAnalyzeResponseStrengthsItemZoneIdMax = 16;
+
+export const insightsAnalyzeResponseStrengthsMax = 4;
+
+export const insightsAnalyzeResponsePracticeAreasItemTextMax = 400;
+
+export const insightsAnalyzeResponsePracticeAreasItemZoneIdMax = 16;
+
+export const insightsAnalyzeResponsePracticeAreasMax = 4;
+
+export const insightsAnalyzeResponseTrendCommentMax = 400;
+
+export const insightsAnalyzeResponseRecommendationsItemTextMax = 400;
+
+export const insightsAnalyzeResponseRecommendationsItemZoneIdMax = 16;
+
+export const insightsAnalyzeResponseRecommendationsMax = 4;
+
+export const insightsAnalyzeResponseEncouragementMax = 400;
+
+
+
+export const InsightsAnalyzeResponse = zod.object({
+  "strengths": zod.array(zod.object({
+  "text": zod.string().max(insightsAnalyzeResponseStrengthsItemTextMax),
+  "zoneId": zod.string().max(insightsAnalyzeResponseStrengthsItemZoneIdMax).optional()
+})).max(insightsAnalyzeResponseStrengthsMax),
+  "practiceAreas": zod.array(zod.object({
+  "text": zod.string().max(insightsAnalyzeResponsePracticeAreasItemTextMax),
+  "zoneId": zod.string().max(insightsAnalyzeResponsePracticeAreasItemZoneIdMax).optional()
+})).max(insightsAnalyzeResponsePracticeAreasMax),
+  "trendComment": zod.string().max(insightsAnalyzeResponseTrendCommentMax).optional(),
+  "recommendations": zod.array(zod.object({
+  "text": zod.string().max(insightsAnalyzeResponseRecommendationsItemTextMax),
+  "zoneId": zod.string().max(insightsAnalyzeResponseRecommendationsItemZoneIdMax).optional()
+})).max(insightsAnalyzeResponseRecommendationsMax),
+  "encouragement": zod.string().max(insightsAnalyzeResponseEncouragementMax),
+  "confidence": zod.enum(['high', 'medium', 'low']),
+  "disclaimer": zod.string(),
+  "filtered": zod.boolean().optional().describe('True when the banned-terms filter dropped model text')
+}).describe('Banned-terms-filtered AI narrative. The disclaimer is server-fixed text, never model output.\n')
 
 
 /**

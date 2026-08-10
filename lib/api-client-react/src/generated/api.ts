@@ -20,10 +20,16 @@ import type {
 } from '@tanstack/react-query';
 
 import type {
-  AvatarChatInput,
   AvatarChatReply,
   AvatarError,
   HealthStatus,
+  InsightsAnalyzeInput,
+  InsightsAnalyzeReply,
+  NyayaAiChatInput,
+  NyayaAiVoiceGuardInput,
+  NyayaAiVoiceGuardReply,
+  NyayaAiVoiceTokenInput,
+  NyayaAiVoiceTokenReply,
   PersonaChatInput
 } from './api.schemas';
 
@@ -53,6 +59,294 @@ const withQueryKey = <T extends object, K>(query: T, queryKey: K): T & { queryKe
   }
   return result;
 };
+
+export const getNyayaAiChatUrl = () => {
+
+
+
+
+  return `/api/nyaya-ai/chat`
+}
+
+/**
+ * Stateless chat with Nyaya Nagri's ONE AI assistant. Gemini-powered and retrieval-grounded: specific legal facts come only from a pre-approved corpus of PRD §4 act summaries whose public source is India Code (indiacode.nic.in) — the model never invents acts or sections. Understands safe game context (current zone, completed zones, progress, badges, current lesson) passed as stable ids and capped strings. Enforces the identical safety contract as the persona route: deterministic distress escalation before any AI call (English, Hindi, Hinglish, and Gujarati lexicon), PII ingress redaction, untrusted history quoting, and the fail-closed helpline output gate. Replies follow the child's own language (English / Hindi / Hinglish / Gujarati). Educational legal information, never professional legal advice; no conversation data is persisted. Requires the server-side GEMINI_API_KEY secret — the key never reaches the client.
+ * @summary Ask Nyaya AI (Your Rights Guide)
+ */
+export const nyayaAiChat = async (nyayaAiChatInput: NyayaAiChatInput, options?: Parameters<typeof customFetch>[1]): Promise<AvatarChatReply> => {
+
+  return customFetch<AvatarChatReply>(getNyayaAiChatUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(nyayaAiChatInput)
+  }
+);}
+
+
+
+
+
+export const getNyayaAiChatMutationOptions = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiChat>>, TError,{data: BodyType<NyayaAiChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof nyayaAiChat>>, TError,{data: BodyType<NyayaAiChatInput>}, TContext> => {
+
+const mutationKey = ['nyayaAiChat'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof nyayaAiChat>>, {data: BodyType<NyayaAiChatInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  nyayaAiChat(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NyayaAiChatMutationResult = NonNullable<Awaited<ReturnType<typeof nyayaAiChat>>>
+    export type NyayaAiChatMutationBody = BodyType<NyayaAiChatInput>
+    export type NyayaAiChatMutationError = ErrorType<AvatarError>
+
+    /**
+ * @summary Ask Nyaya AI (Your Rights Guide)
+ */
+export const useNyayaAiChat = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiChat>>, TError,{data: BodyType<NyayaAiChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof nyayaAiChat>>,
+        TError,
+        {data: BodyType<NyayaAiChatInput>},
+        TContext
+      > => {
+      return useMutation(getNyayaAiChatMutationOptions(options));
+    }
+
+export const getNyayaAiChatStreamUrl = () => {
+
+
+
+
+  return `/api/nyaya-ai/chat-stream`
+}
+
+/**
+ * Streaming variant of /nyaya-ai/chat with the IDENTICAL deterministic safety contract (shared preparation code server-side). The response body is NDJSON — one JSON event per line: {"type":"delta","text":"..."} is a gated increment of the reply (the fail-closed helpline output gate runs over the ACCUMULATED reply BEFORE each increment is forwarded, so no ungated text ever reaches the client); {"type":"escalated","reply":"..."} carries the canonical hard-coded escalation text and the client replaces the whole partial reply with it; {"type":"done"} ends a clean reply; {"type":"error"} means the upstream died mid-reply (the client keeps the partial text and offers a retry). Failures before the first event use plain HTTP statuses. Consumed by a small hand-written streaming reader in the web client — the generated JSON client cannot parse NDJSON.
+ * @summary Ask Nyaya AI — low-latency streaming twin (NDJSON)
+ */
+export const nyayaAiChatStream = async (nyayaAiChatInput: NyayaAiChatInput, options?: Parameters<typeof customFetch>[1]): Promise<Response> => {
+
+  return customFetch<Response>(getNyayaAiChatStreamUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(nyayaAiChatInput)
+  }
+);}
+
+
+
+
+
+export const getNyayaAiChatStreamMutationOptions = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiChatStream>>, TError,{data: BodyType<NyayaAiChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof nyayaAiChatStream>>, TError,{data: BodyType<NyayaAiChatInput>}, TContext> => {
+
+const mutationKey = ['nyayaAiChatStream'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof nyayaAiChatStream>>, {data: BodyType<NyayaAiChatInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  nyayaAiChatStream(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NyayaAiChatStreamMutationResult = NonNullable<Awaited<ReturnType<typeof nyayaAiChatStream>>>
+    export type NyayaAiChatStreamMutationBody = BodyType<NyayaAiChatInput>
+    export type NyayaAiChatStreamMutationError = ErrorType<AvatarError>
+
+    /**
+ * @summary Ask Nyaya AI — low-latency streaming twin (NDJSON)
+ */
+export const useNyayaAiChatStream = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiChatStream>>, TError,{data: BodyType<NyayaAiChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof nyayaAiChatStream>>,
+        TError,
+        {data: BodyType<NyayaAiChatInput>},
+        TContext
+      > => {
+      return useMutation(getNyayaAiChatStreamMutationOptions(options));
+    }
+
+export const getNyayaAiVoiceTokenUrl = () => {
+
+
+
+
+  return `/api/nyaya-ai/voice-token`
+}
+
+/**
+ * Real-time voice conversation support. Returns a short-lived, single-use ephemeral token that the browser uses to open a Gemini Live API WebSocket directly with Google — the GEMINI_API_KEY secret never leaves the server. The token is constraint-locked at mint time: model, child-friendly voice, transcription settings and the ENTIRE system instruction (safety rules + the pre-approved India Code corpus + safe game context) are fixed server-side and cannot be altered by the client. No audio or transcripts are ever stored server-side.
+ * @summary Mint an ephemeral Gemini Live session token for voice chat
+ */
+export const nyayaAiVoiceToken = async (nyayaAiVoiceTokenInput: NyayaAiVoiceTokenInput, options?: Parameters<typeof customFetch>[1]): Promise<NyayaAiVoiceTokenReply> => {
+
+  return customFetch<NyayaAiVoiceTokenReply>(getNyayaAiVoiceTokenUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(nyayaAiVoiceTokenInput)
+  }
+);}
+
+
+
+
+
+export const getNyayaAiVoiceTokenMutationOptions = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiVoiceToken>>, TError,{data: BodyType<NyayaAiVoiceTokenInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof nyayaAiVoiceToken>>, TError,{data: BodyType<NyayaAiVoiceTokenInput>}, TContext> => {
+
+const mutationKey = ['nyayaAiVoiceToken'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof nyayaAiVoiceToken>>, {data: BodyType<NyayaAiVoiceTokenInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  nyayaAiVoiceToken(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NyayaAiVoiceTokenMutationResult = NonNullable<Awaited<ReturnType<typeof nyayaAiVoiceToken>>>
+    export type NyayaAiVoiceTokenMutationBody = BodyType<NyayaAiVoiceTokenInput>
+    export type NyayaAiVoiceTokenMutationError = ErrorType<AvatarError>
+
+    /**
+ * @summary Mint an ephemeral Gemini Live session token for voice chat
+ */
+export const useNyayaAiVoiceToken = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiVoiceToken>>, TError,{data: BodyType<NyayaAiVoiceTokenInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof nyayaAiVoiceToken>>,
+        TError,
+        {data: BodyType<NyayaAiVoiceTokenInput>},
+        TContext
+      > => {
+      return useMutation(getNyayaAiVoiceTokenMutationOptions(options));
+    }
+
+export const getNyayaAiVoiceGuardUrl = () => {
+
+
+
+
+  return `/api/nyaya-ai/voice-guard`
+}
+
+/**
+ * Voice-mode twin of the text pipeline's deterministic gates, using the SAME shared safety module. The client streams Live API transcripts here — both the child's speech (role user) and the model's spoken reply (role model). When escalated=true the client must stop audio playback, end the Live session, show the returned canonical helpline text (hard-coded server-side, never model-generated) and pulse the shared Get Help Now button. Fully deterministic (no AI call), so it works even without GEMINI_API_KEY.
+ * @summary Deterministic safety gate for live voice transcripts
+ */
+export const nyayaAiVoiceGuard = async (nyayaAiVoiceGuardInput: NyayaAiVoiceGuardInput, options?: Parameters<typeof customFetch>[1]): Promise<NyayaAiVoiceGuardReply> => {
+
+  return customFetch<NyayaAiVoiceGuardReply>(getNyayaAiVoiceGuardUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(nyayaAiVoiceGuardInput)
+  }
+);}
+
+
+
+
+
+export const getNyayaAiVoiceGuardMutationOptions = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiVoiceGuard>>, TError,{data: BodyType<NyayaAiVoiceGuardInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof nyayaAiVoiceGuard>>, TError,{data: BodyType<NyayaAiVoiceGuardInput>}, TContext> => {
+
+const mutationKey = ['nyayaAiVoiceGuard'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof nyayaAiVoiceGuard>>, {data: BodyType<NyayaAiVoiceGuardInput>}> = (props) => {
+          const {data} = props ?? {};
+
+          return  nyayaAiVoiceGuard(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type NyayaAiVoiceGuardMutationResult = NonNullable<Awaited<ReturnType<typeof nyayaAiVoiceGuard>>>
+    export type NyayaAiVoiceGuardMutationBody = BodyType<NyayaAiVoiceGuardInput>
+    export type NyayaAiVoiceGuardMutationError = ErrorType<AvatarError>
+
+    /**
+ * @summary Deterministic safety gate for live voice transcripts
+ */
+export const useNyayaAiVoiceGuard = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof nyayaAiVoiceGuard>>, TError,{data: BodyType<NyayaAiVoiceGuardInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof nyayaAiVoiceGuard>>,
+        TError,
+        {data: BodyType<NyayaAiVoiceGuardInput>},
+        TContext
+      > => {
+      return useMutation(getNyayaAiVoiceGuardMutationOptions(options));
+    }
 
 export const getPersonaChatUrl = () => {
 
@@ -126,26 +420,26 @@ export const usePersonaChat = <TError = ErrorType<AvatarError>,
       return useMutation(getPersonaChatMutationOptions(options));
     }
 
-export const getAvatarChatUrl = () => {
+export const getInsightsAnalyzeUrl = () => {
 
 
 
 
-  return `/api/avatar/chat`
+  return `/api/insights/analyze`
 }
 
 /**
- * Stateless chat with the child's AI guide. The server builds the age-band-scoped system prompt and enforces all safety guardrails. No conversation data is persisted (data minimization by design).
- * @summary Send a message to the AI avatar companion
+ * Stateless narrative layer over the CLIENT-side deterministic learning analyzer. The request carries compact anonymous aggregates only (per-topic accuracy labels, session trend buckets, engagement signals) — never raw events, free text, nicknames, or any PII (DPDP data minimization). The model only rephrases the given numbers into supportive, growth-oriented observations; a deterministic banned-terms filter then drops any psychological / medical / diagnostic phrasing (the NON-DIAGNOSTIC guarantee is enforced in code, not just by the prompt), and the server attaches the fixed non-diagnostic disclaimer. Called in batch — once per dashboard visit when the activity fingerprint changed; the client caches the narrative (never per-click AI calls). Requires the server-side GEMINI_API_KEY secret.
+ * @summary AI narrative for the learning-insights dashboards
  */
-export const avatarChat = async (avatarChatInput: AvatarChatInput, options?: Parameters<typeof customFetch>[1]): Promise<AvatarChatReply> => {
+export const insightsAnalyze = async (insightsAnalyzeInput: InsightsAnalyzeInput, options?: Parameters<typeof customFetch>[1]): Promise<InsightsAnalyzeReply> => {
 
-  return customFetch<AvatarChatReply>(getAvatarChatUrl(),
+  return customFetch<InsightsAnalyzeReply>(getInsightsAnalyzeUrl(),
   {
     ...options,
     method: 'POST',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(avatarChatInput)
+    body: JSON.stringify(insightsAnalyzeInput)
   }
 );}
 
@@ -153,11 +447,11 @@ export const avatarChat = async (avatarChatInput: AvatarChatInput, options?: Par
 
 
 
-export const getAvatarChatMutationOptions = <TError = ErrorType<AvatarError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof avatarChat>>, TError,{data: BodyType<AvatarChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
-): UseMutationOptions<Awaited<ReturnType<typeof avatarChat>>, TError,{data: BodyType<AvatarChatInput>}, TContext> => {
+export const getInsightsAnalyzeMutationOptions = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof insightsAnalyze>>, TError,{data: BodyType<InsightsAnalyzeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof insightsAnalyze>>, TError,{data: BodyType<InsightsAnalyzeInput>}, TContext> => {
 
-const mutationKey = ['avatarChat'];
+const mutationKey = ['insightsAnalyze'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
       options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
       options
@@ -167,10 +461,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof avatarChat>>, {data: BodyType<AvatarChatInput>}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof insightsAnalyze>>, {data: BodyType<InsightsAnalyzeInput>}> = (props) => {
           const {data} = props ?? {};
 
-          return  avatarChat(data,requestOptions)
+          return  insightsAnalyze(data,requestOptions)
         }
 
 
@@ -180,22 +474,22 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
   return  { mutationFn, ...mutationOptions }}
 
-    export type AvatarChatMutationResult = NonNullable<Awaited<ReturnType<typeof avatarChat>>>
-    export type AvatarChatMutationBody = BodyType<AvatarChatInput>
-    export type AvatarChatMutationError = ErrorType<AvatarError>
+    export type InsightsAnalyzeMutationResult = NonNullable<Awaited<ReturnType<typeof insightsAnalyze>>>
+    export type InsightsAnalyzeMutationBody = BodyType<InsightsAnalyzeInput>
+    export type InsightsAnalyzeMutationError = ErrorType<AvatarError>
 
     /**
- * @summary Send a message to the AI avatar companion
+ * @summary AI narrative for the learning-insights dashboards
  */
-export const useAvatarChat = <TError = ErrorType<AvatarError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof avatarChat>>, TError,{data: BodyType<AvatarChatInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
+export const useInsightsAnalyze = <TError = ErrorType<AvatarError>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof insightsAnalyze>>, TError,{data: BodyType<InsightsAnalyzeInput>}, TContext>, request?: SecondParameter<typeof customFetch>}
  ): UseMutationResult<
-        Awaited<ReturnType<typeof avatarChat>>,
+        Awaited<ReturnType<typeof insightsAnalyze>>,
         TError,
-        {data: BodyType<AvatarChatInput>},
+        {data: BodyType<InsightsAnalyzeInput>},
         TContext
       > => {
-      return useMutation(getAvatarChatMutationOptions(options));
+      return useMutation(getInsightsAnalyzeMutationOptions(options));
     }
 
 export const getHealthCheckUrl = () => {

@@ -25,7 +25,19 @@ export interface UIStrings {
   appTitle: string;
   myProgress: string;
   mapLabel: string;
+  /** Full-screen map modal (reference redesign, Aug 2026). */
+  mapModalSubtitle: string;
+  mapOpenLabel: string;
+  mapCloseLabel: string;
+  mapLegendYou: string;
+  mapLegendHub: string;
+  mapLegendPath: string;
+  mapYouAreHere: string;
   startHereTagline: string;
+  // Reference bottom bar shortcuts (Aug 2026 "same to same" round)
+  learnRights: string;
+  helpOthers: string;
+  earnBadges: string;
   settings: string;
   pressToEnter: string;
   locked: string;
@@ -90,6 +102,29 @@ export interface UIStrings {
   authoritiesRememberLine: string;
 
   // Progress dashboard
+  /** Task 27 - zone completion certificates (PRD 9.4: nickname only). */
+  certificatesHeading: string;
+  certificatesEarnHeading: string;
+  certificateOfCompletion: string;
+  certificateCompletedTag: string;
+  viewCertificate: string;
+  downloadCertificate: string;
+  certificateDownloading: string;
+  certificateDownloadFailed: string;
+  certificateLockedHint: string;
+  certificateLevelsDone: (done: number, total: number) => string;
+  certificateUnlockedToast: string;
+  certificateUnlockedBody: (zoneName: string) => string;
+  certificateClose: string;
+  certBrandName: string;
+  certBrandTagline: string;
+  certPresentedTo: string;
+  certForCompleting: string;
+  certBodyLine: string;
+  certCompletedOnLabel: string;
+  certIdLabel: string;
+  certRecipientFallback: string;
+
   progressTitle: string;
   closeProgress: string;
   completedXofY: (done: number, total: number) => string;
@@ -115,6 +150,157 @@ export interface UIStrings {
   avgImprovement: string;
   sessionIdLabel: string;
 
+  // Learning insights — child-facing glimpse + adult area link (ProgressScreen)
+  adultAreaLink: string;
+  adultAreaLinkSub: string;
+  insMiniTitle: string;
+  insMiniEmpty: string;
+  insMiniAnswered: (count: number) => string;
+  insMiniStrong: (zone: string) => string;
+  insMiniPractice: (zone: string) => string;
+  insMiniKeepGoing: string;
+
+  // Adult insights hub + PIN gate
+  adultAreaTitle: string;
+  adultAreaIntro: string;
+  adultGateNote: string;
+  adultSetPinTitle: string;
+  adultSetPinSub: string;
+  adultEnterPinTitle: string;
+  adultPinPlaceholder: string;
+  adultPinConfirmPlaceholder: string;
+  adultPinMismatch: string;
+  adultPinFormatError: string;
+  adultPinWrong: string;
+  adultSetPinBtn: string;
+  adultUnlock: string;
+  adultLock: string;
+  adultForgotPin: string;
+  adultForgotPinNote: string;
+  adultTeacherCard: string;
+  adultTeacherCardSub: string;
+  adultParentCard: string;
+  adultParentCardSub: string;
+  adultReportCard: string;
+  adultReportCardSub: string;
+  adultBackToGame: string;
+  adultBackToHub: string;
+
+  // Insights dashboards — deterministic layer
+  insLearnerTitle: string;
+  insLearnerSub: string;
+  insNotEnoughData: string;
+  insEvidenceLine: (questions: number, sessions: number) => string;
+  insConfidence: string;
+  insConfidenceHigh: string;
+  insConfidenceMedium: string;
+  insConfidenceLow: string;
+  insLabelStrong: string;
+  insLabelDeveloping: string;
+  insLabelNeedsPractice: string;
+  insLabelInsufficient: string;
+  insTrendImproving: string;
+  insTrendSteady: string;
+  insTrendDeclining: string;
+  insTrendInsufficient: string;
+  insStatQuestions: string;
+  insStatSessions: string;
+  insStatActiveDays: string;
+  insStatAccuracy: string;
+  insStatTime: string;
+  insStatLevels: string;
+  insStatBadges: string;
+  insStatStreak: string;
+  insStatPractice: string;
+  insMinutes: (mins: number) => string;
+  insTopicChartTitle: string;
+  insTrendChartTitle: string;
+  insTrendChartSub: string;
+  insColTopic: string;
+  insColAnswered: string;
+  insColAccuracy: string;
+  insColLabel: string;
+  insColSessions: string;
+  insBehaviorTitle: string;
+  insBehaviorRecap: (count: number) => string;
+  insBehaviorPersistence: (pct: number) => string;
+  insBehaviorPracticeReplays: (count: number) => string;
+  insEngagement: string;
+  insEngagementGood: string;
+  insEngagementBuilding: string;
+  insEngagementLow: string;
+  insStrengthsTitle: string;
+  insPracticeTitle: string;
+  insRecsTitle: string;
+  insFindStrengthTopic: (zone: string, pct: number) => string;
+  insFindImproving: (fromPct: number, toPct: number) => string;
+  insFindPersistence: (pct: number) => string;
+  insFindPracticeTopic: (zone: string, pct: number) => string;
+  insFindPracticeTopicDeveloping: (zone: string, pct: number) => string;
+  insFindRecentDip: (pts: number) => string;
+  insRecReplayZone: (zone: string) => string;
+  insRecContinueZone: (zone: string) => string;
+  insRecRegular: string;
+
+  // Insights — AI narrative panel
+  insAiTitle: string;
+  insAiSub: string;
+  insAiRefresh: string;
+  insAiLoading: string;
+  insAiError: string;
+  insAiUnavailable: string;
+  insAiStrengths: string;
+  insAiPractice: string;
+  insAiRecommendations: string;
+  insAiTrendLabel: string;
+  insAiEncouragementLabel: string;
+  insAiFilteredNote: string;
+  insAiEmpty: string;
+  insAiCachedNote: string;
+
+  // Parent view
+  parentTitle: string;
+  parentIntro: string;
+  parentJourney: (done: number, total: number) => string;
+  parentWhatItMeans: string;
+  parentWhatItMeansBody: string;
+  parentTalkTitle: string;
+  parentTalkBody: string;
+
+  // 14-section report (spec order)
+  reportTitle: string;
+  reportPrint: string;
+  reportGeneratedOn: (when: string) => string;
+  reportS1: string;
+  reportS2: string;
+  reportS3: string;
+  reportS4: string;
+  reportS5: string;
+  reportS6: string;
+  reportS7: string;
+  reportS8: string;
+  reportS9: string;
+  reportS10: string;
+  reportS11: string;
+  reportS12: string;
+  reportS13: string;
+  reportS14: string;
+  reportQpBaseline: string;
+  reportQpCheckpoint: string;
+  reportQpRecap: string;
+  reportQpAvgTime: string;
+  reportSeconds: (secs: number) => string;
+  reportObservedTag: string;
+  reportDevRefTag: string;
+  reportDevRefBody: string;
+  reportSourcesTitle: string;
+  reportSourceLegalIntro: string;
+  reportLegalUnverified: string;
+  reportColAct: string;
+  reportNoBadges: string;
+  reportNoCertificates: string;
+  insDisclaimer: string;
+
   // Help dialog — helpline names/numbers must stay exact in every language
   getHelpNow: string;
   emergencyHelp: string;
@@ -134,6 +320,30 @@ export interface UIStrings {
   openGuide: string;
   closeChat: string;
   zoneWelcomeFallback: (zoneName: string, theme: string) => string;
+
+  // Nyaya AI — sitewide Gemini-powered legal-literacy Q&A helper.
+  // The disclaimer is HARD-CODED and permanently visible in the widget
+  // (PRD §9.1/§9.2); never AI-generated. Suggested questions are static.
+  nyayaAiDisclaimer: string;
+  nyayaAiSuggestedTitle: string;
+  nyayaAiSuggested: string[];
+  nyayaAiNotConfigured: string;
+  nyayaAiMicDenied: string;
+
+  // Nyaya AI real-time voice mode (Gemini Live). Status labels are UI
+  // chrome (never AI-generated); error texts are friendly, never raw
+  // technical/transport errors, and always point back to typing.
+  nyayaAiTapToTalk: string;
+  nyayaAiListening: string;
+  nyayaAiThinking: string;
+  nyayaAiSpeaking: string;
+  nyayaAiConnecting: string;
+  nyayaAiMicHint: string;
+  nyayaAiVoiceStop: string;
+  nyayaAiVoiceUnavailable: string;
+  nyayaAiVoiceConnectFail: string;
+  nyayaAiMicDeniedVoice: string;
+  nyayaAiRetry: string;
 
   // Persona interviews (Task 17, PRD §7.4) — disclaimer is HARD-CODED and
   // shown every time a persona appears (PRD §9.2); never AI-generated.
@@ -322,7 +532,17 @@ const EN: UIStrings = {
   appTitle: 'Nyaya Nagri',
   myProgress: 'My Progress',
   mapLabel: 'Map',
+  mapModalSubtitle: 'Your journey across Nyaya Nagri',
+  mapOpenLabel: 'Open the full map',
+  mapCloseLabel: 'Close map',
+  mapLegendYou: 'You',
+  mapLegendHub: 'Current Hub',
+  mapLegendPath: 'Path',
+  mapYouAreHere: 'You are here',
   startHereTagline: 'Start here!',
+  learnRights: 'Learn Rights',
+  helpOthers: 'Help Others',
+  earnBadges: 'Earn Badges',
   settings: 'Settings',
   pressToEnter: 'Press E or Tap to Enter',
   locked: 'Locked',
@@ -421,6 +641,29 @@ const EN: UIStrings = {
   authoritiesRememberLine:
     'You never have to remember all these names. One easy call — Childline 1098 — can reach the right helper for you.',
 
+  certificatesHeading: 'Certificates',
+  certificatesEarnHeading: 'Certificates to Earn',
+  certificateOfCompletion: 'Certificate of Completion',
+  certificateCompletedTag: 'Completed',
+  viewCertificate: 'View Certificate',
+  downloadCertificate: 'Download Certificate',
+  certificateDownloading: 'Preparing your certificate…',
+  certificateDownloadFailed: 'That download did not work. Please try again.',
+  certificateLockedHint: 'Complete this zone to unlock your certificate.',
+  certificateLevelsDone: (done, total) => `${done} of ${total} levels done`,
+  certificateUnlockedToast: 'Certificate Unlocked!',
+  certificateUnlockedBody: (zoneName) => `Congratulations! You completed ${zoneName}.`,
+  certificateClose: 'Close',
+  certBrandName: 'NYAYA NAGRI',
+  certBrandTagline: 'Learning & Rights Education Platform',
+  certPresentedTo: 'This certificate is proudly presented to',
+  certForCompleting: 'for successfully completing',
+  certBodyLine:
+    'and demonstrating completion of the learning activities and challenges within this Nyaya Nagri learning zone.',
+  certCompletedOnLabel: 'Completed on',
+  certIdLabel: 'Certificate ID',
+  certRecipientFallback: 'Nyaya Nagri Explorer',
+
   progressTitle: 'My Progress',
   closeProgress: 'Close progress',
   completedXofY: (done, total) =>
@@ -452,6 +695,182 @@ const EN: UIStrings = {
   avgImprovement: 'Average improvement across played zones:',
   sessionIdLabel: 'Pseudonymous session ID:',
 
+  adultAreaLink: 'Teacher & Parent Insights',
+  adultAreaLinkSub:
+    'Opens in a new tab — learning patterns, charts and a printable report (PIN-protected).',
+  insMiniTitle: 'My Learning Glimpse',
+  insMiniEmpty: 'Not enough activity data yet. Play a few more levels and check back!',
+  insMiniAnswered: (count: number) =>
+    `You have answered ${count} questions on your journey — great effort!`,
+  insMiniStrong: (zone: string) => `${zone} looks like one of your strong topics. Wonderful!`,
+  insMiniPractice: (zone: string) =>
+    `A friendly replay of ${zone} could make you even stronger.`,
+  insMiniKeepGoing: 'Keep exploring — every question makes your rights-knowledge stronger!',
+
+  adultAreaTitle: 'Teacher & Parent Insights',
+  adultAreaIntro:
+    'Game-based learning patterns for the explorer on this device — observations over time, never judgements or diagnoses.',
+  adultGateNote:
+    'This is a local demo gate for this prototype: the PIN lives only in this browser and protects the adult views on this device. A real school deployment would use accounts with server-side access control.',
+  adultSetPinTitle: 'Set an adult PIN',
+  adultSetPinSub:
+    'Choose a 4-6 digit PIN. You will need it to open the teacher and parent views on this device.',
+  adultEnterPinTitle: 'Enter the adult PIN',
+  adultPinPlaceholder: 'PIN (4-6 digits)',
+  adultPinConfirmPlaceholder: 'Repeat PIN',
+  adultPinMismatch: 'The two PINs do not match.',
+  adultPinFormatError: 'The PIN must be 4 to 6 digits.',
+  adultPinWrong: 'Wrong PIN. Please try again.',
+  adultSetPinBtn: 'Save PIN & open',
+  adultUnlock: 'Unlock',
+  adultLock: 'Lock this area',
+  adultForgotPin: 'Forgot the PIN? Reset it',
+  adultForgotPinNote:
+    'Resetting the PIN never touches any learning data. You will simply set a new PIN.',
+  adultTeacherCard: 'Teacher dashboard',
+  adultTeacherCardSub:
+    'Topic accuracy, session trends, behaviour signals and AI observations.',
+  adultParentCard: 'Parent view',
+  adultParentCardSub: "A simple, friendly summary of your child's learning journey.",
+  adultReportCard: 'Detailed report',
+  adultReportCardSub: 'The full 14-section learning report — printable as PDF.',
+  adultBackToGame: 'Back to the game',
+  adultBackToHub: 'Back to insights home',
+
+  insLearnerTitle: 'Explorer on this device',
+  insLearnerSub:
+    'This prototype stores one learner locally in this browser — identified only by a pseudonymous session ID, never a real name.',
+  insNotEnoughData:
+    'Not enough activity data yet to identify learning patterns. Insights appear after at least 8 answered questions across 2 different play sessions.',
+  insEvidenceLine: (questions: number, sessions: number) =>
+    `Based on ${questions} answered questions across ${sessions} play sessions`,
+  insConfidence: 'Evidence confidence',
+  insConfidenceHigh: 'High',
+  insConfidenceMedium: 'Medium',
+  insConfidenceLow: 'Low',
+  insLabelStrong: 'Strong',
+  insLabelDeveloping: 'Developing',
+  insLabelNeedsPractice: 'Needs Practice',
+  insLabelInsufficient: 'Not enough data',
+  insTrendImproving: 'Improving',
+  insTrendSteady: 'Steady',
+  insTrendDeclining: 'Recent dip',
+  insTrendInsufficient: 'Not enough data',
+  insStatQuestions: 'Questions answered',
+  insStatSessions: 'Play sessions',
+  insStatActiveDays: 'Active days',
+  insStatAccuracy: 'Overall accuracy',
+  insStatTime: 'Active learning time',
+  insStatLevels: 'Levels completed',
+  insStatBadges: 'Badges',
+  insStatStreak: 'Day streak',
+  insStatPractice: 'Practice replays',
+  insMinutes: (mins: number) => (mins < 1 ? 'under a minute' : `${mins} min`),
+  insTopicChartTitle: 'Accuracy by topic (zones)',
+  insTrendChartTitle: 'Improvement timeline',
+  insTrendChartSub:
+    'Average accuracy per play session — patterns over time, never single answers.',
+  insColTopic: 'Topic',
+  insColAnswered: 'Answered',
+  insColAccuracy: 'Accuracy',
+  insColLabel: 'Status',
+  insColSessions: 'Sessions',
+  insBehaviorTitle: 'Learning behaviour signals',
+  insBehaviorRecap: (count: number) =>
+    `${count} adaptive recap questions answered (guided revisits after a tough baseline)`,
+  insBehaviorPersistence: (pct: number) =>
+    `Continues playing after a wrong answer ${pct}% of the time`,
+  insBehaviorPracticeReplays: (count: number) =>
+    `${count} voluntary practice replays of finished levels`,
+  insEngagement: 'Engagement',
+  insEngagementGood: 'Good rhythm',
+  insEngagementBuilding: 'Building up',
+  insEngagementLow: 'Just starting',
+  insStrengthsTitle: 'Strengths',
+  insPracticeTitle: 'Areas for practice',
+  insRecsTitle: 'Recommended next steps',
+  insFindStrengthTopic: (zone: string, pct: number) =>
+    `Shows strong understanding of ${zone} (${pct}% correct).`,
+  insFindImproving: (fromPct: number, toPct: number) =>
+    `Accuracy across sessions grew from ${fromPct}% to ${toPct}% — steady improvement.`,
+  insFindPersistence: (pct: number) =>
+    `Keeps going after mistakes (${pct}% of wrong answers are followed by continued play) — a healthy learning habit.`,
+  insFindPracticeTopic: (zone: string, pct: number) =>
+    `${zone} may benefit from more practice (${pct}% correct so far).`,
+  insFindPracticeTopicDeveloping: (zone: string, pct: number) =>
+    `${zone} is developing well (${pct}% correct) — a little more play could make it strong.`,
+  insFindRecentDip: (pts: number) =>
+    `Recent sessions dipped by about ${pts} points — a gentle revisit could help.`,
+  insRecReplayZone: (zone: string) =>
+    `Replay a level in ${zone} for friendly practice (replays are never scored).`,
+  insRecContinueZone: (zone: string) => `Continue the journey: ${zone} is the next zone waiting.`,
+  insRecRegular: 'Short, regular play sessions (2-3 per week) build the strongest patterns.',
+
+  insAiTitle: 'AI observations',
+  insAiSub:
+    'Written by AI from the aggregated numbers above — filtered so it can never contain psychological or medical claims. The deterministic stats stay the source of truth.',
+  insAiRefresh: 'Refresh AI observations',
+  insAiLoading: 'Asking the AI to summarize the latest patterns…',
+  insAiError:
+    'The AI summary is unavailable right now. The stats above are unaffected — try again in a moment.',
+  insAiUnavailable:
+    'AI observations need the server AI key (GEMINI_API_KEY). All deterministic insights above work without it.',
+  insAiStrengths: 'Strengths',
+  insAiPractice: 'Practice areas',
+  insAiRecommendations: 'Suggestions',
+  insAiTrendLabel: 'Trend',
+  insAiEncouragementLabel: 'A word for the adults',
+  insAiFilteredNote: 'Some AI text was removed by the safety filter (non-diagnostic guarantee).',
+  insAiEmpty: 'No AI observations yet — tap refresh to generate them.',
+  insAiCachedNote: 'Generated once per data change and cached — never on every click.',
+
+  parentTitle: 'Parent view',
+  parentIntro:
+    "A simple picture of your child's learning journey in Nyaya Nagri — the game that teaches children their legal rights.",
+  parentJourney: (done: number, total: number) => `${done} of ${total} zones explored`,
+  parentWhatItMeans: 'What does this mean?',
+  parentWhatItMeansBody:
+    'These numbers only describe how your child plays and answers inside the game. They show learning patterns — they never measure intelligence, attention, or any medical or psychological condition.',
+  parentTalkTitle: 'A nice question to ask your child',
+  parentTalkBody:
+    '"Which zone did you like the most, and what would you do if a friend needed that right?" — talking about it doubles the learning.',
+
+  reportTitle: 'Learning & Development Report',
+  reportPrint: 'Print / Save as PDF',
+  reportGeneratedOn: (when: string) => `Generated on ${when}`,
+  reportS1: 'Student Overview',
+  reportS2: 'Learning Summary',
+  reportS3: 'Zone Progress',
+  reportS4: 'Question Performance',
+  reportS5: 'Topic Performance',
+  reportS6: 'Strengths',
+  reportS7: 'Areas for Practice',
+  reportS8: 'Improvement Timeline',
+  reportS9: 'Engagement Summary',
+  reportS10: 'Recommended Activities',
+  reportS11: 'Badges',
+  reportS12: 'Certificates',
+  reportS13: 'AI-Generated Learning Insights',
+  reportS14: 'Disclaimer',
+  reportQpBaseline: 'Baseline quiz accuracy (before learning)',
+  reportQpCheckpoint: 'Checkpoint quiz accuracy (after learning)',
+  reportQpRecap: 'Adaptive recap accuracy',
+  reportQpAvgTime: 'Average response time',
+  reportSeconds: (secs: number) => `${secs}s`,
+  reportObservedTag: 'Observed game behaviour',
+  reportDevRefTag: 'Developmental reference',
+  reportDevRefBody:
+    'Background reading on how children develop and learn (adult context only — never used to assess this child): Verywell Mind, "Child Psychology and Development".',
+  reportSourcesTitle: 'Sources & verification',
+  reportSourceLegalIntro:
+    "Every legal topic in the game traces to Indian law as published on India Code (indiacode.nic.in), the Government of India's official legislation repository:",
+  reportLegalUnverified: 'Legal source could not be verified',
+  reportColAct: 'Legal basis (India Code)',
+  reportNoBadges: 'No badges earned yet.',
+  reportNoCertificates: 'No certificates earned yet.',
+  insDisclaimer:
+    "These insights describe game-based learning patterns only. This is not a psychological, medical, or diagnostic assessment, and it cannot determine any child's mental or medical condition. If you have any concern about a child's development or wellbeing, please talk to a qualified professional.",
+
   getHelpNow: 'Get Help Now',
   emergencyHelp: 'Emergency Help',
   childline: 'Childline',
@@ -460,17 +879,46 @@ const EN: UIStrings = {
   close: 'Close',
 
   guideIntro:
-    "Hi! I'm your guide here in Nyaya Nagri. I'm a computer friend, not a real person, but I'm here to help you learn about your rights. How can I help today?",
-  yourGuide: 'Your Guide',
-  aiCompanion: 'AI Companion',
+    "Hi! I'm Nyaya AI 👋 Ask me anything about your rights or what you're learning in Nyaya Nagri. I'm a computer helper, not a real person or lawyer — and please don't share personal details like your real name, school, or phone number.",
+  yourGuide: 'Nyaya AI',
+  aiCompanion: 'Your Rights Guide',
   thinking: 'Thinking...',
-  askAnything: 'Ask me anything...',
-  guideResting: 'Your guide is taking a rest — try again in a moment.',
+  askAnything: 'Type your question...',
+  guideResting: 'Nyaya AI is taking a short break. Please try again.',
   toggleVoice: 'Toggle voice',
-  openGuide: 'Open Guide',
+  openGuide: 'Open Nyaya AI',
   closeChat: 'Close chat',
   zoneWelcomeFallback: (zoneName, theme) =>
     `Welcome to ${zoneName}! Here we'll learn about: ${theme}.`,
+
+  nyayaAiDisclaimer:
+    'This AI provides educational legal information, not professional legal advice.',
+  nyayaAiSuggestedTitle: 'Try asking:',
+  nyayaAiSuggested: [
+    'What are my rights?',
+    'Explain this zone',
+    'What should I do online?',
+    'Why is this important?',
+    'Explain in simple words',
+  ],
+  nyayaAiNotConfigured: 'Nyaya AI is not set up yet — please try again later.',
+  nyayaAiMicDenied:
+    "I can't hear you because microphone access is off. You can allow the mic in your browser settings, or just type your question.",
+
+  nyayaAiTapToTalk: 'Tap to talk',
+  nyayaAiListening: 'Listening... speak now',
+  nyayaAiThinking: 'Thinking...',
+  nyayaAiSpeaking: 'Nyaya AI is speaking...',
+  nyayaAiConnecting: 'Connecting...',
+  nyayaAiMicHint: 'Tap the microphone and talk to me.',
+  nyayaAiRetry: 'Try again',
+  nyayaAiVoiceStop: 'End voice chat',
+  nyayaAiVoiceUnavailable:
+    'Voice chat is temporarily unavailable. You can still chat with Nyaya AI.',
+  nyayaAiVoiceConnectFail:
+    "I couldn't start voice chat right now. Please try again, or just type your question.",
+  nyayaAiMicDeniedVoice:
+    "I can't hear you because microphone access is blocked. You can allow the mic in your browser settings, or just type your question — I'm still here!",
 
   personaDisclaimer: (role) => `This is a role-play, not a real ${role}.`,
   personaRolePolice: 'Police Officer',
@@ -718,7 +1166,17 @@ const HI: UIStrings = {
   appTitle: 'न्याय नगरी',
   myProgress: 'मेरी प्रगति',
   mapLabel: 'नक्शा',
+  mapModalSubtitle: 'न्याय नगरी में तुम्हारा सफ़र',
+  mapOpenLabel: 'पूरा नक्शा खोलो',
+  mapCloseLabel: 'नक्शा बंद करो',
+  mapLegendYou: 'तुम',
+  mapLegendHub: 'मुख्य केंद्र',
+  mapLegendPath: 'रास्ता',
+  mapYouAreHere: 'तुम यहाँ हो',
   startHereTagline: 'यहाँ से शुरू करो!',
+  learnRights: 'अधिकार सीखो',
+  helpOthers: 'दूसरों की मदद करो',
+  earnBadges: 'बैज कमाओ',
   settings: 'सेटिंग्स',
   pressToEnter: 'E दबाओ या टैप करके अंदर जाओ',
   locked: 'अभी बंद है',
@@ -817,6 +1275,29 @@ const HI: UIStrings = {
   authoritiesRememberLine:
     'तुम्हें ये सारे नाम याद रखने की ज़रूरत नहीं है। एक आसान कॉल — चाइल्डलाइन 1098 — तुम्हें सही मददगार तक पहुँचा सकती है।',
 
+  certificatesHeading: 'प्रमाणपत्र',
+  certificatesEarnHeading: 'कमाने के लिए प्रमाणपत्र',
+  certificateOfCompletion: 'पूर्णता प्रमाणपत्र',
+  certificateCompletedTag: 'पूरा हुआ',
+  viewCertificate: 'प्रमाणपत्र देखो',
+  downloadCertificate: 'प्रमाणपत्र डाउनलोड करो',
+  certificateDownloading: 'तुम्हारा प्रमाणपत्र तैयार हो रहा है…',
+  certificateDownloadFailed: 'डाउनलोड नहीं हो पाया। फिर से कोशिश करो।',
+  certificateLockedHint: 'अपना प्रमाणपत्र पाने के लिए यह ज़ोन पूरा करो।',
+  certificateLevelsDone: (done, total) => `${total} में से ${done} लेवल पूरे`,
+  certificateUnlockedToast: 'प्रमाणपत्र मिल गया!',
+  certificateUnlockedBody: (zoneName) => `बधाई हो! तुमने ${zoneName} पूरा कर लिया।`,
+  certificateClose: 'बंद करो',
+  certBrandName: 'न्याय नगरी',
+  certBrandTagline: 'सीखने और अधिकारों की शिक्षा का मंच',
+  certPresentedTo: 'यह प्रमाणपत्र गर्व के साथ दिया जाता है',
+  certForCompleting: 'सफलतापूर्वक पूरा करने के लिए',
+  certBodyLine:
+    'और इस न्याय नगरी लर्निंग ज़ोन की सीखने की गतिविधियाँ और चुनौतियाँ पूरी करने के लिए।',
+  certCompletedOnLabel: 'पूरा किया',
+  certIdLabel: 'प्रमाणपत्र आईडी',
+  certRecipientFallback: 'न्याय नगरी खोजी',
+
   progressTitle: 'मेरी प्रगति',
   closeProgress: 'प्रगति बंद करो',
   completedXofY: (done, total) =>
@@ -848,6 +1329,180 @@ const HI: UIStrings = {
   avgImprovement: 'खेले गए ज़ोन में औसत सुधार:',
   sessionIdLabel: 'छद्म सेशन ID:',
 
+  adultAreaLink: 'शिक्षक और अभिभावक इनसाइट्स',
+  adultAreaLinkSub:
+    'नए टैब में खुलता है — सीखने के पैटर्न, चार्ट और प्रिंट होने वाली रिपोर्ट (PIN-सुरक्षित)।',
+  insMiniTitle: 'मेरी सीखने की झलक',
+  insMiniEmpty: 'अभी पर्याप्त गतिविधि डेटा नहीं है। कुछ और लेवल खेलो और फिर देखना!',
+  insMiniAnswered: (count: number) =>
+    `तुमने अपनी यात्रा में ${count} सवालों के जवाब दिए हैं — शानदार मेहनत!`,
+  insMiniStrong: (zone: string) => `${zone} तुम्हारे मज़बूत विषयों में लगता है। बहुत बढ़िया!`,
+  insMiniPractice: (zone: string) =>
+    `${zone} का एक दोस्ताना रीप्ले तुम्हें और भी मज़बूत बना सकता है।`,
+  insMiniKeepGoing: 'खोज जारी रखो — हर सवाल तुम्हारी अधिकारों की समझ मज़बूत करता है!',
+
+  adultAreaTitle: 'शिक्षक और अभिभावक इनसाइट्स',
+  adultAreaIntro:
+    'इस डिवाइस के खोजी के गेम-आधारित सीखने के पैटर्न — समय के साथ अवलोकन, कभी भी फ़ैसले या निदान नहीं।',
+  adultGateNote:
+    'यह इस प्रोटोटाइप का लोकल डेमो गेट है: PIN सिर्फ़ इसी ब्राउज़र में रहता है और इसी डिवाइस पर बड़ों के व्यू सुरक्षित करता है। असली स्कूल डिप्लॉयमेंट में सर्वर-साइड एक्सेस कंट्रोल वाले असली अकाउंट होंगे।',
+  adultSetPinTitle: 'बड़ों का PIN सेट करें',
+  adultSetPinSub:
+    '4-6 अंकों का PIN चुनें। इसी डिवाइस पर शिक्षक और अभिभावक व्यू खोलने के लिए यह चाहिए होगा।',
+  adultEnterPinTitle: 'बड़ों का PIN डालें',
+  adultPinPlaceholder: 'PIN (4-6 अंक)',
+  adultPinConfirmPlaceholder: 'PIN दोबारा डालें',
+  adultPinMismatch: 'दोनों PIN मेल नहीं खाते।',
+  adultPinFormatError: 'PIN 4 से 6 अंकों का होना चाहिए।',
+  adultPinWrong: 'ग़लत PIN। फिर से कोशिश करें।',
+  adultSetPinBtn: 'PIN सेव करें और खोलें',
+  adultUnlock: 'खोलें',
+  adultLock: 'इस हिस्से को लॉक करें',
+  adultForgotPin: 'PIN भूल गए? रीसेट करें',
+  adultForgotPinNote:
+    'PIN रीसेट करने से सीखने का कोई डेटा नहीं मिटता। आप बस नया PIN सेट करेंगे।',
+  adultTeacherCard: 'शिक्षक डैशबोर्ड',
+  adultTeacherCardSub: 'विषयवार सटीकता, सेशन ट्रेंड, व्यवहार संकेत और AI अवलोकन।',
+  adultParentCard: 'अभिभावक व्यू',
+  adultParentCardSub: 'आपके बच्चे की सीखने की यात्रा का सरल, दोस्ताना सार।',
+  adultReportCard: 'विस्तृत रिपोर्ट',
+  adultReportCardSub: 'पूरी 14-खंड वाली लर्निंग रिपोर्ट — PDF की तरह प्रिंट करें।',
+  adultBackToGame: 'गेम पर वापस',
+  adultBackToHub: 'इनसाइट्स होम पर वापस',
+
+  insLearnerTitle: 'इस डिवाइस का खोजी',
+  insLearnerSub:
+    'यह प्रोटोटाइप एक ही लर्नर को इसी ब्राउज़र में लोकली रखता है — पहचान सिर्फ़ छद्म सेशन ID से, कभी असली नाम से नहीं।',
+  insNotEnoughData:
+    'सीखने के पैटर्न पहचानने के लिए अभी पर्याप्त गतिविधि डेटा नहीं है। कम से कम 2 अलग सेशनों में 8 सवालों के जवाब के बाद इनसाइट्स दिखेंगी।',
+  insEvidenceLine: (questions: number, sessions: number) =>
+    `${sessions} सेशनों में ${questions} जवाबों के आधार पर`,
+  insConfidence: 'भरोसे का स्तर',
+  insConfidenceHigh: 'उच्च',
+  insConfidenceMedium: 'मध्यम',
+  insConfidenceLow: 'कम',
+  insLabelStrong: 'मज़बूत',
+  insLabelDeveloping: 'विकसित हो रहा',
+  insLabelNeedsPractice: 'अभ्यास चाहिए',
+  insLabelInsufficient: 'डेटा कम है',
+  insTrendImproving: 'सुधर रहा',
+  insTrendSteady: 'स्थिर',
+  insTrendDeclining: 'हाल में हल्की गिरावट',
+  insTrendInsufficient: 'डेटा कम है',
+  insStatQuestions: 'जवाब दिए सवाल',
+  insStatSessions: 'खेल सेशन',
+  insStatActiveDays: 'सक्रिय दिन',
+  insStatAccuracy: 'कुल सटीकता',
+  insStatTime: 'सक्रिय सीखने का समय',
+  insStatLevels: 'पूरे किए लेवल',
+  insStatBadges: 'बैज',
+  insStatStreak: 'दिनों की स्ट्रीक',
+  insStatPractice: 'अभ्यास रीप्ले',
+  insMinutes: (mins: number) => (mins < 1 ? 'एक मिनट से कम' : `${mins} मिनट`),
+  insTopicChartTitle: 'विषय (ज़ोन) अनुसार सटीकता',
+  insTrendChartTitle: 'सुधार की टाइमलाइन',
+  insTrendChartSub: 'हर खेल सेशन की औसत सटीकता — समय के साथ पैटर्न, अकेले जवाब नहीं।',
+  insColTopic: 'विषय',
+  insColAnswered: 'जवाब',
+  insColAccuracy: 'सटीकता',
+  insColLabel: 'स्थिति',
+  insColSessions: 'सेशन',
+  insBehaviorTitle: 'सीखने के व्यवहार संकेत',
+  insBehaviorRecap: (count: number) =>
+    `${count} अडैप्टिव रीकैप सवालों के जवाब (कठिन बेसलाइन के बाद दोस्ताना दोहराव)`,
+  insBehaviorPersistence: (pct: number) =>
+    `ग़लत जवाब के बाद ${pct}% बार खेलना जारी रहता है`,
+  insBehaviorPracticeReplays: (count: number) =>
+    `पूरे हो चुके लेवलों के ${count} स्वैच्छिक अभ्यास रीप्ले`,
+  insEngagement: 'जुड़ाव',
+  insEngagementGood: 'अच्छी लय',
+  insEngagementBuilding: 'बन रही है',
+  insEngagementLow: 'अभी शुरुआत है',
+  insStrengthsTitle: 'मज़बूत पक्ष',
+  insPracticeTitle: 'अभ्यास के क्षेत्र',
+  insRecsTitle: 'अगले सुझाए कदम',
+  insFindStrengthTopic: (zone: string, pct: number) =>
+    `${zone} की समझ मज़बूत दिख रही है (${pct}% सही)।`,
+  insFindImproving: (fromPct: number, toPct: number) =>
+    `सेशनों के साथ सटीकता ${fromPct}% से बढ़कर ${toPct}% हुई — लगातार सुधार।`,
+  insFindPersistence: (pct: number) =>
+    `ग़लती के बाद भी आगे बढ़ना जारी रहता है (${pct}% ग़लत जवाबों के बाद खेल जारी) — सीखने की अच्छी आदत।`,
+  insFindPracticeTopic: (zone: string, pct: number) =>
+    `${zone} में और अभ्यास मदद कर सकता है (अभी ${pct}% सही)।`,
+  insFindPracticeTopicDeveloping: (zone: string, pct: number) =>
+    `${zone} अच्छे से विकसित हो रहा है (${pct}% सही) — थोड़ा और खेल इसे मज़बूत बना देगा।`,
+  insFindRecentDip: (pts: number) =>
+    `हाल के सेशनों में करीब ${pts} अंकों की हल्की गिरावट — एक दोस्ताना दोहराव मदद करेगा।`,
+  insRecReplayZone: (zone: string) =>
+    `${zone} का कोई लेवल दोस्ताना अभ्यास के लिए रीप्ले करें (रीप्ले कभी स्कोर नहीं होते)।`,
+  insRecContinueZone: (zone: string) => `यात्रा जारी रखें: अगला ज़ोन ${zone} इंतज़ार कर रहा है।`,
+  insRecRegular: 'छोटे, नियमित खेल सेशन (हफ़्ते में 2-3) सबसे मज़बूत पैटर्न बनाते हैं।',
+
+  insAiTitle: 'AI अवलोकन',
+  insAiSub:
+    'ऊपर के जोड़े गए आँकड़ों से AI द्वारा लिखा गया — ऐसे फ़िल्टर के साथ कि इसमें कभी मनोवैज्ञानिक या चिकित्सीय दावे न आ सकें। भरोसे का स्रोत हमेशा ऊपर के आँकड़े ही हैं।',
+  insAiRefresh: 'AI अवलोकन रीफ्रेश करें',
+  insAiLoading: 'AI से ताज़ा पैटर्न का सार माँगा जा रहा है…',
+  insAiError:
+    'AI सार अभी उपलब्ध नहीं है। ऊपर के आँकड़े प्रभावित नहीं हैं — थोड़ी देर में फिर कोशिश करें।',
+  insAiUnavailable:
+    'AI अवलोकनों के लिए सर्वर पर AI key (GEMINI_API_KEY) चाहिए। ऊपर की सभी नियतात्मक इनसाइट्स इसके बिना भी काम करती हैं।',
+  insAiStrengths: 'मज़बूत पक्ष',
+  insAiPractice: 'अभ्यास क्षेत्र',
+  insAiRecommendations: 'सुझाव',
+  insAiTrendLabel: 'रुझान',
+  insAiEncouragementLabel: 'बड़ों के लिए दो शब्द',
+  insAiFilteredNote: 'सुरक्षा फ़िल्टर ने कुछ AI टेक्स्ट हटाया (नॉन-डायग्नोस्टिक गारंटी)।',
+  insAiEmpty: 'अभी कोई AI अवलोकन नहीं — बनाने के लिए रीफ्रेश दबाएँ।',
+  insAiCachedNote: 'डेटा बदलने पर ही एक बार बनता है और कैश होता है — हर क्लिक पर कभी नहीं।',
+
+  parentTitle: 'अभिभावक व्यू',
+  parentIntro:
+    'न्याय नगरी में आपके बच्चे की सीखने की यात्रा की सरल तस्वीर — वह गेम जो बच्चों को उनके कानूनी अधिकार सिखाता है।',
+  parentJourney: (done: number, total: number) => `${total} में से ${done} ज़ोन खोजे`,
+  parentWhatItMeans: 'इसका मतलब क्या है?',
+  parentWhatItMeansBody:
+    'ये संख्याएँ सिर्फ़ यह बताती हैं कि आपका बच्चा गेम के अंदर कैसे खेलता और जवाब देता है। ये सीखने के पैटर्न दिखाती हैं — बुद्धिमत्ता, ध्यान या किसी चिकित्सीय/मनोवैज्ञानिक स्थिति को कभी नहीं मापतीं।',
+  parentTalkTitle: 'बच्चे से पूछने लायक एक प्यारा सवाल',
+  parentTalkBody:
+    '"तुम्हें कौन-सा ज़ोन सबसे अच्छा लगा, और किसी दोस्त को उस अधिकार की ज़रूरत हो तो तुम क्या करोगे?" — इस पर बात करने से सीख दोगुनी हो जाती है।',
+
+  reportTitle: 'लर्निंग और डेवलपमेंट रिपोर्ट',
+  reportPrint: 'प्रिंट / PDF सेव करें',
+  reportGeneratedOn: (when: string) => `${when} को बनाई गई`,
+  reportS1: 'विद्यार्थी परिचय',
+  reportS2: 'सीखने का सार',
+  reportS3: 'ज़ोन प्रगति',
+  reportS4: 'सवालों का प्रदर्शन',
+  reportS5: 'विषयवार प्रदर्शन',
+  reportS6: 'मज़बूत पक्ष',
+  reportS7: 'अभ्यास के क्षेत्र',
+  reportS8: 'सुधार की टाइमलाइन',
+  reportS9: 'जुड़ाव का सार',
+  reportS10: 'सुझाई गई गतिविधियाँ',
+  reportS11: 'बैज',
+  reportS12: 'प्रमाणपत्र',
+  reportS13: 'AI-जनित लर्निंग इनसाइट्स',
+  reportS14: 'अस्वीकरण',
+  reportQpBaseline: 'बेसलाइन क्विज़ सटीकता (सीखने से पहले)',
+  reportQpCheckpoint: 'चेकपॉइंट क्विज़ सटीकता (सीखने के बाद)',
+  reportQpRecap: 'अडैप्टिव रीकैप सटीकता',
+  reportQpAvgTime: 'औसत जवाब समय',
+  reportSeconds: (secs: number) => `${secs} सेकंड`,
+  reportObservedTag: 'देखा गया गेम व्यवहार',
+  reportDevRefTag: 'विकास संबंधी संदर्भ',
+  reportDevRefBody:
+    'बच्चे कैसे बढ़ते और सीखते हैं, इस पर पृष्ठभूमि पठन (सिर्फ़ बड़ों के संदर्भ के लिए — इस बच्चे के आकलन के लिए कभी नहीं): Verywell Mind, "Child Psychology and Development"।',
+  reportSourcesTitle: 'स्रोत और सत्यापन',
+  reportSourceLegalIntro:
+    'गेम का हर कानूनी विषय भारत सरकार के आधिकारिक कानून भंडार India Code (indiacode.nic.in) पर प्रकाशित कानूनों से जुड़ता है:',
+  reportLegalUnverified: 'कानूनी स्रोत सत्यापित नहीं हो सका',
+  reportColAct: 'कानूनी आधार (India Code)',
+  reportNoBadges: 'अभी कोई बैज नहीं मिला।',
+  reportNoCertificates: 'अभी कोई प्रमाणपत्र नहीं मिला।',
+  insDisclaimer:
+    'ये जानकारियाँ केवल गेम-आधारित सीखने के पैटर्न बताती हैं। यह कोई मनोवैज्ञानिक, चिकित्सीय या नैदानिक आकलन नहीं है, और यह किसी बच्चे की मानसिक या चिकित्सा स्थिति तय नहीं कर सकती। बच्चे के विकास या भलाई से जुड़ी किसी भी चिंता के लिए कृपया योग्य विशेषज्ञ से बात करें।',
+
   getHelpNow: 'अभी मदद लो',
   emergencyHelp: 'आपातकालीन मदद',
   childline: 'चाइल्डलाइन',
@@ -856,17 +1511,46 @@ const HI: UIStrings = {
   close: 'बंद करो',
 
   guideIntro:
-    'नमस्ते! मैं न्याय नगरी में तुम्हारा गाइड हूँ। मैं एक कंप्यूटर दोस्त हूँ, असली इंसान नहीं, पर तुम्हें तुम्हारे अधिकार सीखने में मदद करने के लिए यहाँ हूँ। बताओ, आज कैसे मदद करूँ?',
-  yourGuide: 'तुम्हारा गाइड',
-  aiCompanion: 'AI साथी',
+    'नमस्ते! मैं Nyaya AI हूँ 👋 अपने अधिकारों या न्याय नगरी में जो सीख रहे हो, उसके बारे में कुछ भी पूछो। मैं एक कंप्यूटर हेल्पर हूँ, असली इंसान या वकील नहीं — और अपना असली नाम, स्कूल या फ़ोन नंबर जैसी निजी बातें मत बताना।',
+  yourGuide: 'Nyaya AI',
+  aiCompanion: 'तुम्हारा अधिकार गाइड',
   thinking: 'सोच रहा हूँ...',
-  askAnything: 'कुछ भी पूछो...',
-  guideResting: 'तुम्हारा गाइड थोड़ा आराम कर रहा है — थोड़ी देर में फिर कोशिश करो।',
+  askAnything: 'अपना सवाल लिखो...',
+  guideResting: 'Nyaya AI थोड़ा आराम कर रहा है। थोड़ी देर में फिर कोशिश करो।',
   toggleVoice: 'आवाज़ चालू/बंद करो',
-  openGuide: 'गाइड खोलो',
+  openGuide: 'Nyaya AI खोलो',
   closeChat: 'चैट बंद करो',
   zoneWelcomeFallback: (zoneName, theme) =>
     `${zoneName} में स्वागत है! यहाँ हम सीखेंगे: ${theme}।`,
+
+  nyayaAiDisclaimer:
+    'यह AI शिक्षा के लिए कानूनी जानकारी देता है, पेशेवर कानूनी सलाह नहीं।',
+  nyayaAiSuggestedTitle: 'ये पूछकर देखो:',
+  nyayaAiSuggested: [
+    'मेरे क्या अधिकार हैं?',
+    'यह ज़ोन समझाओ',
+    'ऑनलाइन मुझे क्या करना चाहिए?',
+    'यह ज़रूरी क्यों है?',
+    'आसान शब्दों में समझाओ',
+  ],
+  nyayaAiNotConfigured: 'Nyaya AI अभी तैयार नहीं है — थोड़ी देर बाद कोशिश करो।',
+  nyayaAiMicDenied:
+    'माइक्रोफ़ोन की अनुमति बंद है, इसलिए मैं सुन नहीं पा रहा। ब्राउज़र में माइक की अनुमति दो, या बस अपना सवाल टाइप करो।',
+
+  nyayaAiTapToTalk: 'बोलने के लिए टैप करो',
+  nyayaAiListening: 'सुन रहा हूँ... बोलो',
+  nyayaAiThinking: 'सोच रहा हूँ...',
+  nyayaAiSpeaking: 'Nyaya AI बोल रहा है...',
+  nyayaAiConnecting: 'जुड़ रहा हूँ...',
+  nyayaAiMicHint: 'माइक्रोफ़ोन पर टैप करो और मुझसे बात करो।',
+  nyayaAiRetry: 'फिर से कोशिश करो',
+  nyayaAiVoiceStop: 'वॉइस चैट बंद करो',
+  nyayaAiVoiceUnavailable:
+    'वॉइस चैट अभी थोड़ी देर के लिए उपलब्ध नहीं है। तुम Nyaya AI से टाइप करके बात कर सकते हो।',
+  nyayaAiVoiceConnectFail:
+    'वॉइस चैट अभी शुरू नहीं हो पाई। फिर कोशिश करो, या बस अपना सवाल टाइप करो।',
+  nyayaAiMicDeniedVoice:
+    'माइक्रोफ़ोन की अनुमति बंद है, इसलिए मैं तुम्हें सुन नहीं पा रहा। ब्राउज़र में माइक की अनुमति दो, या बस अपना सवाल टाइप करो — मैं यहीं हूँ!',
 
   personaDisclaimer: (role) => `यह सिर्फ़ एक रोल-प्ले है, असली ${role} नहीं।`,
   personaRolePolice: 'पुलिस अफ़सर',

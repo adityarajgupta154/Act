@@ -24,12 +24,20 @@ export type UIState = {
   avatarEditOpen: boolean;
   /** Avatar Shop overlay (Task 16) — cosmetic Coins shop, no real money. */
   shopOpen: boolean;
+  /** Full-screen Map modal (reference redesign) — opened from the minimap. */
+  mapOpen: boolean;
   /**
    * Task 15: the level currently being played inside the active zone, so
    * the AI companion can greet level entry (like it greets zone entry).
    * Null while on the Level-Select screen or outside a zone.
    */
   activeLevel: { zoneId: string; levelIndex: number; kind: LevelKind } | null;
+  /**
+   * Task 27: zone id whose certificate is open in the viewer, else null.
+   * Central so BOTH My Progress and the zone-complete celebration open the
+   * same viewer.
+   */
+  certificateZoneId: string | null;
 };
 
 let state: UIState = {
@@ -44,7 +52,9 @@ let state: UIState = {
   helpOpen: false,
   avatarEditOpen: false,
   shopOpen: false,
+  mapOpen: false,
   activeLevel: null,
+  certificateZoneId: null,
 };
 
 const listeners = new Set<() => void>();
@@ -143,12 +153,28 @@ export function closeAvatarEdit() {
   uiStore.set({ avatarEditOpen: false });
 }
 
+export function openMap() {
+  uiStore.set({ mapOpen: true });
+}
+
+export function closeMap() {
+  uiStore.set({ mapOpen: false });
+}
+
 export function openShop() {
   uiStore.set({ shopOpen: true });
 }
 
 export function closeShop() {
   uiStore.set({ shopOpen: false });
+}
+
+export function openCertificate(zoneId: string) {
+  uiStore.set({ certificateZoneId: zoneId });
+}
+
+export function closeCertificate() {
+  uiStore.set({ certificateZoneId: null });
 }
 
 // DEV-ONLY test seam: the e2e browser cannot render WebGL, so it cannot

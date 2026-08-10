@@ -73,6 +73,28 @@ const DISTRESS_PATTERNS: RegExp[] = [
   /(मजबूर\s*कर|ज़बरदस्ती\s*कर|जबरदस्ती\s*कर|राज़?\s*रखने|किसी\s*को\s*मत\s*बता|बताने\s*से\s*मना)/,
   // Ongoing harassment / stalking
   /(परेशान\s*कर(ता|ती|\s*रहा|\s*रही)|पीछा\s*कर)/,
+
+  // --- Gujarati (ગુજરાતી script) disclosures — added with the Legal Buddy
+  // AI task, which answers in Gujarati too. Same broad-recall bias as the
+  // Devanagari set: a false positive shows correct helpline info. These run
+  // for EVERY AI chat route (shared module, single-sourced). ---
+  /(મને\s*(માર|પીટ|અડ|ડરાવ|ધમક)|બચાવો|મદદ\s*કર|મને\s*ડર|ખોટી\s*રીતે)/,
+  // Threats / blackmail (any inflection)
+  /(ધમકી|ધમકાવ|બ્લેકમેલ|બ્લેક\s*મેલ)/,
+  // Image-based abuse: photos/videos spread, leaked, shared, demanded
+  /(ફોટો|ફોટા|તસવીર|વીડિયો|વિડિયો|ન્યૂડ)\S*.{0,40}(ફેલાવ|વાયરલ|લીક|શેર|મોકલ|માંગ|બતાવ)/,
+  /(મારી|મારો|મારા)\s*(ફોટો|ફોટા|તસવીર|વીડિયો|વિડિયો|ન્યૂડ)/,
+  // Physical/sexual harm verb inflections
+  /(મારતો|મારતી|મારે\s*છે|પીટતો|પીટતી|પીટે\s*છે|અડતો|અડતી|અડે\s*છે|છેડતો|છેડતી|છેડછાડ)/,
+  /(મારી\s*સાથે|મારા\s*સાથે).{0,30}(ખોટું|ખરાબ|જબરદસ્તી|બળજબરી)/,
+  // Fear / feeling unsafe
+  /(ડર\s*લાગ|ડરી\s*ગય|ડરેલો|ડરેલી|સુરક્ષિત\s*નથી|અસુરક્ષિત|જોખમમાં|ભયમાં)/,
+  // Self-harm
+  /(આપઘાત|આત્મહત્યા|ખુદને\s*(ઈજા|નુકસાન)|મરવું\s*છે|મરી\s*જવું|જીવવું\s*નથી|મારો\s*જીવ)/,
+  // Coercion / forced secrecy
+  /(મજબૂર\s*કર|જબરદસ્તી\s*કર|બળજબરી\s*કર|કોઈને\s*કહે(તો|તી|તા)?\s*ન(હીં|ા)|ખાનગી\s*રાખ|છાનું\s*રાખ)/,
+  // Ongoing harassment / stalking
+  /(પરેશાન\s*કર|હેરાન\s*કર|પીછો\s*કર)/,
 ];
 
 /**
@@ -99,9 +121,35 @@ export const ESCALATION_REPLY_HI = [
   'तुम्हारी स्क्रीन पर "अभी मदद लो" बटन में ये नंबर हमेशा मौजूद हैं। बोलकर तुमने बहादुरी दिखाई है।',
 ].join(' ');
 
+/**
+ * Gujarati escalation reply (Legal Buddy AI task). Hand-written, hard-coded,
+ * human-reviewed — same meaning as the English text, same helpline digits
+ * (1098 / 155260, digits are NEVER localized or altered). The app UI has no
+ * Gujarati chrome, so the Get Help Now button is named in English with a
+ * Gujarati gloss.
+ */
+export const ESCALATION_REPLY_GU = [
+  'મારા પર ભરોસો રાખવા બદલ આભાર — તમે હમણાં જે કહ્યું તે ખરેખર ખૂબ મહત્વનું લાગે છે, અને તમે એક સાચા માણસ પાસેથી સાચી મદદ મેળવવાના હકદાર છો.',
+  'કૃપા કરીને કોઈ ભરોસાપાત્ર મોટા સાથે વાત કરો — જેમ કે મમ્મી-પપ્પા, શિક્ષક કે કોઈ સગા.',
+  'તમે ચાઈલ્ડલાઈનને 1098 પર મફત ફોન કરી શકો છો, ગમે ત્યારે, દિવસ હોય કે રાત (અથવા ઓનલાઈન થતી કોઈ પણ વાત માટે 155260 પર).',
+  'તમારી સ્ક્રીન પર દેખાતા "Get Help Now" (મદદ) બટનમાં આ નંબર હંમેશાં છે. બોલીને તમે હિંમત બતાવી છે.',
+].join(' ');
+
 /** Select the canonical escalation reply for a validated request language. */
-export function getEscalationReply(language: 'en' | 'hi'): string {
-  return language === 'hi' ? ESCALATION_REPLY_HI : ESCALATION_REPLY;
+export function getEscalationReply(language: 'en' | 'hi' | 'gu'): string {
+  if (language === 'hi') return ESCALATION_REPLY_HI;
+  if (language === 'gu') return ESCALATION_REPLY_GU;
+  return ESCALATION_REPLY;
+}
+
+/**
+ * Deterministic script sniff: does the text contain Gujarati script
+ * (U+0A80–U+0AFF)? Used by routes that can answer in Gujarati to pick the
+ * canonical GU escalation reply for a child who wrote in Gujarati. Romanized
+ * Gujarati falls back to the app language — an accepted limitation.
+ */
+export function hasGujaratiScript(text: string): boolean {
+  return /[\u0A80-\u0AFF]/.test(text);
 }
 
 /** Returns true when a single text looks like a real disclosure or distress. */
@@ -123,10 +171,28 @@ export function scanForDistress(texts: string[]): boolean {
  * help resources.
  */
 const OUTPUT_ESCALATION_RE =
-  /1098|155\s?260|१०९८|१५५२६०|childline|child\s?line|cyber\s?crime\s?(helpline|number)|helpline|चाइल्ड\s?लाइन|हेल्प\s?लाइन|साइबर\s?(क्राइम|अपराध)|बाल\s*सहायता|सहायता\s*(लाइन|नंबर)|(नंबर|फ़ोन|फोन)\s*पर\s*(मुफ़्त\s*)?(कॉल|फ़ोन|फोन)|आपातकालीन\s*(नंबर|मदद)|(कॉल|फ़ोन|फोन)\s*कर(ो|ना|\s*सकते)/i;
+  /1098|155\s?260|१०९८|१५५२६०|૧૦૯૮|૧૫૫૨૬૦|childline|child\s?line|cyber\s?crime\s?(helpline|number)|helpline|चाइल्ड\s?लाइन|हेल्प\s?लाइन|साइबर\s?(क्राइम|अपराध)|बाल\s*सहायता|सहायता\s*(लाइन|नंबर)|(नंबर|फ़ोन|फोन)\s*पर\s*(मुफ़्त\s*)?(कॉल|फ़ोन|फोन)|आपातकालीन\s*(नंबर|मदद)|(कॉल|फ़ोन|फोन)\s*कर(ो|ना|\s*सकते)|ચા(ઈ|ઇ)લ્ડ\s?લા(ઈ|ઇ)ન|હેલ્પ\s?લા(ઈ|ઇ)ન|સાયબર\s?(ક્રા(ઈ|ઇ)મ|અપરાધ)|બાળ\s*સહાય|(નંબર|ફોન)\s*પર\s*(મફત\s*)?(કૉલ|કોલ|ફોન)|(ફોન|કૉલ|કોલ)\s*કર(ો|જો|ી\s*શકો)/i;
+
+/**
+ * Digit-run normalization for the output gate: maps Devanagari (०-९) and
+ * Gujarati (૦-૯) numerals to Western digits, then collapses separators
+ * BETWEEN digits so obfuscated helpline numbers ("1 0 9 8", "1-0-9-8",
+ * "૧ ૦ ૯ ૮") cannot slip past the canonical-escalation check. Fail-closed
+ * bias is deliberate: a rare false positive only swaps a legit reply for
+ * the canonical (safe) escalation text.
+ */
+function normalizeDigitRuns(text: string): string {
+  return text
+    .replace(/[०-९]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0966 + 0x30))
+    .replace(/[૦-૯]/g, (d) => String.fromCharCode(d.charCodeAt(0) - 0x0ae6 + 0x30))
+    .replace(/([0-9])[\s\-.()/]+(?=[0-9])/g, '$1');
+}
 
 export function requiresCanonicalEscalation(reply: string): boolean {
-  return OUTPUT_ESCALATION_RE.test(reply);
+  return (
+    OUTPUT_ESCALATION_RE.test(reply) ||
+    OUTPUT_ESCALATION_RE.test(normalizeDigitRuns(reply))
+  );
 }
 
 /**
@@ -147,7 +213,7 @@ export function requiresCanonicalEscalation(reply: string): boolean {
  * prompt-enforced and the client UI never asks for any of it.
  */
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/g;
-const LONG_NUMBER_RE = /\+?[0-9०-९](?:[\s\-.()/]?[0-9०-९]){7,}/g;
+const LONG_NUMBER_RE = /\+?[0-9०-९૦-૯](?:[\s\-.()/]?[0-9०-९૦-૯]){7,}/g;
 const HANDLE_RE = /@[A-Za-z0-9_.]{3,}/g;
 
 export const PII_PLACEHOLDER = '[private detail removed]';

@@ -38,3 +38,12 @@ The redesign spec's "keep fully visible" list = logo / welcome / central visual 
 - `resolution:'high'` + `removeBackground:true` can return a PNG whose RGB still holds the full background while the ALPHA mask is correct — and ReadFile's image preview renders RGB IGNORING alpha, so transparent PNGs look opaque. Judge transparency via `%[fx:mean.a]` or flatten over magenta first.
 - `removeImageBackground` CodeExecution callback WORKS despite the "TODO: not implemented" note inside its SKILL.md.
 - pango + librsvg delegates ARE present in this container's ImageMagick (`magick -list format | grep -i pango`).
+
+## Cutting painterly elements out of a reference frame (world monuments round)
+AI background removal fails on painterly scenes — it keeps the whole background. Deterministic winner: feathered ellipse vignette, `magick crop.png \( -size WxH xc:black -fill white -draw 'ellipse CX,CY RX,RY 0,360' -blur 0x6 \) -alpha off -compose CopyOpacity -composite out.png` — the soft halo carries its own grass and blends into any same-palette ground plate (sample the plate edge for the flat GRASS_BASE hex).
+Locating baked-in UI to erase (padlocks, labels): color-mask connected components + zoomed side-by-side color|mask crops read visually. Eyeball pixel estimates cost ~6 failed clone-patch iterations; the mask method nailed all four in one pass.
+
+## Replicating a full world mock (Aug 2026 village round)
+- Check the reference's NATIVE pixel size (`magick identify`) FIRST — measuring a scaled preview once forced a complete re-measure (assumed 1024x683, real 1536x1024). Derive the mock's px/unit from a known in-world span, then place cutouts with `setScale(worldPxPerUnit / mockPxPerUnit)` (e.g. 40/29.6 → 1.35).
+- A mock's zone ring is usually TIGHTER than gameplay allows: keep every zone-anchor pair ≥ 2× the proximity radius (circles must never intersect) and spread positions outward while preserving the composition's bearings. Also budget for the label pill + bottom HUD bar: south-row zones need z pulled up or their pills clip behind the bar.
+- Baked-in UI floating over WATER: clone-patch with dense low-feather horizontal water bands — ghost gone; slight stylized wave banding is the accepted cost.

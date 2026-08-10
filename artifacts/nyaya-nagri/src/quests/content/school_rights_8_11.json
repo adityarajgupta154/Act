@@ -5,6 +5,18 @@
   "title": "School Is for Everyone",
   "scenes": [
     {
+      "sceneId": "intro1",
+      "narration": "Welcome to School Rights Lane! This is the story of Kiran and his friend Tara. School is a happy place for them, full of friends, games, and new things to learn. But today, something is wrong. Tara has been very quiet since morning.",
+      "next": "intro2",
+      "choices": []
+    },
+    {
+      "sceneId": "intro2",
+      "narration": "Every child in India has special protections for school, written into the country's law. In this story, you will help Kiran and Tara discover them, step by step. Ready? Let's find out what is troubling Tara.",
+      "next": "scene1",
+      "choices": []
+    },
+    {
       "sceneId": "scene1",
       "narration": "Meet Kiran. At lunch, his friend Tara is very quiet. Finally she whispers: 'Papa's work has stopped. There is no money at home. I think I cannot come to school anymore.' Tara looks like she might cry. What should Kiran do?",
       "choices": [
@@ -118,19 +130,60 @@
       "levelId": "level1",
       "kind": "story",
       "sceneIds": [
-        "scene1",
-        "scene2"
+        "intro1",
+        "intro2"
       ],
-      "entryScene": "scene1"
+      "entryScene": "intro1"
     },
     {
       "levelId": "level2",
       "kind": "decision",
       "sceneIds": [
+        "scene1",
+        "scene2",
         "scene3",
         "scene4"
       ],
-      "entryScene": "scene3"
+      "entryScene": "scene1"
+    },
+    {
+      "levelId": "level_sorting",
+      "kind": "sorting",
+      "sorting": {
+        "intro": "Kiran and Tara learned a lot! Now help them sort these school moments. Which are safe and okay? Which should a child tell a trusted grown-up about? And which need Childline 1098 right away?",
+        "cards": [
+          {
+            "text": "Tara gets her textbooks and uniform free at the government school.",
+            "bucket": "safe",
+            "feedback": "That is exactly how it should be. In a government school, elementary education is free: no fees, free textbooks, free uniform."
+          },
+          {
+            "text": "A child is told to leave school because there is no money at home.",
+            "bucket": "tell",
+            "feedback": "The law says no child can lose school because of money. Tell a trusted grown-up, like a parent or teacher, so they can remind the school of the rule."
+          },
+          {
+            "text": "The teacher kindly explains the lesson again when someone does not understand.",
+            "bucket": "safe",
+            "feedback": "That is what school should feel like — teachers are there to help children learn, kindly."
+          },
+          {
+            "text": "A child is worried about school and does not know who to ask.",
+            "bucket": "tell",
+            "feedback": "Worries shared with a trusted grown-up get smaller. A parent or a teacher is a good first person to tell."
+          },
+          {
+            "text": "A child is scared and alone, and there is no trusted grown-up nearby to help.",
+            "bucket": "emergency",
+            "feedback": "Childline 1098 is free, for every child, day and night. Calling is always okay."
+          },
+          {
+            "text": "Friends play together at lunch and share their tiffin.",
+            "bucket": "safe",
+            "feedback": "School should feel just like this: safe, friendly, and fun."
+          }
+        ]
+      }
     },
     {
       "levelId": "level3",

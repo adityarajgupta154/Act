@@ -1,5 +1,5 @@
 /**
- * Nyaya Nagri — the illustrated 2D world scene (Task 25 engine migration).
+ * Nyaya Nagri — the illustrated 2D world scene.
  *
  * BEHAVIOR CONTRACT — replicated 1:1 from the 3D Player.tsx/Scene.tsx:
  *  - logical coordinates: x/z in -40..40, zone anchors from zones.ts
@@ -7,31 +7,30 @@
  *  - E interacts ONLY when nearby + unlocked + not inside a zone
  *  - proximity: first zone (in ZONES order) with dist^2 < 36
  *  - movement freezes while a zone is open or a transition runs
- *  - playerPosition {x,z} mirrored every frame for the minimap (STEP 8:
- *    the minimap needs zero changes because the logical space is identical)
- * NEW (explicitly requested by STEP 5): collision bounds — world edges,
- * monuments, and large scenery now block the player.
+ *  - playerPosition {x,z} mirrored every frame for the minimap
+ *  - collision bounds: world edges, monuments, and large scenery block
+ *
+ * VISUALS (Aug 2026 "same to same" rebuild): the whole village is composed
+ * from the child's reference painting — painterly grass plate, radial
+ * cobble paths around a central plaza disc, cutout monuments, twin
+ * blue-roof houses, and a cutout tree ring. All cutouts render at native
+ * crop size (1 px = 1 world px).
  */
 import Phaser from 'phaser';
 import { ZONES, getZoneStates } from '../zones';
 import { uiStore, playerPosition, enterZone } from '@/ui/uiStore';
 import { progressStore } from '@/data/progressStore';
 import {
-  CANOPY_DARK,
-  CANOPY_LIGHT,
-  CANOPY_MAIN,
   GRASS_BASE,
   GRASS_DARK,
   GRASS_LIGHT,
-  PATH_EDGE,
-  PATH_LIGHT,
-  PATH_MAIN,
+  PATH_TILE_W,
+  PLATE,
+  PLAZA,
   PROXIMITY_SQ,
   SPEED_UNITS,
-  TRUNK,
   U,
   WORLD_PX,
-  ZONE0_TILE,
   px,
   toUnit,
 } from './const';
@@ -39,7 +38,10 @@ import {
   MonumentHandle,
   applyMonumentState,
   createMonument,
+  setMonumentLabel,
 } from './monuments';
+import { settingsStore } from '@/data/settingsStore';
+import { getStrings } from '@/i18n/strings';
 import {
   PUPPET_H,
   PUPPET_W,
@@ -55,41 +57,59 @@ interface JoystickRefLike {
 
 interface SceneData {
   joystickRef: JoystickRefLike;
-  territoryUrl: string;
-  monumentUrl: string;
+  /** Phaser texture key -> Vite-resolved URL (see PhaserWorld.tsx). */
+  assets: Record<string, string>;
 }
 
 /**
- * Solid scenery painted INTO the zone0 territory art, expressed as logical
- * circles (STEP 5). Positions were measured off the generated painting
- * (image fractions -> tile space); the corridor along the painted path at
- * x ~ 3.5 stays open on purpose.
+ * Cutout tree ring enclosing the village (decor + collision) — the new
+ * reference frame shows a much denser border forest, so this ring runs
+ * tighter and fuller: [x, z, scale, useTreeB].
  */
-const ZONE0_ART_COLLIDERS: Array<{ x: number; z: number; r: number }> = [
-  { x: -5.7, z: -18.6, r: 1.5 }, // wishing well
-  { x: 4.8, z: -21.7, r: 2.2 }, // orange-roof cottage
-  { x: 9.9, z: -13.7, r: 2.2 }, // blue-roof cottage
-  { x: -8.7, z: -10.2, r: 2.2 }, // yellow-roof cottage
-  { x: -0.8, z: -24.2, r: 2.2 }, // north tree cluster
-  { x: -10.4, z: -17.2, r: 2.2 }, // west tree cluster
-  { x: 8.4, z: -20.0, r: 2.0 }, // north-east trees
-  { x: -2.2, z: -4.0, r: 2.0 }, // south shrubs (left of the path gap)
-  { x: 1.4, z: -2.9, r: 1.6 }, // south shrubs (right)
-  { x: 6.2, z: -9.6, r: 1.4 }, // flower fence
+const BORDER_TREES: Array<[number, number, number, boolean]> = [
+  // top edge
+  [-30, -31, 1.3, false], [-23, -33, 1.05, true], [-16, -31, 1.2, false],
+  [-9, -33, 1.0, true], [-2, -31, 1.35, false], [5, -33, 1.0, true],
+  [12, -31, 1.25, false], [19, -33, 1.05, true], [26, -31, 1.3, false],
+  [32, -33, 1.0, true],
+  // right edge
+  [29, -26, 1.15, true], [31, -19, 1.3, false], [28, -12, 1.05, true],
+  [31, -5, 1.25, false], [29, 2, 1.1, true], [31, 9, 1.3, false],
+  [28, 15, 1.05, true],
+  // bottom edge
+  [24, 17, 1.25, false], [17, 15, 1.0, true], [10, 17, 1.3, false],
+  [3, 15, 1.0, true], [-4, 17, 1.25, false], [-11, 15, 1.05, true],
+  [-18, 17, 1.3, false], [-25, 15, 1.0, true],
+  // left edge (behind the river)
+  [-31, 10, 1.25, false], [-29, 3, 1.1, true], [-31, -4, 1.3, false],
+  [-29, -11, 1.05, true], [-31, -18, 1.2, false], [-29, -25, 1.1, true],
+  // outer fillers — the reference forest reads as a solid canopy wall
+  [-34, -27, 1.1, true], [-33, -11, 1.15, false], [-33, 6, 1.1, true],
+  [-34, 13, 1.2, false], [33, -26, 1.1, false], [34, -12, 1.2, true],
+  [33, 1, 1.1, false], [34, 12, 1.15, true], [-30, 17, 1.15, true],
+  [30, 17, 1.2, true], [-27, -34, 1.1, true], [9, -35, 1.1, false],
+  [27, -34, 1.15, true],
 ];
 
-/** Decorative placeholder planting for zones 1-6 (deterministic offsets). */
-const DECOR_TREES: Array<[number, number, number]> = [
-  [-7, 1, 1], [6, 3, 0.85], [-4, -6, 1], [7, -4, 0.9],
+/** Interior tree accents between the zone spokes (reference clumps). */
+const INNER_TREES: Array<[number, number, number, boolean]> = [
+  [-20, -20, 0.95, false], [20, -20, 0.9, true],
+  [-6, -30, 0.85, false], [6, -30, 0.8, true], [0, -31, 0.9, false],
+  [-16, 3, 0.9, true], [16, 4, 0.85, false],
+  [-8, 12, 0.8, true], [8, 12, 0.8, false],
+  [22, -7, 0.9, false], [-22, -16, 0.85, true],
 ];
-const DECOR_BUSHES: Array<[number, number]> = [[-5, 5], [4, -2]];
-const DECOR_FLOWERS: Array<[number, number]> = [[-2, 4], [3, 6], [-7, -2]];
 
-/** Border forest ring (decor + collision) enclosing the walkable world. */
-const BORDER_TREES: Array<[number, number, number]> = [
-  [-34, -34, 1.1], [-20, -37, 0.9], [12, -37, 1], [30, -35, 0.95], [38, -22, 1.05],
-  [38, 6, 0.9], [36, 33, 1.1], [16, 37, 0.9], [-12, 38, 1], [-30, 34, 0.95],
-  [-38, 14, 1.05], [-38, -8, 0.9],
+/** The single blue-roof "help house" east of the plaza (decor only). */
+const HOUSES: Array<[number, number, boolean]> = [
+  [16, -12, false],
+];
+
+/** Flower patch cutouts along the paths (no collision). */
+const FLOWER_PATCHES: Array<[number, number]> = [
+  [-6, -18], [6, -18], [-14, -18], [14, -18],
+  [-5, -5], [5, -5], [-13, -6], [13, -6],
+  [3, 6], [-3, 8], [14, 3], [-9, -27], [9, -27], [18, -16],
 ];
 
 export class WorldScene extends Phaser.Scene {
@@ -108,6 +128,7 @@ export class WorldScene extends Phaser.Scene {
   private frameIndex = 0;
   private avatarHash = '';
   private unsubProgress: (() => void) | null = null;
+  private unsubSettings: (() => void) | null = null;
   private keyHandlers: Array<[string, (e: Event) => void]> = [];
 
   constructor() {
@@ -120,8 +141,9 @@ export class WorldScene extends Phaser.Scene {
 
   preload() {
     const data = this.sys.settings.data as unknown as SceneData;
-    this.load.image('zone0-territory', data.territoryUrl);
-    this.load.image('zone0-monument', data.monumentUrl);
+    for (const [key, url] of Object.entries(data.assets)) {
+      this.load.image(key, url);
+    }
   }
 
   create() {
@@ -129,9 +151,7 @@ export class WorldScene extends Phaser.Scene {
 
     this.buildGround();
     this.buildPaths();
-    this.buildZone0Territory();
-    this.buildPlaceholderTerritories();
-    this.buildBorderForest();
+    this.buildDecor();
     this.buildMonuments();
     this.buildPlayer();
     this.setupCamera();
@@ -151,6 +171,15 @@ export class WorldScene extends Phaser.Scene {
       }
     });
 
+    // Zone label pills follow the app language (EN <-> HI) live.
+    this.unsubSettings = settingsStore.subscribe(() => {
+      const s = getStrings(settingsStore.getState().language);
+      for (const handle of this.monuments) {
+        const zone = ZONES.find((z) => z.id === handle.id);
+        if (zone) setMonumentLabel(handle, s.zones[zone.id]?.name ?? zone.name);
+      }
+    });
+
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.cleanup());
     this.events.once(Phaser.Scenes.Events.DESTROY, () => this.cleanup());
   }
@@ -161,20 +190,20 @@ export class WorldScene extends Phaser.Scene {
     this.add
       .rectangle(WORLD_PX / 2, WORLD_PX / 2, WORLD_PX, WORLD_PX, GRASS_BASE)
       .setDepth(0);
-    // Soft painterly meadow patches.
-    const g = this.add.graphics().setDepth(1);
+    // The painterly meadow plate from the reference round (1024px art at
+    // 2x) carries the village core; its edges fade into GRASS_BASE.
+    this.add
+      .image(px(PLATE.x), px(PLATE.z), 'village-grass')
+      .setDisplaySize(PLATE.sizePx, PLATE.sizePx)
+      .setDepth(0.4);
+    // Soft far-field patches beyond the plate so the outer meadow is not flat.
+    const g = this.add.graphics().setDepth(0.45);
     const patches: Array<[number, number, number, number, number, number]> = [
-      [-26, -24, 9, 6, GRASS_LIGHT, 0.35], [22, -22, 8, 5.5, GRASS_DARK, 0.25],
-      [-24, 8, 10, 7, GRASS_DARK, 0.22], [26, 10, 9, 6, GRASS_LIGHT, 0.32],
-      [-8, 30, 11, 7, GRASS_LIGHT, 0.3], [12, 32, 8, 5, GRASS_DARK, 0.22],
-      [0, -34, 12, 6, GRASS_LIGHT, 0.28], [-34, -6, 7, 5, GRASS_LIGHT, 0.3],
-      [34, -4, 7, 5, GRASS_DARK, 0.2], [8, 12, 9, 6, GRASS_LIGHT, 0.25],
-      [-14, -30, 6, 4, GRASS_DARK, 0.2], [30, 26, 7, 4.5, GRASS_LIGHT, 0.3],
-      // Blend the Zone 0 territory tile borders into the meadow (art fades to
-      // pale green; these lighten the surrounding flat ground to match).
-      [-10, 3, 7, 4, GRASS_LIGHT, 0.32], [-3, 2.5, 6, 3.5, GRASS_LIGHT, 0.26],
-      [4, 3.5, 7, 4, GRASS_LIGHT, 0.3], [11, 2.5, 6, 3.5, GRASS_LIGHT, 0.28],
-      [-16, -3, 5, 6, GRASS_LIGHT, 0.24], [16, -4, 5, 6, GRASS_LIGHT, 0.24],
+      [-34, -30, 9, 6, GRASS_LIGHT, 0.3], [32, -28, 8, 5.5, GRASS_DARK, 0.22],
+      [-33, 10, 8, 6, GRASS_DARK, 0.2], [34, 14, 8, 5, GRASS_LIGHT, 0.28],
+      [-10, 32, 11, 7, GRASS_LIGHT, 0.28], [14, 34, 8, 5, GRASS_DARK, 0.2],
+      [0, -36, 12, 6, GRASS_LIGHT, 0.26], [-36, -8, 7, 5, GRASS_LIGHT, 0.28],
+      [36, -2, 7, 5, GRASS_DARK, 0.2],
     ];
     for (const [ux, uz, rx, rz, color, alpha] of patches) {
       g.fillStyle(color, alpha);
@@ -183,96 +212,136 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * Dirt paths from the spawn hub to zones 1-6 (zone 0's approach is
-   * painted in its territory art). Drawn UNDER the territory tile so the
-   * painted village takes over where the art begins.
+   * The reference composition: a central cobble plaza disc with path
+   * spokes radiating to every monument. Strips are TileSprites of the
+   * cobble crop, rotated along each spoke so the angles match the mock.
    */
   private buildPaths() {
-    const g = this.add.graphics().setDepth(2);
-    const hub = { x: px(0), y: px(0) };
-    ZONES.forEach((zone, i) => {
-      if (zone.id === 'zone0') return;
-      const end = { x: px(zone.position[0]), y: px(zone.position[1]) };
-      const mx = (hub.x + end.x) / 2;
-      const my = (hub.y + end.y) / 2;
-      const dx = end.x - hub.x;
-      const dy = end.y - hub.y;
-      const len = Math.hypot(dx, dy) || 1;
-      const sign = i % 2 === 0 ? 1 : -1;
-      const bend = {
-        x: mx + (-dy / len) * len * 0.14 * sign,
-        y: my + (dx / len) * len * 0.14 * sign,
-      };
-      const layers: Array<[number, number]> = [
-        [U * 1.7, PATH_EDGE],
-        [U * 1.25, PATH_MAIN],
-      ];
-      for (const [width, color] of layers) {
-        g.lineStyle(width, color, 1);
-        g.beginPath();
-        g.moveTo(hub.x, hub.y);
-        g.lineTo(bend.x, bend.y);
-        g.lineTo(end.x, end.y);
-        g.strokePath();
-        g.fillStyle(color, 1);
-        g.fillCircle(bend.x, bend.y, width / 2);
-        g.fillCircle(end.x, end.y, width / 2);
-      }
-      // Cobble pad where each placeholder monument stands.
-      g.fillStyle(0xd6cdb8, 1);
-      g.fillEllipse(end.x, end.y + 8, 7 * U, 4.6 * U);
-      g.fillStyle(0xe4dcc9, 0.8);
-      g.fillEllipse(end.x, end.y + 6, 5.6 * U, 3.6 * U);
-    });
-  }
-
-  private buildZone0Territory() {
-    const size = ZONE0_TILE.size * U;
     this.add
-      .image(px(ZONE0_TILE.x), px(ZONE0_TILE.z), 'zone0-territory')
-      .setOrigin(0, 0)
-      .setDisplaySize(size, size)
-      .setDepth(3);
-    // Trailhead pad where the child spawns (over the tile's faded edge).
-    const g = this.add.graphics().setDepth(4);
-    g.fillStyle(PATH_MAIN, 0.9);
-    g.fillEllipse(px(0), px(0), 5.2 * U, 3.4 * U);
-    g.fillStyle(PATH_LIGHT, 0.75);
-    g.fillEllipse(px(0), px(0), 3.9 * U, 2.4 * U);
-    // Solid circles for the big props painted into the art (STEP 5).
-    for (const c of ZONE0_ART_COLLIDERS) {
-      this.addStaticCircle(px(c.x), px(c.z), c.r * U);
-    }
-  }
+      .image(px(PLAZA.x), px(PLAZA.z), 'plaza-disc')
+      .setDepth(0.6);
 
-  /**
-   * Zones 1-6 pending their own generated paintings (this round is the
-   * Zone 0 proof of concept): each gets palette-matched ground patches and
-   * simple planted decor so the whole map stays walkable and every
-   * monument keeps its full behavior.
-   */
-  private buildPlaceholderTerritories() {
-    const g = this.add.graphics().setDepth(1);
-    for (const zone of ZONES) {
-      if (zone.id === 'zone0') continue;
-      const cx = px(zone.position[0]);
-      const cy = px(zone.position[1]);
-      g.fillStyle(GRASS_LIGHT, 0.4);
-      g.fillEllipse(cx, cy, 19 * U, 13 * U);
-      g.fillStyle(GRASS_DARK, 0.18);
-      g.fillEllipse(cx + 2 * U, cy + U, 13 * U, 8 * U);
-      for (const [ox, oz, s] of DECOR_TREES) {
-        this.addTree(cx + ox * U, cy + oz * U, s, true);
+    // Spokes as polylines from the plaza edge to each monument front —
+    // the diagonals bend once so they read like the mock's curved lanes.
+    const spokes: Array<Array<[number, number]>> = [
+      [[0, -15.95], [0, -21.8]], // N — wisdom well
+      [[0, -8.05], [0, 15]], // S — through spawn to the meadow edge
+      [[-4.7, -12], [-14.6, -12]], // W — rights cottage
+      [[4.7, -12], [13.6, -12]], // E — help house
+      [[-3.3, -14.6], [-8, -19], [-11.2, -22.3]], // NW — crystal
+      [[3.3, -14.6], [8, -19], [11.2, -22.3]], // NE — shield
+      [[-3.5, -8.6], [-6.8, -5.7], [-9.8, -2.7]], // SW — law pillar
+      [[3.5, -8.6], [6.8, -5.7], [9.8, -2.7]], // SE — kindness corner
+    ];
+    for (const line of spokes) {
+      for (let i = 0; i < line.length - 1; i++) {
+        this.addPathStrip(line[i][0], line[i][1], line[i + 1][0], line[i + 1][1]);
       }
-      for (const [ox, oz] of DECOR_BUSHES) this.addBush(cx + ox * U, cy + oz * U);
-      DECOR_FLOWERS.forEach(([ox, oz], i) => this.addFlower(cx + ox * U, cy + oz * U, i));
     }
   }
 
-  private buildBorderForest() {
-    for (const [ux, uz, s] of BORDER_TREES) {
-      this.addTree(px(ux), px(uz), s, true);
+  private addPathStrip(x1: number, z1: number, x2: number, z2: number) {
+    const ax = px(x1);
+    const ay = px(z1);
+    const bx = px(x2);
+    const by = px(z2);
+    const len = Math.hypot(bx - ax, by - ay);
+    // Extend both ends by half a unit so bent polylines overlap at their
+    // joints instead of leaving a wedge gap.
+    const pad = 0.5 * U;
+    const nx = (bx - ax) / len;
+    const ny = (by - ay) / len;
+    const sx = ax - nx * pad;
+    const sy = ay - ny * pad;
+    const ex = bx + nx * pad;
+    const ey = by + ny * pad;
+    const flen = Math.hypot(ex - sx, ey - sy);
+    // 76px-wide lane (the mock's paths run chunkier than the old 64px),
+    // with the cobble texture scaled up to fill the width seam-free.
+    const strip = this.add.tileSprite(
+      (sx + ex) / 2,
+      (sy + ey) / 2,
+      PATH_TILE_W * 1.19,
+      flen,
+      'path-tile',
+    );
+    strip.setTileScale(1.19);
+    // TileSprite "height" runs along screen +y; rotate it onto the spoke.
+    strip.setRotation(Math.atan2(ey - sy, ex - sx) - Math.PI / 2);
+    strip.setDepth(0.7);
+  }
+
+  private buildDecor() {
+    // River corner with the wooden bridge (reference SW edge): one large
+    // cutout laid over the meadow; the water is fenced off with a chain
+    // of static circle bodies so the player cannot walk in.
+    this.add
+      .image(px(-21.5), px(-2), 'river-corner')
+      .setDisplaySize(378, 600)
+      .setDepth(0.55);
+    for (const rz of [-7.5, -3.5, 0.5, 4.5]) {
+      this.addStaticCircle(px(-23), px(rz), 2.2 * U);
+      this.addStaticCircle(px(-19), px(rz), 2.2 * U);
     }
+
+    // The blue-roof help house east of the plaza (reference mid-right).
+    for (const [ux, uz, flip] of HOUSES) {
+      const hx = px(ux);
+      const hy = px(uz);
+      this.add.ellipse(hx - 8, hy + 6, 150, 40, 0x233318, 0.15).setDepth(5);
+      this.add
+        .image(hx, hy, 'decor-house')
+        .setOrigin(0.5, 0.9)
+        .setFlipX(flip)
+        .setDepth(10 + hy * 0.01);
+      this.addStaticCircle(hx, hy - 6, 2.0 * U);
+    }
+    const plantTree = ([ux, uz, s, useB]: [number, number, number, boolean], i: number) => {
+      const tx = px(ux);
+      const ty = px(uz);
+      this.add
+        .ellipse(tx - 8 * s, ty + 6 * s, 130 * s, 36 * s, 0x233318, 0.13)
+        .setDepth(5);
+      this.add
+        .image(tx, ty, useB ? 'decor-tree-b' : 'decor-tree-a')
+        .setOrigin(0.5, 0.92)
+        .setScale(s)
+        .setFlipX(i % 3 === 1)
+        .setDepth(10 + ty * 0.01);
+      this.addStaticCircle(tx, ty - 4, 1.5 * U * s);
+    };
+    BORDER_TREES.forEach(plantTree);
+    INNER_TREES.forEach(plantTree);
+
+    // Small reference props: rocks, stacked logs, mushrooms, flower fences.
+    const props: Array<[string, number, number, number, boolean]> = [
+      ['decor-rocks', -11, -28.2, 1.35, false],
+      ['decor-rocks', 18, -8, 1.1, true],
+      ['decor-log', 16, -2.5, 1.35, false],
+      ['decor-mushroom', 14.6, -0.2, 1.35, false],
+      ['decor-mushroom', -3.4, 5.2, 1.05, true],
+      ['decor-fence', 12.8, -3.6, 1.35, false],
+      ['decor-fence', -20.5, -13, 1.35, true],
+    ];
+    for (const [key, ux, uz, s, flip] of props) {
+      this.add
+        .image(px(ux), px(uz), key)
+        .setOrigin(0.5, 0.9)
+        .setScale(s)
+        .setFlipX(flip)
+        .setDepth(10 + px(uz) * 0.01);
+    }
+    // Chunky props block movement; mushrooms and fences stay walk-through.
+    this.addStaticCircle(px(-11), px(-28.4), 1.3 * U);
+    this.addStaticCircle(px(18), px(-8.2), 1.1 * U);
+    this.addStaticCircle(px(16), px(-2.7), 1.2 * U);
+
+    FLOWER_PATCHES.forEach(([ux, uz], i) => {
+      this.add
+        .image(px(ux), px(uz), i % 2 ? 'decor-flowers-b' : 'decor-flowers-a')
+        .setDepth(5.5)
+        .setAlpha(0.95);
+    });
   }
 
   private buildMonuments() {
@@ -283,18 +352,28 @@ export class WorldScene extends Phaser.Scene {
       const state = getZoneStates().find((z) => z.id === zoneId);
       if (state?.unlocked) enterZone(zoneId);
     };
+    const strings = getStrings(settingsStore.getState().language);
     this.monuments = ZONES.map((zone) =>
-      createMonument(this, zone, this.colliders, onTap),
+      createMonument(
+        this,
+        zone,
+        this.colliders,
+        onTap,
+        strings.zones[zone.id]?.name ?? zone.name,
+      ),
     );
   }
 
   private buildPlayer() {
     bakePuppetTextures(this, progressStore.getState().avatar);
     this.playerShadow = this.add
-      .ellipse(px(0) - 3, px(0) + 3, 42, 15, 0x1c2a14, 0.22)
+      .ellipse(px(0) - 4, px(0) + 4, 60, 22, 0x1c2a14, 0.22)
       .setDepth(9.99);
     this.player = this.physics.add.sprite(px(0), px(0), puppetKey('down', 0));
     this.player.setOrigin(0.5, 0.97);
+    // The reference frame draws the child noticeably larger against the
+    // village; 1.5x keeps that presence while fitting the 1.9-unit lanes.
+    this.player.setScale(1.5);
     const body = this.player.body as Phaser.Physics.Arcade.Body;
     body.setCircle(20, (PUPPET_W - 40) / 2, PUPPET_H - 42);
     body.setCollideWorldBounds(true);
@@ -305,12 +384,14 @@ export class WorldScene extends Phaser.Scene {
     const cam = this.cameras.main;
     cam.setBounds(0, 0, WORLD_PX, WORLD_PX);
     cam.startFollow(this.player, false, 0.12, 0.12);
-    // Look ahead: centre the view ~7 units north of the player so the Zone 0
-    // monument is visible from spawn (the 3D camera tilted forward the same way).
-    cam.setFollowOffset(0, 7 * U);
+    // Look ahead: centre the view ~12 units north of the player so the
+    // whole zone ring is on screen from spawn (the reference framing).
+    cam.setFollowOffset(0, 12 * U);
     cam.setRoundPixels(true);
     const applyZoom = (width: number) => {
-      cam.setZoom(Math.max(0.5, Math.min(1, width / 1600)));
+      // /2600: desktop fits the full ring — crystal to shield across,
+      // well at the top — in one frame like the reference painting.
+      cam.setZoom(Math.max(0.5, Math.min(1, width / 2600)));
     };
     applyZoom(this.scale.width);
     this.onScaleResize = (size: Phaser.Structs.Size) => applyZoom(size.width);
@@ -414,7 +495,7 @@ export class WorldScene extends Phaser.Scene {
 
     // Depth sort + shadow follow.
     this.player.setDepth(10 + this.player.y * 0.01);
-    this.playerShadow.setPosition(this.player.x - 3, this.player.y + 3);
+    this.playerShadow.setPosition(this.player.x - 4, this.player.y + 4);
     this.playerShadow.setDepth(10 + this.player.y * 0.01 - 0.02);
 
     // 3. Publish the logical position for the minimap (no React renders).
@@ -466,90 +547,6 @@ export class WorldScene extends Phaser.Scene {
     this.colliders.push(zone);
   }
 
-  private ensureTreeTexture(): string {
-    const key = 'decor-tree';
-    if (this.textures.exists(key)) return key;
-    const tex = this.textures.createCanvas(key, 96, 122);
-    if (tex) {
-      const ctx = tex.getContext();
-      ctx.fillStyle = `#${TRUNK.toString(16)}`;
-      ctx.fillRect(43, 72, 10, 44);
-      const blob = (x: number, y: number, r: number, c: number) => {
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `#${c.toString(16)}`;
-        ctx.fill();
-      };
-      blob(48, 52, 34, CANOPY_DARK);
-      blob(40, 42, 26, CANOPY_MAIN);
-      blob(60, 46, 21, CANOPY_MAIN);
-      blob(46, 34, 16, CANOPY_LIGHT);
-      tex.refresh();
-    }
-    return key;
-  }
-
-  private addTree(cx: number, cy: number, scale: number, solid: boolean) {
-    this.add
-      .ellipse(cx - 8 * scale, cy + 6 * scale, 70 * scale, 22 * scale, 0x233318, 0.15)
-      .setDepth(5);
-    this.add
-      .image(cx, cy, this.ensureTreeTexture())
-      .setOrigin(0.5, 0.95)
-      .setScale(scale)
-      .setDepth(10 + cy * 0.01);
-    if (solid) this.addStaticCircle(cx, cy - 4, 1.1 * U * scale);
-  }
-
-  private addBush(cx: number, cy: number) {
-    const key = 'decor-bush';
-    if (!this.textures.exists(key)) {
-      const tex = this.textures.createCanvas(key, 64, 44);
-      if (tex) {
-        const ctx = tex.getContext();
-        const blob = (x: number, y: number, r: number, c: number) => {
-          ctx.beginPath();
-          ctx.arc(x, y, r, 0, Math.PI * 2);
-          ctx.fillStyle = `#${c.toString(16)}`;
-          ctx.fill();
-        };
-        blob(20, 28, 15, CANOPY_DARK);
-        blob(42, 28, 14, CANOPY_MAIN);
-        blob(31, 18, 13, CANOPY_LIGHT);
-        tex.refresh();
-      }
-    }
-    this.add.image(cx, cy, key).setOrigin(0.5, 0.9).setDepth(10 + cy * 0.01);
-  }
-
-  private addFlower(cx: number, cy: number, variant: number) {
-    const colors = [0xf27fb2, 0xffd75e, 0xffffff];
-    const key = `decor-flower-${variant % 3}`;
-    if (!this.textures.exists(key)) {
-      const tex = this.textures.createCanvas(key, 22, 22);
-      if (tex) {
-        const ctx = tex.getContext();
-        const c = colors[variant % 3];
-        const petal = (x: number, y: number) => {
-          ctx.beginPath();
-          ctx.arc(x, y, 4, 0, Math.PI * 2);
-          ctx.fillStyle = `#${c.toString(16).padStart(6, '0')}`;
-          ctx.fill();
-        };
-        petal(11, 5);
-        petal(11, 17);
-        petal(5, 11);
-        petal(17, 11);
-        ctx.beginPath();
-        ctx.arc(11, 11, 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = '#f5b73c';
-        ctx.fill();
-        tex.refresh();
-      }
-    }
-    this.add.image(cx, cy, key).setDepth(5.5);
-  }
-
   private applyZoneStates() {
     const states = getZoneStates();
     for (const handle of this.monuments) {
@@ -563,6 +560,8 @@ export class WorldScene extends Phaser.Scene {
     this.keyHandlers = [];
     this.unsubProgress?.();
     this.unsubProgress = null;
+    this.unsubSettings?.();
+    this.unsubSettings = null;
     if (this.onScaleResize) {
       this.scale.off('resize', this.onScaleResize);
       this.onScaleResize = null;
