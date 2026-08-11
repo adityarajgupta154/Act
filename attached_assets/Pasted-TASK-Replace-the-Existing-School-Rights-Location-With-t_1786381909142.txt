@@ -1,0 +1,381 @@
+TASK: Replace the Existing School Rights Location With the New Transparent Well Asset
+
+I have provided a new transparent-background School Rights / Wisdom Well asset.
+
+Use THIS NEW ASSET as the exact visual replacement for the current School Rights well on the main Nyaya Nagri map.
+
+IMPORTANT:
+Do NOT redesign the map.
+Do NOT regenerate the asset.
+Do NOT modify the other locations.
+Do NOT change the map layout.
+
+Only replace the current School Rights location artwork with the provided new transparent well asset.
+
+==================================================
+1. ASSET TO USE
+==================================================
+
+Use the newly provided transparent PNG asset:
+
+[provided School Rights well asset]
+
+The asset already has its background removed.
+
+Use the actual transparent PNG directly.
+
+Do NOT add:
+
+- white background
+- colored rectangle
+- gray background
+- circular platform
+- artificial black/gray base
+- new background image
+- CSS background behind the asset
+
+The grass/map background must remain visible naturally through the transparent areas.
+
+==================================================
+2. REPLACE CURRENT SCHOOL RIGHTS ASSET
+==================================================
+
+Find the existing location corresponding to:
+
+"School Rights"
+currently represented by the purple-roof well.
+
+Remove the old visual asset completely and replace it with the new transparent well PNG.
+
+The new well should be the ONLY visible artwork representing the School Rights location.
+
+Do not render both assets simultaneously.
+
+IMPORTANT:
+There must be NO duplicate old well behind the new well.
+
+==================================================
+3. PRESERVE MAP POSITION
+==================================================
+
+Keep the School Rights location at its CURRENT map position.
+
+Do NOT move it.
+
+Do NOT change:
+
+- X position
+- Y position
+- path position
+- label position
+- surrounding environment
+- player position
+- camera position
+- map dimensions
+
+Only replace the artwork.
+
+==================================================
+4. SIZE AND SCALE
+==================================================
+
+The new asset is larger/more detailed than the old well.
+
+Scale it carefully so that it visually fits the existing School Rights location.
+
+Do NOT simply use the raw image dimensions.
+
+The final result should:
+
+- look naturally placed in the game world
+- have enough visual presence to be recognizable
+- not cover the path
+- not overlap nearby locations
+- not cover the top navigation
+- not cover the minimap
+- not cover the player
+- not extend outside the intended location area
+
+Compare it visually with the other locations such as:
+
+- Justice Arena
+- Community Shield
+- Rights Cottage
+- Help House
+- Law Pillar
+- Kindness Corner
+
+The School Rights well should have a similar visual importance/scale to the other map locations.
+
+==================================================
+5. REMOVE THE OLD CIRCULAR PLATFORM
+==================================================
+
+VERY IMPORTANT:
+
+The current School Rights well has a dark gray/black circular platform underneath it.
+
+Do NOT keep that platform.
+
+The new transparent asset should sit naturally on the grass.
+
+Remove/hide ONLY the old artificial circular platform associated with the School Rights location.
+
+Do NOT add a replacement circular platform.
+
+Do NOT add a gray ellipse.
+
+Do NOT add a black shadow.
+
+Do NOT add a CSS circle.
+
+If the new PNG already contains its own natural grounding/shadow elements, preserve those because they are part of the asset.
+
+==================================================
+6. TRANSPARENCY
+==================================================
+
+Preserve the PNG alpha channel.
+
+The transparent portions of the asset must show the actual map grass behind them.
+
+Expected visual:
+
+        NEW WELL
+           ↓
+   transparent area
+           ↓
+   existing map grass
+
+NOT:
+
+        NEW WELL
+           ↓
+     white rectangle
+           ↓
+        grass
+
+NOT:
+
+        NEW WELL
+           ↓
+     gray circle
+           ↓
+        grass
+
+==================================================
+7. SCHOOL RIGHTS LABEL
+==================================================
+
+Keep the existing:
+
+"School Rights"
+
+label.
+
+Do NOT permanently bake the label into the image.
+
+The label should remain a separate UI/game element so it continues to work with the existing interaction system.
+
+Position the label naturally below/near the new well, matching the existing map style.
+
+Do not allow the label to overlap the well artwork.
+
+==================================================
+8. LOCK STATE
+==================================================
+
+If School Rights is currently locked, preserve the existing locked state.
+
+The existing lock interaction must continue to work.
+
+Do NOT remove:
+
+- lock icon
+- locked/unlocked logic
+- hover behavior
+- click behavior
+- enter interaction
+
+Only the visual location asset is being replaced.
+
+==================================================
+9. INTERACTION
+==================================================
+
+The new well must behave exactly like the old School Rights location.
+
+Preserve:
+
+- click/tap detection
+- proximity detection
+- Enter interaction
+- keyboard interaction
+- hover state
+- locked state
+- unlocked state
+- any associated story/level navigation
+
+Do NOT create a new interaction system.
+
+Reuse the existing School Rights location component and replace only its visual asset.
+
+==================================================
+10. RESPONSIVE BEHAVIOR
+==================================================
+
+Make sure the new asset behaves correctly when:
+
+- browser window is resized
+- screen resolution changes
+- zoom changes
+- game viewport changes
+
+It must remain anchored to the same map coordinates as the old School Rights location.
+
+Do NOT allow it to drift relative to the map.
+
+==================================================
+11. TECHNICAL IMPLEMENTATION
+==================================================
+
+First inspect the codebase.
+
+Find the exact component responsible for rendering:
+
+"School Rights"
+
+Then determine whether the current well is rendered using:
+
+- <img>
+- CSS background
+- SVG
+- canvas
+- React component
+- absolute-positioned image
+- sprite
+- map object configuration
+
+Replace only the old visual source with the provided transparent PNG.
+
+Prefer using the existing location component rather than creating a duplicate component.
+
+For example:
+
+OLD:
+
+<img src={oldSchoolRightsAsset} />
+
+NEW:
+
+<img src={newSchoolRightsTransparentAsset} />
+
+Keep all existing:
+
+- position styles
+- interaction handlers
+- state logic
+- labels
+- animations
+- accessibility
+- z-index behavior
+
+Only adjust scale/transform if necessary to fit the new asset.
+
+==================================================
+12. Z-INDEX / LAYERING
+==================================================
+
+Make sure the layering is correct.
+
+Expected order:
+
+MAP BACKGROUND
+↓
+PATH
+↓
+ENVIRONMENT
+↓
+SCHOOL RIGHTS WELL
+↓
+LOCK / LOCATION STATUS
+↓
+SCHOOL RIGHTS LABEL
+↓
+PLAYER/UI where appropriate
+
+The well must NOT disappear behind the grass.
+
+The well must NOT appear above unrelated HUD elements.
+
+==================================================
+13. DO NOT MODIFY OTHER LOCATIONS
+==================================================
+
+Absolutely do NOT change:
+
+- Justice Arena
+- Community Shield
+- Rights Cottage
+- Help House
+- Law Pillar
+- Kindness Corner
+- Story Adventure location
+- player character
+- minimap
+- joystick
+- bottom navigation
+- AI assistant
+- Get Help button
+
+Only School Rights is being changed.
+
+==================================================
+14. FINAL VISUAL GOAL
+==================================================
+
+The final map should look like the new School Rights well was originally designed as part of the Nyaya Nagri environment.
+
+It should feel:
+
+- integrated
+- natural
+- polished
+- colorful
+- child-friendly
+- consistent with the existing 3D cartoon game style
+
+There should be NO obvious rectangular image boundary.
+
+There should be NO dark circular platform underneath it.
+
+There should be NO old well visible behind it.
+
+==================================================
+15. TEST CHECKLIST
+==================================================
+
+After implementation verify:
+
+[ ] Old School Rights well is completely removed.
+[ ] New transparent well is visible.
+[ ] No white/black/gray image background is visible.
+[ ] No artificial circular platform remains.
+[ ] Map grass is visible around the transparent areas.
+[ ] School Rights label remains.
+[ ] Lock state remains.
+[ ] School Rights interaction still works.
+[ ] Enter/click behavior still works.
+[ ] Well stays at the original map coordinates.
+[ ] Well does not overlap the path incorrectly.
+[ ] No other map location changed.
+[ ] No duplicate well is rendered.
+[ ] No existing game functionality is broken.
+
+IMPORTANT FINAL RULE:
+
+DO NOT generate another image.
+DO NOT recreate the well with CSS.
+DO NOT redesign the map.
+
+Use the provided transparent PNG asset directly and integrate it into the existing School Rights location component.

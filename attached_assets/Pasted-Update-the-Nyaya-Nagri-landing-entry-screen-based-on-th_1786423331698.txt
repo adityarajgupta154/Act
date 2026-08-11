@@ -1,0 +1,147 @@
+Update the Nyaya Nagri landing/entry screen based on the provided reference image.
+
+IMPORTANT: This is a UI modification only. Do not regenerate or replace the background image/artwork.
+
+1. REMOVE THESE ELEMENTS COMPLETELY
+-----------------------------------
+
+Remove these three UI elements from the landing page:
+
+- "Your journey begins here"
+- "Explore Nyaya Nagri"
+- "How it works"
+
+They should be completely removed from the DOM/layout, not just hidden with opacity.
+
+Also remove any spacing, margins, containers, shadows, or reserved layout space that existed only for these elements.
+
+Do NOT remove:
+- Nyaya Nagri logo
+- About button
+- Accessibility button
+- Settings button
+- Main "ENTER NYAYA NAGRI" button
+- Get Help Now button
+- Existing background artwork
+- Character
+- All buildings/portals in the background
+
+2. MOVE "ENTER NYAYA NAGRI"
+-----------------------------------
+
+After removing the three elements above, reposition the main:
+
+"ENTER NYAYA NAGRI →"
+
+button slightly lower on the screen.
+
+Target position:
+- Horizontally centered.
+- Vertically around 60–65% of the viewport height.
+- It should sit naturally in front of the central Nyaya Nagri building/entrance area.
+- Do not place it too close to the bottom.
+- Keep enough spacing above the Get Help Now button.
+
+The button should remain visually prominent and be the primary CTA.
+
+3. BUTTON DESIGN
+-----------------------------------
+
+Keep the existing orange "ENTER NYAYA NAGRI" design.
+
+Maintain:
+- Large pill-shaped button
+- Orange gradient/style already present
+- White bold text
+- Right arrow icon
+- Existing shadow/border treatment
+
+Do not unnecessarily redesign the button.
+
+Only change its position and surrounding spacing.
+
+4. RESPONSIVE BEHAVIOR
+-----------------------------------
+
+The new positioning must work properly on:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Do NOT use a fixed pixel position that breaks on different screen sizes.
+
+Prefer responsive positioning using:
+- flex/grid layout
+- percentage/vh based spacing
+- responsive CSS breakpoints
+
+The button must remain centered relative to the viewport.
+
+5. REMOVE EMPTY SPACE
+-----------------------------------
+
+After deleting:
+
+"Your journey begins here"
+"Explore Nyaya Nagri"
+"How it works"
+
+make sure there is no awkward empty gap where those components previously existed.
+
+The central CTA should visually occupy that space naturally.
+
+6. IMPORTANT VISUAL REQUIREMENT
+-----------------------------------
+
+The final landing page should feel cleaner and more focused.
+
+The visual hierarchy should be:
+
+Nyaya Nagri Logo
+        ↓
+Main background / central building
+        ↓
+ENTER NYAYA NAGRI
+        ↓
+Background artwork
+
+The "ENTER NYAYA NAGRI" button should clearly be the primary action.
+
+7. DO NOT CHANGE
+-----------------------------------
+
+Do NOT modify:
+
+- Background image
+- Character artwork
+- Buildings
+- Portals
+- Logo
+- Top navigation buttons
+- Get Help Now functionality
+- Existing navigation logic
+- Authentication
+- Story Adventure
+- AI assistant
+- Any backend functionality
+
+Only modify the landing-page UI layout described above.
+
+8. FINAL CHECK
+-----------------------------------
+
+After implementation:
+
+- There must be ZERO instances of "Your journey begins here".
+- There must be ZERO instances of "Explore Nyaya Nagri".
+- There must be ZERO instances of "How it works".
+- Only ONE "ENTER NYAYA NAGRI" button should exist.
+- The Enter button must be horizontally centered.
+- The Enter button must be positioned slightly lower than its current position.
+- No overlapping elements.
+- No unexpected blank space.
+- No change to the background artwork.
+
+Use the uploaded reference image as the visual reference for the desired final composition.

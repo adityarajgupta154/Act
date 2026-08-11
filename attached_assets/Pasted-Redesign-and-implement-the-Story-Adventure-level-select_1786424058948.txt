@@ -1,0 +1,579 @@
+Redesign and implement the Story Adventure level-selection screen of my Nyaya Nagri project using the attached reference image as the PRIMARY visual/design reference.
+
+IMPORTANT:
+- Do NOT generate a new image.
+- Do NOT replace the UI with a static image.
+- Recreate the design using actual HTML/CSS/React components.
+- Preserve all existing functionality, routing, level progression, completion state, and click handlers.
+- This is a UI/UX redesign only.
+- The existing Story Adventure functionality must continue working exactly as before.
+
+REFERENCE:
+Use the attached generated design image as the visual direction.
+Also inspect the existing Story Adventure screen/code to understand the current level data and interactions.
+
+==================================================
+1. OVERALL VISUAL STYLE
+==================================================
+
+Transform the current Story Adventure screen into a polished children's adventure-map interface inspired by the reference.
+
+Visual personality:
+- Bright
+- Friendly
+- Educational
+- Playful
+- Premium children's game UI
+- Soft fantasy/adventure atmosphere
+- Clean and readable
+- Suitable for approximately 8-year-old children
+
+Do NOT make it:
+- Dark
+- Cyberpunk
+- Futuristic
+- Overly complex
+- Neon-heavy
+- Corporate/SaaS-looking
+
+Use the existing Nyaya Nagri visual identity.
+
+Primary palette:
+- Deep navy for headings/text
+- Warm orange/yellow for active progression
+- Soft purple for upcoming/locked progression
+- Green for completed states
+- Cream/white cards
+- Very light sky-blue background
+- Soft pastel green landscape
+
+==================================================
+2. PAGE HEADER
+==================================================
+
+At the top:
+
+LEFT:
+- Circular back button
+- Keep it simple and consistent with the rest of Nyaya Nagri
+
+CENTER:
+Story Adventure
+Har level ek naya adhikar sikhata hai.
+
+Use a large rounded, friendly display font similar to the current project.
+
+RIGHT:
+- Progress pill
+- Example:
+  ⭐ 1 / 2 Complete
+
+This progress value must remain dynamically connected to actual completed levels.
+
+==================================================
+3. ADVENTURE MAP BACKGROUND
+==================================================
+
+Do NOT use a flat empty background.
+
+Create a soft illustrated adventure environment using CSS/HTML elements and existing assets where available.
+
+The background should contain:
+- Soft grassy islands/terrain
+- Trees
+- Flowers
+- Small rocks
+- Logs
+- Mushrooms
+- Small decorative sparkles
+- Soft shadows
+- Subtle depth
+
+The decoration must remain behind the interactive level cards.
+
+Do NOT let decorative elements overlap important text or buttons.
+
+Use absolute-positioned decorative elements only inside a controlled map container so they do not cause page layout problems.
+
+==================================================
+4. LEVEL PATH
+==================================================
+
+Create a clear Candy-Crush-inspired progression path.
+
+The path should visually connect:
+
+LEVEL 1 → LEVEL 2 → LEVEL 3 → LEVEL 4 → ...
+
+Important:
+I will add MANY levels later.
+
+Therefore DO NOT hardcode a two-level layout.
+
+Create a reusable data-driven level system:
+
+levels = [
+  {
+    id,
+    title,
+    subtitle,
+    status,
+    completed,
+    unlocked,
+    image/icon,
+    reward
+  }
+]
+
+The UI should automatically render any number of levels.
+
+The path should be generated from the level sequence.
+
+Use a playful dotted/dashed path.
+
+The path must clearly show progression.
+
+Completed section:
+- Orange/gold path
+- Green completion indicators
+
+Upcoming section:
+- Purple/soft pastel path
+
+Locked section:
+- Muted/grey/pastel appearance
+
+==================================================
+5. LEVEL NODE DESIGN
+==================================================
+
+Each level should have a large circular game node.
+
+Example:
+
+LEVEL 1
+Large orange/gold circular node
+Inside:
+🏆 trophy icon
+
+Completed:
+- Green circular check badge attached to node
+- Subtle glow
+- Small level number badge
+
+LEVEL 2
+Large circular active node
+Inside:
+▶ play icon
+
+Unlocked but not completed:
+- Orange/purple accent
+- Slight pulse/glow animation
+- Clearly clickable
+
+LOCKED LEVEL:
+- Lock icon
+- Muted colors
+- No active glow
+- Not clickable
+
+The node must feel like a game level rather than a normal website button.
+
+==================================================
+6. LEVEL INFORMATION CARD
+==================================================
+
+Next to each node, show a clean white rounded card.
+
+Example:
+
+LEVEL 2
+
+Clean Water,
+Healthy Life
+
+Right to Health & Care
+
+[ ▶ Shuru karo ]
+
+For completed levels:
+
+✓ Completed
+🏆 Right to Life
+
+For locked levels:
+
+🔒 Locked
+Complete previous level first
+
+The card should have:
+- 16–24px rounded corners
+- Soft shadow
+- Thin subtle border
+- Comfortable spacing
+- Strong hierarchy
+
+Do NOT make cards excessively large.
+
+==================================================
+7. LEVEL 1 BEHAVIOR
+==================================================
+
+LEVEL 1 is already completed in the current application.
+
+Keep its current completion state.
+
+Show:
+
+✓ Completed
+
+🏆 Right to Life
+
+The user should be able to click/replay it if the current application already supports replay.
+
+Do not remove existing replay functionality.
+
+==================================================
+8. LEVEL 2 BEHAVIOR
+==================================================
+
+Use the existing Level 2 data:
+
+Title:
+Clean Water, Healthy Life
+
+Right:
+Right to Health & Care
+
+Level 2 should be unlocked ONLY when Level 1 is completed.
+
+Show:
+
+▶ Shuru karo
+
+Clicking Level 2 must open the existing Level 2 Story Adventure flow.
+
+Do not create a new route unless the existing application requires it.
+
+Reuse the existing navigation/route/state logic.
+
+==================================================
+9. FUTURE LEVEL SUPPORT
+==================================================
+
+This is VERY IMPORTANT.
+
+I will add many levels after Level 2.
+
+The design must automatically support:
+
+Level 1
+Level 2
+Level 3
+Level 4
+Level 5
+...
+Level 20+
+
+Do not manually position every level in a way that becomes impossible to maintain.
+
+Use a reusable level component:
+
+<AdventureLevel />
+
+and a reusable path component:
+
+<AdventurePath />
+
+Level position can alternate:
+
+left → right → left → right
+
+or use a controlled zig-zag layout.
+
+The layout must remain visually balanced.
+
+==================================================
+10. UNLOCK ANIMATION
+==================================================
+
+When a level becomes unlocked after completing the previous level:
+
+Create a polished game-style animation:
+
+1. Previous level completion
+2. Green check appears
+3. Reward/check animation
+4. Dotted path lights up progressively
+5. Camera/map subtly moves toward next level
+6. Next level node appears with a soft scale-in
+7. Small sparkle particles appear
+8. Play button gently pulses
+9. Level card fades/slides in
+
+Keep animation short and smooth.
+
+Do NOT make animations excessive.
+
+Suggested timing:
+- 300–500ms for individual transitions
+- 600–900ms total progression sequence
+
+==================================================
+11. LEVEL CARD INTERACTION
+==================================================
+
+When hovering/clicking an unlocked level:
+
+- Slight scale: 1 → 1.03
+- Soft shadow increase
+- Node glow increases
+- Cursor pointer
+
+When clicking:
+
+- Small press animation
+- Then navigate to the story
+
+Locked level click:
+
+Do NOT navigate.
+
+Instead show a small friendly message:
+
+"Pehele pichhla level complete karo! 😊"
+
+Do not show browser alerts.
+
+Use the project's existing toast/modal system if available.
+
+==================================================
+12. MAP CAMERA / SCROLL
+==================================================
+
+The map should feel like a continuous adventure world.
+
+If there are many levels:
+
+- The page should vertically scroll naturally.
+- The level path should continue downward.
+- Avoid horizontal overflow.
+- Keep the header usable.
+- Do NOT allow cards/nodes to overlap.
+- Do NOT let the bottom navigation cover level cards.
+
+If entering Story Adventure:
+- Automatically position the user near the first unlocked level.
+- If Level 1 is completed and Level 2 is unlocked, optionally focus the viewport around Level 2.
+
+==================================================
+13. BOTTOM NAVIGATION
+==================================================
+
+Keep the existing Nyaya Nagri bottom navigation:
+
+Learn Rights
+Help Others
+Earn Badges
+
+But redesign it to match the new visual style.
+
+Use:
+- White/cream pill
+- Soft shadow
+- Rounded corners
+- Small icons
+- Clear active state
+
+IMPORTANT:
+The bottom navigation must be fixed/sticky only if it currently behaves that way.
+
+It must NOT overlap level cards.
+
+Add enough bottom padding to the map content.
+
+==================================================
+14. GET HELP NOW
+==================================================
+
+Keep the existing "Get Help Now" button.
+
+It should remain fixed at the bottom-right.
+
+Do NOT allow it to overlap:
+- Level cards
+- Level nodes
+- Bottom navigation
+
+On mobile:
+- Resize/reposition appropriately.
+
+==================================================
+15. AI ASSISTANT
+==================================================
+
+Keep the existing AI assistant character/button.
+
+Place it at the bottom-right above/near the Get Help Now button.
+
+Do NOT change its existing functionality.
+
+Do NOT add another AI assistant.
+
+==================================================
+16. RESPONSIVE DESIGN
+==================================================
+
+The current design appears optimized for desktop.
+
+Make it responsive.
+
+Desktop:
+- Wide adventure map
+- Zig-zag level path
+- Large level nodes
+
+Tablet:
+- Reduce spacing
+- Keep path readable
+
+Mobile:
+- Single vertical adventure path
+- Level node centered
+- Card below/above node
+- No horizontal scrolling
+- Fixed controls must not cover content
+
+==================================================
+17. IMPORTANT Z-INDEX RULES
+==================================================
+
+Create a clear layer hierarchy:
+
+Background decorations
+↓
+Adventure terrain
+↓
+Path
+↓
+Level nodes
+↓
+Level cards
+↓
+Header
+↓
+Bottom navigation
+↓
+AI assistant
+↓
+Get Help Now
+
+Do NOT use random huge z-index values everywhere.
+
+Use a controlled z-index system.
+
+==================================================
+18. PERFORMANCE
+==================================================
+
+Do not add a heavy animation library if the project already has one.
+
+Reuse existing:
+- React
+- Tailwind/CSS
+- Framer Motion if already installed
+
+Avoid unnecessary re-renders.
+
+Decorative animations should be lightweight.
+
+==================================================
+19. ACCESSIBILITY
+==================================================
+
+Even though this is a children's interface:
+
+- Buttons must have accessible labels
+- Keyboard navigation should work
+- Focus states should be visible
+- Do not rely only on color to communicate locked/completed state
+- Use icons + text
+- Maintain readable contrast
+
+==================================================
+20. DO NOT BREAK EXISTING LOGIC
+==================================================
+
+Before changing code:
+
+1. Inspect the existing Story Adventure implementation.
+2. Identify:
+   - level state
+   - completed level state
+   - unlocked level state
+   - navigation
+   - replay behavior
+   - progress counter
+   - existing animations
+3. Keep those systems.
+4. Refactor only where necessary.
+
+Do NOT create duplicate level state.
+
+Do NOT create a second navigation system.
+
+Do NOT create duplicate progress calculations.
+
+Do NOT create duplicate buttons.
+
+==================================================
+21. FINAL VISUAL TARGET
+==================================================
+
+The final result should feel like:
+
+"Nyaya Nagri's own children's adventure map"
+
+inspired by Candy Crush progression mechanics, but NOT a copy.
+
+It should visually communicate:
+
+✓ Level 1 completed
+→ Level 2 unlocked
+→ Future levels waiting
+→ Child is progressing through a journey of learning rights
+
+The screen should feel exciting enough that an 8-year-old wants to tap the next level.
+
+Most importantly:
+KEEP THE EXISTING NYAYA NAGRI IDENTITY.
+Do not turn it into a generic Candy Crush clone.
+
+==================================================
+IMPLEMENTATION PROCESS
+==================================================
+
+First inspect the current Story Adventure components and routing.
+
+Then:
+
+1. Identify the current level data.
+2. Convert level rendering into reusable components.
+3. Implement the new map layout.
+4. Implement dynamic progression path.
+5. Implement completed/unlocked/locked states.
+6. Implement unlock animation.
+7. Implement responsive layout.
+8. Preserve existing navigation and level functionality.
+9. Test Level 1 → Level 2 progression.
+10. Test locked future levels.
+11. Test replay.
+12. Test desktop + mobile.
+13. Check for overlapping buttons/cards/navigation.
+14. Remove obsolete Story Adventure UI code that causes duplicate elements.
+15. Ensure there is only ONE source of truth for levels and progression.
+
+After implementation, run the project and visually compare it against the attached reference image.
+
+Do not stop at simply making it functional.
+Polish spacing, typography, shadows, animations, node positioning and path alignment until the result looks like a production-quality children's adventure game UI.

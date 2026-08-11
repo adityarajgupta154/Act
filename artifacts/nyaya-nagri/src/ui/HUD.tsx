@@ -4,12 +4,8 @@ import { HelpDialog } from './HelpDialog';
 import {
   Settings,
   Map as MapIcon,
-  Award,
-  Star,
   Users,
   Trophy,
-  Coins,
-  Flame,
   Scale,
   MapPin,
   ChevronUp,
@@ -19,11 +15,12 @@ import {
   BookOpen,
   BadgeCheck,
 } from 'lucide-react';
-import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, openShop, openMap, openStory, enterLevel, clearLevel } from './uiStore';
+import { useUIStore, playerPosition, enterZone, exitZone, openProgress, openSettings, openCommunity, openMap, openStoryMap, enterLevel, clearLevel } from './uiStore';
 import { ProgressOverlay } from './ProgressScreen';
 import { MapOverlay } from './MapScreen';
 import { StoryOverlay } from '@/story/StoryOverlay';
-import { getStoryLevel } from '@/story/storyData';
+import { StoryAdventureMap } from '@/story/StoryAdventureMap';
+import { STORY_LEVELS, STORY_ENTRANCE, isStoryLevelUnlockedIn } from '@/story/storyData';
 import { CertificateOverlay } from '@/certificates/CertificateModal';
 import { SettingsPanel } from './SettingsPanel';
 import { CommunityOverlay } from './CommunityScreen';
@@ -36,8 +33,8 @@ import { OnboardingFlow } from '@/onboarding/OnboardingFlow';
 import { PlayerAvatar } from '@/player/PlayerAvatar';
 import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
 import { AvatarShopOverlay } from '@/economy/AvatarShop';
-import { rankForXp } from '@/economy/economy';
 import { usePlayerAvatarConfig } from '@/player/PlayerAvatar';
+import { PlayerProfile } from './PlayerProfile';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
 import { LevelSelect } from '@/quests/LevelSelect';
@@ -50,98 +47,11 @@ function useOnboarded(): boolean {
   return onboarded;
 }
 
-/* Reference redesign (Aug 2026): HUD chips are solid white rounded cards
-   with soft shadows, colored icon coins and deep-navy labels. */
-const CHIP = 'self-start bg-white pl-1.5 pr-4 py-1.5 rounded-full flex items-center gap-2 shadow-md';
-const CHIP_LABEL = 'font-bold text-sm text-[#0b2a52]';
-const CHIP_ICON = 'w-7 h-7 rounded-full grid place-content-center shrink-0';
-
-/** Rank subtitle under the child's nickname (reference profile chip). */
-function RankLine() {
-  const t = useStrings();
-  const [xp, setXp] = useState(() => progressStore.getState().xp);
-  useEffect(() => progressStore.subscribe((s) => setXp(s.xp)), []);
-  return (
-    <span className="block text-[11px] leading-tight font-semibold text-slate-400">
-      {t.playerRankChip(rankForXp(xp))}
-    </span>
-  );
-}
-
-function BadgeCounter() {
-  const [count, setCount] = useState(() => {
-    const b = progressStore.getState().badges;
-    return Object.values(b).filter(Boolean).length;
-  });
-
-  useEffect(() => {
-    return progressStore.subscribe(state => {
-      const b = state.badges;
-      setCount(Object.values(b).filter(Boolean).length);
-    });
-  }, []);
-
-  if (count === 0) return null;
-
-  return (
-    <div className={CHIP}>
-      <span className={`${CHIP_ICON} bg-orange-100 text-orange-500`}>
-        <Award className="w-4 h-4 fill-orange-400" />
-      </span>
-      <span className={CHIP_LABEL}>{count}</span>
-    </div>
-  );
-}
-
-/**
- * Task 16 economy chips: "Player Rank" (wording is deliberate — never
- * confusable with the in-zone "Level X"), Coins (tap = Avatar Shop), and
- * the gentle streak. The streak chip only celebrates the current count —
- * there is no warning, countdown, or guilt state anywhere (PRD §9.6).
- */
-function EconomyChips() {
-  const t = useStrings();
-  const [snap, setSnap] = useState(() => {
-    const s = progressStore.getState();
-    return { xp: s.xp, coins: s.coins, streak: s.streak.count };
-  });
-  useEffect(
-    () =>
-      progressStore.subscribe((s) =>
-        setSnap({ xp: s.xp, coins: s.coins, streak: s.streak.count }),
-      ),
-    [],
-  );
-
-  return (
-    <>
-      <div className={CHIP}>
-        <span className={`${CHIP_ICON} bg-blue-100 text-blue-600`}>
-          <Trophy className="w-4 h-4" />
-        </span>
-        <span className={CHIP_LABEL}>{t.playerRankChip(rankForXp(snap.xp))}</span>
-      </div>
-      <button
-        onClick={openShop}
-        aria-label={t.openShopLabel}
-        className={`${CHIP} hover:bg-amber-50 transition-colors active:scale-95 touch-manipulation`}
-      >
-        <span className={`${CHIP_ICON} bg-amber-100 text-amber-600`}>
-          <Coins className="w-4 h-4" />
-        </span>
-        <span className={CHIP_LABEL}>{t.coinsChip(snap.coins)}</span>
-      </button>
-      {snap.streak > 0 && (
-        <div className={CHIP}>
-          <span className={`${CHIP_ICON} bg-orange-100 text-orange-500`}>
-            <Flame className="w-4 h-4" />
-          </span>
-          <span className={CHIP_LABEL}>{t.streakChip(snap.streak)}</span>
-        </div>
-      )}
-    </>
-  );
-}
+/* Reference redesign (Aug 2026) + map declutter: the old left-rail chip
+   stack (badges / rank / coins / streak / My Progress / Rights Community)
+   now lives INSIDE the expandable PlayerProfile card — see
+   PlayerProfile.tsx. Only the brand card and that ONE card stay on the
+   left; the dropdown overlays the map without moving anything. */
 
 function Minimap() {
   const playerRef = useRef<HTMLDivElement>(null);
@@ -195,8 +105,28 @@ function Minimap() {
               strokeLinecap="round"
             />
           ))}
+          {/* S entrance lane + E story-house lane — same structure as the
+              world's road network (map redesign, Aug 2026). */}
           <line x1="50" y1="31.3" x2="50" y2="73" stroke="#d9c99f" strokeWidth="3.5" strokeLinecap="round" />
+          <line
+            x1="50"
+            y1="31.3"
+            x2={((STORY_ENTRANCE.position[0] + 32) / 64) * 100}
+            y2={((STORY_ENTRANCE.position[1] + 32) / 64) * 100}
+            stroke="#d9c99f"
+            strokeWidth="3.5"
+            strokeLinecap="round"
+          />
         </svg>
+        {/* Story house dot — same registry the world builds from. */}
+        <div
+          className="absolute w-3 h-3 -ml-1.5 -mt-1.5 rounded-full border-2 border-white shadow-sm"
+          style={{
+            left: `${((STORY_ENTRANCE.position[0] + 32) / 64) * 100}%`,
+            top: `${((STORY_ENTRANCE.position[1] + 32) / 64) * 100}%`,
+            backgroundColor: '#ea580c',
+          }}
+        />
         {states.map(z => {
           const px = ((z.position[0] + 32) / 64) * 100;
           const pz = ((z.position[1] + 32) / 64) * 100;
@@ -319,10 +249,12 @@ function ProximityPrompt() {
  * Story Adventure door prompt — mirrors ProximityPrompt exactly. Appears
  * only while standing at the house (nearbyStoryId) and never fights a zone
  * prompt: the house sits >11 units from every zone anchor, so the two can
- * never be non-null together.
+ * never be non-null together. The button opens the LEVEL MAP (progression
+ * screen) — never a story directly; the second line previews the next
+ * unplayed level from the SAME data/lock rule the map itself renders.
  */
 function StoryPrompt() {
-  const { nearbyStoryId, activeStory } = useUIStore();
+  const { nearbyStoryId, activeStory, storyMapOpen } = useUIStore();
   const { language } = useSettings();
   const t = useStrings();
   const [storyProgress, setStoryProgress] = useState(
@@ -330,10 +262,14 @@ function StoryPrompt() {
   );
   useEffect(() => progressStore.subscribe((s) => setStoryProgress(s.storyProgress)), []);
 
-  if (!nearbyStoryId || activeStory) return null;
-  const level = getStoryLevel(nearbyStoryId);
-  if (!level) return null;
-  const done = !!storyProgress[nearbyStoryId];
+  if (!nearbyStoryId || activeStory || storyMapOpen) return null;
+  const playable = STORY_LEVELS.filter((l) => l.slides.length > 0);
+  const doneCount = playable.filter((l) => storyProgress[l.id]).length;
+  const next =
+    playable.find(
+      (l) => !storyProgress[l.id] && isStoryLevelUnlockedIn(storyProgress, l.id),
+    ) ?? null;
+  const allDone = playable.length > 0 && doneCount === playable.length;
 
   return (
     <div className="bg-white px-6 py-4 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-center gap-3 pointer-events-auto animate-in slide-in-from-bottom-4 duration-200">
@@ -346,18 +282,18 @@ function StoryPrompt() {
             {t.storyAdventure}
           </span>
           <span className="block text-sm font-semibold text-slate-500">
-            {t.levelN(level.number)} — {level.title[language]}
+            {next ? `${t.levelN(next.number)} — ${next.title[language]}` : t.storyMapAllDone}
           </span>
         </span>
       </div>
-      {done && (
+      {allDone && (
         <span className="inline-flex items-center gap-1.5 bg-green-50 border border-green-200 text-green-700 px-3 py-1 rounded-full text-sm font-bold">
           <BadgeCheck className="w-4 h-4" />
           {t.levelCompletedTag}
         </span>
       )}
       <button
-        onClick={() => openStory(nearbyStoryId)}
+        onClick={() => openStoryMap()}
         className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-6 py-3 rounded-full font-bold transition-transform active:scale-95 shadow-md flex items-center gap-2 touch-manipulation"
       >
         {t.storyEnterCta}
@@ -441,7 +377,6 @@ export function HUD() {
   const { activeZoneId, fadeOpacity } = useUIStore();
   const t = useStrings();
   const onboarded = useOnboarded();
-  const playerAvatar = usePlayerAvatarConfig();
 
   // Task 16: opening the game counts as "played today" — the streak grows
   // gently from simply showing up (idempotent per local calendar day).
@@ -462,8 +397,10 @@ export function HUD() {
           {/* Top-center: where to go next */}
           <NextZoneBanner />
 
-          {/* Top Bar */}
-          <div className="flex justify-between items-start w-full z-10">
+          {/* Top Bar — z-20 so the profile dropdown paints (and receives
+              taps) above the joystick/prompt rows if they overlap on very
+              short screens */}
+          <div className="flex justify-between items-start w-full z-20">
             <div className="flex flex-col gap-2 pointer-events-auto">
               <div className="bg-white px-4 py-2.5 rounded-2xl shadow-md border border-slate-100 flex items-center gap-3">
                 <span className="w-10 h-10 rounded-xl bg-[#152a52] grid place-content-center shrink-0">
@@ -479,41 +416,11 @@ export function HUD() {
                   )}
                 </h1>
               </div>
-              {/* Player avatar chip (Task 14) — cosmetic identity corner icon */}
-              {playerAvatar && (
-                <div className={CHIP}>
-                  <div className="w-8 h-8 rounded-full bg-sky-50 border border-sky-100 overflow-hidden flex items-center justify-center shrink-0">
-                    <PlayerAvatar config={playerAvatar} size={26} variant="face" />
-                  </div>
-                  <span className="leading-tight">
-                    <span className={`font-display ${CHIP_LABEL} block`}>
-                      {playerAvatar.nickname}
-                    </span>
-                    <RankLine />
-                  </span>
-                </div>
-              )}
-              <BadgeCounter />
-              {/* Task 16: Player Rank / Coins (opens shop) / gentle streak */}
-              {onboarded && <EconomyChips />}
-              <button
-                onClick={openProgress}
-                className={`${CHIP} hover:bg-amber-50 transition-colors active:scale-95 touch-manipulation`}
-              >
-                <span className={`${CHIP_ICON} bg-amber-100 text-amber-500`}>
-                  <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                </span>
-                <span className={CHIP_LABEL}>{t.myProgress}</span>
-              </button>
-              <button
-                onClick={openCommunity}
-                className={`${CHIP} hover:bg-sky-50 transition-colors active:scale-95 touch-manipulation`}
-              >
-                <span className={`${CHIP_ICON} bg-sky-100 text-sky-600`}>
-                  <Users className="w-4 h-4" />
-                </span>
-                <span className={CHIP_LABEL}>{t.community}</span>
-              </button>
+              {/* Map declutter (Aug 2026): ONE expandable profile card owns
+                  every player stat + the My Progress / Rights Community
+                  shortcuts (old floating chips removed — PlayerProfile.tsx).
+                  Its dropdown overlays the map; nothing below ever shifts. */}
+              {onboarded && <PlayerProfile />}
             </div>
             <div className="flex flex-col items-end gap-3 pointer-events-auto">
               <button 
@@ -575,6 +482,15 @@ export function HUD() {
           <ZoneInterior zoneId={activeZoneId} />
         </div>
       )}
+
+      {/* Story Adventure LEVEL MAP (z-30) — the Candy-Crush-style
+          progression screen the house door opens; stories launch from its
+          nodes and the unlock cinematic plays here. Stands down while a
+          story is open. Mounted BEFORE the Progress/Community overlays
+          (same z-30): the map's reference bottom bar opens those screens,
+          and later siblings paint on top, so they appear ABOVE the map and
+          closing them lands back on the map. */}
+      <StoryAdventureMap />
 
       {/* Progress dashboard overlay (z-30) — Help button (z-50) stays on top */}
       <ProgressOverlay />

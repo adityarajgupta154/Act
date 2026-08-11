@@ -1,0 +1,274 @@
+IMPORTANT: REMOVE THE GOOGLE PLACES API DEPENDENCY FROM THE "GET HELP NOW" NEARBY HELP FEATURE.
+
+The current UI shows:
+
+PLACES_API_UNAUTHORIZED
+"The map service key is not working right now."
+
+I want this feature to work WITHOUT ANY GOOGLE MAPS API KEY.
+
+==================================================
+1. REMOVE PLACES API
+==================================================
+
+Completely remove the dependency on:
+
+- Google Places API
+- Places API (New)
+- Nearby Search API
+- GOOGLE_MAPS_API_KEY
+- any backend endpoint that calls Google Places API
+
+Do NOT attempt to fix the API key.
+
+Do NOT show PLACES_API_UNAUTHORIZED anymore.
+
+Do NOT make any Google Places API requests.
+
+Keep GEMINI_API_KEY untouched because it is used by the Story Adventure AI voice system.
+
+==================================================
+2. USE BROWSER GEOLOCATION
+==================================================
+
+When the user clicks:
+
+"Get Help Now"
+
+request browser location permission using:
+
+navigator.geolocation.getCurrentPosition()
+
+Handle:
+
+- permission granted
+- permission denied
+- location unavailable
+- timeout
+
+Store:
+
+latitude
+longitude
+
+Do not send the user's location to any unnecessary backend service.
+
+==================================================
+3. API-FREE GOOGLE MAPS SEARCH
+==================================================
+
+After successfully obtaining the location, create Google Maps URLs dynamically.
+
+Hospital search:
+
+https://www.google.com/maps/search/?api=1&query=hospitals+near+LAT,LNG
+
+Medical search:
+
+https://www.google.com/maps/search/?api=1&query=medical+care+near+LAT,LNG
+
+Child care search:
+
+https://www.google.com/maps/search/?api=1&query=children%27s+hospital+near+LAT,LNG
+
+Emergency search:
+
+https://www.google.com/maps/search/?api=1&query=emergency+hospital+near+LAT,LNG
+
+Replace LAT and LNG with the user's actual coordinates.
+
+These are normal Google Maps URLs.
+
+NO API KEY must be required.
+
+==================================================
+4. DIRECTIONS
+==================================================
+
+If the user selects a known hospital/place from the UI, generate:
+
+https://www.google.com/maps/dir/?api=1&origin=USER_LAT,USER_LNG&destination=HOSPITAL_NAME
+
+Open it in a new tab/window.
+
+Do not use Google Directions API.
+
+==================================================
+5. DO NOT FAKE HOSPITAL DATA
+==================================================
+
+CRITICAL:
+
+Do NOT create fake hospitals.
+
+Do NOT invent:
+
+- hospital names
+- ratings
+- distances
+- phone numbers
+- addresses
+
+Without a place-data API, the application cannot reliably retrieve these details dynamically.
+
+Instead, let Google Maps perform the actual nearby search.
+
+==================================================
+6. NEW UI
+==================================================
+
+Replace the current error UI with:
+
+FIND HELP NEAR ME
+
+If location is successfully obtained:
+
+"Your location is ready. Find nearby medical help."
+
+Show three clean buttons:
+
+🏥 Find Hospitals Nearby
+🩺 Find Medical Care
+👶 Find Child Care
+
+Each button opens the corresponding Google Maps search.
+
+Also show:
+
+🚨 Emergency Help
+📞 Call 112
+
+The 112 button should use:
+
+tel:112
+
+on supported devices.
+
+==================================================
+7. LOADING STATE
+==================================================
+
+While requesting location:
+
+"Finding your location..."
+
+Show a small loading indicator.
+
+Do NOT show:
+
+"Voice are delayed"
+"API unauthorized"
+"Map service key error"
+
+==================================================
+8. LOCATION DENIED
+==================================================
+
+If the user denies location permission:
+
+Show:
+
+"Location access is needed to find help near you."
+
+Buttons:
+
+[ Allow Location Again ]
+
+[ Open Google Maps ]
+
+[ Call 112 ]
+
+Do not crash the application.
+
+==================================================
+9. LOCATION SUCCESS
+==================================================
+
+After location success:
+
+Show:
+
+✓ Location found
+
+"Choose the type of help you need."
+
+Then display the three Google Maps search buttons.
+
+==================================================
+10. GOOGLE MAPS BUTTON
+
+Each button must open Google Maps externally.
+
+Use:
+
+window.open(url, "_blank", "noopener,noreferrer")
+
+or an anchor with:
+
+target="_blank"
+rel="noopener noreferrer"
+
+depending on the existing architecture.
+
+==================================================
+11. SECURITY
+
+Do not expose or request:
+
+GOOGLE_MAPS_API_KEY
+
+for this feature.
+
+Remove any unused environment variable references associated with Google Places.
+
+Do not remove GEMINI_API_KEY.
+
+==================================================
+12. EXISTING UI
+
+Preserve:
+
+- Get Help Now button
+- emergency styling
+- existing Nyaya Nagri design
+- AI assistant
+- Story Adventure
+- Gemini voice system
+- level progression
+- map
+- player profile
+
+Only change the nearby medical help implementation.
+
+==================================================
+13. IMPORTANT FINAL BEHAVIOR
+
+Flow should be:
+
+Get Help Now
+       ↓
+Request Location
+       ↓
+Location Granted
+       ↓
+"Location Found"
+       ↓
+┌───────────────────────────┐
+│ 🏥 Find Hospitals Nearby  │
+│ 🩺 Find Medical Care      │
+│ 👶 Find Child Care        │
+│                           │
+│ 🚨 Emergency              │
+│ 📞 Call 112               │
+└───────────────────────────┘
+       ↓
+Google Maps opens
+       ↓
+Google Maps handles nearby places,
+ratings, phone numbers and directions.
+
+There must be ZERO Google Places API calls.
+
+The application must never display:
+PLACES_API_UNAUTHORIZED
+again.

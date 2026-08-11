@@ -1,0 +1,252 @@
+TASK: Replace the Existing Right to Childhood Cottage Asset
+
+I have provided a new transparent-background cottage image asset.
+
+Use this new asset to replace the CURRENT "Right to Childhood" cottage on the main Nyaya Nagri game map.
+
+IMPORTANT:
+The new image is the replacement asset.
+Do NOT regenerate or recreate the cottage.
+Use the provided image file exactly as the visual asset.
+
+==================================================
+1. REPLACE ONLY RIGHT TO CHILDHOOD
+==================================================
+
+Find the location currently labeled:
+
+"Right to Childhood"
+
+Replace only its current cottage/building image with the new transparent-background cottage asset.
+
+Do NOT change:
+
+- School Rights / Wisdom Well
+- Family & Community Shield
+- Law Pillar
+- Kindness Corner
+- Help House
+- central book pillar
+- paths
+- map background
+- player
+- minimap
+- sidebar
+- bottom navigation
+- AI assistant
+- Get Help button
+- any other location
+
+==================================================
+2. USE THE TRANSPARENT ASSET CORRECTLY
+==================================================
+
+The new cottage image has a transparent background.
+
+Render it as a transparent PNG/image layer over the existing game-map grass.
+
+IMPORTANT:
+
+There must NOT be any white/gray/checkerboard background visible behind the cottage.
+
+Do NOT put the image inside a white card.
+
+Do NOT add a rectangular background.
+
+Do NOT add a circular platform underneath it.
+
+The grass/map should remain visible around the cottage.
+
+==================================================
+3. REMOVE THE OLD ASSET COMPLETELY
+==================================================
+
+Do not stack the new cottage on top of the old cottage.
+
+Completely remove/unmount the old Right to Childhood cottage asset.
+
+There must be only ONE cottage visible at that location.
+
+Do not leave:
+
+- old cottage
+- old shadow
+- old circular platform
+- old duplicate image
+- old background layer
+
+behind the new cottage.
+
+==================================================
+4. MATCH THE EXISTING MAP POSITION
+==================================================
+
+Keep the Right to Childhood location in exactly the same map position as before.
+
+Do NOT move the location.
+
+Do NOT change its path.
+
+Do NOT change the label position unnecessarily.
+
+Do NOT change the player navigation coordinates.
+
+The new cottage should occupy approximately the same visual footprint as the old cottage.
+
+Adjust ONLY the image:
+
+- width
+- height
+- object-fit
+- object-position
+- transform/scale
+
+as necessary so that it looks naturally placed in the existing map.
+
+==================================================
+5. IMPORTANT: NO DARK CIRCULAR BASE
+==================================================
+
+The new cottage should NOT have the large dark gray circular platform that some of the other map locations currently use.
+
+Remove/disable that platform specifically for this location.
+
+The cottage should sit directly on the grass.
+
+If a very subtle natural grounding shadow is already part of the transparent asset, keep it.
+
+But DO NOT add an artificial dark circular platform.
+
+==================================================
+6. NATURAL MAP INTEGRATION
+==================================================
+
+The final result should look like:
+
+Existing grass background
+        ↓
+New cottage asset
+        ↓
+Natural integration with grass
+
+NOT:
+
+Grass
+ ↓
+Dark circular platform
+ ↓
+Cottage
+
+The cottage should visually feel like it is actually part of the Nyaya Nagri world.
+
+==================================================
+7. PRESERVE EXISTING INTERACTION
+==================================================
+
+The Right to Childhood location must continue behaving exactly as before.
+
+Preserve:
+
+- click interaction
+- hover interaction
+- player proximity detection
+- Enter prompt
+- locked/unlocked state
+- label
+- collision/proximity area
+- story/level navigation
+- animations
+- any existing event handlers
+
+Only replace the visual asset.
+
+If the current location has an invisible interaction/collision area, DO NOT remove it.
+
+==================================================
+8. DO NOT CHANGE THE IMAGE ITSELF
+==================================================
+
+Use the provided cottage image as-is.
+
+Do NOT:
+
+- recolor it
+- crop important parts
+- add text
+- add a lock icon
+- add a label inside the image
+- change its art style
+- generate a replacement
+- flatten the transparency
+
+The map UI should provide the location label separately.
+
+==================================================
+9. RESPONSIVE POSITIONING
+==================================================
+
+Make sure the replacement works correctly at different viewport sizes.
+
+The cottage must remain aligned with the same Right to Childhood location when:
+
+- browser window is resized
+- zoom changes
+- different desktop resolutions are used
+
+Do not hard-code a viewport-specific position if the map uses a coordinate/world-space system.
+
+Use the existing map positioning architecture.
+
+==================================================
+10. IMPLEMENTATION PROCESS
+==================================================
+
+Before editing:
+
+1. Inspect the current map/location component.
+2. Find the exact asset used for "Right to Childhood".
+3. Find the component responsible for rendering it.
+4. Find any platform/base/shadow associated with it.
+5. Replace only the visual asset.
+6. Remove the old platform/background if it exists.
+7. Preserve all interaction logic.
+
+Do NOT rewrite the entire map.
+
+==================================================
+11. VISUAL QA
+==================================================
+
+After implementation, verify:
+
+✓ Right to Childhood uses the new cottage
+✓ old cottage is completely gone
+✓ no duplicate cottage exists
+✓ transparent background works correctly
+✓ no white/gray rectangle appears
+✓ no dark circular platform appears
+✓ cottage is naturally placed on grass
+✓ cottage size looks proportional to the other locations
+✓ label remains correctly positioned
+✓ path remains unchanged
+✓ player can still approach the location
+✓ Enter interaction still works
+✓ other map locations are completely unchanged
+✓ minimap remains unchanged
+✓ AI assistant remains unchanged
+
+==================================================
+FINAL GOAL
+==================================================
+
+The final main map should look like the existing Nyaya Nagri reference image, except:
+
+RIGHT TO CHILDHOOD
+
+must use the newly provided transparent cottage asset.
+
+Everything else should remain visually and functionally unchanged.
+
+Do not make unrelated improvements.
+Do not redesign the map.
+Make this a precise single-location asset replacement.

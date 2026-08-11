@@ -34,7 +34,23 @@ export interface StorySlide {
   /** URL under public/, or null for the placeholder frame. */
   image: string | null;
   caption: StoryText;
-  /** CHOICE slides only: exactly two options, exactly one correct. */
+  /**
+   * Optional spoken twin of the caption for the voice guide — slightly
+   * more natural for the ear, SAME story facts (never contradicts the
+   * caption; fixed hand-written content like everything else here).
+   * When absent, the voice guide reads the caption itself.
+   */
+  narration?: StoryText;
+  /**
+   * CHOICE slides only: the spoken situation-explainer the guide says
+   * BEFORE reading the question ("Riya ke saamne ab ek decision hai…").
+   */
+  questionIntro?: StoryText;
+  /**
+   * CHOICE slides only: two to four options, exactly ONE correct (the
+   * spoken option leads are fixed words — "Option one/two/three/four" —
+   * so four is a hard ceiling; the story smoke pins it).
+   */
   choices?: StoryChoice[];
 }
 
@@ -43,9 +59,11 @@ export interface StoryLevelDef {
   /** 1-based display number ("Level 1"). */
   number: number;
   title: StoryText;
+  /** Short tagline under the title on the level map (the right it teaches). */
+  subtitle: StoryText;
   /** The right unlocked on completion — shown as "<reward> Unlocked!". */
   reward: StoryText;
-  /** Empty while the level is a locked teaser (Level 2). */
+  /** Empty = "coming soon" teaser: shown on the level map but never openable. */
   slides: StorySlide[];
 }
 
@@ -58,8 +76,9 @@ const STORY_ART_BASE = `${import.meta.env?.BASE_URL ?? '/'}story/`;
 const storyArt = (file: string) => `${STORY_ART_BASE}${file}`;
 
 /**
- * The registry. Level 1 "Right to Life" is fully playable; Level 2 is a
- * LOCKED teaser only — its story is deliberately not implemented yet.
+ * The registry — the ONE place future story levels get added (task §5/§15:
+ * the level map, unlock chain, voice catalog and My Progress all generate
+ * from this array; adding Level N later is data + art only, no UI change).
  * English captions are the child's own lines, kept verbatim.
  */
 export const STORY_LEVELS: StoryLevelDef[] = [
@@ -67,6 +86,7 @@ export const STORY_LEVELS: StoryLevelDef[] = [
     id: 'right-to-life',
     number: 1,
     title: { en: 'Right to Life', hi: 'जीने का अधिकार' },
+    subtitle: { en: 'Every Child Matters', hi: 'हर बच्चा ज़रूरी है' },
     reward: { en: 'Right to Life', hi: 'जीने का अधिकार' },
     slides: [
       {
@@ -76,6 +96,11 @@ export const STORY_LEVELS: StoryLevelDef[] = [
         caption: {
           en: 'School se ghar lautte waqt Riya ek naye gaon ke raste se guzarti hai.',
           hi: 'स्कूल से घर लौटते वक़्त रिया एक नए गाँव के रास्ते से गुज़रती है।',
+        },
+        // Spoken opener (voice-guide spec's own script for slide 1).
+        narration: {
+          en: 'Riya school se ghar wapas aa rahi hai. Raste mein use ek chhota sa gaon dikhai deta hai, jahan kuch bachche khel rahe hain.',
+          hi: 'रिया स्कूल से घर वापस आ रही है। रास्ते में उसे एक छोटा सा गाँव दिखाई देता है, जहाँ कुछ बच्चे खेल रहे हैं।',
         },
       },
       {
@@ -104,6 +129,11 @@ export const STORY_LEVELS: StoryLevelDef[] = [
         caption: {
           en: 'Riya ke paas ek decision tha — kya wo Aman ki madad karegi?',
           hi: 'रिया के पास एक फ़ैसला था — क्या वो अमन की मदद करेगी?',
+        },
+        // Spoken BEFORE the question (voice-guide spec STEP 1 script).
+        questionIntro: {
+          en: 'Riya ke saamne ab ek important decision hai. Aman ko madad ki zaroorat hai. Ab dekhte hain Riya kya faisla karti hai.',
+          hi: 'रिया के सामने अब एक ज़रूरी फ़ैसला है। अमन को मदद की ज़रूरत है। अब देखते हैं रिया क्या फ़ैसला करती है।',
         },
         choices: [
           {
@@ -140,10 +170,144 @@ export const STORY_LEVELS: StoryLevelDef[] = [
   {
     id: 'right-to-health',
     number: 2,
-    title: { en: 'Right to Health & Care', hi: 'सेहत और देखभाल का अधिकार' },
+    title: { en: 'Clean Water, Healthy Life', hi: 'साफ़ पानी, सेहतमंद ज़िंदगी' },
+    subtitle: { en: 'Right to Health & Care', hi: 'सेहत और देखभाल का अधिकार' },
     reward: { en: 'Right to Health & Care', hi: 'सेहत और देखभाल का अधिकार' },
-    // Locked teaser — no slides until the Level 2 story ships.
-    slides: [],
+    // Continues DIRECTLY from Level 1 (same Riya + Aman story): Aman is a
+    // little better now, and Riya starts seeing the village's wider health
+    // and clean-water problem. Captions are the child's lines, verbatim.
+    slides: [
+      {
+        id: 'water',
+        type: 'INTRO',
+        image: storyArt('s6-water.webp'),
+        caption: {
+          en: 'Riya ne dekha ki gaon ke kai bachche saaf paani aur achhi health facilities ki kami ka saamna kar rahe hain.',
+          hi: 'रिया ने देखा कि गाँव के कई बच्चे साफ़ पानी और अच्छी स्वास्थ्य सुविधाओं की कमी का सामना कर रहे हैं।',
+        },
+        // Spoken opener bridges from Level 1 (task: SAME ongoing story).
+        narration: {
+          en: 'Aman ki tabiyat ab thodi behtar hai. Aaj Riya Aman ke saath gaon mein ghoom rahi hai. Tabhi wo dekhti hai ki kuch bachche ek purane handpump se ganda paani bhar rahe hain.',
+          hi: 'अमन की तबियत अब थोड़ी बेहतर है। आज रिया अमन के साथ गाँव में घूम रही है। तभी वो देखती है कि कुछ बच्चे एक पुराने हैंडपंप से गंदा पानी भर रहे हैं।',
+        },
+      },
+      {
+        id: 'sick',
+        type: 'STORY',
+        image: storyArt('s7-sick.webp'),
+        caption: {
+          en: 'Doosre bachche bhi baar-baar bimaar ho rahe the kyunki unhe saaf paani aur sahi care nahi mil rahi thi.',
+          hi: 'दूसरे बच्चे भी बार-बार बीमार हो रहे थे क्योंकि उन्हें साफ़ पानी और सही देखभाल नहीं मिल रही थी।',
+        },
+        narration: {
+          en: 'Ek ghar mein ek chhota baccha bimaar leta hua hai, aur uski maa uski dekhbhal kar rahi hai. Riya chinta se dekh rahi hai — ganda paani peene se bachche baar-baar bimaar ho rahe hain.',
+          hi: 'एक घर में एक छोटा बच्चा बीमार लेटा हुआ है, और उसकी माँ उसकी देखभाल कर रही है। रिया चिंता से देख रही है — गंदा पानी पीने से बच्चे बार-बार बीमार हो रहे हैं।',
+        },
+      },
+      {
+        id: 'meeting',
+        type: 'DIALOGUE',
+        image: storyArt('s8-meeting.webp'),
+        caption: {
+          en: 'Riya ne decide kiya ki wo problem ko ignore nahi karegi. Usne bade logon se madad maangi.',
+          hi: 'रिया ने तय किया कि वो प्रॉब्लम को नज़रअंदाज़ नहीं करेगी। उसने बड़े लोगों से मदद माँगी।',
+        },
+        narration: {
+          en: 'Riya apne teacher, doctor aur gaon ke logon ke saath baithkar baat karti hai. Wo sabko batati hai ki bachchon ko saaf paani aur sahi care ki zaroorat hai.',
+          hi: 'रिया अपने टीचर, डॉक्टर और गाँव के लोगों के साथ बैठकर बात करती है। वो सबको बताती है कि बच्चों को साफ़ पानी और सही देखभाल की ज़रूरत है।',
+        },
+      },
+      {
+        id: 'choice',
+        type: 'CHOICE',
+        // Deliberately image-free: the CHOICE slide IS the "game screen".
+        image: null,
+        caption: {
+          en: 'Riya kya kare?',
+          hi: 'रिया क्या करे?',
+        },
+        // Spoken BEFORE the question — carries the child's moral line
+        // ("Ek achha decision…") verbatim, per the Level 2 script.
+        questionIntro: {
+          en: 'Riya ke saamne ab ek bada decision hai. Ek achha decision kai bachchon ki zindagi badal sakta hai. Ab dekhte hain Riya kya faisla karti hai.',
+          hi: 'रिया के सामने अब एक बड़ा फ़ैसला है। एक अच्छा फ़ैसला कई बच्चों की ज़िंदगी बदल सकता है। अब देखते हैं रिया क्या फ़ैसला करती है।',
+        },
+        choices: [
+          {
+            id: 'ignore',
+            label: { en: 'Problem ko ignore karo', hi: 'प्रॉब्लम को नज़रअंदाज़ करो' },
+            correct: false,
+            feedback: {
+              en: 'Riya agar problem ko ignore karegi, to Aman aur doosre bachchon ko help nahi mil paayegi.',
+              hi: 'रिया अगर प्रॉब्लम को नज़रअंदाज़ करेगी, तो अमन और दूसरे बच्चों को मदद नहीं मिल पाएगी।',
+            },
+          },
+          {
+            id: 'only-self',
+            label: { en: 'Sirf khud ke liye paani bachao', hi: 'सिर्फ़ खुद के लिए पानी बचाओ' },
+            correct: false,
+            feedback: {
+              en: 'Sirf apne liye paani bachane se doosre bachchon ki problem waise hi rahegi. Sab ke liye milkar solution dhoondhna zyada behtar hai.',
+              hi: 'सिर्फ़ अपने लिए पानी बचाने से दूसरे बच्चों की प्रॉब्लम वैसे ही रहेगी। सबके लिए मिलकर हल ढूँढना ज़्यादा बेहतर है।',
+            },
+          },
+          {
+            id: 'health-camp',
+            label: {
+              en: 'Health camp aur clean water ke liye help lo',
+              hi: 'हेल्थ कैंप और साफ़ पानी के लिए मदद लो',
+            },
+            correct: true,
+            feedback: {
+              en: 'Bilkul sahi! Ek achha decision kai bachchon ki zindagi badal sakta hai. Health camp aur clean water se poore gaon ke bachchon ko madad milegi.',
+              hi: 'बिल्कुल सही! एक अच्छा फ़ैसला कई बच्चों की ज़िंदगी बदल सकता है। हेल्थ कैंप और साफ़ पानी से पूरे गाँव के बच्चों को मदद मिलेगी।',
+            },
+          },
+        ],
+      },
+      {
+        id: 'result',
+        type: 'RESULT',
+        image: storyArt('s10-health.webp'),
+        caption: {
+          en: 'Riya ne seekha ki har bacche ko health care, clean water aur safe environment milna chahiye.',
+          hi: 'रिया ने सीखा कि हर बच्चे को हेल्थ केयर, साफ़ पानी और सुरक्षित माहौल मिलना चाहिए।',
+        },
+      },
+    ],
+  },
+];
+
+/**
+ * Gentle "no answer yet" voice reminders for question slides — a VARIED
+ * pool (never robotic repetition), cycled by the narrator hook with
+ * stretching gaps. Fixed hand-written EN/HI twins; reusable by every
+ * story level. No pressure language, no helpline digits (PRD §9).
+ */
+export const STORY_REMINDERS: StoryText[] = [
+  {
+    en: 'Abhi tak koi option select nahi hua hai. Aapko kaunsa answer sahi lagta hai?',
+    hi: 'अभी तक कोई विकल्प चुना नहीं गया है। तुम्हें कौन सा जवाब सही लगता है?',
+  },
+  {
+    en: 'Riya ko ab ek choice karni hai. Neeche diye gaye options mein se ek choose karo.',
+    hi: 'रिया को अब एक फ़ैसला करना है। नीचे दिए गए विकल्पों में से एक चुनो।',
+  },
+  {
+    en: 'Chalo, Riya ki help karte hain. Aapke hisaab se use kya karna chahiye?',
+    hi: 'चलो, रिया की मदद करते हैं। तुम्हारे हिसाब से उसे क्या करना चाहिए?',
+  },
+  {
+    en: 'Ab aapki baari hai. Kisi ek option par tap karke answer do.',
+    hi: 'अब तुम्हारी बारी है। किसी एक विकल्प पर टैप करके जवाब दो।',
+  },
+  {
+    en: 'Koi jaldi nahi hai. Sab options ko dhyaan se socho, phir ek chuno.',
+    hi: 'कोई जल्दी नहीं है। सब विकल्पों को ध्यान से सोचो, फिर एक चुनो।',
+  },
+  {
+    en: 'Sochne ke liye time lena bilkul theek hai. Jab ready ho, ek option par tap karo.',
+    hi: 'सोचने के लिए समय लेना बिल्कुल ठीक है। जब तैयार हो, एक विकल्प पर टैप करो।',
   },
 ];
 
@@ -169,7 +333,8 @@ export function isStoryLevelUnlockedIn(
 /**
  * World entrance: the EXISTING blue-roof decor house east of the plaza
  * (WorldScene HOUSES) — kept exactly where the reference art placed it,
- * only made interactive.
+ * only made interactive. The door opens the LEVEL MAP (not a level);
+ * `storyId` is just the proximity sentinel WorldScene publishes.
  */
 export const STORY_ENTRANCE = {
   storyId: 'right-to-life',

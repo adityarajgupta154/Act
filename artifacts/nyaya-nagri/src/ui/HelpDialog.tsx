@@ -3,12 +3,15 @@ import { Phone, ShieldAlert, ExternalLink, Inbox, CheckCircle2, X } from 'lucide
 import { useUIStore, openHelp, closeHelp } from './uiStore';
 import { useStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
+import { EmergencySection } from '@/help/EmergencySection';
+import { NearbyHelpSection } from '@/help/NearbyHelpSection';
+import { ShareHelpSection } from '@/help/ShareHelpSection';
 
 /**
  * Get Help Now — visible on every screen (PRD §9.1). Helpline NUMBERS are
- * hard-coded digits and must remain identical in every language: Childline
- * 1098, Cyber Crime 155260. Only surrounding labels are localized; their
- * meaning is never altered.
+ * hard-coded digits and must remain identical in every language: Emergency
+ * 112, Childline 1098, Cyber Crime 155260. Only surrounding labels are
+ * localized; their meaning is never altered.
  *
  * Task 12: the dialog is centrally controlled through the ui store, so the
  * SAME screen opens from the always-visible button, from quest-end safety
@@ -20,6 +23,15 @@ import { cn } from '@/lib/utils';
  * Task 25 (Home screen): an optional `card` trigger variant additionally
  * shows the two helpline numbers right on the button. It opens the exact
  * SAME shared screen — there is still only one help handler in the app.
+ *
+ * EMERGENCY ASSISTANCE HUB (Aug 2026): the same screen now leads with the
+ * 112 real-emergency block and an explicit-consent "Find Help Near Me"
+ * nearby-healthcare search (hub spec). Ordering is deliberate: 112 first
+ * and NEVER dependent on location/API/network (spec §15), then Childline,
+ * then nearby search, then trusted-adult sharing, then online reporting.
+ * The hub has NO voice/AI wiring of any kind (spec §13) — the Gemini voice
+ * stack stays isolated in Story Adventure. On phones the screen is a
+ * bottom sheet; on desktop the familiar centered card.
  */
 export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } = {}) {
   const { helpPulse, helpOpen } = useUIStore();
@@ -65,10 +77,23 @@ export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } =
       </Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 animate-in fade-in duration-200" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-3xl p-5 md:p-7 w-[92vw] max-w-md max-h-[88vh] overflow-y-auto shadow-2xl z-50 animate-in zoom-in-95 duration-200 focus:outline-none">
-          <div className="flex justify-between items-center mb-5">
+        {/* Phone: full-width bottom sheet with safe-area padding (hub spec
+            §25). Desktop: the familiar centered card. */}
+        <Dialog.Content
+          className={cn(
+            'fixed z-50 bg-white shadow-2xl focus:outline-none overflow-y-auto',
+            'inset-x-0 bottom-0 w-full max-h-[92dvh] rounded-t-3xl p-5 pb-[max(1.25rem,env(safe-area-inset-bottom))]',
+            'animate-in fade-in zoom-in-95 slide-in-from-bottom-8 duration-200',
+            'md:inset-x-auto md:bottom-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2',
+            'md:w-[92vw] md:max-w-lg md:max-h-[88vh] md:rounded-3xl md:p-7 md:slide-in-from-bottom-0'
+          )}
+        >
+          <div className="flex justify-between items-center">
             <Dialog.Title asChild>
-              <h2 className="font-display font-bold text-2xl text-slate-800">{t.emergencyHelp}</h2>
+              <h2 className="font-display font-bold text-2xl text-slate-800 flex items-center gap-2">
+                <ShieldAlert className="w-7 h-7 text-red-500 shrink-0" aria-hidden />
+                {t.getHelpNow}
+              </h2>
             </Dialog.Title>
             <Dialog.Close asChild>
               <button
@@ -79,8 +104,14 @@ export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } =
               </button>
             </Dialog.Close>
           </div>
+          <Dialog.Description asChild>
+            <p className="mt-1 mb-5 text-sm font-medium text-slate-500">{t.helpHubSubtitle}</p>
+          </Dialog.Description>
 
           <div className="space-y-4">
+            {/* SECTION A — real emergency, 112 first, never gated (spec §15) */}
+            <EmergencySection />
+
             {/* Childline 1098 — one-tap call + calm "what happens" explainer */}
             <div className="bg-red-50 p-4 rounded-2xl border border-red-100">
               <span className="text-sm font-bold text-red-600 uppercase tracking-wider">{t.childline}</span>
@@ -104,6 +135,15 @@ export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } =
                 ))}
               </ul>
             </div>
+
+            {/* SECTION B — nearby healthcare search (explicit consent only) */}
+            <NearbyHelpSection />
+
+            {/* Trusted adult — share the canonical helpline card (spec §36) */}
+            <ShareHelpSection />
+
+            {/* Online reporting — existing portals, unchanged */}
+            <p className="pt-1 text-sm font-bold uppercase tracking-wider text-slate-400">{t.moreHelp}</p>
 
             {/* Cyber Crime 155260 — one-tap call + official reporting portal */}
             <div className="bg-orange-50 p-4 rounded-2xl border border-orange-100">

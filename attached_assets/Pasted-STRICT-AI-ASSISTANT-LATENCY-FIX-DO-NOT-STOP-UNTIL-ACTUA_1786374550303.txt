@@ -1,0 +1,639 @@
+STRICT AI ASSISTANT LATENCY FIX — DO NOT STOP UNTIL ACTUALLY FIXED
+
+The existing Nyaya AI Assistant has a serious responsiveness problem.
+
+CURRENT PROBLEMS:
+- It takes too long to start listening.
+- It sometimes takes too long to detect that the user has finished speaking.
+- It takes too long to start processing.
+- Gemini response starts late.
+- Voice response starts late.
+- Sometimes there is noticeable silence before the assistant responds.
+- The interaction feels laggy instead of real-time.
+
+I want this FIXED STRICTLY.
+
+DO NOT make superficial UI changes.
+DO NOT simply reduce the loading animation.
+DO NOT fake a faster response.
+DO NOT replace the assistant with a dummy response.
+DO NOT sacrifice existing functionality.
+
+FIRST FIND THE ACTUAL LATENCY BOTTLENECKS, THEN FIX THEM.
+
+==================================================
+1. AUDIT THE COMPLETE PIPELINE
+==================================================
+
+Trace the exact current pipeline:
+
+MICROPHONE
+↓
+SPEECH DETECTION
+↓
+SPEECH-TO-TEXT
+↓
+TRANSCRIPT FINALIZATION
+↓
+GEMINI REQUEST
+↓
+GEMINI FIRST RESPONSE
+↓
+TEXT PROCESSING
+↓
+VOICE/TTS
+↓
+AUDIO PLAYBACK
+
+Measure each stage.
+
+Add development-only timing logs:
+
+[VOICE]
+microphone activated: ___ ms
+
+[VOICE]
+speech detected: ___ ms
+
+[VOICE]
+speech ended: ___ ms
+
+[VOICE]
+transcript ready: ___ ms
+
+[GEMINI]
+request started: ___ ms
+
+[GEMINI]
+first response chunk: ___ ms
+
+[GEMINI]
+response complete: ___ ms
+
+[TTS]
+request started: ___ ms
+
+[TTS]
+first audio ready: ___ ms
+
+[AUDIO]
+playback started: ___ ms
+
+This must identify EXACTLY where the delay is occurring.
+
+==================================================
+2. DO NOT WAIT UNNECESSARILY AFTER USER STOPS SPEAKING
+==================================================
+
+Inspect the current speech recognition end-of-speech logic.
+
+If there is an unnecessarily long silence timeout, reduce it.
+
+Do NOT wait several seconds after the user has clearly finished speaking.
+
+Use appropriate Voice Activity Detection / speech-end detection where available.
+
+Target:
+
+User stops speaking
+↓
+speech end detected quickly
+↓
+Gemini request starts immediately
+
+Do not introduce an artificial delay.
+
+Avoid code like:
+
+setTimeout(..., 2000)
+setTimeout(..., 3000)
+setTimeout(..., 5000)
+
+unless technically required.
+
+Remove unnecessary debounce/throttle delays from the voice pipeline.
+
+==================================================
+3. START GEMINI REQUEST IMMEDIATELY
+==================================================
+
+As soon as a reliable final user utterance is available:
+
+START THE GEMINI REQUEST IMMEDIATELY.
+
+Do NOT wait for:
+
+- UI animations
+- database updates
+- progress calculations
+- analytics
+- logging
+- unrelated API calls
+- image loading
+- game state updates
+
+Those operations must not block the AI response.
+
+If analytics/progress updates are needed, perform them asynchronously.
+
+==================================================
+4. STREAM THE GEMINI RESPONSE
+==================================================
+
+If the current Gemini integration supports streaming:
+
+USE STREAMING.
+
+Do NOT wait for the complete response.
+
+Desired behavior:
+
+User finishes speaking
+↓
+Gemini request
+↓
+FIRST RESPONSE CHUNK
+↓
+Immediately begin processing/displaying response
+↓
+Continue receiving remaining response
+
+The user should not experience:
+
+"thinking..."
+3–5 seconds of silence
+then complete response.
+
+==================================================
+5. REDUCE AI RESPONSE LENGTH
+==================================================
+
+The Nyaya AI Assistant is a CHILD-FRIENDLY in-game assistant.
+
+Default responses should be short.
+
+Use:
+
+1–3 concise sentences for normal questions.
+
+Avoid unnecessary introductions like:
+
+"That's a really interesting question! I'd be happy to explain..."
+
+Instead:
+
+"Yes! Every child has the right to education."
+
+Only provide longer explanations when the user explicitly asks for detail.
+
+Shorter responses will improve both latency and voice playback.
+
+==================================================
+6. DO NOT SEND HUGE PROMPTS
+==================================================
+
+Inspect the Gemini request payload.
+
+DO NOT send:
+
+- entire game state
+- entire conversation history
+- entire India Code website
+- unnecessary UI data
+- unnecessary player data
+- duplicate system instructions
+- large repeated context
+
+Send only the information required for the current question.
+
+Keep a compact conversation memory.
+
+Example:
+
+currentZone
+currentLesson
+recentConversation
+relevantLegalContext
+
+NOT the entire application state.
+
+==================================================
+7. DO NOT FETCH INDIA CODE FOR EVERY MESSAGE
+==================================================
+
+If India Code / legal retrieval is currently executed for every AI question:
+
+FIX THIS.
+
+Only perform legal retrieval when the user's question actually requires legal information.
+
+For casual questions:
+
+"Hi"
+"How are you?"
+"What should I do next?"
+
+DO NOT perform legal retrieval.
+
+For legal questions:
+
+retrieve only relevant content.
+
+Cache frequently used legal information where appropriate.
+
+==================================================
+8. PARALLELIZE INDEPENDENT OPERATIONS
+==================================================
+
+Find sequential operations such as:
+
+await operationA()
+await operationB()
+await operationC()
+
+If they are independent and safe to run simultaneously:
+
+use Promise.all()
+
+Example:
+
+Do NOT wait for analytics to finish before starting Gemini.
+
+Gemini response must have priority.
+
+Never sacrifice correctness or create race conditions just for speed.
+
+==================================================
+9. VOICE RESPONSE MUST START FAST
+==================================================
+
+Do NOT wait for the entire AI response before starting voice playback if the current Gemini audio/voice architecture supports streaming.
+
+Desired:
+
+Gemini starts responding
+↓
+first usable audio
+↓
+PLAY IMMEDIATELY
+
+while the rest of the response continues processing.
+
+Do NOT:
+
+generate complete response
+↓
+generate complete audio
+↓
+then start playback
+
+if a lower-latency streaming approach is available.
+
+==================================================
+10. AUDIO QUEUE
+==================================================
+
+Use a proper audio queue.
+
+When audio chunks arrive:
+
+chunk 1 → play
+chunk 2 → buffer
+chunk 3 → buffer
+
+Keep playback continuous.
+
+Do NOT create a new audio element for every chunk.
+
+Do NOT introduce gaps between chunks.
+
+==================================================
+11. INTERRUPT / BARGE-IN
+==================================================
+
+This is mandatory.
+
+If the AI is speaking and the user starts speaking:
+
+IMMEDIATELY:
+
+1. Stop current audio.
+2. Cancel/abort current AI generation where possible.
+3. Clear audio queue.
+4. Start listening to the user.
+5. Process the new request.
+
+The user must NOT have to wait for the AI to finish speaking.
+
+This is essential for real-time conversation.
+
+==================================================
+12. MICROPHONE MUST RESPOND IMMEDIATELY
+==================================================
+
+When the user activates the AI assistant:
+
+Do NOT:
+
+open UI
+↓
+wait
+↓
+initialize microphone
+↓
+wait
+↓
+start listening
+
+Initialize/reuse the audio context and speech recognition efficiently.
+
+The microphone should enter LISTENING state as quickly as possible.
+
+Avoid recreating expensive audio objects for every question.
+
+Reuse them when safe.
+
+==================================================
+13. REUSE GEMINI CLIENT / SESSION
+==================================================
+
+Do NOT create a completely new Gemini client/session unnecessarily for every message.
+
+If the current architecture supports persistent conversation/session:
+
+reuse it.
+
+Maintain context efficiently.
+
+For Gemini Live API:
+
+keep the Live session alive while the user is actively using voice conversation.
+
+Do not reconnect for every sentence.
+
+==================================================
+14. CANCEL STALE REQUESTS
+==================================================
+
+If a new user request starts while the previous request is still running:
+
+cancel/abort the previous request where supported.
+
+Never allow:
+
+Request A
++
+Request B
++
+Request C
+
+to run simultaneously and compete for audio playback.
+
+Only the newest valid user request should control the assistant.
+
+==================================================
+15. PREVENT DUPLICATE REQUESTS
+==================================================
+
+Check for:
+
+- duplicate onClick handlers
+- duplicate speech-recognition callbacks
+- duplicate final transcript events
+- React Strict Mode side effects
+- multiple microphone listeners
+- multiple WebSocket listeners
+- multiple Gemini requests
+- duplicate TTS calls
+
+A single user utterance must result in:
+
+ONE Gemini request.
+
+Not two.
+Not three.
+
+==================================================
+16. REACT PERFORMANCE
+==================================================
+
+The AI assistant must NOT cause the entire game to re-render.
+
+Inspect the React component tree.
+
+Isolate rapidly changing:
+
+- microphone state
+- transcript
+- audio state
+- speaking state
+- AI response state
+
+Use appropriate:
+
+React.memo
+useMemo
+useCallback
+useRef
+
+where beneficial.
+
+Do NOT put rapidly changing audio data into global game state unnecessarily.
+
+==================================================
+17. THREE.JS / GAME PERFORMANCE
+==================================================
+
+The AI assistant must not block the game loop.
+
+While AI is listening/thinking/speaking:
+
+- player movement remains responsive
+- map remains responsive
+- animations remain smooth
+- game rendering remains smooth
+
+Do not trigger unnecessary Three.js scene updates from every AI token/audio chunk.
+
+==================================================
+18. AI RESPONSE STYLE
+==================================================
+
+Update the existing Nyaya AI system instruction so normal voice responses are concise.
+
+Example:
+
+User:
+"What is a right?"
+
+Bad:
+
+"That's a very interesting and important question. A right can be
+understood as something that..."
+
+Good:
+
+"A right is something every person is entitled to. For children,
+rights help keep them safe, healthy, and able to learn."
+
+Keep voice answers naturally conversational.
+
+==================================================
+19. REMOVE ARTIFICIAL DELAYS
+==================================================
+
+Search the codebase for:
+
+setTimeout
+setInterval
+debounce
+throttle
+sleep
+delay
+await new Promise
+
+inside the AI voice pipeline.
+
+Inspect EVERY delay.
+
+Remove unnecessary delays.
+
+Do not blindly remove technically required delays.
+
+The goal is:
+
+NO ARTIFICIAL WAITING.
+
+==================================================
+20. ERROR / TIMEOUT HANDLING
+==================================================
+
+If Gemini is genuinely slow or unavailable:
+
+Do not leave the user staring at "Thinking..." indefinitely.
+
+Set a reasonable timeout.
+
+Show:
+
+"Sorry, I couldn't respond right now. Try again."
+
+Do not expose raw API/WebSocket errors.
+
+==================================================
+21. IMPORTANT: DO NOT CHANGE OTHER FEATURES
+==================================================
+
+Keep all existing:
+
+- Nyaya AI functionality
+- Story Adventure
+- Story voice system
+- Map
+- zones
+- progress
+- certificates
+- Get Help
+- localization
+- avatar
+- quests
+- game logic
+
+However, the MAIN Nyaya AI Assistant voice interaction must become faster.
+
+Do not break the Story Adventure voice implementation while optimizing the main assistant.
+
+==================================================
+22. PERFORMANCE TARGET
+==================================================
+
+Do not fake these numbers.
+
+Use them as engineering targets where the network/model allows:
+
+MIC ACTIVATION:
+as close to immediate as possible
+
+SPEECH END → GEMINI REQUEST:
+near-instant
+
+GEMINI REQUEST → FIRST RESPONSE:
+target around <1 second when conditions allow
+
+FIRST RESPONSE → VOICE START:
+as close to immediate as possible
+
+No unnecessary 2–5 second silence.
+
+The exact latency depends on network and Gemini service conditions, but the application itself must not add unnecessary delay.
+
+==================================================
+23. TESTING
+==================================================
+
+Test at least 20 voice interactions.
+
+Test:
+
+1. Short question
+2. Long question
+3. Hindi
+4. Hinglish
+5. English
+6. Follow-up question
+7. Rapid question
+8. User interrupts AI
+9. AI interrupts correctly
+10. Slow network
+11. Gemini error
+12. Microphone permission
+13. Repeated question
+14. Opening/closing assistant
+15. Moving around the game while AI responds
+
+Verify:
+
+- microphone starts quickly
+- speech ends quickly
+- Gemini request starts immediately
+- no duplicate requests
+- response begins quickly
+- voice begins quickly
+- no audio overlap
+- interruption works
+- game remains smooth
+
+==================================================
+24. DO NOT CONSIDER THIS COMPLETE AFTER A UI CHANGE
+==================================================
+
+This task is NOT complete if you only:
+
+- change the loading text
+- change animation
+- reduce spinner time
+- hide latency
+- add fake responses
+
+The actual pipeline latency must be investigated and improved.
+
+Use the development timing logs to prove which stage was slow before and after optimization.
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+STRICTLY FIX THE ACTUAL LATENCY.
+
+Inspect the existing implementation first.
+
+Measure:
+STT → Gemini → TTS → Audio
+
+Find the bottleneck.
+
+Fix the bottleneck.
+
+Then test the complete voice interaction.
+
+The final assistant should feel like a fast, real-time conversational AI companion inside Nyaya Nagri.

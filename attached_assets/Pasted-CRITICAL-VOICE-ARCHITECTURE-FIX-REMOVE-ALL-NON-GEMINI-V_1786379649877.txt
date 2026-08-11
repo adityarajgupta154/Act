@@ -1,0 +1,576 @@
+CRITICAL VOICE ARCHITECTURE FIX — REMOVE ALL NON-GEMINI VOICE SYSTEMS
+
+There is still a major bug in Story Adventure.
+
+The application currently has MULTIPLE voice/TTS systems.
+
+On the Story Adventure slides, especially the question slide, the voice that plays is sometimes a robotic/non-Gemini voice instead of the Gemini voice assistant.
+
+I do NOT want multiple voice systems anymore.
+
+I want ONE voice system ONLY:
+
+                    GEMINI VOICE AGENT
+                           ↓
+              ALL STORY ADVENTURE VOICE
+
+Remove/disable every other voice/TTS implementation.
+
+==================================================
+1. GEMINI MUST BE THE ONLY VOICE ENGINE
+==================================================
+
+The ONLY voice engine allowed in Story Adventure is the existing Google Gemini voice implementation already integrated into the project.
+
+Do NOT use:
+
+- window.speechSynthesis
+- SpeechSynthesisUtterance
+- browser Web Speech API
+- browser built-in TTS
+- Web Speech API voices
+- any robotic fallback voice
+- any third-party TTS provider
+- any local/system voice
+- any previously implemented generic voice assistant
+- any separate narration TTS utility
+- any duplicate audio generation system
+
+Search the ENTIRE codebase for all voice/TTS implementations and identify them.
+
+Examples of things to search for:
+
+speechSynthesis
+SpeechSynthesisUtterance
+speechSynthesis.speak
+speechSynthesis.cancel
+SpeechRecognition
+webkitSpeechRecognition
+new Audio(...)
+AudioContext
+TTS
+textToSpeech
+speak()
+voiceAssistant
+narrator
+narration
+tts
+fallbackVoice
+browserVoice
+
+DO NOT blindly delete unrelated audio functionality.
+
+Instead, determine which implementations are used for voice generation and remove/disable those from Story Adventure.
+
+==================================================
+2. ONE SINGLE GEMINI VOICE PATH
+==================================================
+
+Create ONE centralized Story Adventure voice controller.
+
+For example:
+
+StoryAdventureGeminiVoiceController
+
+ALL Story Adventure speech must go through this controller.
+
+Architecture:
+
+Story Adventure
+      ↓
+StoryAdventureGeminiVoiceController
+      ↓
+Gemini Voice API / existing Gemini voice implementation
+      ↓
+ONE AUDIO OUTPUT
+      ↓
+User
+
+There must NOT be another voice path running in parallel.
+
+==================================================
+3. THREE STORY SLIDES MUST USE GEMINI
+==================================================
+
+There are three story/narration slides before the question.
+
+ALL THREE must use the SAME Gemini voice.
+
+Slide 1:
+Gemini reads the complete story content/caption.
+
+Slide 2:
+Gemini reads the complete story content/caption.
+
+Slide 3:
+Gemini reads the complete story content/caption.
+
+The voice must sound like the existing Gemini voice assistant.
+
+Do NOT use a separate "story narrator".
+
+Do NOT use browser TTS for these slides.
+
+==================================================
+4. QUESTION SLIDE MUST ALSO USE GEMINI
+==================================================
+
+This is extremely important.
+
+When the question slide opens:
+
+Gemini MUST speak the question.
+
+Then Gemini MUST speak option 1.
+
+Then Gemini MUST speak option 2.
+
+Then Gemini can say:
+
+"Ab aap apna answer select kijiye."
+
+Example sequence:
+
+GEMINI:
+"Riya ke paas ek decision tha — kya woh Aman ki madad karegi?"
+
+GEMINI:
+"Option 1: Chup chaap aage badh jao."
+
+GEMINI:
+"Option 2: Aman ke liye help bulao."
+
+GEMINI:
+"Ab aap apna answer select kijiye."
+
+ALL FOUR must come from the SAME Gemini voice system.
+
+There must be ZERO robotic browser TTS.
+
+==================================================
+5. REMOVE THE OLD ROBOTIC QUESTION VOICE
+==================================================
+
+The current bug strongly suggests that the question slide is calling another TTS function.
+
+Find exactly where the question text is converted into speech.
+
+Trace the complete call chain:
+
+Question component
+→ question narration function
+→ TTS function
+→ audio generation
+→ audio playback
+
+If this path eventually uses:
+
+speechSynthesis
+SpeechSynthesisUtterance
+browser voice
+fallback TTS
+generic narrator
+old voice utility
+
+REMOVE THAT PATH.
+
+Replace it with:
+
+Question component
+→ StoryAdventureGeminiVoiceController
+→ Gemini
+→ audio playback
+
+There should be ONLY ONE path.
+
+==================================================
+6. NO FALLBACK TO ROBOTIC VOICE
+==================================================
+
+THIS IS VERY IMPORTANT.
+
+Do NOT do this:
+
+Gemini fails
+    ↓
+browser TTS
+
+Do NOT do this:
+
+Gemini loading
+    ↓
+browser TTS
+
+Do NOT do this:
+
+Gemini unavailable
+    ↓
+default system voice
+
+Do NOT do this:
+
+API error
+    ↓
+SpeechSynthesis
+
+I would rather have a visible:
+
+"🔊 Voice unavailable — Tap to retry"
+
+than hear a completely different robotic voice.
+
+NO AUTOMATIC FALLBACK TO ANOTHER VOICE ENGINE.
+
+==================================================
+7. GEMINI FAILURE HANDLING
+==================================================
+
+If Gemini voice generation fails:
+
+1. Do NOT switch to another TTS.
+2. Stop audio.
+3. Show a small child-friendly retry state.
+4. Allow the user to tap "🔊 Retry Voice".
+5. Retry Gemini.
+
+Example:
+
+"Voice is taking a moment. Tap to try again."
+
+The retry must still use Gemini.
+
+==================================================
+8. NO GENERIC AI GREETING
+==================================================
+
+The generic AI assistant voice must NOT automatically speak during Story Adventure.
+
+Do not allow:
+
+Generic AI Assistant
+        ↓
+Story Adventure
+
+Instead:
+
+Story Adventure
+        ↓
+Gemini Story Voice Controller
+
+The normal AI assistant and Story Adventure narration must be separate.
+
+If the application already has a floating AI assistant, its automatic greeting must be disabled while Story Adventure is active.
+
+==================================================
+9. STORY ADVENTURE VOICE SCOPE
+==================================================
+
+Gemini Story Voice should ONLY activate inside:
+
+Story Adventure → Level → Story Slides + Question Slide
+
+It must NOT automatically narrate:
+
+- map
+- playground
+- normal game world
+- My Progress
+- certificates
+- reward screen
+- congratulations screen
+- Continue Exploring screen
+- other locations
+- other game activities
+
+==================================================
+10. CONGRATULATIONS SCREEN MUST BE SILENT
+==================================================
+
+When the correct answer is selected and the application moves to:
+
+"Right to Life Unlocked!"
+
+immediately:
+
+- stop Gemini audio
+- cancel pending Gemini narration
+- cancel question voice
+- cancel option narration
+- cancel reminder timers
+- invalidate the current Story Voice session
+
+The congratulations screen must remain SILENT.
+
+Do not read the congratulations content automatically.
+
+==================================================
+11. QUESTION REMINDER MUST ALSO USE GEMINI
+==================================================
+
+If the user doesn't answer:
+
+After 5 seconds:
+
+Gemini says:
+
+"Aapne abhi tak answer select nahi kiya hai. Kripya apna answer choose kijiye."
+
+After another 5 seconds:
+
+Gemini says a different reminder.
+
+Example:
+
+"Riya ko kya karna chahiye? Neeche diye gaye options me se ek choose kijiye."
+
+Every reminder MUST use Gemini.
+
+Never use browser/system TTS for reminders.
+
+==================================================
+12. SINGLE AUDIO OUTPUT
+==================================================
+
+At any point there must be ONLY ONE active Story Adventure audio output.
+
+Never allow:
+
+Gemini + browser TTS
+
+or:
+
+Gemini + old narrator
+
+or:
+
+Gemini + generic assistant
+
+or:
+
+two Gemini audio streams
+
+to play simultaneously.
+
+Before starting any new Gemini narration:
+
+STOP/CANCEL the previous Story Adventure audio session.
+
+==================================================
+13. VOICE SESSION MANAGEMENT
+==================================================
+
+Implement a unique session ID for every Story Adventure slide.
+
+Example:
+
+storyVoiceSessionId
+
+When a slide changes:
+
+1. Increment session ID.
+2. Cancel current audio.
+3. Cancel pending timers.
+4. Invalidate previous callbacks.
+5. Start Gemini narration for the new slide.
+
+Old Gemini callbacks must NOT be allowed to play audio after the slide has changed.
+
+==================================================
+14. DO NOT DUPLICATE GEMINI REQUESTS
+==================================================
+
+Make sure React re-renders do not trigger multiple Gemini voice requests.
+
+Use proper effect dependencies and cleanup.
+
+Avoid:
+
+useEffect → Gemini request
+useEffect rerender → Gemini request again
+state update → Gemini request again
+
+Each slide should trigger its Gemini narration exactly ONCE.
+
+Question:
+- question once
+- option 1 once
+- option 2 once
+- instruction once
+
+Reminder:
+- only after 5 seconds
+- only if unanswered
+- one reminder at a time
+
+==================================================
+15. IMPORTANT: DO NOT CHANGE GEMINI VOICE QUALITY
+==================================================
+
+Use the existing Gemini voice configuration that is already working elsewhere in the application.
+
+Do NOT replace the Gemini model or voice configuration unnecessarily.
+
+Do NOT introduce another TTS provider.
+
+The goal is:
+
+EXISTING GEMINI VOICE
+        +
+CLEAN SINGLE VOICE PIPELINE
+        =
+CONSISTENT GEMINI VOICE EVERYWHERE IN STORY ADVENTURE
+
+==================================================
+16. CODEBASE CLEANUP
+==================================================
+
+Before implementing the fix:
+
+SEARCH THE ENTIRE PROJECT.
+
+Find all voice-related code.
+
+Create a clear list internally of:
+
+A. Gemini voice implementation
+B. Browser TTS implementation
+C. Generic AI voice implementation
+D. Story narration implementation
+E. Question narration implementation
+F. Reminder narration implementation
+
+Then consolidate them.
+
+Final architecture should be:
+
+GeminiVoiceService
+        ↓
+StoryAdventureGeminiVoiceController
+        ↓
+Story Slides
+Question
+Options
+Reminders
+
+NO OTHER STORY VOICE ENGINE.
+
+==================================================
+17. IMPORTANT — DO NOT BREAK THE REST OF THE APP
+==================================================
+
+Do not redesign the UI.
+
+Do not remove the Gemini AI assistant visual.
+
+Do not change:
+
+- map
+- player movement
+- story images
+- story captions
+- questions
+- answer options
+- progress system
+- certificates
+- rewards
+- game logic
+
+This task is specifically about cleaning and fixing the voice architecture.
+
+==================================================
+18. FINAL TEST — MUST PASS ALL TESTS
+==================================================
+
+Test the complete Story Adventure from the beginning.
+
+TEST 1:
+Open Story Adventure.
+
+Expected:
+Slide 1 → Gemini voice.
+
+TEST 2:
+Go to Slide 2.
+
+Expected:
+Slide 2 → Gemini voice.
+
+TEST 3:
+Go to Slide 3.
+
+Expected:
+Slide 3 → Gemini voice.
+
+TEST 4:
+Go to Question Slide.
+
+Expected EXACTLY:
+
+Gemini:
+Question
+
+Gemini:
+Option 1
+
+Gemini:
+Option 2
+
+Gemini:
+"Ab aap apna answer select kijiye."
+
+NO ROBOTIC VOICE.
+
+TEST 5:
+Do not answer.
+
+Expected:
+After 5 seconds → Gemini reminder.
+
+TEST 6:
+Still don't answer.
+
+Expected:
+Another reminder → Gemini voice.
+
+TEST 7:
+Select an answer.
+
+Expected:
+All reminders stop immediately.
+
+TEST 8:
+Correct answer → Congratulations.
+
+Expected:
+ZERO voice on congratulations screen.
+
+TEST 9:
+Leave Story Adventure.
+
+Expected:
+ZERO Story Adventure voice remains active.
+
+TEST 10:
+Open normal game/map.
+
+Expected:
+Story Adventure voice system has NO effect.
+
+==================================================
+FINAL NON-NEGOTIABLE REQUIREMENT
+==================================================
+
+There must be EXACTLY ONE voice engine for Story Adventure:
+
+                         GEMINI
+
+No browser TTS.
+No SpeechSynthesis.
+No robotic fallback.
+No separate narrator.
+No generic AI voice.
+No duplicate voice.
+
+If Gemini voice cannot generate audio, show a Retry button instead of switching to another voice.
+
+DO NOT CONSIDER THIS TASK COMPLETE UNTIL YOU HAVE TRACED THE EXISTING CODE, REMOVED THE COMPETING VOICE PATHS, AND VERIFIED THAT THE QUESTION + BOTH OPTIONS ARE BEING SPOKEN BY THE SAME GEMINI VOICE.

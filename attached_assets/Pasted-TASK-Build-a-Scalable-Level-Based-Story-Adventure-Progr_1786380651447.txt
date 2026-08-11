@@ -1,0 +1,681 @@
+TASK: Build a Scalable Level-Based Story Adventure Progression System
+
+I want to completely upgrade the existing "Story Adventure" inside Nyaya Nagri.
+
+IMPORTANT:
+This is NOT a redesign of the entire game.
+Keep the existing map, player, AI assistant, UI, story slides and existing Level 1 functionality.
+
+The main change is to convert Story Adventure into a scalable level-based progression system similar to the progression experience of Candy Crush:
+
+Level 1 → Complete → Level 2 Unlocks
+Level 2 → Complete → Level 3 Unlocks
+Level 3 → Complete → Level 4 Unlocks
+...
+and so on.
+
+I will eventually add MANY story levels, so build this as a reusable data-driven system rather than hard-coding individual levels.
+
+==================================================
+1. STORY ADVENTURE ENTRY
+==================================================
+
+When the player approaches/enters the Story Adventure location:
+
+Open a dedicated Story Adventure Level Selection screen.
+
+The player should NOT immediately be thrown into a story.
+
+Instead show a beautiful level progression map.
+
+Example:
+
+        🔒 Level 5
+           |
+        🔒 Level 4
+           |
+        🔒 Level 3
+           |
+        ⭐ Level 2
+           |
+        🏆 Level 1
+
+Level 1 should be unlocked initially.
+
+All future levels should appear locked.
+
+==================================================
+2. CANDY-CRUSH-STYLE PROGRESSION
+==================================================
+
+Create a vertical/curved adventure path containing story levels.
+
+Each level should be represented by a beautiful circular/rounded level node.
+
+States:
+
+A. CURRENT / UNLOCKED
+- bright
+- glowing
+- subtle pulsing animation
+- clearly clickable
+- show level number
+- show level title
+
+B. COMPLETED
+- gold/green success appearance
+- checkmark or trophy
+- subtle sparkle animation
+- show reward earned
+- visually indicate completion
+
+C. LOCKED
+- muted appearance
+- lock icon
+- slightly faded
+- NOT clickable
+- show "Complete previous level to unlock"
+
+The progression should visually communicate:
+
+Level 1 completed
+        ↓
+Unlock animation
+        ↓
+Level 2 becomes available
+
+==================================================
+3. UNIQUE UNLOCK ANIMATION
+==================================================
+
+When a player completes Level 1:
+
+Do NOT instantly switch to Level 2.
+
+Create a satisfying unlock sequence.
+
+Suggested animation:
+
+1. Level 1 completion screen appears.
+
+2. Show:
+   "Right to Life Unlocked!"
+   
+3. Trophy/badge animation.
+
+4. Small particles/sparkles appear around the completed level.
+
+5. Camera/path visually moves toward the next locked level.
+
+6. The Level 2 lock begins glowing.
+
+7. Lock shakes slightly.
+
+8. Lock opens with a smooth animation.
+
+9. Level 2 node transforms from LOCKED → UNLOCKED.
+
+10. Show:
+   "New Adventure Unlocked!"
+   
+   "Level 2 — Clean Water, Healthy Life"
+
+11. Add a small "PLAY LEVEL 2" CTA.
+
+12. Only after this animation finishes should Level 2 become clickable.
+
+Animation should feel playful and rewarding, inspired by mobile adventure games, but DO NOT copy Candy Crush assets or branding.
+
+==================================================
+4. IMPORTANT: DO NOT AUTO-START LEVEL 2
+==================================================
+
+After Level 1 completion:
+
+Do NOT automatically start Level 2.
+
+Instead:
+
+Level 2 unlocks
+      ↓
+Level 2 node becomes clickable
+      ↓
+User chooses to enter Level 2
+
+This gives the child control.
+
+==================================================
+5. LEVEL DATA ARCHITECTURE
+==================================================
+
+Build the system using a reusable level data structure.
+
+DO NOT hard-code Level 1 and Level 2 separately in the UI.
+
+Use a structure similar to:
+
+levels = [
+  {
+    id: 1,
+    title: "Right to Life",
+    subtitle: "Every Child Matters",
+    unlockedByDefault: true,
+    reward: "Right to Life",
+    slides: [...]
+  },
+
+  {
+    id: 2,
+    title: "Clean Water, Healthy Life",
+    subtitle: "Right to Health & Care",
+    unlockedByDefault: false,
+    reward: "Right to Health & Care",
+    slides: [...]
+  }
+]
+
+Future levels should be added by simply adding another object.
+
+Example:
+
+Level 3
+Level 4
+Level 5
+Level 6
+...
+
+The UI should automatically generate the progression map.
+
+==================================================
+6. LEVEL UNLOCK LOGIC
+==================================================
+
+Implement proper persistent progression.
+
+Initial state:
+
+Level 1 = unlocked
+Level 2 = locked
+Level 3 = locked
+Level 4 = locked
+...
+
+When Level 1 is successfully completed:
+
+Level 1 = completed
+Level 2 = unlocked
+
+When Level 2 is successfully completed:
+
+Level 2 = completed
+Level 3 = unlocked
+
+Continue automatically.
+
+Persist the progress so that refreshing the browser does NOT reset unlocked levels.
+
+Use the existing project's persistence/database system if available.
+
+If the current project uses localStorage for player progress, integrate with that rather than introducing unnecessary new infrastructure.
+
+Store something similar to:
+
+storyAdventureProgress = {
+  completedLevels: [1],
+  unlockedLevels: [1,2]
+}
+
+After Level 2:
+
+completedLevels: [1,2]
+unlockedLevels: [1,2,3]
+
+Make sure this works correctly even after page refresh/reload.
+
+==================================================
+7. LEVEL SELECTION UI
+==================================================
+
+Create a beautiful story progression environment.
+
+Visual style:
+
+- existing Nyaya Nagri visual language
+- colorful children's adventure game
+- grass/nature/adventure environment
+- soft gradients
+- playful but professional
+- rounded level nodes
+- paths connecting levels
+- subtle particles
+- clean typography
+- no dark/cyberpunk UI
+
+Use the existing game's visual style.
+
+The progression map should feel like the child is travelling through a story world.
+
+==================================================
+8. LEVEL 1
+==================================================
+
+Keep the existing Level 1 exactly functional.
+
+Title:
+
+"Level 1 — Right to Life"
+
+Reward:
+
+🏆 Right to Life Unlocked
+
+Existing 5-slide story:
+
+Slide 1:
+Riya's journey begins.
+
+Slide 2:
+Riya discovers Aman is weak and needs care.
+
+Slide 3:
+Riya talks to Aman.
+
+Slide 4:
+Choice:
+"Chup chaap aage badh jao"
+"Aman ke liye help bulao"
+
+Correct:
+"Aman ke liye help bulao"
+
+Slide 5:
+Doctor checks Aman and he feels better.
+
+Reward:
+"Right to Life Unlocked"
+
+DO NOT break the existing Story Adventure voice system.
+
+==================================================
+9. LEVEL 2
+==================================================
+
+Add the following new level.
+
+TITLE:
+
+Level 2 — Clean Water, Healthy Life
+
+RIGHT:
+
+Right to Health & Care
+
+This story must continue directly from Level 1.
+
+The user should feel that this is the SAME ongoing story involving Riya and Aman.
+
+Do NOT make it feel like a completely unrelated chapter.
+
+==================================================
+LEVEL 2 — SLIDE 1
+
+Image:
+Use the provided Level 2 Image 6.
+
+Scene:
+Riya is walking around the village with Aman.
+
+She notices children collecting dirty water from an old handpump.
+
+Caption:
+
+"Riya ne dekha ki gaon ke kai bachche saaf paani aur achhi health facilities ki kami ka saamna kar rahe hain."
+
+Purpose:
+
+Introduce the health and clean-water problem.
+
+==================================================
+LEVEL 2 — SLIDE 2
+
+Image:
+Use the provided Level 2 Image 7.
+
+Scene:
+
+A small child is lying sick at home.
+The mother is taking care of him.
+Riya watches with concern.
+
+Caption:
+
+"Doosre bachche bhi baar-baar bimaar ho rahe the kyunki unhe saaf paani aur sahi care nahi mil rahi thi."
+
+Purpose:
+
+Make the problem emotionally understandable for the child.
+
+==================================================
+LEVEL 2 — SLIDE 3
+
+Image:
+Use the provided Level 2 Image 8.
+
+Scene:
+
+Riya sits with a teacher, doctor and village people and discusses the problem.
+
+Caption:
+
+"Riya ne decide kiya ki wo problem ko ignore nahi karegi. Usne bade logon se madad maangi."
+
+Purpose:
+
+Teach:
+
+- asking trusted adults for help
+- problem solving
+- helping the community
+
+==================================================
+LEVEL 2 — SLIDE 4
+
+This is the interactive decision screen.
+
+Question:
+
+"Riya kya kare?"
+
+Options:
+
+❌ "Problem ko ignore karo"
+
+❌ "Sirf khud ke liye paani bachao"
+
+✅ "Health camp aur clean water ke liye help lo"
+
+Correct answer:
+
+"Health camp aur clean water ke liye help lo"
+
+Caption:
+
+"Ek achha decision kai bachchon ki zindagi badal sakta hai."
+
+The answer selection should use the SAME interaction system already implemented in Level 1.
+
+Do not create a separate question component.
+
+Reuse the existing Story Adventure question/answer system.
+
+==================================================
+LEVEL 2 — SLIDE 5
+
+Image:
+Use the provided Level 2 Image 10.
+
+Scene:
+
+The village now has:
+
+- clean water tank
+- doctor checking children
+- healthy and happy children
+- safer environment
+
+Caption:
+
+"Riya ne seekha ki har bacche ko health care, clean water aur safe environment milna chahiye."
+
+Reward:
+
+🏆 Right to Health & Care Unlocked
+
+==================================================
+10. STORY VOICE ASSISTANT
+==================================================
+
+VERY IMPORTANT:
+
+The existing Gemini voice assistant behavior implemented for Story Adventure must continue working.
+
+It should ONLY operate inside Story Adventure.
+
+For Level 2:
+
+For every story slide:
+
+1. Read the slide's image/story context.
+2. Read the caption aloud.
+3. Explain it in simple child-friendly language.
+4. Move naturally through the story.
+
+At the question slide:
+
+1. Gemini voice reads the question.
+2. Gemini voice reads ALL available options.
+3. Wait for user selection.
+4. If the user has not answered:
+   after 5 seconds, politely remind them.
+5. Continue reminding every 5 seconds until an answer is selected.
+
+IMPORTANT:
+
+Use ONLY the existing Gemini voice agent.
+
+Do NOT introduce another browser Text-to-Speech API.
+Do NOT use robotic fallback voice.
+Do NOT create a second voice system.
+
+The voice behavior must remain isolated to Story Adventure.
+
+The congratulation/reward screen must NOT trigger the story voice.
+
+==================================================
+11. LEVEL COMPLETION
+==================================================
+
+When the correct answer is selected and the final story slide is completed:
+
+Show a beautiful completion sequence.
+
+Example:
+
+✨ Story Complete!
+
+🏆 RIGHT TO HEALTH & CARE
+
+"Riya ne seekha ki har bacche ko health care,
+clean water aur safe environment milna chahiye."
+
+Then:
+
+"New Adventure Unlocked!"
+
+Level 3 becomes unlocked.
+
+Do NOT unlock Level 3 before the level is actually completed.
+
+==================================================
+12. WRONG ANSWER BEHAVIOR
+==================================================
+
+If the child selects a wrong answer:
+
+Do NOT punish the child.
+
+Show a friendly explanation.
+
+Example:
+
+"Riya agar problem ko ignore karegi, to Aman aur doosre bachchon ko help nahi mil paayegi."
+
+Then:
+
+"Try again!"
+
+Allow the child to attempt the question again.
+
+Do not mark the level as completed until the correct answer is selected.
+
+==================================================
+13. REPLAY SYSTEM
+==================================================
+
+Completed levels should remain replayable.
+
+Example:
+
+Level 1 ✓ Completed
+Level 2 ✓ Completed
+Level 3 🔒 Locked
+
+The child can click Level 1 or Level 2 again and replay the story.
+
+However:
+
+Replaying a completed level must NOT remove progress.
+
+==================================================
+14. LEVEL MAP ANIMATION
+
+Make the progression visually interesting.
+
+When opening Story Adventure:
+
+- slightly animate the camera into the level map
+- current level has a subtle glow
+- completed levels have sparkles
+- locked levels have a subtle floating lock
+- connecting paths animate very subtly
+
+When Level 2 is unlocked:
+
+animate the path from Level 1 → Level 2.
+
+The path should appear to "activate" progressively.
+
+Example:
+
+Level 1 ⭐
+   ╲
+    ╲ glowing path
+     ⭐ Level 2
+
+The player should visually understand where they are going next.
+
+==================================================
+15. SCALABILITY
+
+This is extremely important.
+
+I will add many more levels later.
+
+Therefore:
+
+DO NOT write:
+
+if level === 1 ...
+if level === 2 ...
+if level === 3 ...
+
+throughout the UI.
+
+Instead create reusable components such as:
+
+StoryAdventureMap
+StoryLevelNode
+StoryLevelPath
+StoryLevelScreen
+StorySlide
+StoryQuestion
+StoryCompletion
+LevelUnlockAnimation
+
+The content should come from the level data.
+
+Adding Level 3 later should require only adding its data/content/images.
+
+==================================================
+16. PROGRESSION SAFETY
+
+Make sure:
+
+- user cannot access locked levels
+- URL/state manipulation cannot accidentally mark a level completed
+- level completion is only recorded after the final required interaction
+- refreshing the page preserves progress
+- replaying does not reset progress
+- completing Level 2 does not reset Level 1
+- future levels remain locked until their previous level is completed
+
+==================================================
+17. FINAL EXPERIENCE
+
+The complete user journey should be:
+
+MAIN MAP
+   ↓
+Player enters Story Adventure
+   ↓
+STORY ADVENTURE LEVEL MAP
+   ↓
+Level 1 ⭐
+   ↓
+Play Level 1
+   ↓
+5 story slides
+   ↓
+Question
+   ↓
+Correct answer
+   ↓
+Level 1 Completion
+   ↓
+🏆 Right to Life Unlocked
+   ↓
+✨ Unlock animation
+   ↓
+Level 2 becomes unlocked
+   ↓
+User clicks Level 2
+   ↓
+Level 2 — Clean Water, Healthy Life
+   ↓
+5 story slides
+   ↓
+Question
+   ↓
+Correct answer
+   ↓
+🏆 Right to Health & Care Unlocked
+   ↓
+✨ Level 3 unlock animation
+   ↓
+Continue infinitely for future levels.
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Before making changes:
+
+1. Inspect the existing Story Adventure implementation.
+2. Understand the current Level 1 flow.
+3. Reuse existing components wherever possible.
+4. Do not break the existing Gemini voice assistant.
+5. Do not break the existing story images.
+6. Do not break the current question/answer behavior.
+7. Implement the level progression system around the existing functionality.
+8. Add Level 2 using the provided content/images.
+9. Test Level 1 → Level 2 unlock flow.
+10. Test browser refresh persistence.
+11. Test locked-level protection.
+12. Test replay of completed levels.
+13. Test Gemini voice on Level 2.
+14. Verify the completion screen does NOT trigger voice.
+15. Verify there is only ONE active voice system.
+
+Most importantly:
+
+BUILD THIS AS A LONG-TERM STORY ADVENTURE ENGINE, NOT AS A ONE-OFF LEVEL 2 IMPLEMENTATION.

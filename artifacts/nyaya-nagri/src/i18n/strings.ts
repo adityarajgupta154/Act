@@ -24,6 +24,8 @@ export interface UIStrings {
   // HUD / map
   appTitle: string;
   myProgress: string;
+  /** Left-rail player profile card: trigger aria-label + no-avatar fallback title. */
+  playerProfileToggle: string;
   mapLabel: string;
   /** Full-screen map modal (reference redesign, Aug 2026). */
   mapModalSubtitle: string;
@@ -309,6 +311,42 @@ export interface UIStrings {
   available247: string;
   close: string;
 
+  // Emergency Assistance Hub (Get Help Now v2) — 112 is India's unified
+  // emergency number; all helpline digits stay identical in every language
+  // (PRD §9). Location strings promise session-only use (hub spec §18).
+  helpHubSubtitle: string;
+  realEmergency: string;
+  emergencyQuestion: string;
+  call112: string;
+  isThisEmergency: string;
+  yesCall112: string;
+  emergencySafetyNote: string;
+  findHelpNearMe: string;
+  findHelpIntro: string;
+  allowLocation: string;
+  locationPrivacyNote: string;
+  findingLocation: string;
+  locationFound: string;
+  locationReady: string;
+  chooseHelpType: string;
+  findHospitals: string;
+  findMedicalCare: string;
+  findChildCare: string;
+  emergencySearchLabel: string;
+  allowLocationAgain: string;
+  locationDenied: string;
+  locationSettingsHint: string;
+  locationTimeout: string;
+  locationUnavailable: string;
+  locationUnsupported: string;
+  openMaps: string;
+  emergencyAssistNote: string;
+  needAdult: string;
+  needAdultNote: string;
+  shareHelpInfo: string;
+  shareCopied: string;
+  moreHelp: string;
+
   // Avatar widget
   guideIntro: string;
   yourGuide: string;
@@ -518,12 +556,9 @@ export interface UIStrings {
   // Home / landing screen (entry presentation layer — Task 25)
   homeTagline: string;
   homeEnterCta: string;
-  homeJourney: string;
-  homeExplore: string;
   homeCentralBanner: string;
   homeLoading: string;
   homeAbout: string;
-  homeAccessibility: string;
   homeAboutTitle: string;
   homeAboutBody: string[];
 
@@ -539,11 +574,45 @@ export interface UIStrings {
   storyAdventuresHeading: string;
   storyLockedHint: (previousTitle: string) => string;
   storyExit: string;
+  // Story Adventure LEVEL MAP (Candy-Crush-style progression screen).
+  // Level titles/subtitles/rewards live in storyData; chrome only here.
+  storyMapSubtitle: string;
+  storyMapComingSoon: string;
+  /** Two-tone ghost-card twin of storyMapComingSoon (reference: violet lead + navy tail). */
+  storyMapComingSoonLead: string;
+  storyMapComingSoonTail: string;
+  storyMapPlayCta: string;
+  storyMapReplayCta: string;
+  storyMapNewAdventure: string;
+  storyMapAllDone: string;
+  storyMapContinueCta: string;
+  storyMapPlayLevelCta: (n: number) => string;
+  storyMapLevelsDone: (done: number, total: number) => string;
+  /** Shown when a LOCKED level node is tapped (map redesign §9). */
+  storyMapLockedToast: string;
+  // Story voice guide (spoken chrome + control labels). The spoken lines
+  // are voiced by the Gemini clip narrator (the ONLY story voice) around
+  // the FIXED story data — they never carry story facts themselves.
+  storyVoiceOptionOne: string;
+  storyVoiceOptionTwo: string;
+  storyVoiceOptionThree: string;
+  storyVoiceOptionFour: string;
+  storyVoiceCorrectLead: string;
+  storyVoiceNextCta: string;
+  storyVoiceTryAgainCta: string;
+  storyVoiceYourTurn: string;
+  storyVoiceOn: string;
+  storyVoiceOff: string;
+  storyVoiceReplay: string;
+  storyVoiceRetry: string;
+  /** Neutral loading chip while Gemini audio is being prepared (§12). */
+  storyVoicePreparing: string;
 }
 
 const EN: UIStrings = {
   appTitle: 'Nyaya Nagri',
   myProgress: 'My Progress',
+  playerProfileToggle: 'Player Profile',
   mapLabel: 'Map',
   mapModalSubtitle: 'Your journey across Nyaya Nagri',
   mapOpenLabel: 'Open the full map',
@@ -891,6 +960,39 @@ const EN: UIStrings = {
   available247: "Available 24/7. It's safe and free to call.",
   close: 'Close',
 
+  helpHubSubtitle: "Need help? We'll help you find the right support.",
+  realEmergency: 'Real emergency',
+  emergencyQuestion: 'Someone is badly hurt, unconscious, or cannot breathe?',
+  call112: 'Call 112',
+  isThisEmergency: 'Is this a real emergency?',
+  yesCall112: 'Yes, call 112',
+  emergencySafetyNote: 'For serious or life-threatening emergencies, call emergency services right away.',
+  findHelpNearMe: 'Find Help Near Me',
+  findHelpIntro: 'Allow your location to find nearby hospitals and medical help on Google Maps.',
+  allowLocation: 'Use My Location',
+  locationPrivacyNote: 'Your location stays on this device — it only goes into the Google Maps link you open. It is never saved.',
+  findingLocation: 'Finding your location...',
+  locationFound: 'Location found',
+  locationReady: 'Your location is ready. Find nearby medical help.',
+  chooseHelpType: 'Choose the type of help you need.',
+  findHospitals: 'Find Hospitals Nearby',
+  findMedicalCare: 'Find Medical Care',
+  findChildCare: 'Find Child Care',
+  emergencySearchLabel: 'Emergency Help',
+  allowLocationAgain: 'Allow Location Again',
+  locationDenied: 'Location access is needed to find help near you.',
+  locationSettingsHint: 'Turn location back on in your browser or phone settings, then tap Allow Location Again.',
+  locationTimeout: 'Location is taking too long.',
+  locationUnavailable: "We couldn't determine your location.",
+  locationUnsupported: 'Your device or browser does not support location access.',
+  openMaps: 'Open Google Maps',
+  emergencyAssistNote: 'For immediate emergency assistance',
+  needAdult: 'Need an adult?',
+  needAdultNote: 'Ask a parent, teacher or trusted adult for help.',
+  shareHelpInfo: 'Share Help Information',
+  shareCopied: 'Copied! Show it to an adult.',
+  moreHelp: 'Report online',
+
   guideIntro:
     "Hi! I'm Nyaya AI 👋 Ask me anything about your rights or what you're learning in Nyaya Nagri. I'm a computer helper, not a real person or lawyer — and please don't share personal details like your real name, school, or phone number.",
   yourGuide: 'Nyaya AI',
@@ -1161,12 +1263,9 @@ const EN: UIStrings = {
 
   homeTagline: 'Know Your Rights. Build Your Future.',
   homeEnterCta: 'Enter Nyaya Nagri',
-  homeJourney: 'Your journey begins here',
-  homeExplore: 'Explore Nyaya Nagri',
   homeCentralBanner: 'Know Your Rights',
   homeLoading: 'Loading…',
   homeAbout: 'About',
-  homeAccessibility: 'Accessibility',
   homeAboutTitle: 'About Nyaya Nagri',
   homeAboutBody: [
     'Nyaya Nagri is a learning city where children aged 8-18 explore the rights that protect them — through stories, quests, and games in English and Hindi.',
@@ -1183,11 +1282,37 @@ const EN: UIStrings = {
   storyAdventuresHeading: 'Story Adventures',
   storyLockedHint: (previousTitle) => `Finish "${previousTitle}" to unlock this story.`,
   storyExit: 'Leave the story',
+  storyMapSubtitle: 'Har level ek naya adhikar sikhata hai.',
+  storyMapComingSoon: 'Naye adventures jald aa rahe hain…',
+  storyMapComingSoonLead: 'Naye adventures',
+  storyMapComingSoonTail: 'jald aa rahe hain…',
+  storyMapPlayCta: 'Shuru karo',
+  storyMapReplayCta: 'Dobara khelo',
+  storyMapNewAdventure: 'New Adventure Unlocked!',
+  storyMapAllDone: 'Saari kahaniyan complete!',
+  storyMapContinueCta: 'Continue Adventure',
+  storyMapPlayLevelCta: (n) => `Play Level ${n}`,
+  storyMapLevelsDone: (done, total) => `${done} / ${total} Complete`,
+  storyMapLockedToast: 'Pehle pichhla adventure complete karo!',
+  storyVoiceOptionOne: 'Option one:',
+  storyVoiceOptionTwo: 'Option two:',
+  storyVoiceOptionThree: 'Option three:',
+  storyVoiceOptionFour: 'Option four:',
+  storyVoiceCorrectLead: 'Bahut badhiya!',
+  storyVoiceNextCta: 'Ab Next par tap karke story continue karo.',
+  storyVoiceTryAgainCta: 'Try Again par tap karke dobara answer choose karo.',
+  storyVoiceYourTurn: 'Ab aapki baari hai.',
+  storyVoiceOn: 'Turn voice guide on',
+  storyVoiceOff: 'Turn voice guide off',
+  storyVoiceReplay: 'Listen again',
+  storyVoiceRetry: 'Voice load nahi ho paayi. Dobara sunne ke liye tap karein.',
+  storyVoicePreparing: 'Voice taiyaar ho rahi hai…',
 };
 
 const HI: UIStrings = {
   appTitle: 'न्याय नगरी',
   myProgress: 'मेरी प्रगति',
+  playerProfileToggle: 'खिलाड़ी प्रोफ़ाइल',
   mapLabel: 'नक्शा',
   mapModalSubtitle: 'न्याय नगरी में तुम्हारा सफ़र',
   mapOpenLabel: 'पूरा नक्शा खोलो',
@@ -1533,6 +1658,39 @@ const HI: UIStrings = {
   available247: 'हर दिन, हर समय उपलब्ध। कॉल करना सुरक्षित और मुफ़्त है।',
   close: 'बंद करो',
 
+  helpHubSubtitle: 'मदद चाहिए? हम सही मदद ढूंढने में साथ देंगे।',
+  realEmergency: 'सच में इमरजेंसी?',
+  emergencyQuestion: 'कोई बहुत चोटिल है, बेहोश है, या साँस नहीं ले पा रहा?',
+  call112: '112 पर कॉल करो',
+  isThisEmergency: 'क्या यह सच में इमरजेंसी है?',
+  yesCall112: 'हाँ, 112 पर कॉल करो',
+  emergencySafetyNote: 'गंभीर या जान के खतरे वाली हालत में तुरंत इमरजेंसी सेवा को कॉल करो।',
+  findHelpNearMe: 'आस-पास मदद ढूंढो',
+  findHelpIntro: 'लोकेशन की इजाज़त दो ताकि Google Maps पर आस-पास के अस्पताल और मेडिकल मदद ढूंढ सको।',
+  allowLocation: 'मेरी लोकेशन इस्तेमाल करो',
+  locationPrivacyNote: 'तुम्हारी लोकेशन इसी डिवाइस पर रहती है — सिर्फ़ उस Google Maps लिंक में जाती है जो तुम खोलते हो। कभी सेव नहीं होती।',
+  findingLocation: 'तुम्हारी लोकेशन ढूंढ रहे हैं...',
+  locationFound: 'लोकेशन मिल गई',
+  locationReady: 'तुम्हारी लोकेशन तैयार है। आस-पास की मेडिकल मदद ढूंढो।',
+  chooseHelpType: 'बताओ, किस तरह की मदद चाहिए।',
+  findHospitals: 'आस-पास के अस्पताल ढूंढो',
+  findMedicalCare: 'मेडिकल देखभाल ढूंढो',
+  findChildCare: 'बच्चों का अस्पताल ढूंढो',
+  emergencySearchLabel: 'इमरजेंसी मदद',
+  allowLocationAgain: 'लोकेशन फिर से चालू करो',
+  locationDenied: 'आस-पास मदद ढूंढने के लिए लोकेशन की इजाज़त चाहिए।',
+  locationSettingsHint: 'ब्राउज़र या फ़ोन की सेटिंग में लोकेशन फिर से चालू करो, फिर "लोकेशन फिर से चालू करो" दबाओ।',
+  locationTimeout: 'लोकेशन मिलने में बहुत देर लग रही है।',
+  locationUnavailable: 'तुम्हारी लोकेशन पता नहीं चल पाई।',
+  locationUnsupported: 'तुम्हारा डिवाइस या ब्राउज़र लोकेशन नहीं बता सकता।',
+  openMaps: 'Google Maps खोलो',
+  emergencyAssistNote: 'तुरंत इमरजेंसी मदद के लिए',
+  needAdult: 'किसी बड़े की ज़रूरत है?',
+  needAdultNote: 'मम्मी-पापा, टीचर या किसी भरोसेमंद बड़े से मदद माँगो।',
+  shareHelpInfo: 'मदद की जानकारी भेजो',
+  shareCopied: 'कॉपी हो गया! किसी बड़े को दिखाओ।',
+  moreHelp: 'ऑनलाइन रिपोर्ट करो',
+
   guideIntro:
     'नमस्ते! मैं Nyaya AI हूँ 👋 अपने अधिकारों या न्याय नगरी में जो सीख रहे हो, उसके बारे में कुछ भी पूछो। मैं एक कंप्यूटर हेल्पर हूँ, असली इंसान या वकील नहीं — और अपना असली नाम, स्कूल या फ़ोन नंबर जैसी निजी बातें मत बताना।',
   yourGuide: 'Nyaya AI',
@@ -1801,12 +1959,9 @@ const HI: UIStrings = {
 
   homeTagline: 'अपने अधिकार जानो। अपना भविष्य बनाओ।',
   homeEnterCta: 'न्याय नगरी में चलो',
-  homeJourney: 'तुम्हारा सफ़र यहीं से शुरू होता है',
-  homeExplore: 'न्याय नगरी घूमो',
   homeCentralBanner: 'अपने अधिकार जानो',
   homeLoading: 'लोड हो रहा है…',
   homeAbout: 'परिचय',
-  homeAccessibility: 'सुलभता',
   homeAboutTitle: 'न्याय नगरी के बारे में',
   homeAboutBody: [
     'न्याय नगरी एक सीखने का शहर है जहाँ 8-18 साल के बच्चे कहानियों, क्वेस्ट और खेलों के ज़रिए वे अधिकार सीखते हैं जो उनकी रक्षा करते हैं — हिंदी और अंग्रेज़ी में।',
@@ -1823,6 +1978,31 @@ const HI: UIStrings = {
   storyAdventuresHeading: 'कहानी के सफ़र',
   storyLockedHint: (previousTitle) => `इसे खोलने के लिए पहले "${previousTitle}" पूरी करो।`,
   storyExit: 'कहानी से बाहर जाओ',
+  storyMapSubtitle: 'हर लेवल एक नया अधिकार सिखाता है।',
+  storyMapComingSoon: 'नए एडवेंचर जल्द आ रहे हैं…',
+  storyMapComingSoonLead: 'नए एडवेंचर',
+  storyMapComingSoonTail: 'जल्द आ रहे हैं…',
+  storyMapPlayCta: 'शुरू करो',
+  storyMapReplayCta: 'दोबारा खेलो',
+  storyMapNewAdventure: 'नया एडवेंचर अनलॉक हुआ!',
+  storyMapAllDone: 'सारी कहानियाँ पूरी!',
+  storyMapContinueCta: 'एडवेंचर जारी रखो',
+  storyMapPlayLevelCta: (n) => `लेवल ${n} खेलो`,
+  storyMapLevelsDone: (done, total) => `${done} / ${total} पूरे`,
+  storyMapLockedToast: 'पहले पिछला एडवेंचर पूरा करो!',
+  storyVoiceOptionOne: 'पहला विकल्प:',
+  storyVoiceOptionTwo: 'दूसरा विकल्प:',
+  storyVoiceOptionThree: 'तीसरा विकल्प:',
+  storyVoiceOptionFour: 'चौथा विकल्प:',
+  storyVoiceCorrectLead: 'बहुत बढ़िया!',
+  storyVoiceNextCta: 'अब "आगे" पर टैप करके कहानी जारी रखो।',
+  storyVoiceTryAgainCta: '"फिर से कोशिश करो" पर टैप करके दोबारा जवाब चुनो।',
+  storyVoiceYourTurn: 'अब तुम्हारी बारी है।',
+  storyVoiceRetry: 'आवाज़ लोड नहीं हो पाई। दोबारा सुनने के लिए टैप करें।',
+  storyVoicePreparing: 'आवाज़ तैयार हो रही है…',
+  storyVoiceOn: 'आवाज़ गाइड चालू करो',
+  storyVoiceOff: 'आवाज़ गाइड बंद करो',
+  storyVoiceReplay: 'फिर से सुनो',
 };
 
 export const STRINGS: Record<Language, UIStrings> = { en: EN, hi: HI };

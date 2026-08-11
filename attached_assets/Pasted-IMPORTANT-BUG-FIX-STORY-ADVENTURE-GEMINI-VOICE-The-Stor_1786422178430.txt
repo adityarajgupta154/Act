@@ -1,0 +1,436 @@
+IMPORTANT BUG FIX — STORY ADVENTURE GEMINI VOICE
+
+The Story Adventure voice system is still showing this error:
+
+"Voice aane mein thodi der lag rahi hai — dobara sunne ke liye tap karo."
+
+The problem is happening on Level 2 as well, even though the story slide, image, caption and Next button are working correctly.
+
+DO NOT redesign the UI.
+
+DO NOT change the story content.
+
+DO NOT change the question/answer logic.
+
+ONLY debug and fix the Story Adventure Gemini voice pipeline.
+
+==================================================
+1. FIRST DEBUG THE ACTUAL ROOT CAUSE
+==================================================
+
+Inspect the complete voice implementation and identify:
+
+- Gemini API request
+- Gemini audio generation
+- Gemini response parsing
+- audio/base64/blob conversion
+- audio playback
+- loading state
+- timeout logic
+- retry logic
+- slide-change lifecycle
+- cleanup logic
+- AbortController
+- useEffect dependencies
+- audio element lifecycle
+
+Check the browser Console and Network tab for the actual failing request.
+
+DO NOT assume the problem is network latency.
+
+Find the exact error.
+
+Log useful diagnostics such as:
+
+[StoryVoice] slide id
+[StoryVoice] text being spoken
+[StoryVoice] request started
+[StoryVoice] Gemini response received
+[StoryVoice] audio data received
+[StoryVoice] audio playback started
+[StoryVoice] audio playback completed
+[StoryVoice] error
+
+Never log the GEMINI_API_KEY.
+
+==================================================
+2. GEMINI MUST BE THE ONLY VOICE ENGINE
+==================================================
+
+There must be ONLY ONE voice provider for Story Adventure:
+
+GEMINI.
+
+Remove/disable every other voice engine from Story Adventure:
+
+- window.speechSynthesis
+- browser Web Speech API
+- SpeechSynthesisUtterance
+- generic TTS libraries
+- browser fallback voice
+- robotic fallback voice
+- duplicate voice service
+- old audio generation implementation
+
+Do NOT use another voice provider when Gemini fails.
+
+Do NOT silently switch to a robotic voice.
+
+==================================================
+3. IMPORTANT — STORY ADVENTURE ONLY
+==================================================
+
+This Gemini voice system must ONLY run inside:
+
+Story Adventure.
+
+Do NOT modify voice behavior anywhere else in the application.
+
+Other screens/features must remain untouched.
+
+==================================================
+4. FIX SLIDE LIFECYCLE
+==================================================
+
+The voice must be tied to the current slide.
+
+When a slide opens:
+
+1. Cancel any previous slide's audio/request.
+2. Clear previous audio state.
+3. Read the CURRENT slide content.
+4. Send that content to Gemini.
+5. Wait for Gemini response.
+6. Play the returned audio.
+7. Mark voice as completed.
+
+Do not allow an old slide's request to overwrite the new slide's state.
+
+Example:
+
+Slide 1 request
+   ↓
+user clicks Next
+   ↓
+CANCEL Slide 1 request/audio
+   ↓
+Slide 2 request
+   ↓
+Gemini generates Slide 2 audio
+   ↓
+play Slide 2 audio
+
+==================================================
+5. DO NOT USE A VERY SHORT TIMEOUT
+==================================================
+
+Find the current timeout implementation.
+
+If there is something like:
+
+setTimeout(..., 2000)
+setTimeout(..., 3000)
+setTimeout(..., 5000)
+
+do NOT use an arbitrarily short timeout for Gemini audio generation.
+
+A slow response must not automatically be treated as a failed voice request.
+
+Use a sensible request timeout, preferably with AbortController.
+
+The timeout should be long enough for Gemini audio generation but should not leave the UI stuck forever.
+
+==================================================
+6. HANDLE GEMINI RESPONSE CORRECTLY
+==================================================
+
+Verify the exact Gemini response structure being returned by the current model/API implementation.
+
+Do not assume the audio field exists.
+
+Before attempting playback, validate:
+
+- HTTP status
+- response body
+- MIME type
+- audio data existence
+- base64/blob conversion
+- Blob size
+- Audio object creation
+
+If the response contains no valid audio data:
+
+log the actual response error.
+
+Do NOT simply show the generic:
+
+"Voice aane mein thodi der..."
+
+without knowing why it failed.
+
+==================================================
+7. PREVENT DUPLICATE REQUESTS
+==================================================
+
+A single slide must generate exactly ONE Gemini voice request.
+
+Prevent:
+
+- duplicate useEffect execution
+- duplicate event listeners
+- duplicate API calls
+- duplicate audio playback
+- repeated request caused by React StrictMode
+- stale state triggering another request
+
+Add request IDs.
+
+Example:
+
+requestId = slideId + generationId
+
+Only the latest active request is allowed to update the UI.
+
+==================================================
+8. AUDIO PLAYBACK
+==================================================
+
+After Gemini returns valid audio:
+
+Create the audio correctly.
+
+Example flow:
+
+Gemini response
+→ decode audio
+→ Blob
+→ object URL
+→ HTMLAudioElement
+→ audio.play()
+
+Handle:
+
+audio.onplay
+audio.onended
+audio.onerror
+
+Always revoke old object URLs:
+
+URL.revokeObjectURL(previousUrl)
+
+Prevent multiple audio objects from playing simultaneously.
+
+==================================================
+9. IMPORTANT FOR SLIDE 5 / QUESTION SLIDES
+==================================================
+
+Question slides MUST also use Gemini voice.
+
+For a question slide, Gemini should speak:
+
+1. Question
+2. Option 1
+3. Option 2
+
+Example:
+
+"Riya ke paas ek decision tha — kya wo Aman ki madad karegi?
+
+Option 1: Chup chaap aage badh jao.
+
+Option 2: Aman ke liye help bulao."
+
+Then wait for the user to select an answer.
+
+DO NOT skip voice generation on question slides.
+
+Do NOT use browser TTS for questions.
+
+==================================================
+10. QUESTION WAITING REMINDER
+==================================================
+
+After Gemini finishes speaking the question and options:
+
+If the user has NOT selected an answer:
+
+wait 5 seconds.
+
+Then Gemini should speak a short reminder.
+
+Example:
+
+"Abhi aapne koi answer select nahi kiya hai."
+
+After another 5 seconds, use a slightly different reminder:
+
+"Apna answer choose kijiye."
+
+Then continue this reminder cycle only while:
+
+currentSlide.type === "question"
+AND
+selectedAnswer === null
+
+Immediately stop the reminder loop when the user selects an option.
+
+IMPORTANT:
+
+Never start this reminder timer on normal story slides.
+
+Never start it on the congratulations/reward screen.
+
+Never start it on the level-selection screen.
+
+==================================================
+11. STOP VOICE OUTSIDE STORY QUESTIONS
+==================================================
+
+The voice lifecycle MUST stop when:
+
+- user leaves Story Adventure
+- user closes the story
+- user reaches congratulations screen
+- user completes the level
+- user navigates to another route
+- user selects an answer
+- current slide changes
+
+No voice should continue speaking after leaving the relevant slide.
+
+==================================================
+12. REMOVE THE FALSE ERROR STATE
+==================================================
+
+Do not immediately display:
+
+"Voice aane mein thodi der lag rahi hai..."
+
+just because audio generation takes some time.
+
+Instead show a small neutral loading state:
+
+🔊 Preparing voice...
+
+Only show an error state when the Gemini request actually fails.
+
+If Gemini fails, show:
+
+"Voice load nahi ho paayi. Dobara sunne ke liye tap karein."
+
+The retry button should trigger ONLY the Gemini voice request again.
+
+Never switch to another TTS engine.
+
+==================================================
+13. RETRY
+==================================================
+
+The speaker/replay button should:
+
+- cancel current request/audio
+- create a new Gemini request
+- generate audio for the CURRENT slide
+- play it
+
+It must NOT move to another slide.
+
+Prevent multiple rapid taps from creating multiple simultaneous Gemini requests.
+
+Disable the replay button while the request is actively generating.
+
+==================================================
+14. API KEY
+==================================================
+
+Use ONLY the existing:
+
+GEMINI_API_KEY
+
+for Story Adventure voice.
+
+Do not use:
+
+GOOGLE_MAPS_API_KEY
+
+for voice.
+
+Do not expose GEMINI_API_KEY in client-side source code if the current architecture supports a server/API route.
+
+Use the existing secure server-side Gemini integration if already present.
+
+DO NOT change the existing Google Maps integration.
+
+==================================================
+15. LEVEL 2 SPECIFIC TEST
+==================================================
+
+After fixing, test Level 2 from the beginning:
+
+Slide 1:
+- Gemini voice speaks caption.
+
+Slide 2:
+- Gemini voice speaks caption.
+
+Slide 3:
+- Gemini voice speaks caption.
+
+Slide 4:
+- Gemini voice speaks caption.
+
+Slide 5:
+- Gemini voice speaks question.
+- Gemini voice speaks Option 1.
+- Gemini voice speaks Option 2.
+- Wait for user answer.
+- If no answer → reminder after 5 seconds.
+- User selects answer → stop reminder immediately.
+
+Final congratulations screen:
+- NO automatic Gemini narration.
+- NO reminder.
+- NO voice request.
+
+==================================================
+16. TEST LEVEL 1 TOO
+==================================================
+
+Do not only test Level 2.
+
+Verify:
+
+Level 1:
+all story slides → Gemini voice
+
+question slide → Gemini question + options
+
+no answer → 5-second reminder
+
+answer selected → reminder stops
+
+congratulations → NO voice
+
+==================================================
+17. FINAL REQUIREMENT
+==================================================
+
+After fixing, do not just say "fixed".
+
+Verify the actual Gemini request in the browser/server logs.
+
+Confirm:
+
+- Gemini request succeeds
+- valid audio data is returned
+- audio Blob is created
+- audio.play() succeeds
+- audio.onended fires
+- slide transitions do not create stale requests
+- no duplicate TTS implementation remains
+- no robotic voice is triggered
+- no console errors remain
+
+If Gemini itself is returning an API/model error, show me the exact error and fix the API/model/request format rather than hiding it behind the generic timeout message.
+
+Do not modify unrelated features.

@@ -1,0 +1,711 @@
+I need you to completely redesign and fix the "GET HELP NOW" emergency nearby-help feature.
+
+IMPORTANT:
+This feature must work with the user's real device location and must show REAL nearby hospitals / child-care medical facilities based on the user's current location.
+
+Do NOT use fake hospitals, hardcoded hospitals, dummy phone numbers, or static sample data.
+
+==================================================
+1. CURRENT PROBLEM
+==================================================
+
+Currently, after the user grants location permission, the UI shows:
+
+"Sorry, we couldn't load nearby places."
+
+with:
+- Try Again
+- Open Maps
+- 112
+
+This is not acceptable.
+
+The system must properly fetch nearby real medical facilities after location permission is granted.
+
+Do not hide the actual API error behind a generic message.
+
+Implement proper error handling and debugging.
+
+==================================================
+2. USER FLOW
+==================================================
+
+When the user clicks:
+
+GET HELP NOW
+
+open a child-friendly emergency help panel/modal.
+
+Show:
+
+"Find Help Near Me"
+
+with a short explanation:
+
+"Allow your location so we can find nearby hospitals and child-care medical facilities."
+
+Buttons:
+
+[ Use My Location ]
+
+[ Call 112 ]
+
+Do not immediately request location without explaining why it is needed.
+
+After the user grants location permission:
+
+1. Get current GPS coordinates.
+2. Validate latitude/longitude.
+3. Send coordinates to the backend.
+4. Search for nearby medical facilities.
+5. Fetch detailed information.
+6. Sort the results.
+7. Display maximum 5 facilities.
+
+==================================================
+3. GOOGLE PLACES API (NEW)
+==================================================
+
+Use Google Places API (New), not an obsolete Places API implementation.
+
+Use Nearby Search (New):
+
+POST:
+https://places.googleapis.com/v1/places:searchNearby
+
+Use the user's latitude and longitude as the center.
+
+Search radius:
+
+Start with 5 km.
+
+If fewer than 3 useful results are found:
+expand to 10 km.
+
+If still no useful result:
+expand to 25 km.
+
+Do not blindly return unrelated businesses.
+
+Prioritize medical facilities such as:
+
+- hospital
+- medical_center
+- clinic
+- doctor
+- child_health / pediatric-related medical facilities where supported
+- emergency medical facilities
+
+The exact supported Google place types should be verified against the current Places API documentation instead of inventing unsupported type names.
+
+Use a suitable combination of supported medical place types.
+
+Reference:
+Google Places API (New) Nearby Search supports included place types, radius/location restriction and ranking preferences.
+
+==================================================
+4. BACKEND ARCHITECTURE
+==================================================
+
+DO NOT expose the unrestricted Google Places API key directly in the frontend.
+
+Create a backend endpoint such as:
+
+GET /api/nearby-help?lat=...&lng=...
+
+or:
+
+POST /api/nearby-help
+
+Request:
+
+{
+  "latitude": number,
+  "longitude": number
+}
+
+Backend:
+
+1. Validate latitude.
+2. Validate longitude.
+3. Validate coordinate ranges.
+4. Call Google Places API (New).
+5. Retrieve only the fields actually required.
+6. Normalize the response.
+7. Return clean JSON to the frontend.
+
+Keep the Google API key in Replit Secrets / environment variables.
+
+Example:
+
+GOOGLE_MAPS_API_KEY
+
+Never hardcode the API key in source code.
+
+==================================================
+5. REQUIRED PLACE DATA
+==================================================
+
+For every result try to obtain:
+
+- place ID
+- hospital/facility name
+- rating
+- number of user ratings if available
+- complete address
+- phone number if available
+- Google Maps URL
+- latitude
+- longitude
+- primary place type
+- opening/current availability information if supported
+
+Do not display a phone button if the facility does not provide a valid phone number.
+
+Do not invent phone numbers.
+
+==================================================
+6. MAXIMUM 5 RESULTS
+==================================================
+
+Display maximum 5 nearby facilities.
+
+The results should NOT simply be:
+
+"first 5 results from API."
+
+Create a ranking algorithm.
+
+Priority should be approximately:
+
+1. Medical relevance
+2. Higher rating
+3. Sufficient number of ratings
+4. Distance
+5. Availability/open status if reliable
+
+For example:
+
+A hospital with 4.7 rating and 500 reviews should generally rank above
+a 5.0 rating facility with only 1 review.
+
+Do NOT claim "best hospital" unless the data actually supports it.
+
+Use a label such as:
+
+"Highly Rated"
+
+only when appropriate.
+
+==================================================
+7. RESULT CARD DESIGN
+==================================================
+
+Create a clean child-friendly but serious emergency UI.
+
+Each hospital card should contain:
+
+----------------------------------
+
+🏥 Hospital Name
+
+⭐ 4.6
+(325 reviews)
+
+📍 1.8 km away
+
+Address:
+Full address here
+
+[ 📞 Call ]   [ 🧭 Get Directions ]
+
+----------------------------------
+
+If phone number is unavailable:
+
+[ 📞 Phone unavailable ]
+
+should NOT be clickable.
+
+For directions:
+
+Clicking "Get Directions" should open Google Maps with that exact facility as the destination.
+
+Use the actual place ID / coordinates whenever possible.
+
+Do not just search for a generic "hospital near me".
+
+==================================================
+8. DIRECT CALL FUNCTION
+==================================================
+
+If the facility has a valid phone number:
+
+Clicking:
+
+📞 Call
+
+must trigger the device's phone handler:
+
+tel:<phone-number>
+
+On mobile devices this should open the native dialer.
+
+Do not automatically place a call without user interaction.
+
+For desktop:
+
+show a suitable message such as:
+
+"Calling is available on a phone device."
+
+or allow copying the phone number.
+
+==================================================
+9. GET DIRECTIONS
+==================================================
+
+The Get Directions button must open Google Maps directions to the selected facility.
+
+Use the user's current location as the origin when possible.
+
+Use the selected hospital as the destination.
+
+Use a Google Maps Directions URL with:
+
+api=1
+
+and the destination/place ID or coordinates.
+
+Do NOT open a generic Google Maps search.
+
+The user should land directly on directions to the selected facility.
+
+==================================================
+10. EMERGENCY 112
+==================================================
+
+Keep the red:
+
+CALL 112
+
+button clearly visible.
+
+This should remain separate from hospital cards.
+
+Clicking it should trigger:
+
+tel:112
+
+only after explicit user interaction.
+
+Do not automatically call 112.
+
+Add a small label:
+
+"For immediate emergency assistance"
+
+==================================================
+11. LOCATION ERROR HANDLING
+==================================================
+
+Handle every possible location failure separately.
+
+Cases:
+
+A. Permission denied
+
+Show:
+
+"Location permission is off."
+
+"Please allow location access to find nearby help."
+
+Buttons:
+
+[ Try Location Again ]
+
+[ Open Location Settings ]
+
+[ Call 112 ]
+
+B. Position unavailable
+
+Show:
+
+"We couldn't determine your location."
+
+[ Try Again ]
+
+C. Timeout
+
+Show:
+
+"Location is taking too long."
+
+[ Try Again ]
+
+D. Browser doesn't support geolocation
+
+Show:
+
+"Your device/browser does not support location access."
+
+E. GPS coordinates received but Places API fails
+
+Show:
+
+"We found your location, but nearby medical places could not be loaded."
+
+Then show a developer-safe diagnostic message in console.
+
+Do NOT simply show:
+
+"Sorry, we couldn't load nearby places."
+
+without knowing why.
+
+==================================================
+12. API ERROR DEBUGGING
+==================================================
+
+This is extremely important.
+
+The current project has the bug where location permission is granted but nearby places fail.
+
+Find the exact reason.
+
+Log structured errors in development:
+
+- location permission state
+- latitude
+- longitude
+- API HTTP status
+- Google API error message
+- response status
+- whether API key exists
+- whether Places API is enabled
+- whether request was blocked
+- whether billing/quota failed
+- whether CORS/backend configuration failed
+
+NEVER log the actual API key.
+
+Frontend should receive safe error codes such as:
+
+LOCATION_PERMISSION_DENIED
+LOCATION_UNAVAILABLE
+LOCATION_TIMEOUT
+PLACES_API_UNAUTHORIZED
+PLACES_API_QUOTA_EXCEEDED
+PLACES_API_INVALID_REQUEST
+PLACES_API_NO_RESULTS
+PLACES_API_SERVER_ERROR
+
+Then map these errors to human-friendly UI messages.
+
+==================================================
+13. API CONFIGURATION CHECK
+==================================================
+
+Verify that the Google Cloud project has:
+
+- Places API (New) enabled
+- required billing configuration
+- valid API key
+- appropriate API restrictions
+
+If Maps JavaScript API is already used elsewhere in the project, do not break it.
+
+Use separate/restricted credentials if appropriate.
+
+Do not silently fall back to a fake dataset.
+
+==================================================
+14. LOADING STATE
+==================================================
+
+After location permission is granted, do NOT immediately show an error.
+
+Show an attractive loading state:
+
+📍 Finding your location...
+
+then:
+
+🔎 Finding nearby hospitals...
+
+then:
+
+🏥 Loading nearby medical help...
+
+Use a small animation/spinner.
+
+Do not let the user repeatedly press the button while the request is already running.
+
+Disable duplicate requests.
+
+==================================================
+15. RETRY SYSTEM
+==================================================
+
+"Try Again" must actually retry the failed stage.
+
+If GPS failed:
+retry geolocation.
+
+If Places API failed:
+retry Places API.
+
+Do not unnecessarily request location permission repeatedly if the browser has already granted it.
+
+Prevent multiple simultaneous API calls.
+
+Add request cancellation / stale-request protection where appropriate.
+
+==================================================
+16. EMPTY STATE
+==================================================
+
+If no suitable medical facilities are found:
+
+Show:
+
+"No nearby medical facilities were found within 25 km."
+
+Then:
+
+[ Search in Google Maps ]
+
+[ Call 112 ]
+
+Do not show fake hospitals.
+
+==================================================
+17. UI STRUCTURE
+==================================================
+
+Recommended layout:
+
+-----------------------------------------
+FIND HELP NEAR ME
+-----------------------------------------
+
+📍 Location enabled
+
+"Here are nearby medical facilities based
+on your current location."
+
+-----------------------------------------
+
+🏥 Hospital Card 1
+
+Hospital Name
+⭐ Rating
+📍 Distance
+Address
+
+[ 📞 Call ] [ 🧭 Directions ]
+
+-----------------------------------------
+
+🏥 Hospital Card 2
+
+...
+
+-----------------------------------------
+
+Maximum 5 cards.
+
+-----------------------------------------
+
+🚨 Need immediate emergency help?
+
+[ CALL 112 ]
+
+-----------------------------------------
+
+Location:
+"Based on your current location"
+
+[ Refresh ]
+
+-----------------------------------------
+
+Do not make the UI too dense.
+
+The application is designed for children/families, so use large buttons, readable typography and clear icons.
+
+==================================================
+18. IMPORTANT SAFETY UX
+==================================================
+
+This is a child-safety application.
+
+Do not present search results as guaranteed emergency care.
+
+Use wording such as:
+
+"Nearby medical facilities"
+
+instead of:
+
+"Guaranteed emergency hospital"
+
+If a facility's open/closed status is available and reliable, show:
+
+🟢 Open now
+
+or
+
+🔴 Closed
+
+Otherwise do not guess.
+
+If the situation appears urgent, keep:
+
+CALL 112
+
+prominent.
+
+==================================================
+19. PERFORMANCE
+==================================================
+
+The feature must feel fast.
+
+Use:
+
+- one geolocation request
+- one nearby-search request where possible
+- only fetch additional place details for the top results
+- avoid unnecessary API calls
+- debounce/restrict repeated searches
+- cache results for the current coordinates for a short period
+
+Do not repeatedly call Google APIs every time the modal re-renders.
+
+Only refresh when:
+- user explicitly taps Refresh
+- location meaningfully changes
+- previous request failed
+
+==================================================
+20. IMPORTANT: DO NOT BREAK EXISTING FEATURES
+==================================================
+
+Do NOT modify:
+
+- Story Adventure
+- Story Adventure Gemini voice system
+- Level progression
+- game map
+- player movement
+- rights levels
+- existing AI assistant
+- existing navigation
+- existing UI outside Get Help Now
+
+This implementation must be isolated to the Get Help Now feature.
+
+==================================================
+21. RESPONSIVE DESIGN
+==================================================
+
+Desktop:
+
+Show a centered emergency-help modal/panel with up to 5 cards.
+
+Mobile:
+
+Use a bottom sheet / full-screen friendly layout.
+
+Buttons must be large enough to tap easily.
+
+Phone button should be visually obvious.
+
+Directions button should be next to it.
+
+==================================================
+22. GOOGLE MAPS LINKS
+==================================================
+
+For "Get Directions", generate a real Google Maps directions URL targeting the selected place.
+
+Do not use a generic maps homepage.
+
+Use the selected place's:
+- place ID
+or
+- coordinates
+
+as the destination.
+
+Google Maps URLs support directions using an API=1 URL and destination parameters.
+
+==================================================
+23. FINAL TESTING
+==================================================
+
+After implementation, test all of these:
+
+1. User denies location.
+2. User allows location.
+3. GPS timeout.
+4. GPS unavailable.
+5. Places API returns results.
+6. Places API returns zero results.
+7. Places API returns an authorization error.
+8. Places API quota/billing error.
+9. Hospital has phone number.
+10. Hospital has no phone number.
+11. User clicks Call.
+12. User clicks Get Directions.
+13. User clicks 112.
+14. User clicks Try Again.
+15. User clicks Refresh repeatedly.
+16. User opens/closes the modal repeatedly.
+17. Mobile viewport.
+18. Desktop viewport.
+19. Slow internet.
+20. API request fails halfway through.
+
+There must NEVER be:
+- duplicate hospital cards
+- fake hospital data
+- duplicate API requests caused by React re-renders
+- broken Try Again
+- blank modal
+- infinite loading
+- exposed API key
+- generic error when a specific error can be identified
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Do not just change the UI.
+
+Trace the current "couldn't load nearby places" problem through the entire flow:
+
+GET HELP NOW
+→ permission
+→ navigator.geolocation
+→ coordinates
+→ backend
+→ Google Places API (New)
+→ nearby results
+→ place details
+→ ranking
+→ UI
+
+Find the actual failure and fix it.
+
+Then implement the complete real nearby-help experience described above.
+
+Use real API data only.
+Maximum 5 results.
+Higher-rated/relevant nearby medical facilities first.
+Direct phone call button when a real phone number exists.
+Direct Google Maps directions button for every valid result.
+Keep CALL 112 as the emergency fallback.

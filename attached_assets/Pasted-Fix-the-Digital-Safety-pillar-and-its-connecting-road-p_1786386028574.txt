@@ -1,0 +1,175 @@
+Fix the Digital Safety pillar and its connecting road/path in the existing Nyaya Nagri game map.
+
+IMPORTANT:
+Do NOT redesign the whole map.
+Do NOT change the background, UI, player, buildings, labels, colors, or other locations.
+Only fix the Digital Safety area shown in the reference image.
+
+REFERENCE PROBLEM:
+The Digital Safety pillar currently looks disconnected from the road.
+The road approaches the pillar at an awkward angle and appears to overlap/miss the pillar.
+The pillar also looks slightly misplaced relative to the road.
+
+GOAL:
+Make the Digital Safety location look like a naturally designed game-map destination, similar to the other map locations.
+
+1. ROAD ALIGNMENT
+- The road/path leading to Digital Safety must terminate exactly at the center/base of the Digital Safety pillar.
+- Do not let the road visually pass behind, beside, or through the pillar incorrectly.
+- The final segment of the road should point directly toward the pillar.
+- Make the road direction and perspective consistent with the other roads on the map.
+- The road should have a smooth, continuous connection.
+- Remove any visible gap between the road and the pillar.
+- Do not create a floating road segment.
+
+2. PILLAR POSITION
+- Reposition the Digital Safety pillar slightly if necessary so it sits naturally at the end of the road.
+- Keep the pillar itself unchanged.
+- Preserve its original size, artwork, colors, lock icon and Digital Safety identity.
+- Do not stretch or distort the pillar.
+- The pillar should sit centered on its intended destination/platform area.
+
+3. DEPTH / LAYERING
+Fix the z-index/layering so the road appears BEHIND the pillar/base where appropriate.
+
+Correct visual order should be approximately:
+
+background
+→ terrain
+→ road/path
+→ pillar shadow/base
+→ Digital Safety pillar
+→ lock icon
+→ Digital Safety label
+
+Do NOT allow the road texture to appear on top of the pillar.
+
+4. PERSPECTIVE
+Match the perspective of the existing Nyaya Nagri map.
+
+The Digital Safety road should visually follow the same:
+- width
+- texture
+- perspective
+- edge treatment
+- color
+- lighting
+- scale
+
+as the roads connecting the other locations.
+
+Do not create a completely different road style.
+
+5. ROAD GEOMETRY
+Do NOT simply rotate the existing road image.
+
+Instead, if the road is generated using CSS/SVG/canvas/game coordinates, adjust its actual geometry/path points.
+
+The road should have a clean endpoint at the pillar.
+
+For example:
+
+          Digital Safety Pillar
+                 │
+                 │
+              [BASE]
+                 │
+              ROAD
+                 │
+                 │
+            Main Path
+
+The road must visually terminate underneath the pillar base.
+
+6. CONNECTION TO MAIN PATH
+Make sure the Digital Safety road branches smoothly from the nearest main road.
+
+There should be:
+- no sharp accidental bend
+- no disconnected segment
+- no visible empty triangular gap
+- no overlapping road texture
+- no abrupt width change
+
+Use a smooth angled connection consistent with the map's other branches.
+
+7. COLLISION / INTERACTION
+Do NOT change player movement or collision logic unnecessarily.
+
+If the current pillar has an interaction/click area, preserve it.
+
+Only update the visual position/path coordinates if required.
+
+8. RESPONSIVE POSITIONING
+The fix must work across different screen sizes.
+
+Do not use a solution that only looks correct at one fixed viewport width.
+
+If the map uses normalized coordinates, update the Digital Safety node and road coordinates using the same coordinate system.
+
+If the map uses absolute positioning, make sure the road and pillar remain aligned when the viewport scales.
+
+9. IMPORTANT — USE THE EXISTING MAP AS SOURCE OF TRUTH
+Inspect how the other destinations are positioned:
+
+- Right to Childhood
+- School Rights
+- Family & Community Shield
+- Safe Zone
+- Story Adventure
+- Digital Safety
+
+Use their road-to-location alignment as the visual reference.
+
+Digital Safety should follow the same design logic.
+
+10. DO NOT MODIFY OTHER LOCATIONS
+Do NOT accidentally move or redesign:
+- Right to Childhood
+- School Rights
+- Family & Community Shield
+- Safe Zone
+- Story Adventure
+- Law Pillar
+- Kindness Corner
+- Rights Cottage
+- Help House
+
+Only Digital Safety and its immediate connecting road should be modified.
+
+11. FINAL VISUAL REQUIREMENT
+
+The final result should look like:
+
+MAIN ROAD
+      \
+       \
+        \
+      [DIGITAL
+       SAFETY
+       PILLAR]
+       
+with the road naturally ending underneath the pillar.
+
+It should look intentionally designed, not like two separate images placed together.
+
+12. IMPLEMENTATION
+First inspect the existing code and identify:
+- Digital Safety component/image
+- Digital Safety coordinates
+- road/path rendering logic
+- map coordinate system
+- z-index/layer structure
+
+Then make the smallest possible code changes required.
+
+Do NOT create a duplicate Digital Safety component.
+Do NOT add another road.
+Do NOT add another pillar.
+Do NOT replace the entire map.
+
+After implementation, verify visually that the road connects exactly to the Digital Safety pillar and that no overlap/gap remains.
+
+Also check that the player can still walk toward the Digital Safety location normally.
+
+The final result must match the existing Nyaya Nagri visual style and feel like one continuous game map.

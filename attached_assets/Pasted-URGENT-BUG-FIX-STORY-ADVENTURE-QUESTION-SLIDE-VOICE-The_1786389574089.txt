@@ -1,0 +1,579 @@
+URGENT BUG FIX — STORY ADVENTURE QUESTION SLIDE VOICE
+
+There is a critical bug in the Story Adventure voice system.
+
+Current behavior:
+- Slide 1 voice works.
+- Slide 2 voice works.
+- Slide 3 voice works.
+- When the user reaches Slide 4, which is the QUESTION / CHOICE slide, the voice stops working.
+- The question is visible on screen, but the AI voice does NOT speak the question/options.
+- The UI also shows the voice error/retry message.
+- This must be fixed without breaking the working voice on previous slides.
+
+IMPORTANT:
+Do NOT replace Gemini voice with browser SpeechSynthesis.
+Do NOT introduce another TTS provider.
+Do NOT create a second robotic voice system.
+The Story Adventure must use the EXISTING Gemini voice implementation consistently.
+
+==================================================
+1. FIND THE ROOT CAUSE
+==================================================
+
+First inspect the existing Story Adventure voice implementation.
+
+Trace the complete flow:
+
+Story Adventure
+→ slide change
+→ current slide detection
+→ slide content generation
+→ Gemini voice request
+→ audio response
+→ audio playback
+→ question state
+
+Compare the working implementation of:
+
+Slide 1
+Slide 2
+Slide 3
+
+with:
+
+Slide 4 — QUESTION / CHOICE
+
+Find exactly why Slide 4 is not triggering the same Gemini voice pipeline.
+
+Do NOT just add a random setTimeout or duplicate voice call.
+
+Fix the underlying state/lifecycle problem.
+
+==================================================
+2. QUESTION SLIDE MUST HAVE ITS OWN VOICE FLOW
+==================================================
+
+Slide 4 is an interactive question slide.
+
+When Slide 4 becomes active, Gemini voice MUST automatically speak:
+
+FIRST:
+The question.
+
+Example:
+
+"Riya ke paas ek decision tha — kya wo Aman ki madad karegi?"
+
+Then:
+
+OPTION 1:
+"Option 1 — Chup chaap aage badh jao."
+
+Then:
+
+OPTION 2:
+"Option 2 — Aman ke liye help bulao."
+
+The order MUST always be:
+
+QUESTION
+↓
+OPTION 1
+↓
+OPTION 2
+
+Do not speak the options before the question is completely spoken.
+
+==================================================
+3. WAIT FOR QUESTION AUDIO TO FINISH
+==================================================
+
+The question and options should NOT be fired as three independent simultaneous audio requests.
+
+Use a controlled sequential voice queue:
+
+speak(question)
+WAIT until audio finishes
+↓
+speak(option1)
+WAIT until audio finishes
+↓
+speak(option2)
+WAIT until audio finishes
+↓
+start waiting for user answer
+
+This prevents overlapping audio.
+
+There must be only ONE active Gemini voice playback at a time.
+
+==================================================
+4. DO NOT DEPEND ON IMAGE/CAPTION VOICE LOGIC
+==================================================
+
+The previous slides contain image + caption narration.
+
+Slide 4 is different.
+
+Do NOT expect Slide 4 to have the same image/caption structure.
+
+The question voice must be generated from the question data itself.
+
+For example:
+
+{
+  type: "question",
+  question: "Riya ke paas ek decision tha — kya wo Aman ki madad karegi?",
+  options: [
+    "Chup chaap aage badh jao",
+    "Aman ke liye help bulao"
+  ]
+}
+
+The voice system must explicitly recognize:
+
+slide.type === "question"
+
+and execute the question voice flow.
+
+==================================================
+5. GEMINI ONLY
+==================================================
+
+There must be exactly ONE voice/TTS system for Story Adventure.
+
+Remove/disable any other Story Adventure voice implementation such as:
+
+- browser SpeechSynthesis
+- window.speechSynthesis
+- generic Web Speech API
+- fallback robotic TTS
+- another TTS provider
+- duplicate voice helper
+- duplicate audio generation service
+
+Search the entire project for:
+
+speechSynthesis
+SpeechSynthesisUtterance
+window.speechSynthesis
+speak(
+tts
+textToSpeech
+voice
+audio generation
+
+Make sure Story Adventure does not accidentally call another voice implementation.
+
+IMPORTANT:
+Do not remove voice functionality from unrelated parts of the application.
+
+Only modify the Story Adventure voice system.
+
+==================================================
+6. GEMINI VOICE ERROR HANDLING
+==================================================
+
+If Gemini voice generation fails on Slide 4:
+
+DO NOT silently fail.
+
+Capture the exact error.
+
+Log:
+
+- current slide index
+- slide type
+- question text
+- option count
+- Gemini request started
+- Gemini response received
+- audio data received
+- audio playback started
+- audio playback ended
+- exact API error/status
+
+Never log the API key.
+
+The UI should show:
+
+"Voice couldn't play. Tap the speaker button to try again."
+
+But ONLY after the actual Gemini request has failed.
+
+Do not show the error while a request is still loading.
+
+==================================================
+7. SPEAKER BUTTON
+==================================================
+
+The speaker button at the top must work on Slide 4.
+
+When the user taps it:
+
+Cancel any currently playing Story Adventure audio.
+
+Then restart the Slide 4 voice sequence from the beginning:
+
+QUESTION
+→ OPTION 1
+→ OPTION 2
+
+Do not create a second audio pipeline.
+
+Use the same Gemini voice service already used by Slides 1–3.
+
+==================================================
+8. QUESTION REPEAT LOGIC
+==================================================
+
+After the question + both options have been spoken:
+
+Wait for the user to select an answer.
+
+If the user does NOT select an answer:
+
+After 5 seconds, Gemini voice should speak a reminder.
+
+Example:
+
+"Abhi tak aapne koi option select nahi kiya hai. Ek option choose kijiye."
+
+If the user still does not answer:
+
+After another 5 seconds, say a DIFFERENT reminder.
+
+Example:
+
+"Riya ko kya karna chahiye? Neeche diye gaye dono options mein se ek option select kijiye."
+
+Continue this reminder behavior every 5 seconds while the question remains unanswered.
+
+IMPORTANT:
+Do not speak every 5 seconds while the original question/options are still being played.
+
+The 5-second timer starts ONLY after:
+
+question finished
++
+option 1 finished
++
+option 2 finished.
+
+==================================================
+9. STOP VOICE IMMEDIATELY AFTER ANSWER
+==================================================
+
+When the user clicks either option:
+
+Immediately:
+
+1. Stop/cancel current Gemini audio.
+2. Clear the reminder timer.
+3. Clear any pending voice queue.
+4. Prevent any future reminder.
+5. Process the selected answer.
+6. Show the correct/incorrect feedback.
+7. Allow the user to continue.
+
+There must NEVER be a situation where the user selects an answer and the voice continues saying:
+
+"Please select an option."
+
+==================================================
+10. WRONG ANSWER
+==================================================
+
+If the user selects the wrong option:
+
+Gemini voice should NOT start speaking random greetings.
+
+Show the existing retry/feedback UI.
+
+If voice feedback is intentionally part of the current Story Adventure design, it must use the SAME Gemini voice system.
+
+Otherwise keep feedback silent.
+
+Provide:
+
+Try Again
+
+and allow the user to select an option again.
+
+When Try Again is clicked:
+
+Restart the question voice sequence:
+
+QUESTION
+→ OPTION 1
+→ OPTION 2
+
+Then start the 5-second reminder timer again.
+
+==================================================
+11. CORRECT ANSWER
+==================================================
+
+When the correct option is selected:
+
+Stop all question voice activity.
+
+Clear all timers.
+
+Clear all queued audio.
+
+Show the existing success feedback.
+
+Then allow:
+
+Next
+
+to continue to Slide 5.
+
+IMPORTANT:
+Do not start the question voice again after the correct answer.
+
+==================================================
+12. CRITICAL SLIDE LIFECYCLE FIX
+==================================================
+
+Make sure voice is triggered when the active slide actually changes.
+
+Use a clean effect/state lifecycle similar to:
+
+on slide change:
+    cleanup previous audio
+    cleanup previous timers
+    reset voice state
+
+    if current slide is narration:
+        play narration
+
+    if current slide is question:
+        play question voice sequence
+
+    if current slide is reward/completion:
+        DO NOT play Story Adventure voice automatically
+
+Do not use stale React state.
+
+Do not use a previous slide's question/answer state.
+
+Make sure the effect dependencies include the actual active slide/index.
+
+==================================================
+13. PREVENT DUPLICATE VOICE REQUESTS
+==================================================
+
+React re-renders must NOT cause multiple Gemini voice requests.
+
+Use a ref/request ID/AbortController or equivalent mechanism.
+
+Every voice request should have an identifiable request/session ID.
+
+When slide changes:
+
+invalidate the previous request.
+
+If an old Gemini response arrives after the user has moved to another slide:
+
+IGNORE IT.
+
+It must not play.
+
+This is especially important when moving:
+
+Slide 3 → Slide 4
+Slide 4 → Slide 5
+
+==================================================
+14. QUESTION SLIDE MUST NOT PLAY GENERIC GREETING
+==================================================
+
+There is another bug where the assistant/greeting voice sometimes starts playing around the question area.
+
+For Story Adventure:
+
+QUESTION SLIDE:
+ONLY speak:
+
+1. Question
+2. Option 1
+3. Option 2
+4. Reminder if unanswered
+
+Nothing else.
+
+Do NOT speak:
+
+- generic greeting
+- "Hello"
+- welcome message
+- assistant introduction
+- congratulations
+- random AI response
+- unrelated caption
+- previous slide narration
+
+==================================================
+15. SLIDE 5 RESTRICTION
+==================================================
+
+When Slide 5 / reward screen appears:
+
+DO NOT automatically start the Story Adventure Gemini voice.
+
+The reward screen should remain silent unless the user explicitly taps a speaker/replay control that is intentionally provided.
+
+The voice system must stop at the end of the question slide / transition to reward.
+
+==================================================
+16. AUDIO CLEANUP
+==================================================
+
+Create one centralized cleanup function:
+
+stopStoryAdventureVoice()
+
+It must:
+
+- stop current audio
+- cancel pending Gemini request if possible
+- clear voice queue
+- clear reminder timer
+- reset playback state
+- invalidate current request ID
+
+Call it whenever:
+
+- slide changes
+- user selects answer
+- user closes Story Adventure
+- user clicks speaker/replay
+- Story Adventure component unmounts
+
+This prevents old audio from leaking into other slides.
+
+==================================================
+17. DO NOT CHANGE THE UI
+==================================================
+
+Keep the current Story Adventure design.
+
+Do not redesign:
+
+- question card
+- option buttons
+- Back button
+- Next button
+- progress indicators
+- Get Help Now
+- robot assistant icon
+- top controls
+
+This task is primarily a VOICE ENGINE / STATE MANAGEMENT FIX.
+
+==================================================
+18. FINAL TEST
+==================================================
+
+After fixing, manually test:
+
+TEST 1:
+Open Story Adventure.
+
+Slide 1:
+Gemini voice plays.
+
+Slide 2:
+Gemini voice plays.
+
+Slide 3:
+Gemini voice plays.
+
+Slide 4:
+Gemini voice MUST play:
+
+Question
+→ Option 1
+→ Option 2
+
+No other voice.
+
+TEST 2:
+Wait 5 seconds after the options finish.
+
+Gemini says reminder.
+
+Wait another 5 seconds.
+
+Gemini says a different reminder.
+
+TEST 3:
+Click an option.
+
+Voice stops immediately.
+
+Reminder timer stops.
+
+No additional voice plays.
+
+TEST 4:
+Select wrong answer.
+
+Try Again appears.
+
+Click Try Again.
+
+Question → Option 1 → Option 2 plays again.
+
+TEST 5:
+Select correct answer.
+
+Question voice stops.
+
+Next becomes available.
+
+Move to Slide 5.
+
+Slide 5 MUST remain silent.
+
+TEST 6:
+Rapidly click speaker/replay.
+
+There must never be overlapping voices.
+
+TEST 7:
+Move quickly between slides.
+
+No old slide audio should play on the new slide.
+
+TEST 8:
+Simulate Gemini API failure.
+
+Show a proper retry message.
+
+Do not switch to browser TTS or another voice.
+
+==================================================
+FINAL REQUIREMENT
+==================================================
+
+Do not patch this with a random timeout.
+
+Find and fix the actual reason why the existing Gemini voice works on Slides 1–3 but fails specifically on the Question slide.
+
+The Question slide MUST be treated as a first-class Story Adventure slide type with its own controlled Gemini voice sequence.
+
+There must be ONE Gemini voice pipeline only.
+
+No robotic fallback voice.
+
+No browser TTS.
+
+No duplicate audio.
+
+No voice on the reward/congratulations slide.
+
+Question + options + 5-second unanswered reminders must work reliably.

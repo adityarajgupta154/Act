@@ -1,0 +1,181 @@
+IMPORTANT: Fix the road/path alignment on the main game map of my Nyaya Nagri project.
+
+I am providing a reference image showing exactly how the map roads should be structured. Use the provided reference image as the visual reference for the ROAD NETWORK, alignment, spacing, and placement.
+
+MAIN PROBLEM:
+The current map roads are inconsistent:
+- Some roads are slightly crooked or misaligned.
+- Some roads do not properly connect to the exact center of buildings/locations.
+- Some roads appear to stop before reaching their destination.
+- Diagonal roads have inconsistent angles.
+- Road widths and edges are not uniform.
+- Some locations look visually disconnected from their corresponding roads.
+- The overall map therefore looks unfinished and messy.
+
+GOAL:
+Make the road system look like a professionally designed Candy Crush / adventure-game world map where every destination is intentionally connected to the central hub.
+
+REFERENCE STRUCTURE:
+The central golden Nyaya Nagri monument/plaza is the main hub.
+
+Create a clean radial road network originating from the exact center of the central circular plaza.
+
+The roads should connect precisely to these destinations:
+
+1. TOP-LEFT:
+Right to Childhood
+→ Road must start from the central hub and cleanly connect to the center/bottom entrance of the Right to Childhood location.
+
+2. TOP-CENTER:
+School Rights
+→ A perfectly vertical road should connect from the central hub directly to the School Rights location.
+
+3. TOP-RIGHT:
+Family & Community Shield
+→ A clean diagonal road should connect from the central hub to the center/bottom entrance of this location.
+
+4. LEFT:
+Safe Zone
+→ A perfectly horizontal road should connect from the central hub to the Safe Zone.
+
+5. RIGHT:
+Story Adventure
+→ A perfectly horizontal road should connect from the central hub to Story Adventure.
+
+6. BOTTOM-LEFT:
+Justice System Simulator
+→ A clean diagonal road should connect from the central hub to the Justice System Simulator pillar.
+
+7. BOTTOM-RIGHT:
+Digital Safety
+→ A clean diagonal road should connect from the central hub to the Digital Safety pillar.
+
+8. BOTTOM-CENTER:
+Reserve a clean vertical road/path extending downward from the central hub for future levels/features.
+
+IMPORTANT ROAD RULES:
+
+- Every road must originate exactly from the central circular plaza.
+- Roads must visually touch/connect to the destination instead of stopping nearby.
+- Do not leave visible gaps between roads and destinations.
+- Do not allow roads to overlap buildings, pillars, labels, locks, or other important objects.
+- Keep the road width consistent throughout the entire map.
+- Keep the stone/paving texture consistent.
+- Keep diagonal roads at clean, intentional angles.
+- Horizontal roads must remain perfectly horizontal.
+- The top-center and bottom-center roads must remain perfectly vertical.
+- All diagonal roads should have symmetrical/consistent geometry around the center.
+- Avoid random bends or unnecessary curves.
+- Avoid roads that look manually painted or distorted.
+- The road intersections around the central plaza should look symmetrical and intentional.
+
+CENTRAL HUB:
+Do NOT redesign the central golden monument.
+Do NOT move the central monument.
+Do NOT change the central circular plaza.
+Use the existing central plaza as the exact anchor point for the road network.
+
+DESTINATION POSITION:
+Do NOT unnecessarily move the existing buildings/pillars.
+Instead, adjust the roads so that they properly terminate at the existing destination entrance/anchor point.
+
+If a destination is slightly mispositioned relative to its road, make only a very small positional adjustment if absolutely necessary.
+
+VISUAL STYLE:
+Maintain the existing colorful children's adventure-game style:
+- bright green fantasy meadow
+- warm golden stone roads
+- colorful flowers
+- trees
+- soft cartoon/isometric aesthetic
+- clean game UI
+- child-friendly visuals
+
+Do NOT change:
+- existing UI panels
+- player character
+- map widget
+- logo
+- buttons
+- destination names
+- locks
+- completed-state checkmarks
+- background environment
+- central monument
+
+IMPLEMENTATION REQUIREMENTS:
+
+First inspect how the current map is implemented.
+
+If the roads are HTML/CSS/SVG elements:
+- Refactor the road system into a proper reusable road/path component.
+- Use absolute positioning or SVG paths with calculated coordinates.
+- Define the central hub as the single source of truth.
+- Define destination anchor points for every location.
+- Generate roads between the hub and destination anchors instead of manually positioning random road pieces.
+
+If the roads are images/background assets:
+- Do NOT stretch or distort the entire map.
+- Create a proper overlay/path layer above the map background.
+- Use SVG paths or appropriately positioned road assets for accurate connections.
+
+Prefer SVG paths for the road network if practical because they will provide:
+- accurate alignment
+- consistent width
+- smooth diagonal connections
+- responsive scaling
+- easier future expansion
+
+RESPONSIVE BEHAVIOR:
+The road network must remain aligned when:
+- browser width changes
+- browser height changes
+- screen resolution changes
+- the map container scales
+
+Do not hardcode pixel positions that only work on one screen size.
+
+Create a coordinate system relative to the map container, preferably using percentages or SVG viewBox coordinates.
+
+FUTURE LEVEL SUPPORT:
+This map will eventually contain MANY more locations and levels.
+
+Therefore, architect the road system so that adding a new destination later only requires something like:
+
+{
+  id: "level-2",
+  position: { x: ..., y: ... },
+  type: "story",
+  label: "Clean Water, Healthy Life"
+}
+
+and the road automatically connects to it.
+
+Do NOT create a one-off solution specifically for the current seven destinations.
+
+VISUAL QUALITY CHECK:
+After implementation, carefully inspect the map and verify:
+
+✓ Every destination has a road
+✓ Every road touches its destination
+✓ No road ends in empty space
+✓ No road passes through a building
+✓ No road passes through labels
+✓ No road passes through locks
+✓ Road widths are consistent
+✓ Diagonal roads are clean
+✓ Horizontal roads are straight
+✓ Vertical roads are straight
+✓ Central intersection is symmetrical
+✓ No visible gaps
+✓ No overlapping road segments
+✓ No weird bends
+✓ No broken textures
+✓ Map still looks like one coherent game world
+
+IMPORTANT:
+Do not simply place a new image over the existing map.
+
+I need the ROAD SYSTEM itself to be fixed in the application so that it remains functional, responsive, and extendable for future levels.
+
+Use the provided reference image as the target visual structure for the road layout, while preserving my existing Nyaya Nagri design and UI.

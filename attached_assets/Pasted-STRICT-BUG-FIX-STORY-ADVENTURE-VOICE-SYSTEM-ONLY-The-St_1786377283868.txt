@@ -1,0 +1,534 @@
+STRICT BUG FIX — STORY ADVENTURE VOICE SYSTEM ONLY
+
+The Story Adventure voice assistant is currently not working correctly on the QUESTION slide.
+
+I want you to FIX the existing implementation properly. Do not create a separate voice system and do not affect any other part of the application.
+
+IMPORTANT SCOPE:
+The voice functionality described below must work ONLY inside the Story Adventure flow.
+
+Do NOT enable or modify this behavior for:
+- Main map
+- Map navigation
+- Other game locations
+- My Progress
+- Certificates
+- Congratulations / reward screen
+- Any other screen
+- Any other AI assistant interaction
+
+==================================================
+1. STORY SLIDES 1–3
+==================================================
+
+For normal story slides:
+
+When a slide opens:
+
+1. AI assistant should automatically read the image caption/content aloud.
+2. It should clearly explain the story to the child.
+3. Wait until the narration finishes.
+4. Then allow the child to continue to the next slide.
+
+Do not repeatedly speak on normal story slides.
+
+==================================================
+2. QUESTION SLIDE — CRITICAL
+==================================================
+
+This is the most important part.
+
+When the QUESTION slide opens, the AI assistant MUST speak.
+
+Currently the question slide sometimes becomes silent.
+FIX THIS.
+
+The voice sequence MUST be:
+
+STEP 1:
+Read the question aloud.
+
+Example:
+
+"Riya ke paas ek decision tha — kya woh Aman ki madad karegi?"
+
+STEP 2:
+After the question finishes, read OPTION 1 aloud.
+
+Example:
+
+"Option 1: Chup chaap aage badh jao."
+
+STEP 3:
+Then read OPTION 2 aloud.
+
+Example:
+
+"Option 2: Aman ke liye help bulao."
+
+STEP 4:
+After both options have been spoken, tell the child:
+
+"Ab aap apna answer select kijiye."
+
+The child can then click/tap one of the options.
+
+==================================================
+3. QUESTION MUST NEVER BE SILENT
+==================================================
+
+Make sure the question narration is triggered reliably every time the question slide mounts.
+
+Do NOT depend on:
+- previous slide voice state
+- previous audio promise
+- stale React state
+- browser autoplay state
+- a previous narration completion flag
+- an already-used audio element
+- a cached "hasSpoken" state from another slide
+
+Every time a new question slide becomes active, initialize its question voice sequence correctly.
+
+Use a unique voice session / narration ID for every Story Adventure slide so that old narration cannot interfere with the new slide.
+
+==================================================
+4. USER HAS NOT ANSWERED — REMINDER SYSTEM
+==================================================
+
+After the complete question + option narration finishes:
+
+Start a reminder timer.
+
+If the user has NOT selected an answer:
+
+After EXACTLY 5 seconds, AI should speak a short reminder.
+
+Example:
+
+"Aapne abhi tak answer select nahi kiya hai. Kripya apna answer choose kijiye."
+
+After another 5 seconds, if the user STILL has not answered, speak a DIFFERENT natural reminder.
+
+Examples:
+
+"Apna answer select kijiye."
+
+or
+
+"Riya ko kya karna chahiye? Neeche diye gaye options me se ek choose kijiye."
+
+or
+
+"Please ek option select kijiye."
+
+IMPORTANT:
+
+Do NOT repeat the exact same sentence every 5 seconds.
+
+Rotate between several short reminder messages.
+
+Continue this reminder cycle ONLY while:
+- the question slide is active
+- no answer has been selected
+- the user has not left the Story Adventure
+
+==================================================
+5. STOP REMINDERS IMMEDIATELY AFTER ANSWER
+==================================================
+
+The moment the user selects an option:
+
+IMMEDIATELY:
+
+- stop the 5-second reminder timer
+- cancel any pending reminder
+- stop any currently queued reminder speech
+- mark the question as answered
+- prevent any further reminder speech
+
+There must NEVER be a reminder after the user has already answered.
+
+==================================================
+6. WRONG ANSWER
+==================================================
+
+If the user selects the wrong answer:
+
+AI should explain the result briefly.
+
+Example:
+
+"Is option se Aman ko zaroori madad nahi mil paayegi."
+
+Then provide the educational explanation already configured for this question.
+
+After the explanation:
+
+Show the existing "Try Again" interaction.
+
+Do NOT start the unanswered-question reminder while the user is on the feedback/try-again state.
+
+If the user clicks "Try Again", reset the question voice flow correctly.
+
+The question and options should be spoken again only when the question interaction is actually restarted.
+
+==================================================
+7. CORRECT ANSWER
+==================================================
+
+If the user selects the correct answer:
+
+AI can give a SHORT confirmation if the existing design requires it.
+
+Example:
+
+"Bilkul sahi! Aman ki madad karna sahi faisla tha."
+
+Then proceed to the next Story Adventure slide / reward flow according to the existing application logic.
+
+IMPORTANT:
+Once the answer is successfully selected:
+
+THE QUESTION VOICE SYSTEM MUST BE COMPLETELY DISABLED.
+
+No reminder.
+No question repetition.
+No option repetition.
+
+==================================================
+8. CRITICAL — CONGRATULATIONS / REWARD SCREEN
+==================================================
+
+THIS IS A MAJOR BUG THAT MUST BE FIXED.
+
+Currently the AI voice continues speaking when the question is finished and the Congratulations / "Right to Life Unlocked" screen appears.
+
+That MUST NOT happen.
+
+When the application enters:
+
+"Right to Life Unlocked!"
+
+or any congratulations/reward/completion screen:
+
+IMMEDIATELY:
+
+- stop all Story Adventure question narration
+- stop all pending speech
+- cancel all speech timers
+- cancel all reminder timers
+- cancel all queued audio
+- invalidate the previous voice session
+- disable Story Adventure voice controller
+
+The congratulations screen MUST be SILENT.
+
+Do NOT automatically read:
+- congratulations text
+- reward text
+- caption
+- explanation
+- button text
+- "Continue Exploring"
+- anything else
+
+The reward/congratulations screen should contain NO automatic voice narration.
+
+==================================================
+9. CRITICAL — GREETING / AI ASSISTANT AREA
+==================================================
+
+Another current bug:
+
+After the question narration completes, the AI assistant starts speaking from the normal greeting/assistant area.
+
+FIX THIS.
+
+The Story Adventure question voice system must NOT trigger the generic AI greeting system.
+
+There must be NO automatic greeting such as:
+- "Hello..."
+- "How can I help?"
+- generic assistant messages
+- unrelated AI responses
+
+while the question flow is active or immediately after it.
+
+The question voice system and generic AI assistant system must be completely separated.
+
+==================================================
+10. VOICE STATE MACHINE
+==================================================
+
+Implement the Story Adventure voice flow using explicit states.
+
+Suggested states:
+
+IDLE
+STORY_NARRATING
+QUESTION_READING
+OPTION_1_READING
+OPTION_2_READING
+WAITING_FOR_ANSWER
+REMINDER_WAITING
+REMINDER_SPEAKING
+ANSWER_SELECTED
+FEEDBACK
+COMPLETED
+SILENT
+
+State transitions:
+
+Story slide opens
+→ STORY_NARRATING
+
+Story narration completes
+→ IDLE
+
+Question slide opens
+→ QUESTION_READING
+
+Question completes
+→ OPTION_1_READING
+
+Option 1 completes
+→ OPTION_2_READING
+
+Option 2 completes
+→ WAITING_FOR_ANSWER
+
+WAITING_FOR_ANSWER
+→ 5 second timer
+
+No answer after 5 sec
+→ REMINDER_SPEAKING
+→ REMINDER_WAITING
+
+User selects answer
+→ ANSWER_SELECTED
+→ cancel ALL timers
+→ cancel ALL reminders
+
+Correct answer
+→ COMPLETED
+→ SILENT
+
+Congratulations screen
+→ SILENT
+
+==================================================
+11. SLIDE CHANGE SAFETY
+==================================================
+
+Whenever the Story Adventure slide changes:
+
+FIRST:
+
+1. Cancel current speech.
+2. Cancel all timers.
+3. Cancel all pending callbacks.
+4. Invalidate the previous voice session.
+5. Create a new voice session for the new slide.
+6. Start only the narration belonging to the new slide.
+
+This prevents voice from slide 3 continuing into slide 4 or slide 5.
+
+Example:
+
+Slide 3 narration
+      ↓
+User clicks Next
+      ↓
+STOP Slide 3 voice
+      ↓
+Invalidate old voice session
+      ↓
+Initialize Slide 4 voice
+      ↓
+Read question
+      ↓
+Read options
+      ↓
+Wait for answer
+
+==================================================
+12. PREVENT DUPLICATE SPEECH
+==================================================
+
+There must NEVER be:
+
+- duplicate question narration
+- duplicate option narration
+- two voices playing simultaneously
+- old slide narration + new slide narration
+- reminder + question playing simultaneously
+- generic AI greeting + Story Adventure narration simultaneously
+
+Before starting any new speech:
+
+Cancel/stop the previous speech session.
+
+Use a single active Story Adventure speech controller.
+
+==================================================
+13. AUDIO QUEUE
+==================================================
+
+Do not allow uncontrolled speech.queue buildup.
+
+If using SpeechSynthesis:
+
+- cancel previous utterances when changing slides
+- maintain one controlled queue
+- do not push the same utterance multiple times
+- track the active narration session
+- ignore callbacks belonging to old sessions
+
+If using Gemini/TTS audio:
+
+- maintain one active audio request
+- abort/cancel obsolete requests when slide changes
+- do not play stale responses
+- prevent multiple audio elements from playing simultaneously
+
+==================================================
+14. BROWSER AUTOPLAY / FIRST INTERACTION
+==================================================
+
+Handle browser audio restrictions gracefully.
+
+If automatic speech cannot start because the browser requires user interaction:
+
+show a small child-friendly "🔊 Tap to listen" / "Listen" control.
+
+Once the child interacts:
+
+start the Story Adventure voice sequence.
+
+Do NOT silently fail.
+
+There should always be a visible fallback if audio autoplay is blocked.
+
+==================================================
+15. PERFORMANCE
+==================================================
+
+Voice must feel fast and responsive.
+
+Do NOT wait unnecessarily for:
+- unrelated API calls
+- generic AI responses
+- map loading
+- analytics
+- database writes
+- other UI operations
+
+Question narration should start as soon as the question slide becomes ready.
+
+Reminder timers must run locally and should NOT depend on an API request.
+
+==================================================
+16. DO NOT BREAK EXISTING UI
+==================================================
+
+Do NOT redesign the Story Adventure UI.
+
+Do NOT change:
+- story images
+- captions
+- question design
+- option buttons
+- navigation
+- progress indicators
+- AI assistant visual design
+- congratulations design
+
+This task is specifically to FIX the voice behavior and lifecycle.
+
+==================================================
+17. TEST THIS FLOW BEFORE FINISHING
+==================================================
+
+You MUST test the following exact scenarios:
+
+TEST 1:
+Open Story Adventure → Slide 1
+Expected:
+Slide 1 narration plays once.
+
+TEST 2:
+Move to Slide 2
+Expected:
+Slide 1 voice stops.
+Slide 2 narration plays once.
+
+TEST 3:
+Move to Question Slide
+Expected:
+Question is spoken.
+Option 1 is spoken.
+Option 2 is spoken.
+Then assistant says:
+"Ab aap apna answer select kijiye."
+
+TEST 4:
+Do not select anything.
+Expected:
+After 5 seconds reminder #1.
+After another 5 seconds reminder #2.
+Continue naturally until answer.
+
+TEST 5:
+Select an answer.
+Expected:
+Reminder stops IMMEDIATELY.
+No more question repetition.
+No more reminders.
+
+TEST 6:
+Select wrong answer.
+Expected:
+Feedback is shown/spoken according to existing logic.
+No unanswered-question reminders.
+Try Again works correctly.
+
+TEST 7:
+Select correct answer.
+Expected:
+Question voice system stops completely.
+
+TEST 8:
+Enter Congratulations / "Right to Life Unlocked" screen.
+EXPECTED:
+ZERO automatic voice.
+ZERO reminders.
+ZERO generic greeting.
+ZERO leftover audio.
+
+TEST 9:
+Click Continue Exploring.
+Expected:
+No Story Adventure voice remains active.
+
+TEST 10:
+Enter another part of the application.
+Expected:
+Story Adventure voice system has NO effect there.
+
+FINAL REQUIREMENT:
+
+Do not consider this task complete until ALL of the above behaviors work correctly.
+
+The most important requirements are:
+
+1. QUESTION MUST ALWAYS BE SPOKEN.
+2. BOTH OPTIONS MUST ALWAYS BE SPOKEN.
+3. REMINDER EVERY 5 SECONDS ONLY WHILE USER HAS NOT ANSWERED.
+4. REMINDERS MUST STOP IMMEDIATELY AFTER ANSWER.
+5. NO VOICE ON CONGRATULATIONS/REWARD SCREEN.
+6. NO GENERIC GREETING VOICE AFTER THE QUESTION.
+7. STORY ADVENTURE VOICE MUST NOT AFFECT ANY OTHER PART OF THE APP.
+8. NO DUPLICATE OR OVERLAPPING AUDIO.
+9. NO STALE AUDIO FROM PREVIOUS SLIDES.
+10. Do not finish until you have tested the complete flow end-to-end.

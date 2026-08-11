@@ -1,0 +1,328 @@
+Redesign the LEFT PLAYER PROFILE section of the Nyaya Nagri map screen.
+
+IMPORTANT:
+Do not change the map, roads, buildings, castles, Story Adventure, AI assistant, bottom navigation, or any other gameplay functionality.
+
+ONLY redesign the player profile/statistics UI shown on the left side.
+
+CURRENT PROBLEM:
+The following items are individually scattered vertically on the map:
+
+- Aditya
+- 7
+- Player Rank 7
+- 386 Coins
+- 4-day streak
+- My Progress
+- Rights Community
+
+This makes the map look cluttered and wastes valuable map space.
+
+I want ALL of these secondary stats to be INSIDE the "Aditya" profile component.
+
+==================================================
+1. COLLAPSED STATE
+==================================================
+
+On initial page load, show ONLY a compact player profile card:
+
+┌──────────────────────────────┐
+│  [Avatar]  Aditya            │
+│            Player Rank 7  ▼  │
+└──────────────────────────────┘
+
+Keep it visually consistent with the existing Nyaya Nagri UI.
+
+The card should be compact and should occupy approximately the same space as the current Aditya card.
+
+Do NOT show the following items outside the card:
+
+- 7
+- Player Rank 7
+- 386 Coins
+- 4-day streak
+- My Progress
+- Rights Community
+
+==================================================
+2. CLICK / TAP INTERACTION
+==================================================
+
+When the user clicks/taps the Aditya profile card:
+
+Expand a small profile panel/dropdown directly below it.
+
+Use a smooth animation:
+
+- height
+- opacity
+- transform
+
+Duration approximately 200–300ms.
+
+Do NOT push the entire map layout down.
+
+The profile panel must overlay the map using absolute/fixed positioning.
+
+==================================================
+3. EXPANDED PROFILE
+==================================================
+
+Inside the expanded panel show:
+
+Aditya
+Player Rank 7
+
+Then show the existing stats:
+
+🏅 7
+Player Rank 7
+🪙 386 Coins
+🔥 4-day streak
+⭐ My Progress
+👥 Rights Community
+
+Keep the existing icons and meaning.
+
+Do NOT create duplicate information outside the profile.
+
+==================================================
+4. VISUAL DESIGN
+==================================================
+
+Use the existing Nyaya Nagri design language:
+
+- white/off-white cards
+- rounded corners
+- subtle shadow
+- navy text
+- orange/yellow accents
+- blue secondary accents
+- green success accents
+
+The profile dropdown should feel like part of the existing UI, not like a browser dropdown.
+
+Use a slightly larger rounded panel for the expanded state.
+
+Example:
+
+┌───────────────────────────────┐
+│ 🧑  Aditya                    │
+│     Player Rank 7          ▲  │
+├───────────────────────────────┤
+│ 🏅 7                          │
+│ 🏆 Player Rank 7              │
+│ 🪙 386 Coins                  │
+│ 🔥 4-day streak               │
+│ ⭐ My Progress                 │
+│ 👥 Rights Community            │
+└───────────────────────────────┘
+
+==================================================
+5. MAP MUST NOT MOVE
+==================================================
+
+CRITICAL:
+
+Opening the profile must NOT change the map layout.
+
+Do NOT use normal document flow that pushes the map/content.
+
+The profile dropdown should be positioned over the map.
+
+The map should remain completely stationary.
+
+==================================================
+6. CLICK OUTSIDE
+==================================================
+
+When the profile is expanded:
+
+Clicking anywhere outside the profile should collapse it.
+
+Also close it when:
+
+- user presses Escape
+- user navigates to another screen
+
+Do not close it when clicking inside the profile.
+
+==================================================
+7. MOBILE / RESPONSIVE
+==================================================
+
+On mobile:
+
+Keep the profile card compact.
+
+When expanded:
+
+Make the panel fit within the viewport.
+
+Do not allow it to cover the entire screen.
+
+Do not cause horizontal scrolling.
+
+==================================================
+8. DATA
+==================================================
+
+Use the existing player data/state.
+
+Do NOT hardcode:
+
+"Aditya"
+"7"
+"386 Coins"
+"4-day streak"
+
+if these values are already coming from application state.
+
+Bind the UI to the existing player/profile state.
+
+For example:
+
+player.name
+player.rank
+player.coins
+player.streak
+player.progress
+
+Use whatever actual variable names already exist in the project.
+
+==================================================
+9. MY PROGRESS
+==================================================
+
+"My Progress" should remain clickable.
+
+If it already opens the progress screen/modal, preserve that functionality.
+
+Do not remove existing navigation.
+
+==================================================
+10. RIGHTS COMMUNITY
+==================================================
+
+"Rights Community" should remain clickable.
+
+Preserve its existing functionality.
+
+Do not convert it into a static label.
+
+==================================================
+11. ANIMATION
+==================================================
+
+Collapsed → Expanded:
+
+- profile panel fades in
+- slight downward movement
+- subtle scale from 0.98 → 1
+- smooth shadow
+
+Expanded → Collapsed:
+
+reverse animation.
+
+Do not use excessive bouncing.
+
+==================================================
+12. IMPORTANT MAP CLEANUP
+==================================================
+
+After implementation, verify that the left side of the map contains ONLY:
+
+[Aditya Profile Card]
+
+Nothing else from the player statistics should remain floating separately.
+
+Remove the old standalone UI elements for:
+
+- 7
+- Player Rank 7
+- 386 Coins
+- 4-day streak
+- My Progress
+- Rights Community
+
+because they are now rendered inside the expandable Aditya profile.
+
+==================================================
+13. DO NOT BREAK EXISTING FEATURES
+==================================================
+
+Do not modify:
+
+- map
+- roads
+- buildings
+- level nodes
+- Story Adventure
+- level progression
+- AI assistant
+- Get Help Now
+- bottom navigation
+- joystick
+- settings
+- game logic
+- authentication
+- player state
+
+Only refactor the existing left-side profile/statistics UI.
+
+==================================================
+14. IMPLEMENTATION
+==================================================
+
+First inspect the existing player/profile components.
+
+Reuse the existing avatar, icons, typography and state.
+
+Prefer creating a reusable component such as:
+
+<PlayerProfile />
+
+with:
+
+isExpanded
+setIsExpanded
+
+and existing player data.
+
+Do not duplicate the profile data.
+
+Make sure there is only ONE source of truth for the player information.
+
+==================================================
+15. FINAL RESULT
+==================================================
+
+The final map should visually feel much cleaner.
+
+Collapsed:
+
+        ┌───────────────────┐
+        │ 🧑 Aditya         │
+        │    Player Rank 7 ▼│
+        └───────────────────┘
+
+        MAP
+        MAP
+        MAP
+
+Expanded:
+
+        ┌───────────────────┐
+        │ 🧑 Aditya       ▲ │
+        │    Player Rank 7  │
+        ├───────────────────┤
+        │ 🏅 7              │
+        │ 🏆 Player Rank 7  │
+        │ 🪙 386 Coins      │
+        │ 🔥 4-day streak   │
+        │ ⭐ My Progress     │
+        │ 👥 Rights Community│
+        └───────────────────┘
+
+The map itself must never move when this panel opens.

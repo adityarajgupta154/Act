@@ -1,0 +1,113 @@
+Implement a subtle, smooth, slow-moving animation for the existing “Nyaya Nagri” sky balloon/blimp shown in the hero section.
+
+IMPORTANT:
+- Do NOT redesign the existing website.
+- Do NOT change the hero background, layout, typography, buttons, colors, buildings, character, portals, or any other UI element.
+- Only modify the Nyaya Nagri sky balloon/blimp animation.
+- Use the existing blimp/balloon image asset already present in the project.
+- Preserve the exact visual appearance of the blimp.
+
+ANIMATION BEHAVIOR:
+1. The blimp should continuously move slowly from LEFT → RIGHT across the sky.
+2. Start slightly outside or near the left side of its current visible area.
+3. Move horizontally across the hero section and gradually exit from the right side.
+4. After completely leaving the screen, smoothly restart from the left.
+5. The movement must be VERY SLOW and subtle — it should feel like a distant airship floating through the sky.
+6. Full left-to-right movement should take approximately 20–25 seconds.
+7. Use smooth `easeInOut` or linear-smooth motion. Avoid sudden acceleration or stopping.
+8. Add a very subtle vertical floating motion while moving:
+   - only a few pixels up/down
+   - slow floating cycle
+   - no bouncing
+   - no exaggerated movement
+9. Keep the blimp at approximately the same vertical level as it is currently positioned.
+10. The animation must loop infinitely.
+
+VISUAL REQUIREMENTS:
+- Keep the blimp above the background but below important UI elements if necessary.
+- Do not let it overlap or interfere with the “ENTER NYAYA NAGRI” button.
+- Preserve its current size and proportions.
+- Do not distort the image.
+- Do not add glow, particles, trails, motion blur, shadows, or other visual effects.
+- The animation should look natural and premium.
+
+TECHNICAL REQUIREMENTS:
+- First inspect the existing project and identify:
+  - framework
+  - animation library already installed
+  - current hero component
+  - current blimp asset
+  - existing positioning classes/styles
+- Reuse the project's existing animation system if one already exists.
+- If Framer Motion is already installed, use Framer Motion.
+- Otherwise use CSS `@keyframes`.
+- Do NOT install unnecessary dependencies.
+
+IF USING FRAMER MOTION:
+Use a structure similar to:
+
+<motion.div
+  initial={{ x: "-20vw", y: 0 }}
+  animate={{
+    x: "120vw",
+    y: [0, -5, 0, 5, 0]
+  }}
+  transition={{
+    x: {
+      duration: 22,
+      ease: "linear",
+      repeat: Infinity,
+      repeatType: "loop"
+    },
+    y: {
+      duration: 6,
+      ease: "easeInOut",
+      repeat: Infinity
+    }
+  }}
+>
+  <img
+    src={existingBlimpAsset}
+    alt="Nyaya Nagri airship"
+  />
+</motion.div>
+
+IMPORTANT:
+- Adjust the x values according to the existing hero container so the blimp starts outside the left boundary and completely exits through the right boundary.
+- Do not hardcode values that break on different screen sizes.
+- Make the animation responsive for desktop, tablet, and mobile.
+- On smaller screens, reduce the blimp size appropriately while preserving its aspect ratio.
+
+RESPONSIVE BEHAVIOR:
+Desktop:
+- Existing/current blimp size
+- 20–25 second travel duration
+
+Tablet:
+- Slightly smaller blimp
+- Same slow movement
+
+Mobile:
+- Smaller blimp
+- Keep animation subtle
+- Do not cover important UI or CTA elements
+
+PERFORMANCE:
+- Animate only `transform` properties (`translateX` / `translateY`).
+- Avoid animating `left`, `right`, `top`, or other layout properties.
+- Use GPU-friendly transforms.
+- Do not cause layout shifts.
+- Respect `prefers-reduced-motion`.
+- If the user has reduced motion enabled, disable the continuous movement or use a static position.
+
+FINAL REQUIREMENT:
+After implementation, verify that:
+1. The blimp starts from the left.
+2. It slowly travels across the entire sky.
+3. It exits completely from the right.
+4. It restarts smoothly from the left.
+5. The vertical floating motion is barely noticeable.
+6. No existing UI/layout has changed.
+7. The animation works correctly on desktop and mobile.
+
+Make the implementation directly in the existing project and keep the code clean, minimal, and production-ready.

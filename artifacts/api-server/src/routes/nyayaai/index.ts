@@ -51,6 +51,14 @@ const router: IRouter = Router();
 // shape (3.6/flash-latest reject it with 400).
 const CHAT_MODEL = "gemini-3.5-flash";
 
+// Bounded upstream waits (perf spec: never leave a child staring at
+// "Thinking..." forever if Gemini hangs). Classic route: the whole call is
+// bounded — a 1024-token reply finishes far inside this window. Stream
+// route: only the wait for the FIRST chunk is bounded; a healthy reply may
+// legitimately stream past any fixed total window, and mid-stream death is
+// already covered by the client's own stall timer.
+const UPSTREAM_TIMEOUT_MS = 20_000;
+
 type ChatInput = ReturnType<typeof NyayaAiChatBody.parse>;
 
 /**
@@ -157,7 +165,9 @@ router.post("/nyaya-ai/chat", async (req, res) => {
       const response = await getGemini().models.generateContent({
         model: CHAT_MODEL,
         contents: prep.contents,
-        config: prep.config,
+        // Bounded wait: a hung upstream aborts into the normal error path
+        // (one retry, then the friendly 502) instead of hanging the child.
+        config: { ...prep.config, abortSignal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS) },
       });
       reply = (response.text ?? "").trim();
       if (reply) break; // empty reply → fall through to retry once
@@ -242,13 +252,25 @@ router.post("/nyaya-ai/chat-stream", async (req, res) => {
   let lastErr: unknown;
   for (let attempt = 0; attempt < 2; attempt++) {
     if (upstreamAbort.signal.aborted) return;
+    // First-chunk bound: armed per attempt, disarmed the moment the first
+    // chunk arrives (see UPSTREAM_TIMEOUT_MS — a total-stream timeout would
+    // be the wrong shape and could kill healthy long replies).
+    const firstChunkAbort = new AbortController();
+    const firstChunkTimer = setTimeout(() => firstChunkAbort.abort(), UPSTREAM_TIMEOUT_MS);
+    // Bridge instead of AbortSignal.any (Node >= 20.3 only — the deploy
+    // runtime floor is not pinned): the SDK holds ONE signal that fires on
+    // either client-gone or first-chunk timeout; the catch branch still
+    // tells the two apart via upstreamAbort.signal.aborted.
+    const onClientGone = () => firstChunkAbort.abort();
+    upstreamAbort.signal.addEventListener("abort", onClientGone, { once: true });
     try {
       const stream = await getGemini().models.generateContentStream({
         model: CHAT_MODEL,
         contents: prep.contents,
-        config: { ...prep.config, abortSignal: upstreamAbort.signal },
+        config: { ...prep.config, abortSignal: firstChunkAbort.signal },
       });
       for await (const chunk of stream) {
+        clearTimeout(firstChunkTimer); // no-op after the first chunk
         const text = chunk.text ?? "";
         if (!text) continue;
         full += text;
@@ -284,6 +306,9 @@ router.post("/nyaya-ai/chat-stream", async (req, res) => {
         res.end();
         return;
       }
+    } finally {
+      upstreamAbort.signal.removeEventListener("abort", onClientGone);
+      clearTimeout(firstChunkTimer);
     }
     // Nothing forwarded yet (error or empty turn) → one backoff retry,
     // same policy as /chat.

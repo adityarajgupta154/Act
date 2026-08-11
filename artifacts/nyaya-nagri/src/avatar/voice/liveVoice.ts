@@ -41,7 +41,10 @@
  * AudioContexts and listeners — closed widget = zero resource use.
  *
  * LATENCY (perf spec): the mic/playback graph builds IN PARALLEL with the
- * token mint + socket connect; VAD end-of-speech is tuned (600ms silence,
+ * token mint + socket connect (and when the mic permission is already
+ * granted, the mint itself also overlaps getUserMedia — no prompt can
+ * appear, so the single-use token cannot be burned waiting on a dialog);
+ * VAD end-of-speech is tuned (600ms silence,
  * mirrored with the token constraint) so the model's turn starts sooner;
  * the child's utterance is flushed the moment the model's transcript starts
  * so the holdback usually waits only on the model's own first-slice check;
@@ -252,9 +255,33 @@ export class LiveVoiceEngine {
         });
       }
 
+      // LATENCY: when the mic permission is ALREADY granted the browser
+      // prompt cannot appear, so getUserMedia resolves near-instantly — the
+      // token mint (server hop + Google authTokens.create, ~400-500ms
+      // measured) can safely overlap it instead of queueing behind it. When
+      // a prompt IS possible the mint stays strictly AFTER the grant: a
+      // child reading the dialog would outlive the token's 2-minute
+      // session-start window and burn it (the reason this order exists).
+      // If the mic still fails (revoked mid-session race), the unused token
+      // simply expires server-side — it is never sent anywhere.
+      let earlyToken: Promise<{ token: string; model: string; expiresAt: string }> | null =
+        null;
+      try {
+        const perm = await navigator.permissions?.query?.({
+          name: 'microphone' as PermissionName,
+        });
+        if (this.disposed) return; // closed while the (fast) query ran — mint nothing
+        if (perm?.state === 'granted') {
+          earlyToken = this.cb.getToken();
+          earlyToken.catch(() => undefined); // failure surfaces on the awaited path
+        }
+      } catch {
+        /* Permissions API unavailable (older Safari) → sequential order */
+      }
+
       // Mic permission FIRST: never burn the single-use token on a denied mic.
       try {
-        this.mediaStream = await navigator.mediaDevices.getUserMedia({
+        const stream = await navigator.mediaDevices.getUserMedia({
           audio: {
             channelCount: 1,
             echoCancellation: true,
@@ -262,6 +289,21 @@ export class LiveVoiceEngine {
             autoGainControl: true,
           },
         });
+        if (this.disposed) {
+          // stop() ran while the mic was being acquired (widget closed mid-
+          // prompt/mid-grant). stop() has already finished and will never run
+          // again for this engine, so releasing the just-granted tracks HERE
+          // is the only thing that keeps the mic indicator from staying on.
+          for (const track of stream.getTracks()) {
+            try {
+              track.stop();
+            } catch {
+              /* noop */
+            }
+          }
+          return;
+        }
+        this.mediaStream = stream;
       } catch (e) {
         const name = (e as DOMException)?.name;
         throw Object.assign(new Error('mic unavailable'), {
@@ -294,7 +336,7 @@ export class LiveVoiceEngine {
 
       let tok: { token: string; model: string; expiresAt: string };
       try {
-        tok = await this.cb.getToken();
+        tok = await (earlyToken ?? this.cb.getToken());
       } catch (e) {
         throw Object.assign(new Error('token mint failed'), {
           voiceKind:

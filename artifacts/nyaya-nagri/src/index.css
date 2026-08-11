@@ -252,3 +252,38 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .nyaya-voice-ring { animation: none; }
 }
+
+/* Home sky blimp — slow LEFT → RIGHT drift across the whole sky band
+   (Aug 2026 animation task). The wrapper element stays CSS-anchored at
+   its original left-[68%] top-[10%] w-[13.5%] spot; the drift keyframes
+   move it via transform only (GPU-friendly, zero layout shift):
+     from  = fully off the LEFT viewport edge (-68vw cancels the anchor,
+             -110% clears the element's own width, small buffer)
+     to    = anchor +35vw ⇒ left edge past 100vw, fully off the RIGHT
+   Both endpoints are off-screen, so the infinite linear loop restarts
+   invisibly (exit right → re-enter left, no visible snap). 22s per
+   traversal keeps it a distant, non-distracting airship; the separate
+   7s ease-in-out float on the INNER img adds a barely-there ~6px bob
+   (two elements so the two transforms compose cleanly). */
+@keyframes home-blimp-drift {
+  from { transform: translateX(calc(-68vw - 110%)); }
+  to { transform: translateX(35vw); }
+}
+@keyframes home-blimp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+.home-blimp-drift {
+  animation: home-blimp-drift 22s linear infinite;
+}
+.home-blimp-float {
+  animation: home-blimp-float 7s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Static fallback = the blimp's original composition spot (the wrapper
+     never moved its CSS anchors), exactly as before the animation task. */
+  .home-blimp-drift,
+  .home-blimp-float {
+    animation: none;
+  }
+}

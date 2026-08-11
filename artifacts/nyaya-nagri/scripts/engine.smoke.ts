@@ -28,7 +28,13 @@ import {
 import { RECAPS, getRecap } from '../src/quests/recaps';
 import { RECAPS_HI } from '../src/quests/recaps.hi';
 import { progressStore, type AgeBand } from '../src/data/progressStore';
-import { isZoneUnlocked } from '../src/world/zones';
+import { isZoneUnlocked, ZONES } from '../src/world/zones';
+import { PLAZA } from '../src/world/phaser/const';
+import {
+  isInsidePlazaDisc,
+  PLAZA_RX,
+  PLAZA_RZ,
+} from '../src/world/phaser/plazaGeom';
 import type { Quest } from '../src/quests/schema';
 
 function assert(cond: boolean, msg: string) {
@@ -45,6 +51,30 @@ assert(
   JSON.stringify(CONTENT_ZONES) === JSON.stringify(['zone0', 'zone1', 'zone2', 'zone3', 'zone4', 'zone5', 'zone6']),
   `zones with content: ${CONTENT_ZONES.join(', ')}`,
 );
+
+// Road-network hub rule (Aug 10 2026 realignment): the plaza footprint is
+// an ELLIPSE — only a location strictly inside it (the hub pedestal) gets
+// no road; rim/outside locations must auto-connect when added to zones.ts.
+assert(
+  isInsidePlazaDisc(PLAZA.x, PLAZA.z),
+  'plaza hub (zone0 pedestal) is inside the plaza disc — no road',
+);
+const pastMinorAxis: [number, number] = [PLAZA.x, PLAZA.z - (PLAZA_RZ + 0.15)];
+assert(
+  Math.hypot(pastMinorAxis[0] - PLAZA.x, pastMinorAxis[1] - PLAZA.z) <
+    PLAZA_RX && !isInsidePlazaDisc(pastMinorAxis[0], pastMinorAxis[1]),
+  'a location just past the minor-axis rim (inside the old Euclidean radius) is road-connectable',
+);
+assert(
+  !isInsidePlazaDisc(PLAZA.x + PLAZA_RX, PLAZA.z),
+  'a location exactly on the rim is road-connectable',
+);
+for (const z of ZONES) {
+  assert(
+    isInsidePlazaDisc(z.position[0], z.position[1]) === (z.id === 'zone0'),
+    `${z.id} hub-exclusion matches the registry expectation`,
+  );
+}
 
 const seenQuestIds = new Set<string>();
 

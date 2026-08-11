@@ -10,17 +10,19 @@
  * - "Enter Nyaya Nagri" simply dismisses this screen; the HUD then shows
  *   the EXISTING onboarding (language first) for new users, or the world
  *   for returning users ({!onboarded && <OnboardingFlow/>} is untouched).
- * - "Explore Nyaya Nagri" does the same — it can never bypass language,
- *   age-band or guardian-consent steps.
- * - "How It Works" opens the SAME HowItWorksContent used by onboarding.
- * - Settings / Accessibility reuse the existing SettingsPanel + ui store
- *   (accessibility controls live inside Settings).
+ * - Aug 2026 simplification (user reference image): the journey chip and
+ *   both secondary buttons (explore / how-it-works) are REMOVED from
+ *   Home — ENTER is the single CTA, centred over the plaza at ~67dvh.
+ *   The how-it-works content still exists inside the onboarding flow,
+ *   which is untouched.
+ * - Settings reuses the existing SettingsPanel + ui store (accessibility
+ *   controls live inside Settings; the dedicated top-right accessibility
+ *   pill was removed Aug 2026 on user request — functionality untouched).
  * - Get Help Now stays on-screen (PRD §9.1) via the SAME HelpDialog and
  *   the same shared help screen — here as a card that also shows the two
  *   helpline numbers: Childline 1098, Cyber Crime 155260.
  *
- * No PII, no text inputs, no emojis (wave ICON instead of the reference's
- * wave emoji — PRD §9 house rule).
+ * No PII, no text inputs, no emojis (PRD §9 house rule).
  */
 import React, { useState } from 'react';
 import { useStrings } from '@/i18n/strings';
@@ -28,19 +30,16 @@ import { SettingsPanel } from '@/ui/SettingsPanel';
 import { AvatarEditOverlay } from '@/player/AvatarEditOverlay';
 import { HelpDialog } from '@/ui/HelpDialog';
 import { AvatarWidget } from '@/avatar/AvatarWidget';
-import { HowItWorksContent } from '@/onboarding/HowItWorksContent';
 import { HomeBackground } from './HomeBackground';
 import { BrandHeader } from './BrandHeader';
 import { TopControls } from './TopControls';
 import { PrimaryCta } from './PrimaryCta';
-import { SecondaryActions } from './SecondaryActions';
 import { InfoDialog } from './InfoDialog';
 import { AboutContent } from './AboutContent';
 
 export function HomeScreen({ onEnter }: { onEnter: () => void }) {
   const t = useStrings();
   const [aboutOpen, setAboutOpen] = useState(false);
-  const [howOpen, setHowOpen] = useState(false);
 
   return (
     <div className="relative w-full min-h-[100dvh] overflow-hidden bg-sky-200">
@@ -48,24 +47,42 @@ export function HomeScreen({ onEnter }: { onEnter: () => void }) {
       <BrandHeader />
       <TopControls onAbout={() => setAboutOpen(true)} />
 
-      {/* Bottom action column. Desktop: CTA cluster centred and lifted off the
-          bottom edge so it sits over the plaza as in the reference, with help
-          pinned bottom-right. Mobile: CTAs + help stacked. */}
-      <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2.5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:gap-4 md:p-5 md:pb-[5%] xl:gap-5 xl:pb-[7%]">
-        <PrimaryCta onEnter={onEnter} />
-        <SecondaryActions onExplore={onEnter} onHowItWorks={() => setHowOpen(true)} />
+      {/* Single primary CTA, horizontally centred in front of the central
+          building entrance. Button CENTRE pinned to ~67dvh (Aug 2026
+          CTA-shrink task: ~15–20% smaller button, centre dropped ~5dvh =
+          roughly 38–54px lower on normal viewports — inside the task's
+          35–60px band; dvh, never a fixed pixel offset, so every
+          breakpoint scales proportionally and stays centred). The painted
+          sign band ends ~48vh on wide screens, so moving DOWN only adds
+          clearance to the central building art. The min() clamp is a
+          DELIBERATE exception for short landscape phones, where a strict
+          dvh centre would geometrically collide with the mobile in-flow
+          bottom stack (Nyaya AI row + full-width Get Help bar, ~10rem) —
+          the 13rem cap is intentionally UNCHANGED by the shrink task:
+          those tiny viewports keep the proven safe placement, and the
+          smaller button simply gains clear air there. pointer-events are
+          scoped to the button so the full-width centring strip can never
+          swallow clicks. */}
+      <div className="pointer-events-none absolute inset-x-0 top-[min(67dvh,calc(100dvh_-_13rem))] z-20 flex -translate-y-1/2 justify-center px-3">
+        <div className="pointer-events-auto">
+          <PrimaryCta onEnter={onEnter} />
+        </div>
+      </div>
 
+      {/* Bottom chrome only (the CTA cluster left this column with the
+          Aug 2026 simplification — no reserved space remains). Mobile:
+          Nyaya AI row + full-width Get Help bar stacked in-flow. Desktop:
+          both pinned bottom-right as compact floating cards. */}
+      <div className="absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2.5 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:gap-4 md:p-5">
         {/* Nyaya AI — the game's ONE assistant (robot guide, Gemini brain),
-            reachable straight from Home. Mobile: right-aligned row just above
-            the help bar (in-flow, never covers the CTAs). Desktop: floats
-            above the pinned Get Help card. */}
+            reachable straight from Home. */}
         <div className="flex w-full justify-end pt-1 md:absolute md:bottom-44 md:right-5 md:w-auto md:pt-0 xl:bottom-48 xl:right-6">
           <AvatarWidget />
         </div>
 
         {/* Get Help Now — same shared help screen (PRD §9.1), card shows the
-            numbers. IMAGE 4 + brief §13: from `md` up this is a COMPACT
-            floating card pinned bottom-right, never a full-width bar. */}
+            numbers. From `md` up this is a COMPACT floating card pinned
+            bottom-right, never a full-width bar. */}
         <div className="w-full pt-1 md:absolute md:bottom-5 md:right-5 md:w-auto md:pt-0 xl:bottom-6 xl:right-6">
           <HelpDialog variant="card" />
         </div>
@@ -75,12 +92,6 @@ export function HomeScreen({ onEnter }: { onEnter: () => void }) {
           panel's "Edit Avatar" action works on Home too, not just in-game) */}
       <SettingsPanel />
       <AvatarEditOverlay />
-
-      <InfoDialog open={howOpen} onOpenChange={setHowOpen} title={t.howItWorksTitle} closeLabel={t.close}>
-        <div className="pt-6">
-          <HowItWorksContent />
-        </div>
-      </InfoDialog>
 
       <InfoDialog open={aboutOpen} onOpenChange={setAboutOpen} title={t.homeAboutTitle} closeLabel={t.close}>
         <AboutContent />

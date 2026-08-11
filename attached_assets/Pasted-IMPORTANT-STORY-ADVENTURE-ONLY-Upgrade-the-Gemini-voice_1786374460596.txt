@@ -1,0 +1,426 @@
+IMPORTANT — STORY ADVENTURE ONLY
+
+Upgrade the Gemini voice/TTS system ONLY inside the existing "Story Adventure" experience.
+
+DO NOT apply this voice change anywhere else in the application.
+
+==================================================
+SCOPE
+==================================================
+
+The new Gemini native/high-quality voice should ONLY be used for:
+
+- Story Adventure slide narration
+- Story Adventure captions
+- Story Adventure question narration
+- Story Adventure option narration
+- Story Adventure wrong-answer feedback
+- Story Adventure correct-answer feedback
+- Story Adventure "Try Again" guidance
+- Story Adventure "Next" guidance
+- Story Adventure no-answer reminders
+- Story Adventure completion/reward narration
+
+Everything outside Story Adventure must remain exactly as it is.
+
+==================================================
+DO NOT MODIFY THESE
+==================================================
+
+Do NOT change the voice/TTS implementation of:
+
+- Main Nyaya AI Assistant
+- AI chat
+- Map
+- Home page
+- Onboarding
+- How It Works
+- Character/avatar screens
+- My Progress
+- Certificates
+- Other game zones
+- Get Help
+- Any other existing feature
+
+If these areas already use their own voice system, leave them untouched.
+
+==================================================
+EXISTING GEMINI API KEY
+==================================================
+
+Use the existing Gemini API key already configured in the project.
+
+Do NOT create a new API key.
+
+Do NOT create a second Gemini authentication system.
+
+Do NOT change the existing Gemini configuration used by other parts of the application.
+
+Create the Story Adventure voice integration as an isolated module.
+
+==================================================
+STORY ADVENTURE VOICE MODULE
+==================================================
+
+Create a dedicated Story Adventure voice manager.
+
+For example:
+
+StoryAdventureVoiceManager
+
+or an equivalent isolated architecture.
+
+It should handle ONLY:
+
+- story narration
+- question narration
+- option narration
+- feedback
+- reminders
+- replay
+- stop
+- audio caching
+
+Do NOT make this a global replacement for the application's existing TTS.
+
+==================================================
+VOICE QUALITY
+==================================================
+
+The Story Adventure voice should use Gemini's current supported native audio/TTS capability.
+
+The voice should sound:
+
+- natural
+- warm
+- expressive
+- friendly
+- child-friendly
+- conversational
+- patient
+- educational
+
+It should NOT sound like:
+
+- browser SpeechSynthesis
+- robotic TTS
+- GPS voice
+- IVR
+- monotone narration
+
+The voice should feel like a friendly narrator guiding an 8-year-old child through the story.
+
+==================================================
+STORY SLIDE NARRATION
+==================================================
+
+When a Story Adventure slide opens:
+
+1. Stop any previous Story Adventure audio.
+2. Load the current slide.
+3. Automatically narrate the current slide.
+4. Use the existing story content/caption.
+5. Use natural pauses and expressive delivery.
+
+Example:
+
+"Riya school se ghar aa rahi hai...
+
+Raste mein use ek chhota sa gaon dikhai deta hai,
+jahan kuch bachche khel rahe hain."
+
+Do not invent new story facts.
+
+==================================================
+QUESTION SLIDE
+==================================================
+
+For the Story Adventure question slide ONLY:
+
+Voice sequence:
+
+1. Explain the situation.
+2. Read the question.
+3. Read option 1.
+4. Pause.
+5. Read option 2.
+6. Wait for the child.
+
+Example:
+
+"Riya ke saamne ab ek important decision hai...
+
+Kya woh Aman ki madad karegi?
+
+Option one...
+
+Chup chaap aage badh jao.
+
+Option two...
+
+Aman ke liye help bulao.
+
+Ab aapki baari hai."
+
+==================================================
+NO ANSWER REMINDERS
+==================================================
+
+If the child does not select an option:
+
+Use gentle, varied reminders.
+
+Example:
+
+"Abhi tak koi option select nahi hua hai.
+Aapko kaunsa answer sahi lagta hai?"
+
+Another:
+
+"Chalo, Riya ki help karte hain.
+Neeche diye gaye options mein se ek choose karo."
+
+Another:
+
+"Ab aapki baari hai.
+Kisi ek option par tap karo."
+
+Do NOT repeat the exact same sentence continuously.
+
+Use reasonable intervals.
+
+==================================================
+ANSWER SELECTED
+==================================================
+
+The moment the child selects an answer:
+
+- immediately stop Story Adventure voice
+- cancel Story Adventure reminder timers
+- clear Story Adventure audio queue
+- process the selected answer
+
+Do NOT allow any reminder to continue after the answer is selected.
+
+==================================================
+WRONG ANSWER
+==================================================
+
+For a wrong answer:
+
+Use the Story Adventure Gemini voice to explain the existing feedback naturally.
+
+Example:
+
+"Chalo, ek baar phir sochte hain...
+
+Aman ko help ki zaroorat thi.
+Aise situation mein kisi trusted adult ya doctor se help lena important hai.
+
+Try Again par tap karke dobara choose karo."
+
+Do not punish or shame the child.
+
+==================================================
+CORRECT ANSWER
+==================================================
+
+For a correct answer:
+
+Use an encouraging voice.
+
+Example:
+
+"Bahut badhiya!
+
+Aman ke liye help bulana sahi decision tha.
+Kisi bachche ko zaroori madad ki zaroorat ho,
+toh trusted adult ya doctor se help lena important hai.
+
+Ab Next par tap karke story continue karo."
+
+==================================================
+AUDIO MANAGEMENT
+==================================================
+
+Story Adventure must have its own isolated audio manager.
+
+It must support:
+
+speak()
+stop()
+replay()
+preload()
+isSpeaking()
+
+Only one Story Adventure audio response can play at a time.
+
+When:
+
+- slide changes
+- Back clicked
+- Next clicked
+- answer selected
+- Try Again clicked
+- Story Adventure closed
+
+Immediately stop Story Adventure audio.
+
+==================================================
+AUDIO CACHE
+==================================================
+
+Because story content is mostly static, cache the generated Story Adventure audio.
+
+Cache separately for:
+
+- slide narration
+- question
+- options
+- correct feedback
+- wrong feedback
+- reminders
+- completion narration
+
+Do not regenerate the same audio unnecessarily.
+
+Where possible, preload the next Story Adventure slide's audio.
+
+==================================================
+PERFORMANCE
+==================================================
+
+The Story Adventure voice should start quickly.
+
+Do not make a new Gemini request for every tiny sentence if it can be avoided.
+
+Do not generate audio repeatedly for the same fixed story content.
+
+Do not affect the performance of the rest of the game.
+
+The Story Adventure voice system must remain isolated from the main game's rendering and AI systems.
+
+==================================================
+IMPORTANT ARCHITECTURE RULE
+==================================================
+
+Do NOT modify a global function such as:
+
+speak()
+textToSpeech()
+playVoice()
+tts()
+
+if that function is also used elsewhere in the application.
+
+Instead:
+
+Create a Story Adventure-specific voice layer.
+
+For example:
+
+StoryAdventureVoiceManager
+        ↓
+Gemini Native Audio/TTS
+        ↓
+Story Adventure only
+
+Existing global voice system:
+        ↓
+UNCHANGED
+
+==================================================
+LANGUAGE
+==================================================
+
+Respect the language selected inside the existing Story Adventure/game system.
+
+For Hindi/Hinglish:
+
+Use natural Hindi/Hinglish pronunciation.
+
+For English:
+
+Use natural English narration.
+
+Do not change the application's existing localization system.
+
+==================================================
+FALLBACK
+==================================================
+
+If Gemini native audio fails ONLY inside Story Adventure:
+
+1. Retry once.
+2. Use cached Story Adventure audio if available.
+3. As a final fallback, use the existing Story Adventure TTS fallback.
+
+Do NOT change the voice behavior of other parts of the application.
+
+==================================================
+FINAL TEST
+==================================================
+
+Test Story Adventure:
+
+Slide 1
+→ Gemini natural narration
+
+Slide 2
+→ previous audio stops
+→ new narration starts
+
+Slide 3
+→ narration works
+
+Question slide
+→ question
+→ option 1
+→ option 2
+→ waiting
+
+No answer
+→ reminder
+
+Wrong answer
+→ voice stops
+→ wrong feedback
+
+Try Again
+→ question/options can be replayed
+
+Correct answer
+→ voice stops
+→ success feedback
+
+Next
+→ previous audio stops
+→ next slide narration starts
+
+Completion
+→ reward narration plays
+
+Exit Story Adventure
+→ ALL Story Adventure audio stops
+
+==================================================
+CRITICAL FINAL REQUIREMENT
+==================================================
+
+The scope is STRICTLY:
+
+STORY ADVENTURE ONLY.
+
+Do NOT globally replace the application's TTS.
+
+Do NOT change the main Nyaya AI Assistant voice.
+
+Do NOT change any other screen.
+
+Do NOT change any other AI functionality.
+
+Do NOT change the existing Gemini integration used by other features.
+
+Only upgrade the voice experience inside Story Adventure.
+
+Before finishing, search the codebase and verify that no global/shared TTS function used by other features has been modified.

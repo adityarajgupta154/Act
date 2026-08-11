@@ -15,6 +15,7 @@ import '@fontsource/lexend/700.css';
 // attributes to <html> before first render.
 import '@/data/settingsStore';
 import { initAmbientAudio } from '@/audio/ambient';
+import { openHelp } from '@/ui/uiStore';
 
 // Calm, mutable ambient loop (Task 13) — starts after the first user
 // gesture (browser autoplay policy); toggled from Settings.
@@ -40,11 +41,38 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('map'
 }
 
 // Dev-only screenshot/e2e seam (same spirit): `?story=open` boots an
-// onboarded child so the Story Adventure overlay — opened by StoryOverlay's
-// own seam effect, optionally at `&slide=N&pick=correct|wrong` — can be
-// photographed headlessly. HomePage skips the landing screen for this param
-// too. Never active in production builds.
+// onboarded child so the Story Adventure surfaces — the overlay (own seam,
+// `&level=<id>&slide=N&pick=correct|wrong`) or the level map
+// (`&view=map[&celebrate=<id>]`) — can be photographed headlessly.
+// `&done=<id,id>` pre-completes story levels so locked/completed map states
+// and Level 2+ slides are reachable; the lock rule itself stays fail-closed.
+// HomePage skips the landing screen for this param too. Never in production.
 if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('story') === 'open') {
+  const doneIds = (new URLSearchParams(window.location.search).get('done') ?? '')
+    .split(',')
+    .filter(Boolean);
+  progressStore.update({
+    onboarded: true,
+    ageBand: '12-15',
+    storyProgress: Object.fromEntries(doneIds.map((id) => [id, true])),
+  });
+}
+
+// Dev-only screenshot/e2e seam (same spirit): `?help=open` boots an
+// onboarded child with the Get Help Now hub already open. Combine with
+// `&at=<lat>,<lng>` (read inside useNearbyHelp) to skip real geolocation
+// and land in the located state, since the headless capture browser
+// cannot answer a permission prompt. Never active in production builds.
+if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('help') === 'open') {
+  progressStore.update({ onboarded: true, ageBand: '12-15' });
+  openHelp();
+}
+
+// Dev-only screenshot/e2e seam (same spirit): `?profile=open` boots an
+// onboarded child, and PlayerProfile.tsx boots its dropdown expanded, so
+// the headless capture browser (which cannot click) can photograph the
+// expanded profile panel over the map. Never active in production builds.
+if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('profile') === 'open') {
   progressStore.update({ onboarded: true, ageBand: '12-15' });
 }
 

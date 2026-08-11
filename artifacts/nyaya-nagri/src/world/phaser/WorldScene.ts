@@ -18,7 +18,7 @@
  */
 import Phaser from 'phaser';
 import { ZONES, getZoneStates } from '../zones';
-import { uiStore, playerPosition, enterZone, openStory } from '@/ui/uiStore';
+import { uiStore, playerPosition, enterZone, openStoryMap } from '@/ui/uiStore';
 import { STORY_ENTRANCE, STORY_PROXIMITY_SQ } from '@/story/storyData';
 import { progressStore } from '@/data/progressStore';
 import {
@@ -41,6 +41,7 @@ import {
   createMonument,
   setMonumentLabel,
 } from './monuments';
+import { buildRoads } from './roads';
 import { settingsStore } from '@/data/settingsStore';
 import { getStrings } from '@/i18n/strings';
 import {
@@ -115,6 +116,9 @@ const FLOWER_PATCHES: Array<[number, number]> = [
   [-6, -18], [6, -18], [-14, -18], [14, -18],
   [-5, -5], [5, -5], [-13, -6], [13, -6],
   [3, 6], [-3, 8], [14, 3], [-9, -27], [9, -27], [18, -16],
+  // Flanking the S entrance lane's forest terminus (map redesign) so the
+  // road reads as the framed village entrance, not a dead end.
+  [-2.2, 13.6], [2.2, 14.2],
 ];
 
 export class WorldScene extends Phaser.Scene {
@@ -228,63 +232,19 @@ export class WorldScene extends Phaser.Scene {
   }
 
   /**
-   * The reference composition: a central cobble plaza disc with path
-   * spokes radiating to every monument. Strips are TileSprites of the
-   * cobble crop, rotated along each spoke so the angles match the mock.
+   * Roads (map redesign, Aug 2026): the plaza disc is the central junction
+   * and the whole lane network comes from roads.ts — the ONE authoritative
+   * road system, with endpoints derived from zones.ts / storyData.ts. The
+   * old hand-tuned spoke polylines (whose bends left wedge gaps and whose
+   * ends stopped short of the monuments) are gone.
    */
   private buildPaths() {
+    buildRoads(this);
+    // The disc draws ABOVE the lane starts (0.5) so every junction seam
+    // hides under its painted rim.
     this.add
       .image(px(PLAZA.x), px(PLAZA.z), 'plaza-disc')
       .setDepth(0.6);
-
-    // Spokes as polylines from the plaza edge to each monument front —
-    // the diagonals bend once so they read like the mock's curved lanes.
-    const spokes: Array<Array<[number, number]>> = [
-      [[0, -15.95], [0, -21.8]], // N — wisdom well
-      [[0, -8.05], [0, 15]], // S — through spawn to the meadow edge
-      [[-4.7, -12], [-14.6, -12]], // W — rights cottage
-      [[4.7, -12], [13.6, -12]], // E — help house
-      [[-3.3, -14.6], [-8, -19], [-11.2, -22.3]], // NW — crystal
-      [[3.3, -14.6], [8, -19], [11.2, -22.3]], // NE — shield
-      [[-3.5, -8.6], [-6.8, -5.7], [-9.8, -2.7]], // SW — law pillar
-      [[3.5, -8.6], [6.8, -5.7], [9.8, -2.7]], // SE — kindness corner
-    ];
-    for (const line of spokes) {
-      for (let i = 0; i < line.length - 1; i++) {
-        this.addPathStrip(line[i][0], line[i][1], line[i + 1][0], line[i + 1][1]);
-      }
-    }
-  }
-
-  private addPathStrip(x1: number, z1: number, x2: number, z2: number) {
-    const ax = px(x1);
-    const ay = px(z1);
-    const bx = px(x2);
-    const by = px(z2);
-    const len = Math.hypot(bx - ax, by - ay);
-    // Extend both ends by half a unit so bent polylines overlap at their
-    // joints instead of leaving a wedge gap.
-    const pad = 0.5 * U;
-    const nx = (bx - ax) / len;
-    const ny = (by - ay) / len;
-    const sx = ax - nx * pad;
-    const sy = ay - ny * pad;
-    const ex = bx + nx * pad;
-    const ey = by + ny * pad;
-    const flen = Math.hypot(ex - sx, ey - sy);
-    // 76px-wide lane (the mock's paths run chunkier than the old 64px),
-    // with the cobble texture scaled up to fill the width seam-free.
-    const strip = this.add.tileSprite(
-      (sx + ex) / 2,
-      (sy + ey) / 2,
-      PATH_TILE_W * 1.19,
-      flen,
-      'path-tile',
-    );
-    strip.setTileScale(1.19);
-    // TileSprite "height" runs along screen +y; rotate it onto the spoke.
-    strip.setRotation(Math.atan2(ey - sy, ex - sx) - Math.PI / 2);
-    strip.setDepth(0.7);
   }
 
   private buildDecor() {
@@ -335,14 +295,21 @@ export class WorldScene extends Phaser.Scene {
     INNER_TREES.forEach(plantTree);
 
     // Small reference props: rocks, stacked logs, mushrooms, flower fences.
+    // Aug 2026 map redesign: a few more of the SAME cutouts fill the
+    // reference's denser corners (rocks top-left, log + fence by the help
+    // house, rocks bottom-right) — never on a lane.
     const props: Array<[string, number, number, number, boolean]> = [
       ['decor-rocks', -11, -28.2, 1.35, false],
       ['decor-rocks', 18, -8, 1.1, true],
+      ['decor-rocks', -26, -28, 1.2, true],
+      ['decor-rocks', 24, 6, 1.0, false],
       ['decor-log', 16, -2.5, 1.35, false],
+      ['decor-log', -25, 9, 1.2, true],
       ['decor-mushroom', 14.6, -0.2, 1.35, false],
       ['decor-mushroom', -3.4, 5.2, 1.05, true],
       ['decor-fence', 12.8, -3.6, 1.35, false],
       ['decor-fence', -20.5, -13, 1.35, true],
+      ['decor-fence', 19.5, -10.2, 1.25, true],
     ];
     for (const [key, ux, uz, s, flip] of props) {
       this.add
@@ -377,18 +344,19 @@ export class WorldScene extends Phaser.Scene {
     house.setInteractive({ useHandCursor: true });
     house.on('pointerdown', () => {
       // SAME guard chain as monument taps (plus not-already-in-a-story).
-      const { nearbyStoryId, activeZoneId, activeStory, isTransitioning } =
+      const { nearbyStoryId, activeZoneId, activeStory, isTransitioning, storyMapOpen } =
         uiStore.getState();
       if (
         nearbyStoryId !== STORY_ENTRANCE.storyId ||
         activeZoneId ||
         activeStory ||
-        isTransitioning
+        isTransitioning ||
+        storyMapOpen
       ) {
         return;
       }
-      // openStory re-checks lock rules; proximity is the only extra gate.
-      openStory(STORY_ENTRANCE.storyId);
+      // The door opens the LEVEL MAP — individual levels start from there.
+      openStoryMap();
     });
 
     // Name pill under the door — same Fredoka text + pill recipe as the
@@ -546,15 +514,15 @@ export class WorldScene extends Phaser.Scene {
       if (ev.code === 'KeyE' && !ev.repeat) {
         // EXACT interact guard from the 3D Player.tsx (+ the story house
         // door; zone gates keep priority if both could ever apply).
-        const { nearbyZoneId, nearbyStoryId, activeZoneId, activeStory, isTransitioning } =
+        const { nearbyZoneId, nearbyStoryId, activeZoneId, activeStory, isTransitioning, storyMapOpen } =
           uiStore.getState();
-        if (activeZoneId || activeStory || isTransitioning) return;
+        if (activeZoneId || activeStory || isTransitioning || storyMapOpen) return;
         if (nearbyZoneId) {
           const zoneState = getZoneStates().find((z) => z.id === nearbyZoneId);
           if (zoneState?.unlocked) enterZone(nearbyZoneId);
         } else if (nearbyStoryId) {
-          // openStory re-checks lock rules; the prompt is only UI sugar.
-          openStory(nearbyStoryId);
+          // E at the house door opens the LEVEL MAP (not a level directly).
+          openStoryMap();
         }
       }
     };
@@ -578,9 +546,9 @@ export class WorldScene extends Phaser.Scene {
     if (!this.player) return;
     const body = this.player.body as Phaser.Physics.Arcade.Body;
 
-    // Freeze while inside a zone, a story, or during the fade — 3D contract.
-    const { activeZoneId, activeStory, isTransitioning } = uiStore.getState();
-    if (activeZoneId || activeStory || isTransitioning) {
+    // Freeze inside a zone, a story, the level map, or during the fade.
+    const { activeZoneId, activeStory, isTransitioning, storyMapOpen } = uiStore.getState();
+    if (activeZoneId || activeStory || isTransitioning || storyMapOpen) {
       body.setVelocity(0, 0);
       this.setPuppetFrame(false, deltaMs / 1000);
       return;

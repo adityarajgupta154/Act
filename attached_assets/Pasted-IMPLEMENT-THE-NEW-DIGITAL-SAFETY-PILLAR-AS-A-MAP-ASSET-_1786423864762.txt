@@ -1,0 +1,303 @@
+IMPLEMENT THE NEW DIGITAL SAFETY PILLAR AS A MAP ASSET
+
+I have provided a new Digital Safety pillar image with transparent/removed background.
+
+Use this new image as the visual asset for the existing "Digital Safety" location on the Nyaya Nagri map.
+
+IMPORTANT:
+Do NOT regenerate the image.
+Do NOT recreate the pillar using CSS/shapes.
+Use the provided image asset directly.
+
+==================================================
+1. REPLACE EXISTING DIGITAL SAFETY PILLAR
+==================================================
+
+Find the existing map location labeled:
+
+"Digital Safety"
+
+It currently uses the old pillar/structure.
+
+Completely replace that old visual asset with the newly provided Digital Safety pillar image.
+
+Remove the old pillar image from rendering so both assets are NOT visible simultaneously.
+
+==================================================
+2. PRESERVE THE MAP
+==================================================
+
+Do NOT modify:
+
+- map background
+- grass
+- trees
+- flowers
+- roads
+- water
+- other buildings
+- other pillars
+- player character
+- UI panels
+- navigation
+- map controls
+- Get Help Now
+- other locations
+
+Only replace the Digital Safety location asset.
+
+==================================================
+3. TRANSPARENT BACKGROUND
+==================================================
+
+The new asset has been prepared to work as a foreground game asset.
+
+Render it with:
+
+background: transparent;
+
+Do NOT place a white, black, green, or rectangular background behind it.
+
+The surrounding map/grass must remain visible around the pillar.
+
+==================================================
+4. REMOVE OLD GROUND/SURFACE
+==================================================
+
+CRITICAL:
+
+The old Digital Safety pillar currently has an awkward dark/gray circular ground surface underneath it.
+
+Do NOT keep that old circular surface.
+
+The new pillar should sit naturally on the map.
+
+If the new image already contains its own stone base/platform, use that as the complete base.
+
+Do NOT render an additional circular platform underneath it.
+
+Result:
+
+MAP GRASS
+   ↓
+NEW DIGITAL SAFETY PILLAR
+   ↓
+ITS OWN BUILT-IN STONE BASE
+
+No duplicate ground circle.
+
+==================================================
+5. SCALE
+==================================================
+
+Scale the new pillar so that it visually matches the size of the other major map locations.
+
+Do NOT make it excessively large.
+
+Do NOT make it tiny.
+
+The main pillar should be clearly recognizable from the normal map view.
+
+Use responsive sizing rather than hardcoded dimensions that break on different screens.
+
+Example approach:
+
+width: clamp(...);
+height: auto;
+object-fit: contain;
+
+Adjust the exact values according to the existing map scale.
+
+==================================================
+6. POSITION
+==================================================
+
+Keep the Digital Safety location at its existing map coordinates.
+
+Do NOT move the location itself.
+
+Only adjust the asset's internal positioning/scale if necessary so that:
+
+- pillar is centered on its location
+- base sits naturally on the grass
+- label appears underneath
+- nearby road alignment remains unchanged
+- asset does not overlap unrelated map elements
+
+==================================================
+7. LABEL
+==================================================
+
+Keep the existing:
+
+"Digital Safety"
+
+map label.
+
+Do NOT duplicate the label if the new image already contains text.
+
+IMPORTANT:
+
+If the provided image contains a "Digital Safety" plaque inside the image, decide based on the existing map design:
+
+- Prefer using the existing map label if all other locations use external labels.
+- If the embedded plaque is visually important, hide/remove the duplicate external label only if this matches the visual system consistently.
+
+Do NOT show two "Digital Safety" labels directly on top of each other.
+
+==================================================
+8. LOCK STATE
+==================================================
+
+Preserve the existing Digital Safety location's game state.
+
+If it is currently locked:
+
+- keep the lock indicator
+- keep locked interaction behavior
+- keep existing unlock logic
+
+If it is unlocked:
+
+- keep its existing unlocked state
+- keep existing click behavior
+
+The image replacement must NOT affect game progression.
+
+==================================================
+9. CLICK / INTERACTION
+==================================================
+
+The new image must remain inside the existing Digital Safety location's clickable area.
+
+Clicking/tapping the Digital Safety pillar should continue to trigger exactly the same behavior as before.
+
+Do NOT create a separate click system unless required by the existing architecture.
+
+Make sure the transparent parts of the image do not create unexpected huge clickable areas.
+
+Prefer the location wrapper/container to control the interaction.
+
+==================================================
+10. Z-INDEX / LAYERING
+==================================================
+
+Make sure the pillar appears:
+
+ABOVE:
+- grass/map background
+- road
+
+BELOW:
+- important global UI
+- player HUD
+- Get Help Now
+- navigation controls
+
+It must not cover unrelated UI elements.
+
+The asset should visually belong to the map layer, not the global UI layer.
+
+==================================================
+11. RESPONSIVE MAP
+==================================================
+
+Test the Digital Safety pillar at:
+
+- 1920x1080
+- 1600x900
+- 1366x768
+- tablet width
+- mobile width
+
+The pillar should remain anchored to the Digital Safety map location.
+
+Do NOT let it drift away from its intended location when viewport size changes.
+
+==================================================
+12. ASSET QUALITY
+==================================================
+
+Preserve the original image quality.
+
+Do NOT:
+
+- blur it
+- stretch it
+- crop it
+- distort its aspect ratio
+- add unwanted filters
+- add a background
+- add a CSS gradient behind it
+
+Use:
+
+height: auto;
+object-fit: contain;
+
+and preserve the original aspect ratio.
+
+==================================================
+13. CLEAN UP OLD CODE
+==================================================
+
+After implementing the new asset:
+
+- remove unused imports of the old Digital Safety pillar
+- remove unused old asset references
+- remove duplicate rendering
+- remove old Digital Safety-specific background/surface if it is only used by the old asset
+- keep all other map assets untouched
+
+Do not leave dead code unnecessarily.
+
+==================================================
+14. FINAL VISUAL RESULT
+==================================================
+
+The final map should look like:
+
+        Digital Safety
+             ↓
+      [NEW PILLAR]
+             ↓
+       [STONE BASE]
+             ↓
+          GRASS
+
+The new Digital Safety pillar should visually match the existing Nyaya Nagri game world:
+
+- colorful
+- polished
+- kid-friendly
+- 3D/isometric
+- bright
+- premium game UI
+- blue/gold digital-safety theme
+
+Most importantly, it must look like it naturally belongs to the existing map rather than looking like an image pasted on top.
+
+==================================================
+15. DO NOT BREAK EXISTING FEATURES
+==================================================
+
+Do NOT modify:
+
+- Story Adventure
+- Level progression
+- AI assistant
+- Gemini voice
+- Get Help Now
+- location services
+- player movement
+- coins
+- streak
+- badges
+- other map locations
+- navigation
+- authentication
+- backend
+
+This is ONLY a Digital Safety map-asset replacement.
+
+After implementation, verify that there is exactly ONE Digital Safety pillar rendered and no old pillar/gray circular surface remains.

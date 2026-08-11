@@ -35,7 +35,12 @@ export default function HomePage() {
   const [entered, setEntered] = useState(() => {
     if (!import.meta.env?.DEV) return false;
     const params = new URLSearchParams(window.location.search);
-    return params.get('map') === 'open' || params.get('story') === 'open';
+    return (
+      params.get('map') === 'open' ||
+      params.get('story') === 'open' ||
+      params.get('help') === 'open' ||
+      params.get('profile') === 'open'
+    );
   });
 
   if (!entered) {

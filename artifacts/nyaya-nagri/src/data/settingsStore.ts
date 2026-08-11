@@ -39,7 +39,11 @@ const STORAGE_KEY = 'nn-settings-v1';
 
 const DEFAULTS: SettingsState = {
   language: 'en',
-  narration: false,
+  // ON by default (Story Adventure voice guide): the target child (~8)
+  // may not read comfortably, so narration must work without finding a
+  // settings toggle first. The Settings panel + in-story control can turn
+  // it off any time; an explicitly stored "false" is always respected.
+  narration: true,
   dyslexiaFont: false,
   highContrast: false,
   textSize: 'medium',
@@ -57,7 +61,9 @@ function loadStored(): SettingsState {
     const parsed = JSON.parse(raw) as Partial<SettingsState>;
     return {
       language: parsed.language === 'hi' ? 'hi' : 'en',
-      narration: parsed.narration === true,
+      // Missing key (pre-voice-guide save) inherits the new ON default;
+      // only an explicit false (the child turned it off) stays off.
+      narration: parsed.narration !== false,
       dyslexiaFont: parsed.dyslexiaFont === true,
       highContrast: parsed.highContrast === true,
       textSize:

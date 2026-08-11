@@ -1,0 +1,113 @@
+I want you to replace the CURRENT “Right to Childhood” / purple crystal location asset on the game map with a completely redesigned, polished standalone game asset.
+
+IMPORTANT:
+I am providing:
+1. The current game map as the REFERENCE for exact visual style, scale, placement, lighting, perspective, and environment.
+2. The existing Right to Childhood asset as the asset that needs to be replaced.
+
+Study both reference images carefully before making any changes.
+
+GOAL:
+Create a COMPLETE, PROFESSIONAL “Right to Childhood” landmark asset that looks like it was originally designed for this exact game world.
+
+The current asset looks incomplete and visually awkward. Do NOT simply modify or recolor the existing crystal. Replace it with a much more complete landmark.
+
+DESIGN DIRECTION:
+- Keep the same bright, colorful, friendly 3D cartoon game-art style as the map.
+- Match the map's perspective and camera angle exactly.
+- Match the map's lighting, shadows, saturation, outlines, material quality and level of detail.
+- It should feel like a real location/building/monument inside the same game world.
+- Child-friendly, warm, welcoming and educational.
+- Avoid a dark, realistic, horror, futuristic or overly complex appearance.
+- Do not make it look like a generic stock game icon.
+
+RIGHT TO CHILDHOOD CONCEPT:
+Design a distinctive landmark representing children's basic rights, safety, care, childhood and protection.
+
+Suggested visual concept:
+- A beautiful small fantasy-style children's sanctuary / cottage / playground landmark.
+- Rounded friendly architecture.
+- Warm colorful roof.
+- Small decorative elements related to children, play, education and protection.
+- Include subtle symbols such as a child/family icon, heart, home, toy, book or protective shield.
+- The landmark should immediately communicate “Right to Childhood” visually without requiring the text label.
+- Keep the design consistent with the other landmarks in the map.
+
+VERY IMPORTANT — TRANSPARENT ASSET:
+The final landmark must be delivered as an isolated asset with a COMPLETELY TRANSPARENT BACKGROUND.
+
+Remove:
+- grass
+- trees
+- map background
+- paths
+- surrounding environment
+- large ground scenery
+- unrelated objects
+
+Keep only:
+- the complete landmark
+- its own small base/platform if appropriate
+- its own natural contact shadow only if needed for integration
+
+Do NOT place a rectangular background behind it.
+
+MAP INTEGRATION:
+I will place this asset back into the existing game map using code.
+
+Therefore:
+- Preserve the landmark's complete silhouette.
+- Do not crop any part of the building.
+- Leave a small amount of transparent padding around the asset.
+- Make the asset centered.
+- Keep the bottom/base clearly visible.
+- Make sure it looks correct when placed on the map at the same position where the current Right to Childhood landmark exists.
+
+REFERENCE MATCHING:
+Use the provided map image as the PRIMARY visual reference.
+
+Match:
+- camera angle
+- 3D perspective
+- proportions
+- lighting direction
+- shadow softness
+- color palette
+- cartoon rendering
+- edge quality
+- visual detail
+- overall scale
+
+Do NOT copy the exact objects from another location on the map.
+Create a NEW landmark specifically for “Right to Childhood”, while making it look like part of the same game.
+
+LABEL:
+Do NOT bake the “Right to Childhood” text into the image.
+The text label will remain as a separate UI element in the game.
+
+LOCK STATE:
+The map currently shows locations with a lock indicator.
+Do NOT permanently bake the lock UI into the landmark asset.
+The lock should remain a separate game/UI element controlled by the application.
+
+TECHNICAL REQUIREMENTS:
+- High resolution
+- PNG
+- Transparent background
+- Clean edges
+- No white/black background
+- No background rectangle
+- No unwanted objects
+- No text
+- No UI elements
+- No duplicate assets
+- No cropping
+- Production-ready game asset
+
+Most importantly, the final result should look like:
+
+“An original landmark from the exact same game world as the provided map, designed specifically for Right to Childhood.”
+
+Do not change the rest of the map.
+Do not modify other landmarks.
+Only replace the existing Right to Childhood landmark asset and integrate the new asset at the exact same location.

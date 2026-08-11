@@ -10,7 +10,7 @@
  */
 import type { Language } from '@/data/settingsStore';
 
-const LANG_TAGS: Record<Language, string> = { en: 'en-IN', hi: 'hi-IN' };
+export const LANG_TAGS: Record<Language, string> = { en: 'en-IN', hi: 'hi-IN' };
 
 function synth(): SpeechSynthesis | null {
   return typeof window !== 'undefined' && 'speechSynthesis' in window
@@ -23,7 +23,11 @@ export function narrationSupported(): boolean {
   return synth() !== null;
 }
 
-function pickVoice(langTag: string): SpeechSynthesisVoice | null {
+/**
+ * Shared voice picking (also used by the Story Adventure's storyVoice
+ * engine, so quests and story narration always speak with the same voice).
+ */
+export function pickVoice(langTag: string): SpeechSynthesisVoice | null {
   const s = synth();
   if (!s) return null;
   const voices = s.getVoices();

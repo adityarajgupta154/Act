@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react';
 import { getZone, isZoneUnlocked } from '@/world/zones';
 import { getStoryLevel, isStoryLevelUnlockedIn } from '@/story/storyData';
+import { primeStoryAudioInGesture } from '@/story/storyAdventureVoice';
 import { progressStore } from '@/data/progressStore';
 import type { LevelKind } from '@/quests/schema';
 
@@ -28,6 +29,20 @@ export type UIState = {
   shopOpen: boolean;
   /** Full-screen Map modal (reference redesign) — opened from the minimap. */
   mapOpen: boolean;
+  /**
+   * Story Adventure LEVEL MAP (Candy-Crush-style progression screen): the
+   * house door opens THIS, and individual stories start from its nodes.
+   * Movement freezes while open, like activeStory.
+   */
+  storyMapOpen: boolean;
+  /**
+   * Set when a story level is completed FRESH (first time ever) as the
+   * player leaves the RESULT screen — the level map picks it up and plays
+   * the unlock cinematic, then clears it. Transient UI state by design:
+   * the unlock itself lives in progressStore.storyProgress, so a refresh
+   * skips only the show, never the unlock.
+   */
+  storyCelebration: { completedId: string } | null;
   /**
    * Story Adventure (Aug 2026): id of the story level whose house door the
    * player is standing at (proximity prompt), else null. Set by WorldScene
@@ -67,6 +82,8 @@ let state: UIState = {
   avatarEditOpen: false,
   shopOpen: false,
   mapOpen: false,
+  storyMapOpen: false,
+  storyCelebration: null,
   nearbyStoryId: null,
   activeStory: null,
   activeLevel: null,
@@ -131,20 +148,51 @@ export function exitZone() {
 
 /**
  * Story Adventure entry (Aug 2026). Lock rules are enforced HERE too —
- * exactly like enterZone — so no UI path can open a locked or empty story
- * level (Level 2 stays a teaser until its slides ship). The overlay itself
- * animates in; there is no black world-fade for the house door.
+ * exactly like enterZone — so no UI path (including URL/state seams) can
+ * open a locked or slide-less story level. The overlay itself animates in;
+ * there is no black world-fade for the house door.
  */
 export function openStory(storyId: string, initialSlide = 0) {
   if (state.isTransitioning || state.activeZoneId || state.activeStory) return;
   const level = getStoryLevel(storyId);
   if (!level || level.slides.length === 0) return;
   if (!isStoryLevelUnlockedIn(progressStore.getState().storyProgress, storyId)) return;
+  // Still inside the tap/E-key gesture here: unlock the ONE story audio
+  // path for iOS/Safari (the Gemini clip element — the only story voice)
+  // BEFORE the overlay's first auto-narration effect runs outside of it.
+  primeStoryAudioInGesture();
   uiStore.set({ activeStory: { id: storyId, initialSlide } });
 }
 
 export function closeStory() {
   uiStore.set({ activeStory: null });
+}
+
+/**
+ * Story Adventure LEVEL MAP (Candy-Crush-style progression): the house
+ * door opens THIS selection screen — never a story directly. Same guard
+ * chain as openStory; harmless to call while already open.
+ */
+export function openStoryMap() {
+  if (state.isTransitioning || state.activeZoneId || state.activeStory) return;
+  uiStore.set({ storyMapOpen: true });
+}
+
+export function closeStoryMap() {
+  uiStore.set({ storyMapOpen: false, storyCelebration: null });
+}
+
+/**
+ * FRESH story completion → return to the level map WITH the unlock
+ * cinematic queued. Called only by StoryOverlay's leave path; replays of
+ * already-completed levels never come here.
+ */
+export function celebrateStoryCompletion(completedId: string) {
+  uiStore.set({ storyMapOpen: true, storyCelebration: { completedId } });
+}
+
+export function clearStoryCelebration() {
+  uiStore.set({ storyCelebration: null });
 }
 
 export function openProgress() {
@@ -220,6 +268,8 @@ if (import.meta.env?.DEV && typeof window !== 'undefined') {
     exitZone,
     openStory,
     closeStory,
+    openStoryMap,
+    closeStoryMap,
   };
 }
 

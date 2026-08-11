@@ -32,6 +32,10 @@
  *     child-controlled toggle (en-IN / hi-IN). While a reply streams it is
  *     spoken SENTENCE BY SENTENCE as text arrives — playback starts with
  *     the first finished sentence, not after the whole reply.
+ *   - STORY VOICE GUIDE: the assistant is ALSO the story narrator's face.
+ *     While the chat panel is open the story narration suspends (ONE
+ *     voice at a time, ever); while closed, the floating robot bounces +
+ *     glows whenever the story guide is speaking (storyVoice state).
  *   - Safe game context (zones/progress/lesson/nickname) for personalized,
  *     game-aware answers.
  *   - Static suggested-question chips until the first user message.
@@ -72,6 +76,7 @@ import { LiveVoiceEngine, type VoiceState } from './voice/liveVoice';
 import { Mic, MicOff, Send, X, Volume2, VolumeX, Loader2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import assistantBotIcon from '@/assets/ui/assistant-bot.png';
+import { setNarrationSuspended, useNarrationVoiceState } from '@/story/storyNarrationState';
 
 /** BCP-47 tag for the currently selected app language (speech APIs). */
 function currentSpeechLang(): string {
@@ -143,7 +148,7 @@ const MessageList = memo(function MessageList({ messages }: { messages: Message[
 });
 
 export function AvatarWidget() {
-  const { activeZoneId, activeLevel } = useUIStore();
+  const { activeZoneId, activeLevel, activeStory } = useUIStore();
   const t = useStrings();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessagesRaw] = useState<Message[]>(() => {
@@ -158,6 +163,8 @@ export function AvatarWidget() {
 
   const [voiceState, setVoiceState] = useState<VoiceState | 'idle'>('idle');
   const [ttsEnabled, setTtsEnabled] = useState(false);
+  // Story narration state (speaking) — drives the closed-bubble reaction.
+  const storyNarration = useNarrationVoiceState();
   const [speaking, setSpeaking] = useState(false);
 
   // Streaming send state (perf spec): pending covers stream + fallback;
@@ -297,8 +304,32 @@ export function AvatarWidget() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  // Story voice guide: while the chat panel is open, the assistant's chat
+  // voice owns the speakers — story narration suspends and its reminder
+  // timers stop (ONE voice at a time, ever). Cleared again on unmount.
   useEffect(() => {
-    if (activeZoneId && activeZoneId !== prevZoneRef.current) {
+    setNarrationSuspended(isOpen);
+    return () => setNarrationSuspended(false);
+  }, [isOpen]);
+
+  // STRICT story/assistant separation (story-voice bug-fix spec): the
+  // moment a Story Adventure opens, the chat panel closes. A panel left
+  // open (often force-opened by an earlier zone greeting) sits invisibly
+  // BEHIND the fullscreen story overlay while its suspension silences
+  // every slide and question read — the child hears nothing and cannot
+  // see why. Story open ⇒ the story guide owns the speakers. The child
+  // can still deliberately reopen chat mid-story (chat voice then takes
+  // over again, and closing it re-reads the current slide).
+  useEffect(() => {
+    if (activeStory) setIsOpen(false);
+  }, [activeStory]);
+
+  useEffect(() => {
+    // Never greet over a Story Adventure (strict spec §9: the generic
+    // assistant must not speak or force-open while the story/question
+    // flow is active). prevZoneRef still updates below, so a swallowed
+    // greeting is skipped — never deferred to fire later.
+    if (activeZoneId && activeZoneId !== prevZoneRef.current && !activeStory) {
       const zone = getZone(activeZoneId);
       if (zone) {
         setIsOpen(true);
@@ -323,7 +354,8 @@ export function AvatarWidget() {
   const prevLevelRef = useRef<string | null>(null);
   useEffect(() => {
     const key = activeLevel ? `${activeLevel.zoneId}:${activeLevel.levelIndex}` : null;
-    if (activeLevel && key !== prevLevelRef.current) {
+    // Same story-separation gate as zone greetings (strict spec §9).
+    if (activeLevel && key !== prevLevelRef.current && !activeStory) {
       const zone = getZone(activeLevel.zoneId);
       if (zone) {
         const lang = settingsStore.getState().language;
@@ -397,6 +429,12 @@ export function AvatarWidget() {
     };
     const bundle = getStrings(settingsStore.getState().language);
 
+    // DEV-only latency instrumentation (perf spec) — the text-chat twin of
+    // the voice engine's [voice-latency] logs. No-ops in production builds.
+    const debugLat = import.meta.env?.DEV === true;
+    const tSend = debugLat ? performance.now() : 0;
+    let tFirstDelta = 0;
+
     try {
       // STREAMING-FIRST: text renders as it is generated. Every delta was
       // already checked server-side (accumulated-reply output gate) before
@@ -405,12 +443,21 @@ export function AvatarWidget() {
         body,
         (delta) => {
           if (epoch !== sendEpochRef.current) return;
+          if (debugLat && tFirstDelta === 0) {
+            tFirstDelta = performance.now();
+            // eslint-disable-next-line no-console -- DEV-only latency diagnostics
+            console.debug(`[chat-latency] first delta ${Math.round(tFirstDelta - tSend)}ms`);
+          }
           streamBufRef.current += delta;
           scheduleStreamFlush();
         },
         controller.signal,
       );
       if (epoch !== sendEpochRef.current) return; // superseded mid-reply
+      if (debugLat) {
+        // eslint-disable-next-line no-console -- DEV-only latency diagnostics
+        console.debug(`[chat-latency] stream done ${Math.round(performance.now() - tSend)}ms`);
+      }
 
       // Finalize: move the streamed text out of the live bubble.
       stopStreamFlush();
@@ -466,6 +513,10 @@ export function AvatarWidget() {
         // AUTOMATIC fallback to the classic JSON route. Same real API and
         // identical server-side safety contract — never a mock.
         try {
+          if (debugLat) {
+            // eslint-disable-next-line no-console -- DEV-only latency diagnostics
+            console.debug('[chat-latency] stream transport failed -> classic fallback');
+          }
           const res = await chatMutation.mutateAsync({ data: body });
           if (epoch !== sendEpochRef.current) return;
           appendAssistantMessage(res.reply, res.escalated);
@@ -782,10 +833,18 @@ export function AvatarWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="rounded-full transition-all hover:scale-105 active:scale-95 animate-in zoom-in duration-300 touch-manipulation [filter:drop-shadow(0_6px_12px_rgba(30,41,59,0.35))] motion-safe:animate-[nyaya-float_4s_ease-in-out_infinite]"
+          className={cn(
+            'rounded-full transition-all hover:scale-105 active:scale-95 animate-in zoom-in duration-300 touch-manipulation [filter:drop-shadow(0_6px_12px_rgba(30,41,59,0.35))]',
+            storyNarration.speaking
+              ? 'ring-4 ring-sky-300/70 shadow-[0_0_24px_rgba(125,211,252,0.8)]'
+              : 'motion-safe:animate-[nyaya-float_4s_ease-in-out_infinite]',
+          )}
           aria-label={t.openGuide}
         >
-          <AvatarFace speaking={false} className="w-14 h-14 md:w-20 md:h-20" />
+          {/* While the story guide speaks, the robot IS the speaker —
+              bounce + soft glow, no extra characters (spec: reuse the
+              one existing assistant). */}
+          <AvatarFace speaking={storyNarration.speaking} className="w-14 h-14 md:w-20 md:h-20" />
         </button>
       )}
     </div>

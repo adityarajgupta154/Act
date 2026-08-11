@@ -37,7 +37,9 @@ Client sends stable zone IDS + counts + capped nickname/lesson title (`src/avata
 - Connect watchdog (10s → friendly connect-failed) is armed only AFTER getUserMedia resolves — the permission dialog (a child reading it) must never count against it.
 - `flushUser()` fires on the FIRST outputTranscription slice (model turn started ⇒ utterance final), so the user-gate verdict dispatches before the first audio chunk; holdback release then usually waits only on the model first-slice fast-path.
 - DEV latency logs (`[voice-latency]`): widget injects `debugLatency: import.meta.env?.DEV === true`; the engine never reads env itself (smoke-enforced). All marks are no-ops when off.
-- Token prefetch at widget-open was considered and REJECTED: uses:1 tokens burn unused, and the game context locked at mint goes stale.
+- Token prefetch at WIDGET-OPEN stays REJECTED (uses:1 burns unused, game context locked at mint goes stale). But MIC-TAP mint may OVERLAP getUserMedia when `navigator.permissions` reports 'granted' — no prompt can appear, so the 2-min session-start window can't be outlived; prompt-possible/denied/API-missing paths stay strictly mic-first (Aug 2026 latency task, ~450ms saved per start).
+- Chat routes have bounded upstream waits: classic = whole-call `AbortSignal.timeout`; stream = FIRST-CHUNK-only bound per attempt (a total-stream timeout would kill healthy long replies; client's stall timer covers mid-stream death). Both → existing retry/friendly-502 paths.
+- Measured Aug 2026 (:8080 direct): token mint ~420-480ms, chat-stream first-delta ~1.1s, classic total ~1.3-1.6s. TTFT ≈ model floor — the 8-12k-char safety system prompt is NOT the bottleneck; don't trim it for latency.
 
 ## Build/codegen quirks
 - orval@8 emits zod-v4 syntax (`zod.int()`) for OpenAPI `type: integer`, which breaks against installed zod 3.25 — **use `type: number` + min/max in openapi.yaml**.

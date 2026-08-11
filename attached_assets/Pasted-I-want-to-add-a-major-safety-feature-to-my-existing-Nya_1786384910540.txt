@@ -1,0 +1,1126 @@
+I want to add a major safety feature to my existing Nyaya Nagri project.
+
+The existing bottom-right "Get Help Now" button must become a CHILD-FRIENDLY EMERGENCY ASSISTANCE HUB.
+
+IMPORTANT:
+Do not break any existing functionality.
+Do not redesign the entire application.
+Do not modify Story Adventure, Gemini voice agent, map movement, levels, progress, rewards, or existing UI unnecessarily.
+
+The new functionality should ONLY be connected to the existing "Get Help Now" button.
+
+==================================================
+1. CORE IDEA
+==================================================
+
+When the user clicks:
+
+"Get Help Now"
+
+open a beautiful child-friendly emergency assistance modal/panel.
+
+The purpose is to help a child quickly find nearby:
+
+- Hospitals
+- Child-friendly clinics
+- Pediatric care
+- Pharmacies
+- Ambulance/emergency services
+
+based on the user's current location.
+
+There must also be a clearly visible emergency option:
+
+"🚨 Call Emergency Help — 112"
+
+For India, 112 is the official unified emergency number.
+
+IMPORTANT:
+The app must NEVER pretend that it can diagnose a medical condition.
+
+This feature is ONLY for finding help and contacting emergency services.
+
+==================================================
+2. FIRST SCREEN — EMERGENCY HUB
+==================================================
+
+When Get Help Now is clicked, show a modal.
+
+Design:
+
+Header:
+
+🛡️ Get Help Now
+
+Subtitle:
+
+"Need help? We'll help you find the right support."
+
+Then show two major sections.
+
+SECTION A:
+
+🚨 REAL EMERGENCY
+
+"Someone is seriously hurt, unconscious, having trouble breathing, or needs urgent help?"
+
+Button:
+
+"Call 112"
+
+Use a real tel link:
+
+tel:112
+
+The button should be large, obvious and easy to tap.
+
+Add a small safety note:
+
+"For serious or life-threatening emergencies, call emergency services immediately."
+
+Do NOT make the user go through location search before being able to call 112.
+
+==================================================
+3. FIND HELP NEAR ME
+==================================================
+
+Second major section:
+
+📍 Find Help Near Me
+
+Text:
+
+"Find hospitals, clinics and pharmacies close to you."
+
+Button:
+
+"Allow Location"
+
+When clicked:
+
+request browser geolocation permission using:
+
+navigator.geolocation.getCurrentPosition()
+
+Do NOT request location automatically when the application loads.
+
+Only request it after the user explicitly taps:
+
+"Allow Location"
+
+==================================================
+4. LOCATION PERMISSION STATES
+==================================================
+
+Handle ALL location states properly.
+
+STATE 1 — Permission not requested:
+
+Show:
+
+📍 Find Help Near Me
+
+"Allow your location to find nearby healthcare services."
+
+[Allow Location]
+
+STATE 2 — Location loading:
+
+Show:
+
+📍 Finding help near you...
+
+Animated loading indicator.
+
+Do not freeze the UI.
+
+STATE 3 — Location successfully obtained:
+
+Show:
+
+✓ Location found
+
+Then search nearby healthcare services.
+
+STATE 4 — Permission denied:
+
+Show:
+
+"Location access is turned off."
+
+Buttons:
+
+[Try Again]
+
+[Search Manually]
+
+Explain simply:
+
+"You can still search for a hospital by entering your city or area."
+
+STATE 5 — Location unavailable:
+
+Show:
+
+"We couldn't find your location."
+
+[Try Again]
+
+[Search Manually]
+
+STATE 6 — Browser does not support geolocation:
+
+Show a graceful fallback.
+
+Never crash.
+
+==================================================
+5. NEARBY HEALTHCARE SEARCH
+==================================================
+
+Use a proper location-aware Places API.
+
+Preferred implementation:
+
+Google Places API (New) Nearby Search.
+
+Do NOT use deprecated Google Places APIs.
+
+The API should search around:
+
+latitude
+longitude
+
+using an appropriate radius.
+
+Start with approximately:
+
+5000 meters
+
+but make this configurable.
+
+Search categories should include relevant healthcare services such as:
+
+- hospital
+- medical clinic
+- pharmacy
+
+If supported by the selected API/place types, prioritize:
+
+- hospitals
+- pediatric/child healthcare
+- medical clinics
+- pharmacies
+
+Do NOT blindly label a location as a "children's hospital" unless the returned data actually supports that classification.
+
+Never fabricate pediatric specialization.
+
+==================================================
+6. RESULT PRIORITIZATION
+==================================================
+
+Results should be sorted intelligently.
+
+Priority:
+
+1. Hospitals
+2. Child/pediatric healthcare where verified
+3. Medical clinics
+4. Pharmacies
+
+Within each category:
+
+Prefer nearby results.
+
+If routing distance is available, use actual route distance.
+
+Otherwise display approximate straight-line distance and clearly treat it as approximate.
+
+Do not invent travel times.
+
+==================================================
+7. HEALTHCARE RESULT CARD
+==================================================
+
+Each result should use a clean child-friendly card.
+
+Example:
+
+--------------------------------
+
+🏥 City Care Hospital
+
+📍 1.2 km away
+
+⭐ 4.4
+
+🕒 Open now
+
+[ 📞 Call ]    [ 🧭 Directions ]
+
+--------------------------------
+
+Only display information that is actually returned by the API.
+
+Possible fields:
+
+- name
+- address
+- distance
+- phone number
+- opening status
+- rating
+- place type
+- Google Maps URL
+
+Do not display fake data.
+
+==================================================
+8. CALL BUTTON
+==================================================
+
+If a valid phone number exists:
+
+show:
+
+📞 Call
+
+Use:
+
+tel:<phone-number>
+
+This should open the user's phone calling interface.
+
+If no phone number exists:
+
+do not show a fake Call button.
+
+Instead show:
+
+"Phone number unavailable"
+
+or hide the Call button.
+
+==================================================
+9. DIRECTIONS BUTTON
+==================================================
+
+Every result should have:
+
+🧭 Directions
+
+When clicked, open navigation using the place's Google Maps URL if available.
+
+If a direct Maps URL is unavailable, construct a safe Google Maps directions URL using the destination coordinates/place ID.
+
+Do NOT hardcode destinations.
+
+The destination must come from the API result.
+
+==================================================
+10. EMERGENCY HOSPITAL PRIORITY
+==================================================
+
+If the user chooses:
+
+🚨 Emergency
+
+show:
+
+"Nearest emergency help"
+
+and prioritize hospitals/emergency healthcare facilities.
+
+However:
+
+DO NOT claim that a hospital has an emergency department unless the returned data actually confirms it.
+
+Do not show:
+
+"Emergency Department"
+
+unless verified.
+
+==================================================
+11. CHILD-FRIENDLY UX
+==================================================
+
+This application is designed for children.
+
+Therefore:
+
+Do NOT create a complicated medical dashboard.
+
+Use:
+
+- large buttons
+- large icons
+- simple language
+- short sentences
+- clear hierarchy
+- friendly illustrations/icons
+- high contrast
+- readable typography
+
+Avoid:
+
+- medical jargon
+- complex filters
+- long paragraphs
+- scary imagery
+
+The interface should feel safe and reassuring.
+
+==================================================
+12. LANGUAGE
+==================================================
+
+Use simple language.
+
+Primary UI:
+
+English + simple Hindi/Hinglish where appropriate.
+
+Examples:
+
+"Help near you"
+
+"Yahan aas-paas madad mil sakti hai."
+
+"Call Emergency Help"
+
+"Emergency hai? 112 par call karein."
+
+Do not use complicated Hindi.
+
+==================================================
+13. AI ASSISTANT INTEGRATION
+==================================================
+
+The existing AI assistant must NOT automatically start speaking just because the Get Help Now modal opens.
+
+Do not connect the emergency panel to the Story Adventure Gemini voice system.
+
+The existing Gemini voice agent should remain isolated.
+
+If you want AI assistance here, make it explicitly user-triggered.
+
+Example:
+
+"Ask Assistant"
+
+But this is optional.
+
+DO NOT introduce another TTS/voice agent.
+
+There must remain ONLY the existing Gemini voice architecture where it already exists.
+
+==================================================
+14. SAFETY — VERY IMPORTANT
+==================================================
+
+Do not make the AI diagnose:
+
+- fever
+- disease
+- injury severity
+- medication dosage
+- medical condition
+
+Do not tell the child:
+
+"You're fine."
+
+Do not tell the child:
+
+"You don't need a doctor."
+
+Do not recommend medicines.
+
+Do not recommend medication doses.
+
+Do not replace professional medical assistance.
+
+The feature only helps the user:
+
+- identify nearby healthcare facilities
+- call them
+- get directions
+- call emergency services
+
+==================================================
+15. EMERGENCY PRIORITY
+==================================================
+
+The emergency option must ALWAYS remain accessible.
+
+Even if:
+
+- location fails
+- API fails
+- internet is slow
+- Places API is unavailable
+- no hospitals are found
+
+the:
+
+"🚨 Call 112"
+
+button must still work.
+
+This is critical.
+
+The application must never make 112 dependent on the Places API.
+
+==================================================
+16. API FAILURE FALLBACK
+==================================================
+
+If the Places API fails:
+
+show:
+
+"Sorry, we couldn't load nearby places."
+
+Then show:
+
+[Try Again]
+
+[Open Maps]
+
+[Call 112]
+
+Do not show an empty broken panel.
+
+If location is available, "Open Maps" can open a nearby healthcare search.
+
+==================================================
+17. NO RESULTS FALLBACK
+==================================================
+
+If no nearby healthcare facilities are returned:
+
+show:
+
+" We couldn't find healthcare services nearby."
+
+Then:
+
+[Search a larger area]
+
+[Open Maps]
+
+[Call 112]
+
+The search radius can expand:
+
+5 km
+→ 10 km
+→ 25 km
+
+but do not repeatedly call the API unnecessarily.
+
+==================================================
+18. PRIVACY
+==================================================
+
+Location must be requested ONLY after explicit user interaction.
+
+Do not store the user's exact latitude/longitude permanently.
+
+Do not send location to Firebase/database unless absolutely required.
+
+Do not save location in localStorage.
+
+Do not expose the user's location in logs.
+
+Use the location only for the current healthcare search.
+
+Once the modal/session ends, discard the temporary location data.
+
+==================================================
+19. API SECURITY
+==================================================
+
+DO NOT expose secret API keys in frontend source code.
+
+If the current architecture uses a backend:
+
+Frontend
+    ↓
+Backend API
+    ↓
+Google Places API
+
+Store sensitive credentials in environment variables.
+
+Example:
+
+GOOGLE_MAPS_API_KEY
+
+Use the existing project environment configuration.
+
+If the project already has a secure Places integration, reuse it instead of creating another API layer.
+
+==================================================
+20. COST CONTROL
+==================================================
+
+Do not repeatedly call Nearby Search.
+
+Only search when:
+
+1. User explicitly clicks "Allow Location"
+OR
+2. User clicks "Refresh Nearby Help"
+
+Cache the current search results temporarily for the current modal session.
+
+Do not continuously track the user's location.
+
+Do not poll the API.
+
+==================================================
+21. SEARCH RADIUS
+==================================================
+
+Default:
+
+5 km
+
+Provide:
+
+"Search farther"
+
+button.
+
+When clicked:
+
+5 km → 10 km
+
+Do not automatically search huge areas.
+
+==================================================
+22. FILTERS
+==================================================
+
+Keep filters extremely simple.
+
+At the top of results:
+
+[All] [Hospitals] [Clinics] [Pharmacies]
+
+Do NOT create dozens of filters.
+
+The user should understand the interface immediately.
+
+==================================================
+23. MAP VIEW
+==================================================
+
+Add an optional small map preview.
+
+Example:
+
+--------------------------------
+📍 Help Near You
+
+       [MAP]
+
+🏥 Hospital
+🩺 Clinic
+💊 Pharmacy
+📍 You
+
+--------------------------------
+
+The map is optional but highly recommended.
+
+Use the same location data as the result cards.
+
+Do not create a separate fake map dataset.
+
+==================================================
+24. CURRENT LOCATION INDICATOR
+==================================================
+
+If map is shown:
+
+show the user's current location with:
+
+📍 You are here
+
+Do not reveal exact coordinates as text.
+
+==================================================
+25. MOBILE RESPONSIVENESS
+==================================================
+
+This feature is particularly important on mobile.
+
+The modal must:
+
+- fit small screens
+- be scrollable
+- have large touch targets
+- avoid horizontal overflow
+- keep emergency button visible
+- work with browser safe areas
+
+Desktop:
+
+Centered modal/card.
+
+Mobile:
+
+Full-height bottom sheet or full-screen panel.
+
+==================================================
+26. EXISTING GET HELP NOW BUTTON
+==================================================
+
+Keep the existing red:
+
+"Get Help Now"
+
+button.
+
+When clicked:
+
+open the new emergency assistance panel.
+
+Do not navigate to a completely different page unless the existing architecture requires it.
+
+Add a smooth animation:
+
+button click
+→ panel expands
+→ emergency section appears
+→ location section appears
+
+Animation should be fast and subtle.
+
+Do not use excessive animations.
+
+==================================================
+27. UI DESIGN
+==================================================
+
+Match the existing Nyaya Nagri visual language.
+
+Use:
+
+- white/cream cards
+- rounded corners
+- blue/navy text
+- red only for emergency actions
+- green for successful location state
+- orange/yellow for supportive actions
+- large friendly icons
+
+The emergency button should be visually distinct.
+
+Example:
+
+RED:
+
+🚨 Call 112
+
+GREEN/BLUE:
+
+📍 Find Help Near Me
+
+Do not make every button red.
+
+==================================================
+28. ACCESSIBILITY
+==================================================
+
+Buttons must have:
+
+- clear labels
+- accessible aria-labels
+- keyboard navigation
+- sufficient contrast
+- visible focus states
+
+Do not rely only on color to communicate status.
+
+For example:
+
+✓ Location found
+
+not just a green border.
+
+==================================================
+29. COMPONENT ARCHITECTURE
+==================================================
+
+Create reusable components.
+
+Suggested:
+
+GetHelpButton
+EmergencyHelpModal
+EmergencyCallCard
+LocationPermissionCard
+NearbyHelpList
+HealthcareCard
+HealthcareFilters
+HealthcareMap
+LocationStatus
+EmergencyFallback
+
+Suggested services:
+
+locationService
+placesService
+directionsService
+
+Keep API/business logic outside UI components.
+
+==================================================
+30. DATA MODEL
+==================================================
+
+Normalize healthcare results into a consistent internal format:
+
+{
+  id,
+  name,
+  type,
+  address,
+  latitude,
+  longitude,
+  distance,
+  phone,
+  rating,
+  isOpen,
+  mapsUrl,
+  placeId
+}
+
+Do not allow UI components to depend directly on raw API response structure.
+
+==================================================
+31. ERROR HANDLING
+==================================================
+
+Handle:
+
+- permission denied
+- permission unavailable
+- timeout
+- API key missing
+- API quota exceeded
+- network failure
+- no results
+- missing phone number
+- missing address
+- missing rating
+- missing opening status
+- malformed API response
+
+No unhandled errors.
+
+No blank screen.
+
+No console spam.
+
+==================================================
+32. LOADING UX
+==================================================
+
+Never make the user stare at a blank panel.
+
+During search:
+
+Show:
+
+📍 Looking for help near you...
+
+with a small animated loader.
+
+Then show results.
+
+==================================================
+33. IMPORTANT — DO NOT FAKE "OPEN NOW"
+==================================================
+
+Only show:
+
+"Open now"
+
+if the Places API provides reliable current opening information.
+
+Otherwise:
+
+do not display an opening status.
+
+Same rule applies to:
+
+- rating
+- phone
+- pediatric specialization
+- emergency department
+- ambulance availability
+
+Never fabricate healthcare information.
+
+==================================================
+34. IMPORTANT — DO NOT PROMISE RESPONSE TIME
+==================================================
+
+Never display:
+
+"Ambulance will arrive in 5 minutes"
+
+or:
+
+"Hospital is guaranteed to accept you."
+
+The app does not control emergency services.
+
+Only provide verified information.
+
+==================================================
+35. EMERGENCY CALL CONFIRMATION
+==================================================
+
+Because children may accidentally press buttons, consider a very short confirmation before calling 112.
+
+Example:
+
+"Is this an emergency?"
+
+[Cancel]
+
+[Yes, Call 112]
+
+However, do NOT add a long confirmation flow.
+
+The emergency call must remain extremely fast.
+
+For serious emergencies, minimize unnecessary friction.
+
+==================================================
+36. PARENT / TRUSTED ADULT OPTION
+==================================================
+
+Add an optional section:
+
+👨‍👩‍👧 Need an adult?
+
+"Ask a parent, teacher or trusted adult for help."
+
+Button:
+
+"Share Help Information"
+
+If implementing sharing:
+
+use the device's native Web Share API when available.
+
+Do not automatically send location to anyone.
+
+The user must explicitly choose the recipient/action.
+
+==================================================
+37. FINAL USER FLOW
+==================================================
+
+FLOW A:
+
+User clicks:
+
+Get Help Now
+
+↓
+
+Emergency Help Modal
+
+↓
+
+🚨 Real Emergency?
+        |
+        ├── YES → Call 112
+        |
+        └── NO → Find Help Near Me
+
+↓
+
+Allow Location
+
+↓
+
+Location obtained
+
+↓
+
+Search nearby healthcare services
+
+↓
+
+Show:
+
+Hospitals
+Clinics
+Pharmacies
+
+↓
+
+User selects:
+
+📞 Call
+
+OR
+
+🧭 Directions
+
+==================================================
+38. FLOW B — LOCATION DENIED
+==================================================
+
+Get Help Now
+
+↓
+
+Find Help Near Me
+
+↓
+
+Allow Location
+
+↓
+
+Permission denied
+
+↓
+
+Show:
+
+"Location access is unavailable."
+
+↓
+
+[Try Again]
+
+[Search Manually]
+
+[Open Maps]
+
+[Call 112]
+
+==================================================
+39. FLOW C — API FAILURE
+==================================================
+
+Get Help Now
+
+↓
+
+Allow Location
+
+↓
+
+Location found
+
+↓
+
+Places API error
+
+↓
+
+Show:
+
+"Couldn't load nearby help."
+
+↓
+
+[Try Again]
+
+[Open Maps]
+
+[Call 112]
+
+==================================================
+40. FINAL TESTING
+==================================================
+
+Test the feature on:
+
+Desktop Chrome
+Mobile Chrome
+Mobile Safari if possible
+
+Test:
+
+1. Open Get Help Now.
+2. Close modal.
+3. Reopen modal.
+4. Allow location.
+5. Deny location.
+6. Block location.
+7. Enable location again.
+8. Search nearby hospitals.
+9. Search clinics.
+10. Search pharmacies.
+11. Press Call.
+12. Press Directions.
+13. Test API failure.
+14. Test no-result state.
+15. Test slow network.
+16. Test small mobile screen.
+17. Test keyboard navigation.
+18. Test 112 button.
+19. Verify no location is stored permanently.
+20. Verify no console errors.
+
+==================================================
+41. IMPORTANT REGRESSION CHECK
+==================================================
+
+After implementing:
+
+Verify that these existing features still work:
+
+- Main map
+- Player movement
+- Joystick
+- Story Adventure
+- Story Adventure Level 1
+- Story Adventure Level 2
+- Level unlock system
+- Gemini voice agent
+- Story questions
+- Answer selection
+- Progress
+- Coins
+- Badges
+- My Progress
+- Rights Community
+- Mini-map
+- Settings
+
+Do NOT modify these systems unless required.
+
+==================================================
+FINAL GOAL
+==================================================
+
+The "Get Help Now" button should evolve from a generic help button into a real, useful:
+
+"Child Emergency Assistance Hub"
+
+It should provide three core capabilities:
+
+1. 🚨 Immediate emergency call — 112
+2. 📍 Nearby healthcare discovery
+3. 📞 Call / 🧭 Directions to verified nearby facilities
+
+The experience must be extremely simple because the primary users are children.
+
+Safety, reliability, privacy and graceful failure are more important than visual complexity.
+
+Implement this as production-quality functionality, not a mockup.

@@ -54,20 +54,26 @@ function dot(ctx: Ctx, x: number, y: number, r: number, fill: string) {
  * zoneId -> reference cutout (Phaser texture key + native crop size).
  * Thematic mapping from the canon PRD zone names to the reference
  * monuments: golden pedestal = the constitution book (Know Yourself),
- * cottage = a safe home (Safe Zone), crystal = precious childhood,
+ * cottage = a safe home (Safe Zone), children's sanctuary playhouse =
+ * precious childhood (Aug 2026 replacement for the old crystal, generated
+ * to match the map's art style: pink-roofed tower, heart finial, shield
+ * plaque, teddy + blocks — reads "Right to Childhood" without the label),
  * wishing well = the well of knowledge (School Rights), obelisk carries
- * the scales of justice (Justice System Simulator), the heart stone =
- * kindness online (Digital Safety), and the people-shield slab = the
- * community that protects (Family & Community Shield).
+ * the scales of justice (Justice System Simulator), the cyber-safety
+ * pillar = staying safe online (Digital Safety; USER-SUPPLIED art, Aug
+ * 2026 — replaced the old heart stone in the same file/key; its baked
+ * "Digital Safety" plaque is cropped out because the engine draws the
+ * label pill, task §7), and the people-shield slab = the community that
+ * protects (Family & Community Shield).
  */
 const ZONE_ART: Record<string, { key: string; w: number; h: number }> = {
   zone0: { key: 'monument-pedestal', w: 170, h: 240 },
   zone1: { key: 'monument-cottage', w: 177, h: 169 },
-  zone2: { key: 'monument-crystal', w: 158, h: 186 },
-  zone3: { key: 'monument-well', w: 200, h: 159 },
+  zone2: { key: 'monument-childhood', w: 180, h: 139 },
+  zone3: { key: 'monument-well', w: 200, h: 248 },
   zone4: { key: 'monument-obelisk', w: 169, h: 270 },
-  zone5: { key: 'monument-kindness', w: 168, h: 226 },
-  zone6: { key: 'monument-shield', w: 176, h: 196 },
+  zone5: { key: 'monument-kindness', w: 168, h: 222 }, // digital-safety pillar art (historical file/key name)
+  zone6: { key: 'monument-shield', w: 176, h: 182 },
 };
 
 /**
@@ -77,15 +83,17 @@ const ZONE_ART: Record<string, { key: string; w: number; h: number }> = {
  */
 const LABEL_COLORS: Record<string, number> = {
   zone1: 0xb45410, // cottage — warm ochre
-  zone2: 0x7b2fb5, // crystal — purple
+  zone2: 0x7b2fb5, // childhood sanctuary — purple (zone identity color, unchanged)
   zone3: 0x6d28a8, // well — violet
   zone4: 0x5b21b6, // obelisk — royal purple
   zone5: 0xc02867, // heart stone — magenta
   zone6: 0x1f3a63, // shield — navy
 };
 
-/** Ring monuments standing on a gray cobble pad in the reference (all but
- * the plaza pedestal and the grass-set cottage). */
+/** Zones that historically stood on the gray cobble pad. The pad itself is
+ * GONE (removed Aug 2026 — locations sit directly on the grass now), but
+ * the set still drives the label-pill offset so every pill keeps its exact
+ * pre-removal position. */
 const PAD_ZONES = new Set(['zone2', 'zone3', 'zone4', 'zone5', 'zone6']);
 
 /** Draws/redraws the rounded label pill behind a monument's name text. */
@@ -145,9 +153,9 @@ export interface MonumentHandle {
 }
 
 /**
- * Creates one zone monument: cutout sprite + baked shadow + gold ring +
- * padlock badge + static collision circle + tap handler. Returns the
- * handle used by applyMonumentState.
+ * Creates one zone monument: cutout sprite + gold ring + padlock badge +
+ * static collision circle + tap handler. Returns the handle used by
+ * applyMonumentState.
  */
 export function createMonument(
   scene: Phaser.Scene,
@@ -162,19 +170,10 @@ export function createMonument(
   const lockKey = ensureLockTexture(scene);
   const hasPad = PAD_ZONES.has(zone.id);
 
-  // Gray cobble pad under the ring monuments (reference frame look).
-  if (hasPad) {
-    const padW = art.w * 1.5;
-    scene.add
-      .image(cx, cy - 2, 'stone-pad')
-      .setDisplaySize(padW, padW * 0.46)
-      .setDepth(0.92);
-  }
-
-  // Baked ground shadow (sun upper-right -> shadow lower-left).
-  scene.add
-    .ellipse(cx - 10, cy + 8, art.w * 0.92, art.w * 0.27, 0x233318, 0.16)
-    .setDepth(5);
+  // No pad, no code-drawn ground shadow (user task, Aug 2026): monuments
+  // sit directly on the grass. Each cutout's feathered vignette already
+  // carries its own natural grounding — anything drawn under it reads as
+  // an artificial platform.
 
   // Native-size cutout: the vignette's grass halo blends into the plate.
   const sprite = scene.add.image(cx, cy, art.key).setOrigin(0.5, 0.94);
@@ -195,8 +194,8 @@ export function createMonument(
     ease: 'Sine.easeInOut',
   });
 
-  // The padlock sits at the monument's base — on the front of its pad —
-  // like the new reference frame, with a gentle bob.
+  // The padlock sits at the monument's base — front and center, like the
+  // reference frame — with a gentle bob.
   const lock = scene.add.image(cx, cy - 10, lockKey);
   lock.setDepth(10 + cy * 0.01 + 0.06);
   scene.tweens.add({
@@ -210,6 +209,8 @@ export function createMonument(
 
   // Reference-style name pill floating under the monument (skipped for
   // zone0 — the plaza pedestal is named by the objective banner instead).
+  // The hasPad offset preserves the former pad-front geometry so no pill
+  // moved when the pad was removed.
   const labelColor = LABEL_COLORS[zone.id];
   const labelY = hasPad ? cy - 2 + art.w * 0.345 + 24 : cy + 52;
   let labelG: Phaser.GameObjects.Graphics | null = null;

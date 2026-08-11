@@ -1,0 +1,780 @@
+I need you to redesign and fix the existing Nyaya Nagri game map.
+
+IMPORTANT:
+I have provided TWO reference images:
+
+IMAGE 1 = Current project map
+IMAGE 2 = Desired/reference map design
+
+Use IMAGE 2 as the PRIMARY VISUAL AND STRUCTURAL REFERENCE.
+
+The main issue in the current map is the road/path system:
+- Roads are inconsistent.
+- Some roads are crooked or misaligned.
+- Some roads stop before reaching locations.
+- Some locations appear disconnected from their roads.
+- Road widths and angles are inconsistent.
+- The overall map does not feel like one coherent game world.
+
+I want the map structure to closely follow IMAGE 2 while preserving all existing functionality.
+
+==================================================
+1. FIRST: ANALYZE THE EXISTING PROJECT
+==================================================
+
+Before changing anything:
+
+1. Inspect the entire existing map implementation.
+2. Identify:
+   - Map component
+   - Player movement system
+   - Location/landmark components
+   - Road/path rendering
+   - Collision system
+   - Interaction/Enter system
+   - Mini-map
+   - UI overlays
+   - AI assistant
+   - Story Adventure
+   - Progress system
+   - Unlock/lock state
+3. Do NOT rewrite the entire project unnecessarily.
+4. Reuse the existing architecture wherever possible.
+5. Identify the actual source of the road rendering instead of manually covering the problem with additional images.
+
+Do not break existing features.
+
+==================================================
+2. TARGET MAP STRUCTURE
+==================================================
+
+The new map should follow the structure of IMAGE 2.
+
+The central golden book/scales structure is the main hub.
+
+Around the central hub there should be 8 clear connected directions/locations.
+
+The road network should look intentional, symmetrical and game-like.
+
+Every location must sit at the END of a proper road/path.
+
+The road should visually terminate exactly underneath/near the entrance/base of each location.
+
+There must NEVER be:
+
+- floating roads
+- disconnected roads
+- roads ending in empty grass
+- roads passing beside a location without connecting
+- random road angles
+- inconsistent road width
+- overlapping roads
+- visible gaps
+- broken path segments
+
+==================================================
+3. MAP LOCATIONS
+==================================================
+
+Preserve the existing locations and their current functionality.
+
+Use this logical structure:
+
+CENTER:
+- Central Golden Book / Rights Hub
+
+TOP-LEFT:
+- Justice Arena
+- Purple crystal landmark
+
+TOP-CENTER:
+- Wisdom Well / School Rights
+- Purple-roof well
+
+TOP-RIGHT:
+- Community Shield
+- Stone monument
+
+MIDDLE-LEFT:
+- Rights Cottage
+- Yellow/orange roof house
+
+MIDDLE-RIGHT:
+- Help House
+- Blue roof house
+
+BOTTOM-LEFT:
+- Law Pillar
+- Stone pillar with scales
+
+BOTTOM-RIGHT:
+- Kindness Corner
+- Stone pillar with heart
+
+PLAYER:
+- Player starts/appears on the lower central path
+- Player movement must remain functional
+
+Do NOT randomly reposition these landmarks.
+
+Match the spatial relationship shown in IMAGE 2.
+
+==================================================
+4. ROAD SYSTEM — MOST IMPORTANT
+==================================================
+
+Replace the current inconsistent road rendering with a proper structured road system.
+
+DO NOT simply add a background road image over the existing map.
+
+Instead, create the road network structurally.
+
+Recommended implementation:
+
+Create a centralized road configuration such as:
+
+const MAP_NODES = {
+  center: { x: ..., y: ... },
+
+  justiceArena: { x: ..., y: ... },
+  wisdomWell: { x: ..., y: ... },
+  communityShield: { x: ..., y: ... },
+
+  rightsCottage: { x: ..., y: ... },
+  helpHouse: { x: ..., y: ... },
+
+  lawPillar: { x: ..., y: ... },
+  kindnessCorner: { x: ..., y: ... }
+};
+
+Then generate/render roads based on these node positions.
+
+The roads should connect:
+
+center → justiceArena
+center → wisdomWell
+center → communityShield
+
+center → rightsCottage
+center → helpHouse
+
+center → lawPillar
+center → kindnessCorner
+
+If the reference image requires additional connecting segments, implement those consistently.
+
+The central plaza should act as the main junction.
+
+==================================================
+5. ROAD VISUAL DESIGN
+==================================================
+
+Roads should match IMAGE 2 visually.
+
+Use:
+
+- warm golden/tan stone path
+- consistent width
+- consistent tile/pattern
+- soft edges
+- subtle depth
+- clean isometric/top-down appearance
+- no random rotations
+- no jagged geometry
+
+The road should visually look like one continuous road system.
+
+IMPORTANT:
+
+Do not use many independently positioned rectangular road images.
+
+Instead, preferably use:
+
+- CSS/SVG paths
+OR
+- a reusable Road component
+OR
+- canvas/path rendering
+
+depending on the existing architecture.
+
+For example:
+
+<Road
+  from="center"
+  to="justiceArena"
+/>
+
+<Road
+  from="center"
+  to="wisdomWell"
+/>
+
+etc.
+
+The road component should automatically calculate:
+
+- angle
+- length
+- position
+- transform
+- width
+
+from the two node coordinates.
+
+This makes the map scalable.
+
+==================================================
+6. CENTRAL HUB
+==================================================
+
+The central golden book/scales structure must remain the visual focal point.
+
+Create a proper circular stone plaza around it.
+
+All major roads should originate from the plaza.
+
+Roads should connect smoothly to the circular plaza instead of visually overlapping it incorrectly.
+
+Do not allow roads to pass through the central object.
+
+Use a proper central junction.
+
+==================================================
+7. LOCATION ALIGNMENT
+==================================================
+
+Each landmark should have a defined anchor point.
+
+Example:
+
+const LOCATION_ANCHORS = {
+  justiceArena: {
+    x: ...,
+    y: ...,
+    anchor: "bottom-center"
+  },
+
+  wisdomWell: {
+    x: ...,
+    y: ...,
+    anchor: "bottom-center"
+  },
+
+  communityShield: {
+    x: ...,
+    y: ...,
+    anchor: "bottom-center"
+  }
+};
+
+The road endpoint must be calculated from the location anchor.
+
+This is VERY IMPORTANT.
+
+The road must end at the actual entrance/base of the landmark.
+
+Do NOT visually approximate the road endpoint.
+
+==================================================
+8. RESPONSIVE MAP
+==================================================
+
+The map must work properly on:
+
+- desktop
+- laptop
+- tablet
+- different browser sizes
+
+Do not hardcode pixel positions that break when viewport size changes.
+
+Prefer a logical world coordinate system.
+
+For example:
+
+const WORLD_WIDTH = 1920;
+const WORLD_HEIGHT = 1080;
+
+All map positions can be defined relative to this world coordinate system.
+
+Then scale the entire game world based on viewport size.
+
+Player movement coordinates must use the same coordinate system.
+
+==================================================
+9. PLAYER MOVEMENT
+==================================================
+
+Do NOT break the existing player movement.
+
+The player should still be able to:
+
+- move using keyboard
+- use existing joystick
+- walk along the map
+- approach locations
+- trigger interaction/enter prompts
+
+If collision detection currently exists, update it to work with the redesigned road/location coordinates.
+
+Do not create a separate movement system unless absolutely necessary.
+
+==================================================
+10. LOCATION INTERACTION
+==================================================
+
+Existing interaction must continue working.
+
+When the player approaches a location:
+
+show the existing interaction prompt.
+
+For example:
+
+"Enter"
+"Press E or Tap to Enter"
+
+The interaction distance should be based on the actual location anchor.
+
+Do NOT use old hardcoded coordinates if those coordinates become invalid after the redesign.
+
+Use:
+
+distance(playerPosition, locationPosition)
+
+and trigger interaction based on a configurable radius.
+
+Example:
+
+INTERACTION_RADIUS = 80;
+
+==================================================
+11. STORY ADVENTURE
+==================================================
+
+IMPORTANT:
+
+Do NOT break the existing Story Adventure.
+
+The Story Adventure location must remain functional.
+
+If Story Adventure currently has:
+
+- Level 1
+- Level 2
+- locked/unlocked state
+- story slides
+- questions
+- answer selection
+- Gemini voice
+- rewards
+- completion state
+
+all of that must remain untouched.
+
+Only update its map position if required.
+
+The existing Story Adventure location should remain connected to the appropriate path.
+
+==================================================
+12. UNLOCK SYSTEM
+==================================================
+
+Do not break existing locked locations.
+
+Locked locations should continue showing:
+
+- lock icon
+- locked visual state
+
+Unlocked locations should continue showing:
+
+- unlocked visual
+- completion state/checkmark if already implemented
+
+The map redesign must use the existing state management.
+
+Do NOT hardcode locations as permanently unlocked.
+
+==================================================
+13. MINI MAP
+==================================================
+
+The mini-map must reflect the redesigned map.
+
+IMPORTANT:
+
+Do not keep the old mini-map layout if it no longer matches the new map.
+
+The mini-map should represent:
+
+- central hub
+- all major locations
+- player position
+- connected paths
+- locked/unlocked state where applicable
+
+Prefer deriving the mini-map from the SAME MAP_NODES data used by the main map.
+
+This avoids inconsistencies.
+
+For example:
+
+Main map:
+MAP_NODES
+
+Mini-map:
+deriveMiniMapNodes(MAP_NODES)
+
+Do NOT maintain two separate manually positioned maps.
+
+==================================================
+14. UI — DO NOT BREAK
+==================================================
+
+Keep existing UI functionality.
+
+Preserve:
+
+TOP LEFT:
+- Nyaya Nagri logo
+- Player information
+
+TOP CENTER:
+- Current objective / location prompt
+
+TOP RIGHT:
+- Settings
+- Map
+
+LEFT:
+- Player Rank
+- Coins
+- Streak
+- My Progress
+- Rights Community
+
+BOTTOM LEFT:
+- Joystick
+
+BOTTOM CENTER:
+- Learn Rights
+- Help Others
+- Earn Badges
+
+BOTTOM RIGHT:
+- AI Assistant
+- Get Help Now
+
+Do not redesign these unless required for responsiveness.
+
+The main task is the map/world structure.
+
+==================================================
+15. VISUAL STYLE
+==================================================
+
+The visual language should match IMAGE 2:
+
+- colorful
+- bright
+- kid-friendly
+- polished
+- 2D/3D cartoon/isometric hybrid
+- clean
+- educational game aesthetic
+- soft shadows
+- vibrant grass
+- flowers
+- trees
+- small environmental details
+- warm stone paths
+
+Avoid:
+
+- futuristic UI
+- cyberpunk
+- dark theme
+- neon
+- overly realistic environment
+- random road patterns
+
+==================================================
+16. ENVIRONMENT
+==================================================
+
+Keep the existing environment elements.
+
+Include:
+
+- grass
+- flowers
+- bushes
+- trees
+- rocks
+- fences
+- logs
+- mushrooms
+- river
+- wooden bridge
+- cottages
+- landmarks
+
+But make sure environmental objects do not cover the roads.
+
+Roads must remain clearly readable.
+
+==================================================
+17. Z-INDEX / LAYERING
+==================================================
+
+Fix layering carefully.
+
+Recommended conceptual layer order:
+
+1. Background
+2. Grass/environment
+3. Roads
+4. Road decorations
+5. Location platforms
+6. Buildings/landmarks
+7. Player
+8. Interaction indicators
+9. UI
+10. AI assistant / floating controls
+
+Do not allow:
+
+- roads covering buildings
+- buildings disappearing behind roads
+- player appearing behind important objects incorrectly
+- labels going behind landmarks
+- UI being covered by the map
+
+==================================================
+18. REMOVE OLD BROKEN ROAD SYSTEM
+==================================================
+
+This is VERY IMPORTANT.
+
+Do not keep the old broken roads underneath the new road system.
+
+Find and remove/disable the existing inconsistent road/path rendering.
+
+There should be ONE authoritative road system.
+
+Do NOT create:
+
+old roads + new roads
+
+because this will create overlapping or duplicate paths.
+
+After implementation, inspect the DOM/component tree and make sure old road elements are not still rendering.
+
+==================================================
+19. DO NOT DUPLICATE ASSETS
+==================================================
+
+Do not duplicate the same:
+
+- road
+- location
+- label
+- lock
+- player
+- map
+- UI
+
+multiple times accidentally.
+
+Check React rendering and component hierarchy.
+
+==================================================
+20. CODE QUALITY
+==================================================
+
+Create reusable components where appropriate.
+
+Suggested structure:
+
+Map/
+  GameMap
+  MapNode
+  Road
+  CentralHub
+  LocationLandmark
+  Player
+  MiniMap
+  InteractionPrompt
+
+Configuration:
+
+mapConfig.ts
+
+Containing:
+
+MAP_NODES
+LOCATION_CONFIG
+ROAD_CONFIG
+INTERACTION_CONFIG
+
+Example:
+
+const MAP_NODES = {
+  center: { x: 960, y: 540 },
+
+  justiceArena: { x: 520, y: 230 },
+  wisdomWell: { x: 960, y: 180 },
+  communityShield: { x: 1400, y: 230 },
+
+  rightsCottage: { x: 500, y: 500 },
+  helpHouse: { x: 1420, y: 500 },
+
+  lawPillar: { x: 520, y: 850 },
+  kindnessCorner: { x: 1400, y: 850 }
+};
+
+Adjust coordinates according to the actual reference and project world dimensions.
+
+==================================================
+21. PRESERVE EXISTING BUSINESS LOGIC
+==================================================
+
+Do NOT rewrite:
+
+- authentication
+- user profile
+- progress
+- coins
+- streak
+- badges
+- Story Adventure
+- Gemini AI assistant
+- voice functionality
+- question system
+- certificates
+- My Progress
+- unlock system
+
+unless a small change is absolutely required for map integration.
+
+The redesign should be primarily visual + spatial.
+
+==================================================
+22. IMPORTANT REFERENCE RULE
+==================================================
+
+IMAGE 2 is the visual source of truth.
+
+Use it to determine:
+
+- road directions
+- location relationships
+- central hub placement
+- environment composition
+- spacing
+- overall visual hierarchy
+
+IMAGE 1 is only the current implementation.
+
+Do NOT copy the mistakes from IMAGE 1.
+
+The goal is to transform IMAGE 1 into the structural style of IMAGE 2.
+
+==================================================
+23. ACCEPTANCE CRITERIA
+==================================================
+
+The implementation is NOT complete until ALL of these are true:
+
+[ ] Every location is connected to a road.
+
+[ ] No road is broken.
+
+[ ] No road ends randomly.
+
+[ ] No road is floating.
+
+[ ] No road is visibly misaligned with a landmark.
+
+[ ] Road width is consistent.
+
+[ ] Road texture is consistent.
+
+[ ] Central plaza connects cleanly to all major paths.
+
+[ ] Location spacing resembles IMAGE 2.
+
+[ ] Main map and mini-map represent the same structure.
+
+[ ] Player movement still works.
+
+[ ] Joystick still works.
+
+[ ] Keyboard movement still works.
+
+[ ] Location interaction still works.
+
+[ ] Story Adventure still works.
+
+[ ] Locked locations remain locked.
+
+[ ] Unlocked locations remain unlocked.
+
+[ ] AI assistant remains functional.
+
+[ ] Existing UI remains functional.
+
+[ ] No duplicate roads exist.
+
+[ ] No duplicate landmarks exist.
+
+[ ] No old broken roads remain underneath.
+
+[ ] No console errors.
+
+[ ] No React warnings caused by the redesign.
+
+[ ] No major performance regression.
+
+==================================================
+24. FINAL TEST
+==================================================
+
+After implementation:
+
+1. Run the application.
+2. Open the main map.
+3. Walk the player to every location.
+4. Verify every location is reachable.
+5. Verify every road visually connects.
+6. Test every interaction prompt.
+7. Test Story Adventure.
+8. Test mini-map.
+9. Test joystick.
+10. Test keyboard controls.
+11. Resize browser window.
+12. Verify responsive scaling.
+13. Check console for errors/warnings.
+14. Remove any duplicate or obsolete map elements.
+
+Do NOT stop after making the visual changes.
+
+Actually test the complete map interaction.
+
+==================================================
+FINAL GOAL
+==================================================
+
+I want the final result to feel like a polished children's educational adventure game.
+
+The map should visually feel like IMAGE 2:
+
+central hub → clean connected paths → clearly positioned locations.
+
+The most important improvement is the ROAD SYSTEM.
+
+Do not simply make it look similar from one screenshot.
+
+Build the road/location system properly so that it remains stable when I add more locations, levels and Story Adventure content in the future.

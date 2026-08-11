@@ -240,6 +240,19 @@ check(
   voiceEngine.includes('debugLatency') &&
     widget.includes('debugLatency: import.meta.env?.DEV === true'),
 );
+check(
+  'token mint overlaps getUserMedia ONLY when permission already granted',
+  voiceEngine.includes("perm?.state === 'granted'") &&
+    voiceEngine.includes('await (earlyToken ?? this.cb.getToken())') &&
+    voiceEngine.indexOf("perm?.state === 'granted'") <
+      voiceEngine.indexOf('await navigator.mediaDevices.getUserMedia'),
+);
+check(
+  'early-mint + mic acquisition are DISPOSAL-safe (no post-close mint or mic leak)',
+  voiceEngine.indexOf('closed while the (fast) query ran') <
+    voiceEngine.indexOf("perm?.state === 'granted'") &&
+    voiceEngine.includes('for (const track of stream.getTracks())'),
+);
 
 console.log('— mounts: robot is the ONLY floating assistant —');
 check('HUD mounts AvatarWidget (onboarded-gated)', hud.includes('{onboarded && <AvatarWidget />}'));
@@ -396,6 +409,21 @@ console.log('— low-latency streaming chat (perf spec) —');
     apiNyaya.includes('thinkingBudget: 0'),
   );
   check('spec documents /nyaya-ai/chat-stream', spec.includes('/nyaya-ai/chat-stream'));
+  check(
+    'bounded upstream waits: classic call + stream first-chunk (never hang)',
+    apiNyaya.includes('AbortSignal.timeout(UPSTREAM_TIMEOUT_MS)') &&
+      apiNyaya.includes('firstChunkAbort') &&
+      // Portable composition (AbortSignal.any needs Node >= 20.3): one signal
+      // to the SDK, bridged from client-gone; catch still tells them apart.
+      apiNyaya.includes('abortSignal: firstChunkAbort.signal') &&
+      apiNyaya.includes('upstreamAbort.signal.addEventListener') &&
+      apiNyaya.includes('upstreamAbort.signal.removeEventListener'),
+  );
+  check(
+    'DEV-only [chat-latency] instrumentation in send path (prod no-op)',
+    widget.includes('[chat-latency]') &&
+      widget.includes('const debugLat = import.meta.env?.DEV === true'),
+  );
 }
 
 if (failures > 0) {

@@ -1,0 +1,213 @@
+TASK: Remove the Dark Circular Ground/Base Under All Map Locations
+
+I need you to fix the visual issue on the main game map.
+
+Currently, every location/castle/building has a dark gray/black circular platform or ground shadow underneath it. This circular base does NOT visually match the grass/map environment and makes the locations look like they are floating on artificial platforms.
+
+IMPORTANT:
+Do NOT redesign the map.
+Do NOT replace the location assets.
+Do NOT change the gameplay.
+Only fix/remove the unwanted circular base underneath the locations.
+
+==================================================
+PRIMARY REQUIREMENT
+==================================================
+
+Remove the dark gray/black circular surface/platform underneath ALL map locations.
+
+Examples include:
+
+- Right to Childhood
+- School Rights / Wisdom Well
+- Family & Community Shield
+- Any other castle/location that uses the same circular base
+- Future locations that use the same location component
+
+The location/castle itself must remain exactly as it is.
+
+After removing the circular base, the castle/location should visually sit directly on the grass/map environment.
+
+==================================================
+IMPORTANT VISUAL REQUIREMENTS
+==================================================
+
+1. REMOVE ONLY THE DARK CIRCULAR BASE
+
+Remove the element responsible for:
+
+- dark gray circular platform
+- black circular ground
+- artificial circular floor
+- unnecessary large circular shadow underneath the location
+
+Do not remove the actual castle/building.
+
+2. PRESERVE THE LOCATION ASSET
+
+Keep:
+
+- original castle/well/shield artwork
+- original colors
+- original proportions
+- original details
+- original lock icon
+- original labels
+- original position
+- original scale
+
+Do NOT recreate or regenerate the castle.
+
+3. NATURAL GRASS INTEGRATION
+
+Once the circular base is removed:
+
+- the location should appear naturally placed on the grass
+- preserve the existing grass texture
+- preserve flowers, bushes, trees and environmental details
+- preserve the path underneath/around the location
+- do not add a new circular background
+- do not add another artificial platform
+
+If the asset itself already contains a small natural grounding shadow, keep it.
+Only remove the large unwanted circular platform/background.
+
+==================================================
+TECHNICAL IMPLEMENTATION
+==================================================
+
+First inspect the existing codebase and identify how the map locations are rendered.
+
+Find the shared component or CSS responsible for the circular base.
+
+Look for things such as:
+
+- background circle
+- platform
+- base
+- pedestal
+- location shadow
+- radial-gradient
+- border-radius: 50%
+- absolute positioned circular div
+- box-shadow
+- pseudo-elements ::before / ::after
+- SVG circle/ellipse
+- canvas/mesh/plane
+- location container background
+
+Do NOT simply hide the entire location component.
+
+If all locations use a shared component, fix the shared component instead of manually fixing every location individually.
+
+For example, if the structure is something like:
+
+<Location>
+   <div className="location-base">
+   <img src={castle} />
+</Location>
+
+remove only `.location-base`.
+
+If the circular surface is created through CSS, remove that specific CSS layer.
+
+If it is coming from an SVG, remove only the circle/ellipse representing the platform.
+
+If it is a background image layer, remove that layer without affecting the actual location image.
+
+==================================================
+DO NOT BREAK EXISTING FUNCTIONALITY
+==================================================
+
+After the fix, verify that:
+
+- locations remain clickable
+- Enter interaction still works
+- locked/unlocked state still works
+- labels remain visible
+- paths remain unchanged
+- player movement remains unchanged
+- map positioning remains unchanged
+- minimap remains unchanged
+- animations remain unchanged
+- hover effects remain unchanged
+- Story Adventure functionality remains unchanged
+- AI assistant remains unchanged
+- all existing UI remains unchanged
+
+==================================================
+VERY IMPORTANT
+==================================================
+
+Do NOT solve this by:
+
+- changing the entire map background
+- replacing the location images
+- generating new assets
+- adding a new circular grass patch
+- adding another shadow
+- changing location size
+- changing location coordinates
+- changing the path layout
+- changing the minimap
+- changing the camera
+- changing the game's physics
+- changing unrelated CSS
+
+ONLY remove the unwanted dark circular platform/base.
+
+==================================================
+RESPONSIVE CHECK
+==================================================
+
+Make sure the fix works consistently on:
+
+- desktop
+- laptop
+- tablet
+- smaller screens
+
+The locations must remain correctly positioned after removing the base.
+
+==================================================
+FINAL VISUAL RESULT
+==================================================
+
+BEFORE:
+
+Castle / location
+       ↓
+[ DARK CIRCULAR PLATFORM ]
+       ↓
+Grass
+
+AFTER:
+
+Castle / location
+       ↓
+Natural small grounding shadow (only if already part of asset)
+       ↓
+Grass / map environment
+
+The final result should look like the castle/location is naturally placed directly inside the game world instead of sitting on a separate gray circular platform.
+
+==================================================
+IMPLEMENTATION RULE
+==================================================
+
+Before modifying anything:
+
+1. Inspect the existing location/map component.
+2. Identify the exact DOM/SVG/CSS/image layer responsible for the dark circular base.
+3. Remove only that layer.
+4. Test all locations.
+5. Verify that no unwanted circular platform remains.
+6. Verify that no other UI/gameplay has changed.
+
+Do not create a workaround. Fix the actual source of the circular base.
+
+After implementing, give me a short summary of:
+- which component/file was changed
+- what was causing the circular base
+- what was removed/modified
+- confirmation that other map/game functionality was preserved.

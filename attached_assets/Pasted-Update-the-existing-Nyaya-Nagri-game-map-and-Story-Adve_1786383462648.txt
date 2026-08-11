@@ -1,0 +1,89 @@
+Update the existing Nyaya Nagri game map and Story Adventure integration.
+
+IMPORTANT:
+Use the newly provided Help House image as the ONLY visual asset for the Help House building.
+The image has already been cleaned and the "Help House" text label/background has been removed.
+
+GOAL:
+Replace the current Help House building on the main game map with this new clean Help House asset while keeping the existing game's visual style consistent.
+
+IMPLEMENTATION:
+
+1. REMOVE CURRENT HELP HOUSE
+- Completely remove the existing Help House building/asset from the map.
+- Remove its old background, ground patch, shadow platform, decorative circle, and old "Help House" text label if they are part of the asset.
+- Do not leave any duplicate Help House behind.
+
+2. ADD THE NEW HELP HOUSE ASSET
+- Use the newly provided clean Help House image.
+- Preserve its transparent/clean background.
+- Do NOT add a white/black rectangular background.
+- Do NOT crop the house incorrectly.
+- Maintain the original proportions and aspect ratio.
+- Scale it so it visually matches the size of the other major map locations.
+- Position it exactly at the existing Help House location on the right side of the map.
+- Make sure it sits naturally on the surrounding grass/path.
+
+3. MAP VISUAL CONSISTENCY
+The Help House must look like it belongs to the same game world:
+- same cartoon/isometric visual language
+- same lighting direction
+- same scale hierarchy
+- same visual weight as Rights Cottage, Justice Arena, Wisdom Well, etc.
+- no unnecessary platform/circular base underneath
+- no mismatched shadow
+- no extra outline around the entire asset
+
+4. HELP HOUSE INTERACTION
+Keep the existing Help House interaction behavior.
+
+When the player approaches the Help House:
+- show the existing interaction/enter prompt
+- allow the player to enter the Help House
+- do NOT change unrelated map interactions.
+
+5. STORY ADVENTURE
+If Help House is connected to Story Adventure:
+- keep the existing Story Adventure functionality intact
+- entering Help House should open the Story Adventure interface exactly as before
+- do not modify Level 1 or Level 2 story content
+- do not modify the Gemini voice assistant behavior
+- do not modify the question/answer system
+- do not modify the existing level-unlock system.
+
+6. IMPORTANT — DO NOT BREAK EXISTING FEATURES
+Do not redesign the entire map.
+Do not change:
+- player movement
+- joystick
+- minimap
+- HUD
+- coins
+- streak
+- badges
+- My Progress
+- Rights Community
+- Gemini AI assistant
+- Story Adventure voice system
+- Level progression
+- existing story images
+- existing question logic.
+
+Only replace and properly integrate the Help House visual asset.
+
+7. RESPONSIVE POSITIONING
+Make the Help House position responsive so it remains correctly aligned with the map on different screen sizes/resolutions.
+
+Do not use hardcoded positioning that breaks when the viewport changes.
+
+8. FINAL CHECK
+After implementation:
+- verify there is only ONE Help House
+- verify there is no old Help House asset
+- verify there is no old "Help House" text embedded in the visual
+- verify there is no unwanted circular/platform background
+- verify the new house does not overlap paths, UI, player, or other buildings
+- verify clicking/approaching it still triggers the correct interaction
+- verify all existing Story Adventure functionality remains unchanged.
+
+Use the provided clean Help House image directly. Do not generate a replacement image and do not recreate the building with CSS.

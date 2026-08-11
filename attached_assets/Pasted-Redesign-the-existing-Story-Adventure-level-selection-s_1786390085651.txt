@@ -1,0 +1,674 @@
+Redesign the existing "Story Adventure" level-selection screen of my Nyaya Nagri project.
+
+IMPORTANT:
+I am providing a reference image for the desired visual direction. Use the attached reference image as the PRIMARY UI/UX reference for layout, spacing, visual hierarchy, level cards, path, badges, and overall composition.
+
+DO NOT simply paste the image into the website.
+Recreate the design using the existing React components, HTML/CSS and project assets so that the screen remains fully interactive and responsive.
+
+==================================================
+1. CORE DESIGN GOAL
+==================================================
+
+Make the Story Adventure screen feel like a polished, child-friendly adventure map inspired by Candy Crush / modern educational games, BUT it must still visually belong to Nyaya Nagri.
+
+The design should communicate:
+
+- Story Adventure
+- Progress through levels
+- Completed levels
+- Current/unlocked level
+- Locked future levels
+- Clear progression path
+- Rewards/badges
+- Child-friendly exploration
+
+Do NOT make it look like a generic Candy Crush clone.
+
+Keep Nyaya Nagri's identity.
+
+==================================================
+2. COLOR SYSTEM
+==================================================
+
+Use the existing Nyaya Nagri visual language:
+
+Primary:
+#FF7A00 / warm orange
+
+Secondary:
+#2563EB / educational blue
+
+Success:
+#22C55E
+
+Danger / emergency:
+#FF3B3B
+
+Purple:
+#7C3AED
+
+Background:
+very soft cream / pale green / pale blue gradients
+
+Use white cards with subtle shadows.
+
+Avoid:
+- dark backgrounds
+- neon cyberpunk colors
+- excessive gradients
+- overly saturated UI
+- excessive glassmorphism
+
+The screen should feel warm, safe, playful and educational.
+
+==================================================
+3. PAGE HEADER
+==================================================
+
+At the top create:
+
+LEFT:
+A circular back button.
+
+CENTER:
+"Story Adventure"
+
+Subtitle:
+"Har level ek naya adhikar sikhata hai."
+
+RIGHT:
+Progress pill:
+
+⭐ 2 / 2 Complete
+
+The progress pill should automatically update according to the actual number of completed levels.
+
+Do NOT hardcode 2/2.
+
+Example:
+
+1 / 5 Complete
+2 / 5 Complete
+etc.
+
+==================================================
+4. ADVENTURE MAP / PATH
+==================================================
+
+Create a large vertical adventure path.
+
+The path should visually connect the levels.
+
+Use a playful dotted/curved path rather than a straight boring line.
+
+Example progression:
+
+LEVEL 1
+   ↓
+curved path
+   ↓
+LEVEL 2
+   ↓
+curved path
+   ↓
+LEVEL 3
+   ↓
+LEVEL 4
+   ↓
+...
+
+The path must be generated dynamically from the level data.
+
+DO NOT hardcode positions for only Level 1 and Level 2.
+
+We will add many more levels later.
+
+The architecture must support:
+
+Level 1
+Level 2
+Level 3
+Level 4
+Level 5
+...
+Level 20+
+
+without redesigning the component.
+
+==================================================
+5. LEVEL NODE DESIGN
+==================================================
+
+Each level should have a large circular game node.
+
+Completed:
+
+- Orange/golden circular badge
+- Trophy icon
+- Green checkmark badge
+- Level number
+- subtle glow
+- small sparkle decorations
+
+Unlocked/current:
+
+- More prominent glow
+- slightly larger scale
+- animated pulse
+- clear CTA
+- visually different from completed
+
+Locked:
+
+- muted/soft colors
+- lock icon
+- lower opacity
+- no active CTA
+- clearly communicate that it is unavailable
+
+The current active level should immediately attract the child's attention.
+
+==================================================
+6. LEVEL INFORMATION CARD
+==================================================
+
+Each level node should have an information card beside it.
+
+Card structure:
+
+LEVEL 1
+
+Right to Life
+
+Every Child Matters
+
+✓ Completed
+
+🏆 Right to Life
+
+↻ Dobara khelo
+
+
+For Level 2:
+
+LEVEL 2
+
+Clean Water, Healthy Life
+
+Right to Health & Care
+
+✓ Completed
+
+🏆 Right to Health & Care
+
+↻ Dobara khelo
+
+
+The text and data MUST come from the level configuration/data.
+
+Do NOT hardcode the UI.
+
+Create a reusable LevelCard component.
+
+==================================================
+7. LEVEL 1 DATA
+==================================================
+
+Use existing Level 1 data:
+
+Level:
+1
+
+Title:
+Right to Life
+
+Subtitle:
+Every Child Matters
+
+Reward:
+Right to Life
+
+Status:
+completed if the existing progress state says Level 1 is complete.
+
+==================================================
+8. LEVEL 2 DATA
+==================================================
+
+Use:
+
+Level:
+2
+
+Title:
+Clean Water, Healthy Life
+
+Subtitle:
+Right to Health & Care
+
+Reward:
+Right to Health & Care
+
+Story content should remain connected to the existing Level 2 implementation.
+
+Do NOT rewrite or remove the existing Level 2 story.
+
+==================================================
+9. LOCKING SYSTEM
+==================================================
+
+Implement real progression logic.
+
+Rule:
+
+Level 1 is unlocked by default.
+
+Level N+1 becomes unlocked ONLY when Level N is completed.
+
+Example:
+
+Level 1 completed
+→ Level 2 unlock animation
+
+Level 2 completed
+→ Level 3 unlock animation
+
+Level 3 completed
+→ Level 4 unlock animation
+
+etc.
+
+Never allow users to directly open a locked level.
+
+If a locked level is clicked:
+
+show a small child-friendly message:
+
+"Pehele pichhla adventure complete karo! 🔒"
+
+Do not navigate to the level.
+
+==================================================
+10. CANDY-CRUSH-STYLE UNLOCK ANIMATION
+==================================================
+
+When a level is completed, DO NOT immediately switch to the next level without feedback.
+
+Create a polished unlock sequence:
+
+1. Current level trophy gets a subtle glow.
+2. Green checkmark appears.
+3. Sparkles appear around the node.
+4. Progress path lights up from the completed node toward the next node.
+5. Next level node starts glowing.
+6. Lock icon disappears.
+7. Next level badge scales from ~0.8 to 1.0.
+8. Small sparkle burst.
+9. Show:
+
+"New Adventure Unlocked! 🎉"
+
+Then show the new level as active.
+
+Animation should be smooth and short.
+
+Approximately:
+700ms–1500ms total.
+
+Do NOT make the animation annoying or slow.
+
+==================================================
+11. FIRST VISIT BEHAVIOR
+==================================================
+
+When the user enters Story Adventure:
+
+Automatically scroll/focus to the highest unlocked level.
+
+If Level 1 is the only unlocked level:
+
+focus Level 1.
+
+If Level 3 is unlocked:
+
+focus Level 3.
+
+If the user has completed Level 5:
+
+focus Level 6 if available.
+
+The user should not have to manually search for the current level.
+
+==================================================
+12. LEVEL COMPLETION
+==================================================
+
+When a story level is successfully completed:
+
+Update the existing progress state.
+
+Do NOT create a separate duplicate progress system.
+
+Use the project's existing state/localStorage/backend mechanism if one already exists.
+
+After completion:
+
+- mark level completed
+- unlock next level
+- update progress count
+- update Story Adventure map
+- trigger unlock animation
+
+All UI should reactively update.
+
+==================================================
+13. "DOBARA KHELO"
+==================================================
+
+For completed levels:
+
+Show:
+
+↻ Dobara khelo
+
+Clicking it should reopen that completed level.
+
+Completed levels remain replayable.
+
+Replay must NOT reset overall progress.
+
+If the user replays Level 1, Level 2 should remain unlocked.
+
+==================================================
+14. FUTURE LEVELS
+==================================================
+
+The system must be scalable.
+
+Create a data-driven structure similar to:
+
+levels = [
+  {
+    id: 1,
+    title: "Right to Life",
+    subtitle: "Every Child Matters",
+    reward: "Right to Life",
+    ...
+  },
+  {
+    id: 2,
+    title: "Clean Water, Healthy Life",
+    subtitle: "Right to Health & Care",
+    reward: "Right to Health & Care",
+    ...
+  }
+]
+
+Future levels can simply be added to this array.
+
+Do not create separate hardcoded JSX blocks for every level.
+
+==================================================
+15. EMPTY / FUTURE LEVEL AREA
+==================================================
+
+After the currently available levels, show a playful placeholder:
+
+✨
+
+"Naye adventures
+jald aa rahe hain..."
+
+Make it visually look like the adventure continues beyond the currently available content.
+
+This should NOT look like an error.
+
+It should look like upcoming content.
+
+==================================================
+16. BACKGROUND
+==================================================
+
+Do NOT use a plain empty white background.
+
+Create a very subtle adventure-world background:
+
+- soft pale green
+- soft cream
+- subtle blue tint
+- small trees
+- flowers
+- rocks
+- leaves
+- tiny decorative elements
+
+Keep decorations subtle.
+
+The level path and cards must remain the visual focus.
+
+Do not make the background too busy.
+
+==================================================
+17. EXISTING ROBOT + HELP BUTTON
+==================================================
+
+Keep the existing Nyaya Nagri AI assistant robot.
+
+Keep:
+
+"Get Help Now"
+
+button.
+
+Do not redesign or remove their functionality.
+
+Position them exactly as floating elements so they do not overlap the level cards or path.
+
+The help button should remain accessible on desktop and mobile.
+
+==================================================
+18. BOTTOM NAVIGATION
+==================================================
+
+Keep the existing navigation:
+
+📖 Learn Rights
+👥 Help Others
+🏆 Earn Badges
+
+Maintain the existing functionality.
+
+Do not break routing.
+
+Style it so it visually matches the new Story Adventure screen.
+
+==================================================
+19. RESPONSIVE DESIGN
+==================================================
+
+This is VERY IMPORTANT.
+
+Desktop:
+- large adventure map
+- cards beside nodes
+- wide spacing
+
+Tablet:
+- reduce spacing
+- maintain readable cards
+
+Mobile:
+- vertical level progression
+- level node centered
+- card below/above node
+- no horizontal overflow
+- no overlapping buttons
+- no clipped path
+- no hidden level information
+
+The page must work at:
+
+320px
+375px
+390px
+768px
+1024px
+1440px+
+
+==================================================
+20. ACCESSIBILITY
+==================================================
+
+Because the target audience includes children:
+
+- large clickable areas
+- readable typography
+- strong contrast
+- clear status indicators
+- do not rely only on color
+- keyboard accessible
+- focus states
+- buttons should have descriptive aria-labels
+
+Example:
+
+aria-label="Level 2 - Clean Water, Healthy Life"
+
+==================================================
+21. IMPORTANT: DO NOT BREAK EXISTING STORY ADVENTURE
+==================================================
+
+Do NOT modify:
+
+- story content
+- story images
+- question logic
+- answer validation
+- Gemini voice integration
+- voice timing
+- question narration
+- option narration
+- retry logic
+- congratulations screen
+- existing level gameplay
+
+Only modify the LEVEL SELECTION / ADVENTURE MAP screen and the progression logic required to connect levels.
+
+The existing Story Adventure gameplay must continue working exactly as before.
+
+==================================================
+22. DO NOT DUPLICATE COMPONENTS
+==================================================
+
+Before implementing:
+
+Inspect the existing codebase and find:
+
+- Story Adventure route
+- Level data
+- progress state
+- completion handler
+- navigation
+- existing AI assistant
+- existing help button
+- existing design tokens/components
+
+Reuse existing components wherever possible.
+
+Do not create duplicate versions of:
+
+- AI assistant
+- Get Help Now
+- navigation
+- progress state
+- level completion state
+
+==================================================
+23. ANIMATION QUALITY
+==================================================
+
+Use smooth modern animations.
+
+Preferred:
+
+- transform
+- opacity
+- scale
+- subtle glow
+- spring-like transitions
+
+Avoid:
+
+- excessive bouncing
+- flashing
+- long animations
+- layout jumps
+- animation that blocks interaction
+
+Respect:
+
+prefers-reduced-motion
+
+When reduced motion is enabled, use minimal transitions.
+
+==================================================
+24. VISUAL HIERARCHY
+==================================================
+
+The most important visual elements should be:
+
+1. Current/unlocked level
+2. Adventure path
+3. Level cards
+4. Completed rewards
+5. Story Adventure title
+6. Progress indicator
+7. Decorative environment
+
+The screen should immediately communicate:
+
+"You are here → complete this adventure → unlock the next one."
+
+==================================================
+25. FINAL IMPLEMENTATION REQUIREMENT
+==================================================
+
+First inspect the existing Story Adventure implementation.
+
+Then refactor it into reusable components such as:
+
+StoryAdventure
+AdventurePath
+LevelNode
+LevelCard
+ProgressBadge
+UnlockAnimation
+UpcomingAdventure
+AdventureDecorations
+
+Use the existing project's framework, styling system and dependencies.
+
+Do not introduce unnecessary dependencies.
+
+Do not replace the whole application.
+
+Only modify the required Story Adventure level-selection experience.
+
+After implementation:
+
+1. Verify Level 1 opens correctly.
+2. Complete Level 1.
+3. Verify Level 2 unlocks.
+4. Verify unlock animation plays.
+5. Verify progress changes from 1/2 to 2/2.
+6. Verify Level 2 opens correctly.
+7. Verify completed levels can be replayed.
+8. Verify locked levels cannot be opened.
+9. Verify existing voice functionality inside the story remains untouched.
+10. Test desktop and mobile layouts.
+11. Check for all overlapping elements.
+12. Check console for errors.
+13. Fix any TypeScript/React/CSS errors before finishing.
+
+Use the attached reference image as the visual design reference, but implement the UI natively in the existing project rather than using the image itself.

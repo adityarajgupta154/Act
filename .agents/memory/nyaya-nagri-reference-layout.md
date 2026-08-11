@@ -23,3 +23,15 @@ Compare edges with the SAME pixel detector run on BOTH images, and prefer the go
 The Get Help Now shield + mascot float fixed at the bottom-right corner ABOVE every overlay (z-order). Any full-screen overlay that puts a control in its bottom-right corner must reserve ~56-64px right clearance at phone widths (e.g. `pr-14 md:pr-0` on the bar) or the control gets painted under the shield.
 **Why:** Story overlay's bottom-nav Next was partially hidden behind the shield at 402px; user task explicitly forbids overlap with the assistant/help buttons.
 **How to apply:** any new overlay/bottom bar with a right-aligned action — add phone-width right padding; desktop centered columns clear it naturally.
+
+## vh-band placement vs mobile bottom stack (short landscape)
+A spec that pins an element's centre to a viewport band (e.g. 60–65vh) is geometrically impossible on short landscape phones when an in-flow bottom stack (help bar + assistant row) occupies the lower ~10rem. Clamp continuously instead of adding a breakpoint: `top-[min(62dvh,calc(100dvh_-_<reserve>rem))]` — taller viewports keep the band untouched, short ones rise just enough.
+**Why:** portrait/desktop captures never exercise this; an architect round caught the collision at 667×375. Always sanity-check ~375px-tall landscape when placing anything by vh band.
+
+## aspect-ratio + max-h breaks the ratio
+`aspect-video` + `max-h-[Xvh]` on a `w-full` box does NOT keep 16:9 — the height caps but width stays full, so short viewports render an ultra-wide banner and object-cover over-crops the art.
+**Why:** completion-screen hero card came out ~2.65:1 at 720-768px-tall desktops; caught by architect review.
+**How to apply:** cap the WIDTH from the height budget instead — `max-w-[calc-of-vh]` (e.g. 44vh tall 16:9 card → `md:max-w-[78vh]`), and put the cap on the relative wrapper so absolute accents keep hugging the card.
+
+## Centered bottom bars vs the help cluster (md tablets)
+A bottom-centered pill bar collides with the HUD's Get Help cluster (bottom-right, z-50) at md widths (~768px) — bar+cluster together exceed the viewport. Rule: anchor the bar LEFT at md (`left-6`), recenter only at lg+ (`lg:left-1/2 lg:-translate-x-1/2`). **Why:** the cluster floats above every overlay and cannot move; centered bars get covered exactly on tablets.

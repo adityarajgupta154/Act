@@ -1,0 +1,719 @@
+Implement a complete Voice-Guided Story Adventure system for Nyaya Nagri.
+
+IMPORTANT:
+The target users are children around 8 years old.
+Many children may not be able to comfortably read the story captions, questions, or answer options themselves.
+
+Therefore, the existing AI Assistant must become a voice narrator and guide throughout the entire Story Adventure.
+
+DO NOT redesign the existing Story Adventure UI.
+DO NOT remove the existing images, captions, questions, options, navigation, AI assistant, or game functionality.
+
+Only add a robust voice-guided interaction layer on top of the existing Story Adventure.
+
+==================================================
+CORE EXPERIENCE
+==================================================
+
+The AI Assistant should guide the child through every story slide using voice.
+
+For EVERY story slide:
+
+1. The slide opens.
+2. AI Assistant automatically starts speaking.
+3. First, read/explain the story content shown on that slide.
+4. Read the caption naturally.
+5. Explain the situation in simple child-friendly language.
+6. If the slide contains a question:
+   - First explain the question.
+   - Then read Option 1.
+   - Then read Option 2.
+   - Then wait for the child to select an option.
+
+The child should NOT have to read anything to understand the story.
+
+==================================================
+STORY SLIDE VOICE FLOW
+==================================================
+
+For slides 1–3 and other narrative slides:
+
+Example:
+
+Slide 1:
+AI voice:
+
+"Riya school se ghar wapas aa rahi hai.
+Raste mein use ek chhota sa gaon dikhai deta hai,
+jahan kuch bachche khel rahe hain.
+
+Riya ek naye gaon ke raste se guzar rahi hai."
+
+The exact caption/content already configured for the slide should be used.
+
+IMPORTANT:
+Do not invent a different story.
+Use the existing story data/caption associated with the current slide.
+
+The AI can make the wording slightly more natural for spoken narration, but must preserve the original meaning.
+
+Then automatically continue normally when the child moves to the next slide.
+
+==================================================
+SLIDE TRANSITION
+==================================================
+
+When the child clicks:
+
+Next
+
+OR the story automatically moves to the next slide:
+
+1. Stop any currently playing speech.
+2. Wait a very short transition delay.
+3. Load the new slide.
+4. Start narration for the new slide automatically.
+
+Never allow speech from the previous slide to continue into the next slide.
+
+There must NEVER be two voice narrations playing simultaneously.
+
+==================================================
+QUESTION SLIDE FLOW
+==================================================
+
+When the story reaches the question slide:
+
+DO NOT immediately start repeatedly saying the question.
+
+Use this exact sequence:
+
+STEP 1 — Explain the situation
+
+AI:
+
+"Riya ke saamne ab ek important decision hai.
+Aman ko madad ki zaroorat hai.
+Ab dekhte hain Riya kya faisla karti hai."
+
+STEP 2 — Ask the question
+
+AI:
+
+"Riya ke paas ek decision tha —
+kya woh Aman ki madad karegi?"
+
+STEP 3 — Read the options
+
+AI:
+
+"Option one:
+Chup chaap aage badh jao."
+
+Short pause.
+
+AI:
+
+"Option two:
+Aman ke liye help bulao."
+
+Short pause.
+
+STEP 4 — WAIT FOR USER
+
+After both options are spoken:
+
+Do NOT immediately repeat the question.
+
+Wait for the child to select an answer.
+
+==================================================
+NO ANSWER REMINDER SYSTEM
+==================================================
+
+If the child does not select any answer after the initial question narration finishes,
+the AI Assistant should gently remind them.
+
+IMPORTANT:
+Do NOT repeat the exact same sentence every time.
+
+Use different child-friendly variations.
+
+For example:
+
+First reminder:
+
+"Abhi tak koi option select nahi hua hai.
+Aapko kaunsa answer sahi lagta hai?"
+
+Second reminder:
+
+"Riya ko ab ek choice karni hai.
+Neeche diye gaye dono options mein se ek choose karo."
+
+Third reminder:
+
+"Chalo, Riya ki help karte hain.
+Aapke hisaab se use kya karna chahiye?"
+
+Fourth reminder:
+
+"Ab aapki baari hai.
+Kisi ek option par tap karke answer do."
+
+Then continue using a pool of natural variations.
+
+DO NOT use robotic repetition.
+
+==================================================
+REMINDER TIMING
+==================================================
+
+Do NOT speak every second continuously.
+
+Use a sensible reminder interval.
+
+Recommended:
+
+Initial narration:
+Question + options
+
+Then wait:
+
+~5–7 seconds
+
+If no answer:
+Reminder #1
+
+Then wait:
+
+~7–9 seconds
+
+If no answer:
+Reminder #2
+
+Then wait:
+
+~9–12 seconds
+
+If no answer:
+Reminder #3
+
+Then continue with longer intervals.
+
+IMPORTANT:
+Never create an infinite aggressive speech loop.
+
+The child should feel guided, not pressured.
+
+==================================================
+STOP REPEATING IMMEDIATELY
+==================================================
+
+The moment the user clicks ANY answer:
+
+1. Immediately stop current AI speech.
+2. Cancel all pending reminder timers.
+3. Cancel the reminder queue.
+4. Do not speak another reminder.
+5. Process the selected answer normally.
+
+This is extremely important.
+
+There must never be a situation where:
+
+Child clicks answer
++
+AI continues saying:
+"You haven't selected an option yet..."
+
+==================================================
+WRONG ANSWER FLOW
+==================================================
+
+If the selected answer is incorrect:
+
+1. Stop all narration.
+2. Highlight the selected answer using the existing wrong-answer UI.
+3. Show the existing explanation/feedback.
+4. AI Assistant should read the feedback aloud.
+
+Example:
+
+"Ye answer best choice nahi tha.
+
+Aman ko help ki zaroorat thi.
+Aise situation mein kisi trusted adult ya doctor se help lena important hai.
+
+Chalo, ek baar phir try karte hain."
+
+Then say:
+
+"Try Again button par tap karke dobara answer choose karo."
+
+Do NOT automatically advance.
+
+The child must choose again.
+
+==================================================
+CORRECT ANSWER FLOW
+==================================================
+
+If the selected answer is correct:
+
+1. Stop all reminder timers.
+2. Stop current speech.
+3. Highlight the correct option.
+4. Show the existing success feedback.
+5. AI Assistant reads the explanation.
+
+Example:
+
+"Bahut achha!
+
+Aman ke liye help bulana sahi decision tha.
+Jab kisi bachche ko zaroori madad ki zaroorat ho,
+toh trusted adult ya doctor se help lena important hai."
+
+Then:
+
+"Ab Next par tap karke story continue karo."
+
+Only after the correct answer should the Next action become available.
+
+==================================================
+EVERY SLIDE MUST BE DATA-DRIVEN
+==================================================
+
+Do NOT hard-code separate voice logic for only Level 1.
+
+Create a reusable story narration system.
+
+Each story slide should be able to contain:
+
+{
+  id,
+  image,
+  caption,
+  narration,
+  question,
+  options,
+  correctAnswer,
+  explanation
+}
+
+If narration is not explicitly provided,
+generate narration from the existing caption/story content.
+
+IMPORTANT:
+Never invent new story facts that contradict the configured story.
+
+==================================================
+CHILD-FRIENDLY LANGUAGE
+==================================================
+
+Voice should sound like a friendly educational guide.
+
+Use:
+- Simple Hindi/Hinglish
+- Short sentences
+- Natural pauses
+- Clear pronunciation
+- Warm tone
+- Encouraging language
+
+Avoid:
+- Complicated legal terminology
+- Long sentences
+- Robotic speech
+- Overly formal language
+
+The AI should feel like a friendly guide helping a child play the game.
+
+==================================================
+VOICE / AI ASSISTANT
+==================================================
+
+Use the EXISTING AI Assistant character already present in Nyaya Nagri.
+
+Do not create another assistant.
+
+The existing assistant should visually react while speaking.
+
+Suggested states:
+
+IDLE
+- normal assistant appearance
+
+SPEAKING
+- subtle animation
+- small mouth movement or speaking indicator
+- subtle glow/pulse
+
+LISTENING / WAITING
+- calm idle animation
+- optional small "Your turn" indicator
+
+THINKING
+- very short state only when necessary
+
+Do NOT create excessive animations.
+
+==================================================
+VOICE PLAYBACK ENGINE
+==================================================
+
+Create a centralized voice manager.
+
+Example conceptual API:
+
+voiceManager.speak(text)
+voiceManager.stop()
+voiceManager.pause()
+voiceManager.resume()
+voiceManager.isSpeaking()
+voiceManager.cancelReminders()
+
+Only ONE voice request may be active at a time.
+
+Before every new narration:
+
+voiceManager.stop()
+
+Then start the new narration.
+
+==================================================
+FAST RESPONSE / LOW LATENCY
+==================================================
+
+The voice system must feel fast.
+
+IMPORTANT:
+Do NOT call the AI model for every tiny sentence.
+
+Do NOT generate a new Gemini response for every reminder.
+
+Prefer:
+
+1. Prepare narration from the story data.
+2. Cache/generated voice content.
+3. Play the audio immediately.
+4. Preload the next slide's narration where possible.
+
+For fixed story content, narration can be generated ahead of time.
+
+Question and option narration should also be prepared before the child reaches the question.
+
+The interaction must NOT feel laggy.
+
+==================================================
+VOICE CACHING
+==================================================
+
+Implement caching so the same narration does not need to be regenerated repeatedly.
+
+For example:
+
+slide-1-narration
+slide-2-narration
+slide-3-narration
+question-1
+option-1
+option-2
+reminder-1
+reminder-2
+etc.
+
+Cache audio where appropriate.
+
+If using browser speech synthesis,
+reuse SpeechSynthesisUtterance appropriately.
+
+If using Gemini voice/TTS,
+use the existing backend/API integration and cache generated audio.
+
+IMPORTANT SECURITY:
+NEVER expose the Gemini API key directly in frontend source code.
+
+Use the existing secure backend/server environment variable configuration.
+
+Never put API keys into:
+- React source
+- client-side JavaScript
+- localStorage
+- public files
+- Git repository
+
+==================================================
+AUDIO SEQUENCE CONTROLLER
+==================================================
+
+Create a state machine similar to:
+
+NARRATING
+↓
+QUESTION_INTRO
+↓
+READING_OPTIONS
+↓
+WAITING_FOR_ANSWER
+↓
+REMINDER
+↓
+WAITING_FOR_ANSWER
+↓
+ANSWER_SELECTED
+↓
+FEEDBACK
+↓
+WAITING_FOR_NEXT
+
+For normal story slides:
+
+NARRATING
+↓
+WAITING_FOR_NEXT
+
+This prevents overlapping speech and race conditions.
+
+==================================================
+IMPORTANT TIMER MANAGEMENT
+==================================================
+
+All reminder timers must be stored and cleaned up.
+
+When:
+- answer is selected
+- user goes Back
+- user goes Next
+- user exits the story
+- slide changes
+- component unmounts
+
+Immediately:
+
+clearTimeout(...)
+clearInterval(...)
+cancel voice
+cancel queued narration
+
+There must be NO background timers continuing after leaving the question.
+
+==================================================
+BACK BUTTON
+==================================================
+
+If the child clicks Back:
+
+1. Stop voice immediately.
+2. Cancel reminders.
+3. Reset narration state.
+4. Go to previous slide.
+5. Start narration for the previous slide.
+
+Never let the previous slide's voice continue.
+
+==================================================
+NEXT BUTTON
+==================================================
+
+When Next is clicked:
+
+1. Stop current voice.
+2. Cancel reminders.
+3. Move to next slide.
+4. Reset answer state.
+5. Automatically narrate the new slide.
+
+==================================================
+USER CONTROL
+==================================================
+
+Add a small accessible voice control if one does not already exist.
+
+Possible controls:
+
+🔊 Voice On
+🔇 Voice Off
+↻ Replay
+
+The child should be able to replay the current narration.
+
+If Voice Off is selected:
+- stop current speech
+- disable automatic narration
+- disable reminder speech
+- keep all visual functionality working
+
+If Voice On is selected:
+- resume voice guidance on the current slide appropriately.
+
+==================================================
+REPLAY BUTTON
+==================================================
+
+Add a small "Listen Again" / replay control near the story/question area if appropriate.
+
+When clicked:
+
+1. Stop current speech.
+2. Cancel current reminder timers.
+3. Replay the current slide narration.
+
+For a question slide:
+Replay:
+- question explanation
+- question
+- option 1
+- option 2
+
+Then return to waiting state.
+
+==================================================
+IMPORTANT QUESTION RULE
+==================================================
+
+For every question slide, ALWAYS follow this exact order:
+
+1. Explain situation
+2. Read question
+3. Read option 1
+4. Read option 2
+5. Wait for answer
+6. If no answer → gentle reminder
+7. Continue reminders with varied wording
+8. User selects answer → STOP reminders immediately
+9. Evaluate answer
+10. Read feedback
+11. Correct → Next
+12. Wrong → Try Again
+
+Never change this sequence.
+
+==================================================
+EXAMPLE FOR CURRENT LEVEL 1
+==================================================
+
+Question:
+
+"Riya ke paas ek decision tha —
+kya wo Aman ki madad karegi?"
+
+Option 1:
+
+"Chup chaap aage badh jao."
+
+Option 2:
+
+"Aman ke liye help bulao."
+
+Correct answer:
+
+"Aman ke liye help bulao."
+
+Voice after correct answer:
+
+"Bahut badhiya!
+
+Riya ne Aman ki madad karne ka sahi decision liya.
+Jab kisi bachche ko zaroori madad ki zaroorat ho,
+toh trusted adult ya doctor se help lena important hai.
+
+Ab Next par tap karke story continue karo."
+
+Wrong answer:
+
+"Chalo, ek baar sochte hain.
+
+Aman ko help ki zaroorat hai.
+Kya use ignore karke aage badhna sahi hoga?
+
+Try Again par tap karke dobara choose karo."
+
+==================================================
+ACCESSIBILITY
+==================================================
+
+Because the target user may be around 8 years old:
+
+- Voice should be clear.
+- Text should remain visible.
+- Do not depend ONLY on voice.
+- Do not hide answer options.
+- Use large clickable/tappable answer buttons.
+- Use sufficient spacing.
+- Avoid extremely fast speech.
+- Add natural pauses between question and options.
+
+==================================================
+FINAL TESTING
+==================================================
+
+Test the complete Level 1 flow:
+
+Slide 1:
+Narration automatically plays.
+
+Slide 2:
+Previous narration stops.
+New narration starts.
+
+Slide 3:
+Narration automatically plays.
+
+Slide 4:
+AI:
+1. Explains situation
+2. Reads question
+3. Reads option 1
+4. Reads option 2
+5. Waits
+
+No answer:
+Reminder after a reasonable delay.
+
+Still no answer:
+Different reminder.
+
+User selects wrong answer:
+All reminders stop immediately.
+Feedback is spoken.
+Try Again becomes available.
+
+User selects correct answer:
+All reminders stop immediately.
+Success feedback is spoken.
+Next becomes available.
+
+User clicks Next:
+Current voice stops.
+Next slide loads.
+New narration starts.
+
+Slide 5:
+Completion narration plays.
+Then completion screen works normally.
+
+==================================================
+MOST IMPORTANT REQUIREMENTS
+==================================================
+
+1. ONE voice at a time.
+2. NO overlapping narration.
+3. NO repeated voice every second.
+4. Reminders must be varied and child-friendly.
+5. Answer click immediately stops reminders.
+6. Slide change immediately stops previous narration.
+7. Back immediately stops previous narration.
+8. Voice should start automatically when a new slide opens.
+9. Question must ALWAYS be spoken before options.
+10. Options must ALWAYS be spoken after the question.
+11. Child must be given time to answer.
+12. Existing UI and story content must remain intact.
+13. Use existing AI Assistant character.
+14. Keep latency low through caching/preloading.
+15. Do not expose API keys in frontend.
+16. Build this as a reusable system for all future story levels, not a Level-1-only hack.
+
+After implementation, inspect the actual running application and test every state.
+Do not consider the task complete until voice narration, question repetition, answer detection, slide transitions, and timer cleanup all work correctly without overlapping audio or lag.
