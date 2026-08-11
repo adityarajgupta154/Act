@@ -908,8 +908,47 @@ const routeSrc = read('../../api-server/src/routes/storyvoice/index.ts');
 assert(routeSrc.includes('MANIFEST_BY_ID.get'), 'server synthesizes MANIFEST ids only (hard allowlist)');
 assert(!routeSrc.includes('req.body'), 'server never reads free text from a request (GET id only)');
 assert(
-  routeSrc.includes('isGeminiConfigured') && routeSrc.includes('getGemini'),
-  'server reuses the existing Gemini key config (no second auth system)',
+  routeSrc.includes('isGeminiConfigured') && routeSrc.includes('getGemini('),
+  'story TTS runs on the ONE shared Gemini key accessors (single-key — user order, Aug 11 2026)',
+);
+assert(
+  !routeSrc.includes('getStoryTtsGemini') && !routeSrc.includes('isStoryTtsConfigured'),
+  'dedicated story-TTS key accessors are gone from the route (user removed the second key)',
+);
+assert(
+  routeSrc.includes('from "@workspace/integrations-gemini-ai"') && !routeSrc.includes('new GoogleGenAI'),
+  'TTS client still comes from the ONE shared integrations lib (no ad-hoc auth in the route)',
+);
+// Single-key architecture pinned at the SOURCE (client.ts): the dedicated
+// GEMINI_TTS_API_KEY scope must never grow back without an explicit order.
+const clientSrc = read('../../../lib/integrations-gemini-ai/src/client.ts');
+assert(
+  !clientSrc.includes('GEMINI_TTS_API_KEY') && !clientSrc.includes('cachedStoryTts'),
+  'client.ts has NO dedicated story-TTS key scope (single GEMINI_API_KEY — user order, Aug 11 2026)',
+);
+assert(
+  !clientSrc.includes('GEMINI_ASSISTANT_API_KEY'),
+  'the GEMINI_ASSISTANT_API_KEY alias died with the split — single secret name only',
+);
+assert(
+  clientSrc.includes('GEMINI_API_KEY'),
+  'client.ts reads the single shared GEMINI_API_KEY',
+);
+assert(
+  !routeSrc.includes('GEMINI_TTS_API_KEY') && !routeSrc.includes('GEMINI_ASSISTANT_API_KEY'),
+  'retired key names are gone from the route file entirely (comments included)',
+);
+assert(
+  !routeSrc.includes('process.env'),
+  'storyvoice route never reads env directly — key access only via the shared lib accessors',
+);
+const geminiIndexSrc = read('../../../lib/integrations-gemini-ai/src/index.ts');
+assert(
+  geminiIndexSrc.includes('getGemini') &&
+    geminiIndexSrc.includes('getGeminiAlpha') &&
+    geminiIndexSrc.includes('isGeminiConfigured') &&
+    !geminiIndexSrc.includes('StoryTts'),
+  'integration lib public surface = exactly the three shared accessors (no retired story-TTS exports)',
 );
 assert(
   routeSrc.includes('story-voice-cache') && routeSrc.includes('pcmToWav'),

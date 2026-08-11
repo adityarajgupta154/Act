@@ -1,0 +1,495 @@
+I have attached a reference image showing the NEW target design for the Nyaya Nagri landing/home screen.
+
+Use this attached image as the PRIMARY visual reference and redesign the existing homepage to match it as closely as possible.
+
+IMPORTANT:
+This is a UI redesign task, NOT a complete rebuild.
+
+Preserve all existing functionality and routes.
+Only change the visual design, layout, sizing, spacing, and presentation.
+
+==================================================
+1. TARGET DESIGN
+==================================================
+
+The attached reference image is the exact visual direction I want.
+
+The final homepage should feel like:
+
+- Premium children's educational adventure game
+- Colorful storybook world
+- Clean modern game UI
+- Soft 3D/cartoon environment
+- Professional but playful
+- Bright daytime atmosphere
+- Spacious composition
+
+Do NOT make it look like a generic website dashboard.
+
+Do NOT use a dark theme.
+
+Do NOT use cyberpunk/neon futuristic UI.
+
+==================================================
+2. IMPORTANT — SCREEN SIZE
+==================================================
+
+The current homepage feels too zoomed-in and oversized.
+
+Fix this.
+
+The new design should feel more spacious and balanced like the reference image.
+
+The entire environment should be visible comfortably inside the viewport.
+
+Do NOT make the central courthouse, portals, character, or UI elements excessively large.
+
+Use the reference image to determine the correct visual scale.
+
+The user should be able to understand the complete Nyaya Nagri world immediately without the screen feeling crowded.
+
+==================================================
+3. BACKGROUND / WORLD
+==================================================
+
+Redesign the existing background to match the attached reference.
+
+Create a bright fantasy educational town/world containing:
+
+CENTER:
+- Large Nyaya Nagri justice/courthouse building
+- Lady Justice statue in front
+- Central circular plaza
+- Main stone pathway leading toward the viewer
+
+LEFT:
+- Right to Childhood building
+- Safe Zone building
+
+RIGHT:
+- School Rights building
+- Family & Community building
+- Digital Safety building
+
+The world should have:
+
+- green grass
+- trees
+- bushes
+- flowers
+- rocks
+- small decorative vegetation
+- stone paths
+- soft shadows
+- warm sunlight
+- pastel atmosphere
+
+The environment should look like one continuous game world.
+
+==================================================
+4. REUSE EXISTING ASSETS
+==================================================
+
+Before creating new assets, inspect the existing project assets.
+
+Reuse existing assets wherever possible:
+
+- Nyaya Nagri logo
+- courthouse
+- Lady Justice statue
+- child/player character
+- buildings
+- portals
+- Digital Safety building
+- robot/helper
+- trees
+- flowers
+- environmental objects
+- sky balloon
+
+If an existing image contains an unwanted background:
+
+- isolate the actual object
+- remove the unwanted background
+- use the object as a transparent PNG/WebP
+- preserve its original visual quality
+
+Do NOT place rectangular image backgrounds around individual assets.
+
+Do NOT randomly replace existing high-quality assets.
+
+==================================================
+5. CENTRAL COURTHOUSE
+==================================================
+
+The courthouse should be the main visual focal point.
+
+Position it near the upper-center.
+
+It should be:
+
+- large enough to establish hierarchy
+- smaller than the current oversized version
+- visually balanced with the surrounding buildings
+- centered with the main pathway
+
+Place the Lady Justice statue directly in front of it.
+
+Do NOT allow the statue to overlap the CTA.
+
+==================================================
+6. MAIN CTA
+==================================================
+
+Use the existing orange CTA.
+
+Text:
+
+ENTER →
+
+Do NOT use:
+
+ENTER NYAYA NAGRI
+
+The button should be compact.
+
+It should sit on the central pathway below the courthouse/statue area.
+
+Use:
+
+- orange gradient
+- white text
+- white arrow
+- pill shape
+- subtle shadow
+- clean hover effect
+
+It should NOT dominate the screen.
+
+==================================================
+7. TAGLINE
+==================================================
+
+Add the tagline as a compact dark-blue pill above the ENTER button:
+
+Know Your Rights. Build Your Future.
+
+Use small decorative sparkle icons around it.
+
+Keep it subtle.
+
+Do not make it larger than the main CTA.
+
+==================================================
+8. TOP LEFT
+==================================================
+
+Create a clean white rounded logo card.
+
+It should contain:
+
+Nyaya Nagri logo + text
+
+The card should be compact and similar to the reference.
+
+Below it create the player profile card:
+
+Aditya
+Player Rank 7
+
+Use:
+
+- small avatar
+- white pill/card
+- subtle shadow
+- dropdown arrow
+
+Do not make these elements oversized.
+
+==================================================
+9. TOP RIGHT
+==================================================
+
+Keep:
+
+About
+Settings
+
+as compact white pill buttons.
+
+Add a small Map card underneath/near the top-right area.
+
+The map should remain functional.
+
+Do NOT redesign its underlying functionality.
+
+==================================================
+10. PORTAL BUILDINGS
+==================================================
+
+Arrange the themed buildings around the courthouse like the reference.
+
+LEFT:
+
+Safe Zone
+Right to Childhood
+
+RIGHT:
+
+School Rights
+Family & Community
+Digital Safety
+
+Maintain clear visual separation between them.
+
+Each building should have enough surrounding grass/space.
+
+Do NOT overcrowd the center.
+
+Keep the glowing portals visible.
+
+==================================================
+11. CHARACTER
+==================================================
+
+Use the existing child character.
+
+Position the character in the lower-left/center area.
+
+The character should face toward the courthouse.
+
+Scale the character down compared with the current homepage.
+
+The character must feel like part of the environment rather than dominating the screen.
+
+==================================================
+12. SKY BALLOON
+==================================================
+
+Keep the Nyaya Nagri sky balloon/blimp.
+
+Position it naturally in the upper-right sky.
+
+Keep its existing animation if already implemented.
+
+Do NOT make it oversized.
+
+It should remain a secondary decorative element.
+
+==================================================
+13. HELPER ROBOT
+==================================================
+
+Keep the existing robot/helper.
+
+Place it near the lower-right side.
+
+It should remain clearly visible without covering the Digital Safety building.
+
+==================================================
+14. GET HELP NOW
+==================================================
+
+Keep the existing red emergency/help button.
+
+Text:
+
+Get Help Now
+
+Childline 1098
+Cyber Crime 155260
+
+Position it at the lower-right.
+
+Keep it compact enough so it does not cover important map content.
+
+Maintain:
+
+- red background
+- white shield icon
+- white text
+- rounded corners
+- subtle shadow
+
+==================================================
+15. BOTTOM NAVIGATION
+==================================================
+
+Add a clean floating white navigation pill at the bottom-center.
+
+Options:
+
+Learn Rights
+Help Others
+Earn Badges
+
+Use small circular icons.
+
+Keep it compact and elegant.
+
+It should not cover the character or central pathway excessively.
+
+Make it responsive.
+
+==================================================
+16. VISUAL SCALE
+==================================================
+
+This is extremely important.
+
+The current page feels too large/zoomed.
+
+Reduce the overall visual scale.
+
+Use the reference image as the sizing guide.
+
+The following should NOT become oversized:
+
+- courthouse
+- character
+- CTA
+- portal buildings
+- logo
+- emergency button
+- helper robot
+
+Maintain sufficient negative space.
+
+The page should look like a wide game-world overview.
+
+==================================================
+17. RESPONSIVE DESIGN
+==================================================
+
+Desktop should match the attached reference most closely.
+
+Support:
+
+1920px
+1600px
+1440px
+1280px
+1024px
+768px
+480px
+375px
+
+Do not simply shrink the desktop layout on mobile.
+
+For smaller screens:
+
+- scale environmental assets
+- reposition UI
+- keep CTA visible
+- keep emergency button accessible
+- prevent UI overlap
+- preserve visual hierarchy
+- allow world scrolling/camera movement if the existing game requires it
+
+==================================================
+18. EXISTING FUNCTIONALITY
+==================================================
+
+Do NOT break:
+
+- ENTER button navigation
+- About
+- Settings
+- Map
+- Player profile
+- portal interactions
+- Digital Safety
+- Get Help Now
+- helper bot
+- Learn Rights
+- Help Others
+- Earn Badges
+- existing animations
+- existing routing
+
+Only redesign the presentation.
+
+==================================================
+19. TECHNICAL IMPLEMENTATION
+==================================================
+
+First inspect the current project architecture.
+
+Determine:
+
+- framework
+- components
+- CSS/Tailwind setup
+- image assets
+- positioning system
+- map/world system
+- animation system
+
+Reuse the existing stack.
+
+Do NOT install unnecessary libraries.
+
+Prefer existing components and styles where possible.
+
+If the page currently uses one large background image, determine whether the existing assets can be layered more effectively to reproduce the reference design.
+
+Use optimized assets and CSS transforms.
+
+Avoid excessive DOM elements for decorative grass/flowers.
+
+==================================================
+20. REFERENCE IMAGE RULE
+==================================================
+
+The attached image is the PRIMARY visual reference.
+
+Compare the implementation against it continuously.
+
+Match:
+
+- composition
+- visual scale
+- spacing
+- alignment
+- hierarchy
+- colors
+- card proportions
+- environment density
+- UI positioning
+- overall atmosphere
+
+Do NOT make a completely different design and call it "inspired by" the reference.
+
+The goal is to reproduce the same design direction as closely as possible while using the existing project's actual assets and functionality.
+
+==================================================
+21. FINAL QUALITY CHECK
+==================================================
+
+Before finishing, verify:
+
+✓ Page no longer feels excessively zoomed-in
+✓ Complete world is visible
+✓ Courthouse is properly scaled
+✓ Lady Justice is centered
+✓ ENTER button is compact
+✓ Tagline is properly positioned
+✓ Portal buildings are balanced
+✓ Character is correctly positioned
+✓ Sky balloon is correctly scaled
+✓ Logo is compact
+✓ Player card is compact
+✓ Map remains visible
+✓ Get Help Now remains visible
+✓ Helper robot does not overlap important content
+✓ Bottom navigation is balanced
+✓ No rectangular asset backgrounds
+✓ No broken images
+✓ No UI overlap
+✓ Existing functionality still works
+✓ Desktop matches reference closely
+✓ Tablet/mobile remain usable
+
+IMPORTANT:
+
+Do not finish until the rendered result has been visually compared with the attached reference image and the major differences in spacing, scale, and positioning have been corrected.

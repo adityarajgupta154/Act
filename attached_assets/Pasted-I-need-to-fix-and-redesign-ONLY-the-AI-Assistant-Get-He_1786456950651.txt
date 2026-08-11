@@ -1,0 +1,438 @@
+I need to fix and redesign ONLY the AI Assistant + Get Help Now section shown in the attached reference screenshot.
+
+IMPORTANT:
+Do NOT redesign the entire Nyaya Nagri homepage.
+Do NOT change the background, buildings, player, map, navigation, or other UI.
+Do NOT generate any new image.
+Use the existing AI Assistant asset already present in the project.
+
+==================================================
+1. CURRENT PROBLEM
+==================================================
+
+The current AI Assistant and Get Help Now button have poor spacing.
+
+Problems:
+
+- AI Assistant is positioned too high.
+- There is too much empty vertical space between the AI Assistant and Get Help Now.
+- The two elements feel disconnected.
+- Get Help Now is unnecessarily large.
+- The current red button dominates the bottom-right area.
+- The overall composition does not feel like one unified floating safety/assistant control.
+
+Fix this by bringing the AI Assistant and Get Help Now visually closer together and creating a cleaner compact composition.
+
+==================================================
+2. AI ASSISTANT POSITION
+==================================================
+
+Keep the existing AI Assistant robot.
+
+Do NOT replace the robot asset.
+
+Do NOT change its functionality.
+
+Move the AI Assistant slightly downward so that it sits naturally above the Get Help Now button.
+
+The robot should visually overlap/attach to the upper edge area of the Get Help Now component.
+
+Target composition:
+
+        AI ASSISTANT
+             ↓
+       ┌───────────────┐
+       │  GET HELP NOW │
+       │ Childline...  │
+       └───────────────┘
+
+There should be very little empty space between the robot and the button.
+
+The robot should feel like it is presenting/holding the Get Help Now action.
+
+==================================================
+3. REMOVE THE LARGE GAP
+==================================================
+
+This is the MOST IMPORTANT change.
+
+Remove the excessive vertical gap between:
+
+AI Assistant
+and
+Get Help Now.
+
+Do NOT solve this by moving the entire section randomly.
+
+Inspect the existing CSS/layout and find what is causing the gap.
+
+Check:
+
+- margin
+- padding
+- bottom/top positioning
+- flex gap
+- absolute positioning
+- transform
+- fixed positioning
+- container height
+- responsive spacing
+
+Reduce the spacing to approximately:
+
+8px–20px
+
+depending on the robot's visual size.
+
+The robot and button should visually feel connected.
+
+==================================================
+4. GET HELP NOW — REDESIGN
+==================================================
+
+Make the Get Help Now component smaller and more elegant.
+
+The current button is too large.
+
+Reduce:
+
+- width
+- height
+- padding
+- icon size
+- heading size
+- secondary text size
+
+Do NOT make it tiny.
+
+It should remain clearly readable and accessible.
+
+Recommended desktop target:
+
+Width: approximately 280–320px
+Height: approximately 90–110px
+
+Adjust naturally based on the existing layout.
+
+==================================================
+5. NEW GET HELP DESIGN
+==================================================
+
+Create a more polished compact safety card.
+
+Use:
+
+- red/coral gradient background
+- soft rounded corners
+- subtle shadow
+- small white shield icon
+- strong white "Get Help Now" heading
+- smaller emergency information below
+
+Structure:
+
+┌─────────────────────────────────────┐
+│  🛡   Get Help Now                  │
+│      Childline 1098                 │
+│      Cyber Crime 155260             │
+└─────────────────────────────────────┘
+
+Keep the shield icon on the left.
+
+Text should be vertically aligned.
+
+Do NOT make the shield icon huge.
+
+==================================================
+6. TYPOGRAPHY
+==================================================
+
+Heading:
+
+Get Help Now
+
+Use a bold, friendly font consistent with the existing Nyaya Nagri UI.
+
+Target size:
+
+18–22px desktop
+
+Secondary text:
+
+Childline 1098
+Cyber Crime 155260
+
+Target size:
+
+13–15px
+
+Maintain good line-height.
+
+Do not use oversized typography.
+
+==================================================
+7. CARD PROPORTIONS
+==================================================
+
+The button should no longer look like a huge rectangular emergency banner.
+
+Use a compact floating safety card.
+
+Recommended:
+
+border-radius: 20–24px
+
+padding:
+
+14px 18px
+
+Use a subtle shadow.
+
+Avoid excessive glow.
+
+Avoid thick borders.
+
+==================================================
+8. AI ASSISTANT + BUTTON COMPOSITION
+==================================================
+
+Treat these as ONE visual group.
+
+The AI Assistant should be positioned relative to the Get Help Now card rather than independently floating far above it.
+
+Recommended structure:
+
+AI Assistant
+position: absolute;
+bottom: approximately 75–90px;
+
+Get Help Now
+position: absolute;
+bottom: approximately 20–30px;
+
+The exact values must be adapted to the existing viewport/layout.
+
+The important visual result is:
+
+Robot bottom
+      ↓
+8–20px gap
+      ↓
+Get Help Now card
+
+NOT:
+
+Robot
+
+          HUGE GAP
+
+Get Help Now
+
+==================================================
+9. KEEP RIGHT-SIDE ALIGNMENT
+==================================================
+
+Keep the entire group on the lower-right side of the screen.
+
+Use a shared container for both elements if appropriate:
+
+<div className="assistant-help-group">
+    <AI Assistant />
+    <GetHelpButton />
+</div>
+
+This is preferable to independently positioning both elements with unrelated coordinates.
+
+The group should maintain consistent spacing across screen sizes.
+
+==================================================
+10. RESPONSIVE BEHAVIOR
+==================================================
+
+Desktop:
+
+- compact card
+- robot directly above card
+- approximately 8–20px gap
+- right aligned
+- bottom aligned
+
+Tablet:
+
+- slightly smaller robot
+- slightly smaller card
+- same close relationship
+
+Mobile:
+
+- card becomes narrower
+- robot scales down
+- maintain 8–15px spacing
+- do not cover important content
+- keep touch target accessible
+
+Do NOT allow the robot to move to the top of the screen.
+
+==================================================
+11. IMPORTANT — PREVENT THE ROBOT FROM "FLYING UP"
+==================================================
+
+The current issue shows the AI Assistant appearing too high above the Get Help button.
+
+Fix the positioning architecture.
+
+Do NOT use arbitrary viewport coordinates like:
+
+top: 20%;
+top: 30%;
+top: 40%;
+
+for the assistant.
+
+Instead anchor the assistant to the same bottom-right container as Get Help Now.
+
+For example:
+
+assistant-help-group:
+    position: fixed;
+    right: appropriate;
+    bottom: appropriate;
+
+AI Assistant:
+    position: relative;
+
+Get Help:
+    position: relative;
+
+Then control the vertical spacing using flex layout:
+
+display: flex;
+flex-direction: column;
+align-items: flex-end;
+gap: 8px;
+
+This keeps both elements together.
+
+==================================================
+12. Z-INDEX
+==================================================
+
+The group should remain above the game world.
+
+Use a sensible z-index.
+
+Make sure:
+
+- robot is visible
+- button is clickable
+- neither gets hidden behind buildings
+- neither interferes with the Map
+- neither interferes with bottom navigation
+
+==================================================
+13. DO NOT CHANGE FUNCTIONALITY
+==================================================
+
+Keep:
+
+- AI Assistant click behavior
+- AI chat
+- Gemini/API integration
+- voice input
+- voice output
+- TTS
+- assistant animations
+- Get Help Now click behavior
+- emergency information
+- existing routing
+
+This is a visual/layout change only.
+
+==================================================
+14. DO NOT CHANGE OTHER UI
+==================================================
+
+Do NOT modify:
+
+- Nyaya Nagri logo
+- player profile
+- About
+- Settings
+- Map
+- courthouse
+- buildings
+- portals
+- player character
+- sky balloon
+- ENTER button
+- tagline
+- bottom navigation
+- map boundary
+- game movement
+
+Only modify:
+
+AI Assistant
++
+Get Help Now
+
+==================================================
+15. FINAL VISUAL TARGET
+==================================================
+
+The final result should look like a single compact safety/assistant widget:
+
+            AI ROBOT
+          👋
+        ┌───────────────┐
+        │ 🛡 Get Help   │
+        │   Now         │
+        │ Childline...  │
+        │ Cyber Crime.. │
+        └───────────────┘
+
+The robot should be close enough to the card that they visually belong together.
+
+There should be NO large empty gap.
+
+The Get Help Now card should be significantly smaller than the current version.
+
+The overall result should feel:
+
+- compact
+- friendly
+- polished
+- premium
+- child-friendly
+- trustworthy
+- visually balanced
+
+==================================================
+16. FINAL VERIFICATION
+==================================================
+
+Before finishing, verify:
+
+✓ AI Assistant is not too high
+✓ AI Assistant is close to Get Help Now
+✓ Gap is approximately 8–20px
+✓ Get Help Now is smaller
+✓ Text remains readable
+✓ Shield icon remains visible
+✓ Robot is fully visible
+✓ Robot is not cropped
+✓ Group is aligned bottom-right
+✓ No overlap with important UI
+✓ Desktop works
+✓ Tablet works
+✓ Mobile works
+✓ AI functionality still works
+✓ Get Help functionality still works
+✓ No other homepage UI was changed
+
+IMPORTANT:
+Do not generate a new image.
+Do not replace the existing robot asset.
+Do not redesign the entire page.
+
+Only improve the existing AI Assistant + Get Help Now composition and make it compact, connected, and visually polished.

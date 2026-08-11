@@ -1,0 +1,156 @@
+Update the existing Nyaya Nagri homepage according to the following requirements.
+
+IMPORTANT:
+Do not redesign the page.
+Do not change the background image, character, buildings, portals, logo, header, sky balloon, help button, colors, typography, or any other existing UI element.
+
+ONLY modify the main CTA button.
+
+### 1. Change Button Text
+
+Current text:
+"ENTER NYAYA NAGRI"
+
+Change it to:
+"ENTER"
+
+Keep the existing right-arrow icon (→) beside the text.
+
+Final appearance:
+ENTER →
+
+### 2. Make the Button Smaller
+
+The current CTA button is too large.
+
+Reduce its:
+- width
+- height
+- horizontal padding
+- vertical padding
+- font size slightly
+
+Make it a compact pill-shaped CTA.
+
+It should still be clearly visible and clickable, but should no longer dominate the center of the screen.
+
+Suggested desktop size:
+- width: approximately 140–180px
+- height: approximately 50–60px
+- border-radius: 9999px
+
+Do not make it extremely small.
+
+### 3. Move the Button Down
+
+Move the button slightly downward from its current position.
+
+The button must be positioned BELOW the Lady Justice statue.
+
+Desired visual hierarchy:
+
+        COURTHOUSE
+            ↓
+       LADY JUSTICE
+            ↓
+        ENTER →
+
+The button should sit on the central pathway underneath the statue/base.
+
+Keep the button horizontally centered with the statue and central courthouse.
+
+Do NOT move the statue.
+
+Do NOT move the courthouse.
+
+Do NOT move the background.
+
+Only reposition the CTA button.
+
+### 4. Preserve Existing Styling
+
+Keep the existing orange CTA styling.
+
+Maintain:
+- orange gradient/background
+- white text
+- white arrow icon
+- existing font family
+- subtle border/shadow if already present
+- pill-shaped rounded corners
+- hover effect
+- click functionality
+
+Only adjust the size and position.
+
+### 5. Responsive Behavior
+
+Make sure the new button position works correctly on:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+On desktop:
+- Button should appear clearly below the statue.
+- Keep it centered on the central pathway.
+
+On tablet:
+- Scale the button down slightly if required.
+- Keep it centered below the statue.
+
+On mobile:
+- Keep the button visible and accessible.
+- Do not allow it to overlap the statue, character, portals, or other important UI.
+- Maintain appropriate spacing.
+
+### 6. Implementation Rules
+
+First inspect the existing code and locate the component containing:
+
+"ENTER NYAYA NAGRI"
+
+Modify only the necessary JSX/HTML and CSS/Tailwind classes.
+
+Reuse the existing classes and styling wherever possible.
+
+Do NOT create a new design system.
+Do NOT install new dependencies.
+Do NOT modify unrelated components.
+
+If the button currently uses absolute positioning, adjust only its positioning values.
+
+Prefer responsive CSS/Tailwind positioning instead of hardcoded pixel values that only work on one screen size.
+
+### 7. Functionality
+
+The button must continue performing exactly the same action it currently performs.
+
+Do not change:
+- routing
+- navigation
+- click handlers
+- state
+- authentication
+- animations
+- other functionality
+
+Only change:
+1. Text → "ENTER"
+2. Button size → smaller
+3. Position → slightly lower, directly below Lady Justice statue
+
+### Final Result
+
+The final homepage should look visually identical to the current design except for this change:
+
+Before:
+[large] ENTER NYAYA NAGRI →
+
+After:
+[smaller] ENTER →
+
+The smaller ENTER button should be centered on the main pathway, positioned slightly below the Lady Justice statue.
+
+After implementation, test the page at desktop, tablet, and mobile widths and make sure the CTA remains centered, visible, responsive, and functional.

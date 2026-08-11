@@ -67,8 +67,16 @@ check(
 );
 
 console.log('— robot assistant (AvatarWidget → Nyaya AI) —');
-check('robot image asset used directly', widget.includes("assistant-bot.png"));
-check('robot art not recreated: <img> used', widget.includes('<img') && widget.includes('assistantBotIcon'));
+check(
+  'robot image asset used directly (mascot + circular head badge)',
+  widget.includes('assistant-robot.webp') && widget.includes('assistant-robot-face.webp'),
+);
+check(
+  'robot art not recreated: <img> used',
+  widget.includes('<img') &&
+    widget.includes('src={assistantRobotArt}') &&
+    widget.includes('src={assistantFaceIcon}'),
+);
 check('Gemini route wired (useNyayaAiChat)', widget.includes('useNyayaAiChat'));
 check('game context sent', widget.includes('gameContext: buildGameContext()'));
 check('history sent (rolling, capped to server window)', widget.includes('.slice(-8)'));
@@ -257,8 +265,11 @@ check(
 console.log('— mounts: robot is the ONLY floating assistant —');
 check('HUD mounts AvatarWidget (onboarded-gated)', hud.includes('{onboarded && <AvatarWidget />}'));
 check('HUD has exactly one assistant mount', (hud.match(/<AvatarWidget \/>/g) ?? []).length === 1);
-check('Home mounts AvatarWidget (reachable pre-game)', home.includes('<AvatarWidget />'));
-check('Home has exactly one assistant mount', (home.match(/<AvatarWidget \/>/g) ?? []).length === 1);
+// Aug 2026 home redesign: Home passes the optional faceSize prop (the
+// reference paints the robot bigger on the landing screen), so the mount
+// check tolerates props — still exactly ONE assistant mount.
+check('Home mounts AvatarWidget (reachable pre-game)', /<AvatarWidget[\s/>]/.test(home));
+check('Home has exactly one assistant mount', (home.match(/<AvatarWidget[\s/>]/g) ?? []).length === 1);
 check('Get Help Now untouched in HUD (HelpDialog present)', hud.includes('<HelpDialog'));
 
 console.log('— i18n contract —');

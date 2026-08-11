@@ -36,12 +36,20 @@ import {
   toUnit,
 } from './const';
 import {
+  DEBUG_MAP_BOUNDARY,
+  MAP_CENTER,
+  MAP_RADIUS,
+  clampToMapBoundary,
+} from './boundary';
+import {
   MonumentHandle,
   applyMonumentState,
   createMonument,
   setMonumentLabel,
 } from './monuments';
-import { buildRoads } from './roads';
+import { buildRoads, laneSegments } from './roads';
+import { buildScatter } from './scatter';
+import { PLAZA_RX } from './plazaGeom';
 import { settingsStore } from '@/data/settingsStore';
 import { getStrings } from '@/i18n/strings';
 import {
@@ -171,6 +179,17 @@ export class WorldScene extends Phaser.Scene {
     this.setupCamera();
     this.setupInput();
 
+    // Dev-only boundary visual — spec: the production UI must NEVER show
+    // the ring; DEBUG_MAP_BOUNDARY ships false, and the draw is further
+    // fenced behind import.meta.env.DEV as a second lock.
+    if (DEBUG_MAP_BOUNDARY && import.meta.env.DEV) {
+      this.add
+        .graphics()
+        .lineStyle(3, 0xff4444, 0.85)
+        .strokeCircle(px(MAP_CENTER.x), px(MAP_CENTER.z), MAP_RADIUS * U)
+        .setDepth(999);
+    }
+
     // Zone lock states now + on every progress change (zone completion,
     // avatar edits...). Same data source as the 3D world: getZoneStates().
     this.applyZoneStates();
@@ -210,6 +229,24 @@ export class WorldScene extends Phaser.Scene {
     this.add
       .rectangle(WORLD_PX / 2, WORLD_PX / 2, WORLD_PX, WORLD_PX, GRASS_BASE)
       .setDepth(0);
+    // Painterly blade texture over the ENTIRE 80x80 meadow (terrain-polish
+    // task, Aug 2026): ONE seamless tile as a single TileSprite — a pattern
+    // fill, zero per-blade objects — so no camera position can reach flat
+    // CSS-green ground. The tile's mean tone is magick-matched to
+    // GRASS_BASE and its contrast kept quiet, so the village plate's baked
+    // fade (-> #87ae2d) keeps dissolving invisibly where it lands on top.
+    this.add
+      .tileSprite(WORLD_PX / 2, WORLD_PX / 2, WORLD_PX, WORLD_PX, 'grass-tile')
+      .setDepth(0.12);
+    // Second pass of the SAME tile at an incommensurate scale (x1.41) and
+    // half alpha: the two periods (12.8u vs ~18u) never line up, so the
+    // tile's recognisable micro-features (dirt dashes) stop reading as a
+    // repeating grid. Mean tone is identical, so the blend shifts nothing.
+    this.add
+      .tileSprite(WORLD_PX / 2, WORLD_PX / 2, WORLD_PX, WORLD_PX, 'grass-tile')
+      .setTileScale(1.41)
+      .setAlpha(0.45)
+      .setDepth(0.13);
     // The painterly meadow plate from the reference round (1024px art at
     // 2x) carries the village core; its edges fade into GRASS_BASE.
     this.add
@@ -224,6 +261,15 @@ export class WorldScene extends Phaser.Scene {
       [-10, 32, 11, 7, GRASS_LIGHT, 0.28], [14, 34, 8, 5, GRASS_DARK, 0.2],
       [0, -36, 12, 6, GRASS_LIGHT, 0.26], [-36, -8, 7, 5, GRASS_LIGHT, 0.28],
       [36, -2, 7, 5, GRASS_DARK, 0.2],
+      // Terrain-polish task: the south strip + far corners previously had
+      // no low-frequency variation at all — same soft language, no new one.
+      [24, 26, 9, 6, GRASS_DARK, 0.16], [-20, 30, 10, 6, GRASS_LIGHT, 0.22],
+      [34, 33, 7, 5, GRASS_LIGHT, 0.24], [-34, 34, 8, 5, GRASS_DARK, 0.16],
+      [8, 22, 7, 4.5, GRASS_DARK, 0.14],
+      // ...and patches STRADDLING the plate's south fade edge (z≈20), so
+      // the plate-art -> tile texture hand-off hides inside them.
+      [16, 20, 10, 5, GRASS_DARK, 0.13], [33, 19, 8, 4.5, GRASS_LIGHT, 0.18],
+      [-16, 20, 9, 5, GRASS_LIGHT, 0.16], [-33, 20, 7, 4, GRASS_DARK, 0.12],
     ];
     for (const [ux, uz, rx, rz, color, alpha] of patches) {
       g.fillStyle(color, alpha);
@@ -329,6 +375,33 @@ export class WorldScene extends Phaser.Scene {
         .image(px(ux), px(uz), i % 2 ? 'decor-flowers-b' : 'decor-flowers-a')
         .setDepth(5.5)
         .setAlpha(0.95);
+    });
+
+    // Terrain-polish task (Aug 2026): the deterministic meadow field —
+    // flower clumps, tufts, bushes, occasional rocks — over the whole
+    // 80x80 world. Exclusion geometry is assembled HERE (scatter.ts stays
+    // data-in / Phaser-value-free): lane chords from roads.ts (derived,
+    // can't drift), a generous disc per zone monument (largest art is
+    // 200x270 px ≈ 5x6.75u + label pill → r 5.5 centred a bit north),
+    // plaza rim + spawn + river rect + every hand-placed decor above.
+    buildScatter(this, {
+      lanes: laneSegments(),
+      discs: [
+        // Tree disc = actual canopy half-extent (art ≤215px ≈ 2.7u * s);
+        // the candidate's own footprint is added inside scatter.ts.
+        ...[...BORDER_TREES, ...INNER_TREES].map(
+          ([ux, uz, s]) => [ux, uz, 2.7 * s] as [number, number, number],
+        ),
+        ...props.map(([, ux, uz]) => [ux, uz, 1.8] as [number, number, number]),
+        ...FLOWER_PATCHES.map(([ux, uz]) => [ux, uz, 1.4] as [number, number, number]),
+        ...HOUSES.map(([ux, uz]) => [ux, uz, 3.4] as [number, number, number]),
+        ...ZONES.map(
+          (z) => [z.position[0], z.position[1] - 3, 5.5] as [number, number, number],
+        ),
+        [PLAZA.x, PLAZA.z, PLAZA_RX + 1.6],
+        [0, 0, 3.5], // spawn stays open
+      ],
+      rects: [[-21.5, -2, 6.4, 9.2]], // river + bridge, with buffer
     });
   }
 
@@ -585,6 +658,44 @@ export class WorldScene extends Phaser.Scene {
       }
     } else {
       body.setVelocity(0, 0);
+    }
+
+    // 2b. Invisible ring boundary (Aug 2026) — TWO locks, both on the
+    // Arcade BODY CENTRE (the 0.5u collision circle — the point physics
+    // actually moves), never rendered (spec):
+    //
+    //  (a) POST-PHYSICS authority: scene.update() runs after this frame's
+    //      Arcade step, so monument-collider separation that nudged the
+    //      circle past the ring (zone1: 17u anchor + 2.3u collider + 0.5u
+    //      body = 19.8u > 19.5u effective) is pulled back BEFORE the
+    //      postupdate sprite sync — a sub-0.35u correction, invisible;
+    //      velocity is left alone so contact never stutters.
+    //  (b) PRE-STEP re-aim: the next integration's proposed centre is
+    //      projected onto the disc and the velocity re-aimed at it, so
+    //      the step itself cannot land outside. ONE check covers keys,
+    //      joystick, and diagonals — every input funnels into this
+    //      velocity. dt is bounded (tab-resume deltaMs spikes must not
+    //      predict a leap) and non-finite-guarded (no NaN velocity).
+    {
+      const back = clampToMapBoundary(toUnit(body.center.x), toUnit(body.center.y));
+      if (back.clamped) {
+        body.position.x += px(back.x) - body.center.x;
+        body.position.y += px(back.z) - body.center.y;
+        body.updateCenter();
+      }
+      const dt = Number.isFinite(deltaMs) ? Math.min(deltaMs, 100) / 1000 : 0;
+      if (dt > 0 && (body.velocity.x !== 0 || body.velocity.y !== 0)) {
+        const ahead = clampToMapBoundary(
+          toUnit(body.center.x + body.velocity.x * dt),
+          toUnit(body.center.y + body.velocity.y * dt),
+        );
+        if (ahead.clamped) {
+          body.setVelocity(
+            (px(ahead.x) - body.center.x) / dt,
+            (px(ahead.z) - body.center.y) / dt,
+          );
+        }
+      }
     }
     this.setPuppetFrame(lenSq > 0, deltaMs / 1000);
 

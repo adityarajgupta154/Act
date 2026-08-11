@@ -1,37 +1,37 @@
 ---
 name: Nyaya Nagri home screen artwork
-description: Where the 2D landing screen's art comes from (user-supplied, used verbatim), which screen bands overlays may occupy, and the text-baking recipe kept for emergencies.
+description: Where the 2D landing screen's art comes from (user-supplied, used verbatim), the double-rollback history that locks the current design, overlay rules, and the text-baking/cutout recipes kept for emergencies.
 ---
 
-## Source of the artwork (current rule)
-The home backdrop and the guide boy are the USER'S OWN supplied illustrations, used **verbatim**: one city painting as the background layer and one transparent boy sprite as a CSS-positioned foreground layer (never flattened into the background, so his scale/position stay tunable per breakpoint).
+## Source of the artwork (current rule — ORIGINAL plate, restored Aug 11, 2026)
+The home backdrop is the ORIGINAL committed trio, exactly as in git history ("Published your App" era):
+- `home-city.webp` (1537×1023) — palace with painted "KNOW YOUR RIGHTS" banner, Lady Justice, zone buildings + signage, Indian flag, waterfall, distant castles. Rendered as ONE `object-cover` image with `object-[50%_12%]` bias (keeps dome + flag when 16:9 crops).
+- `guide-boy.webp` — SEPARATE transparent sprite, md+ only, `bottom-[3%] left-[10%] h-[54vh]` (lg 56, xl 58). Never flattened into the plate.
+- `home-blimp.webp` — "Nyaya Nagri" airship cutout, md+ only, STATIC at its `left-[68%] top-[10%] w-[13.5%]` anchor. The Aug 2026 drift/float animation was REMOVED on explicit user order (Aug 11, 2026, "isko static hi rehne do") — do not re-animate it unless asked.
+Chrome (logo+tagline top-left, About/Settings pills, ENTER at ~67dvh, robot AI widget, Get Help Now card) is real DOM. There is NO player-profile chip, NO map card, NO bottom quick-nav pill on Home in this design.
+- Assistant + Get Help Now = ONE compact floating group (user spec, Aug 11, 2026): a single bottom-right flex-col items-end container with an 8–10px gap, robot directly above a compact card (rounded-[22px], red→rose gradient, md:min-w-[280px], no full-width mobile bar, no arcade bevel). Never re-spread them with independent viewport coordinates.
 
-Extra elements the user shows only in a REFERENCE COMPOSITE (e.g. the "Nyaya Nagri" airship) are sourced by CROPPING that reference + `removeImageBackground`, kept as separate static sprites — still their pixels, never generated art. The airship and boy are decorative (`aria-hidden`, hidden below `md`).
+## Rollback history — the design is LOCKED to the original (Aug 11, 2026)
+One day saw two full user-ordered rollbacks: (1) reference-mock redesign (v2/v3 chrome-erased plates, extra home chrome: player chip, map card, bottom nav) → (2) uploaded map1.jpeg swap + 3:2 `object-contain` desktop rule → user demanded "FULLY UNDO… pura undo karo pehle ki tarah" back to the ORIGINAL. Everything era-B/map1 was reverted; v2/v3/map1 assets deleted (reference uploads survive in `attached_assets/`). The restore was a clean `git checkout HEAD -- src/home/` because index.css had already been reverted to HEAD byte-identical.
 
-**Why:** the user iterated twice on agent-generated city plates, then supplied their own final art with an explicit "DO NOT RECREATE THE ARTWORK — do not generate alternative buildings or another character" brief. Regenerating or repainting their art is a spec violation, not an improvement.
+**Why:** home art direction proved volatile — two redesigns were approved-then-rejected same day. The committed/published design is the user's real preference.
 
-**How to apply:** for any future home-screen visual request, change CSS (crop bias, position, scale, overlay placement) — not the pixels. Only bake/repaint if the user asks for it in that request.
+**How to apply:** never re-introduce the v2/v3 plates, map1, the contain rule, or the extra home chrome (player chip / map card / bottom nav) unless a NEW explicit request asks; for visual tweaks change CSS, not pixels; keep each home change small and precisely documented (commits are sparse — "immediately before" states are otherwise unrecoverable).
 
-## Overlay safe zones under `object-cover`
-The painted zone signboards land at roughly **40–48% of viewport height** on every wide desktop size, and that stays stable across 1280/1440/1920 because `object-cover` scales by width and the crop bias is proportional. Keep HTML overlays out of that band on the left half; the CTA cluster stays below it (plaza).
-
-**Welcome bubble: REMOVED for good (Aug 9, 2026).** The user deleted it twice — once even after their own pixel-match reference reinstated it. Do NOT reintroduce it (or new left-side overlays) unless explicitly asked; if it ever returns, the safe slots are above the sign band (sky) or beside the boy with top edge ≤ ~52vh.
-
-Vertical crop bias: `object-[50%_12%]` protects the dome + its little flag (top edge of painting) on 16:9 — the sacrificed strip is bottom cobblestones that the UI column covers anyway. Don't raise Y past ~16% or the flag clips at 1920×1080.
-
-**How to apply:** predict before screenshotting — displayed height = viewportWidth ÷ imageAspect; topOffset = (displayedHeight − viewportHeight) × objectPositionY; screenY = (sourceY × scale − topOffset) ÷ viewportHeight.
+## Overlay rules
+- **Welcome bubble: REMOVED for good (Aug 9, 2026).** Deleted twice by the user. Do NOT reintroduce it or new left-side overlays unless explicitly asked.
+- Keep HTML overlays clear of the plate's painted signboard band; verify per plate with desktop+tablet+mobile screenshots. Predict before screenshotting: displayedHeight = viewportWidth ÷ imageAspect; topOffset = (displayedHeight − viewportHeight) × objectPositionY; screenY = (sourceY × scale − topOffset) ÷ viewportHeight.
+- Below `md` the boy sprite and blimp are hidden by design (stacked mobile UI fills that space) — do not "fix" their absence on phones.
 
 ## Signage language tradeoff
-The supplied artwork has English zone signage painted in, so Hindi mode shows English signs while all UI chrome still translates. Accepted deliberately because the brief forbids modifying the artwork. Revisit only on request — then use the baking recipe below.
+The artwork has English signage painted in, so Hindi mode shows English signs while all UI chrome translates. Accepted deliberately: the brief forbids modifying the artwork. Revisit only on request — then use the baking recipe below.
 
 ## Baking text onto a plate (only if asked)
 - EN labels: ImageMagick `caption:` auto-fits to a box. HI labels **must** use `pango:` — `caption:` does no Devanagari shaping (conjuncts/matras break). Render big via pango → `-trim` → resize into the box.
 - Fonts: Baloo 2 (Devanagari + Latin) installed in `~/.fonts` + `fc-cache -f`; Fredoka has no Devanagari. `magick` text draws need an explicit `-font` or they error.
 - Shadow/emboss offset must scale with box height (≈ h/18, min 2px); a fixed 3–4px offset makes small plaques look doubled.
 - Locate blank plaques programmatically (flood-fill from the dominant colour inside a search window) instead of eyeballing coordinates.
-
-## Mobile boy decision
-The redesign spec's "keep fully visible" list = logo / welcome / central visual / Enter / Get Help — the boy is NOT on it. He is `hidden md:block` deliberately (below md he is an unreadable sliver behind the full-width UI column, and showing him forces the text overlap the spec forbids). An architect review once flagged this as a spec violation; the spec text says otherwise — keep the decision.
+- Clone-patching chrome out of a painting: feather F≥18 in flat grass + sources checked against subjects, or seams read as rectangles at full size.
 
 ## Container image-tooling quirks
 - `generateImage` is prompt-only here (no input-image editing/inpainting) — you cannot AI-erase or restyle an existing reference image.
@@ -49,4 +49,4 @@ Locating baked-in UI to erase (padlocks, labels): color-mask connected component
 - Baked-in UI floating over WATER: clone-patch with dense low-feather horizontal water bands — ghost gone; slight stylized wave banding is the accepted cost.
 
 ## Decorative motion on Home = CSS keyframes, never framer-motion
-framer-motion sits in package.json (workspace catalog) but has ZERO imports in src — the project's animation system is CSS keyframes in index.css, and the Home brief mandates pure HTML/CSS. **Why:** task specs that say "use framer if installed" are outranked by their own "reuse the existing system first" clause, and importing it would ship ~35KB JS to the landing for decoration. **How to apply:** animate home sprites by keeping the wrapper's original CSS anchors and translating via calc(-<anchor>vw - 110%) → past-100vw keyframes — reduced-motion (animation:none) then automatically restores the exact static composition.
+framer-motion sits in package.json (workspace catalog) but has ZERO imports in src — the project's animation system is CSS keyframes in index.css, and the Home brief mandates pure HTML/CSS. **Why:** task specs that say "use framer if installed" are outranked by their own "reuse the existing system first" clause, and importing it would ship ~35KB JS to the landing for decoration. **How to apply:** if home decoration is ever animated again, keep the wrapper's original CSS anchors and translate via calc(-<anchor>vw - 110%) → past-100vw keyframes — reduced-motion (animation:none) then automatically restores the exact static composition. Note: the blimp's drift built this way was later removed on user order (static preferred); the recipe stays valid for future asks.

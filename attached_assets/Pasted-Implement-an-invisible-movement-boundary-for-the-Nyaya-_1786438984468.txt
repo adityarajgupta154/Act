@@ -1,0 +1,326 @@
+Implement an invisible movement boundary for the Nyaya Nagri game map.
+
+I have attached a screenshot showing the exact boundary I want. The red line/circle in the screenshot is ONLY a visual reference for the desired playable area.
+
+IMPORTANT:
+DO NOT display the red circle, outline, border, overlay, or any visible boundary in the final UI.
+
+The boundary must be completely invisible to the player.
+
+==================================================
+GOAL
+==================================================
+
+The player character must NEVER be able to move outside the area indicated by the red boundary in the reference image.
+
+The playable zone should cover approximately the same area as the red boundary shown in the screenshot.
+
+The character should be able to freely move:
+
+- Up
+- Down
+- Left
+- Right
+- Diagonally
+
+but movement must stop/clamp when the character reaches the invisible boundary.
+
+==================================================
+1. INSPECT EXISTING MOVEMENT SYSTEM
+==================================================
+
+First inspect the existing project.
+
+Find:
+
+- Player/character component
+- Player position state
+- Keyboard movement
+- Joystick movement
+- Touch controls
+- Mouse controls if present
+- Map/world container
+- Camera movement
+- Map dimensions
+- Existing collision logic
+- Existing movement constraints
+
+DO NOT create a second independent movement system.
+
+Integrate the boundary into the existing player movement logic.
+
+==================================================
+2. CREATE INVISIBLE PLAYABLE ZONE
+==================================================
+
+Use a circular/radial boundary matching the red area in the attached screenshot.
+
+Define:
+
+const MAP_CENTER = {
+  x: ...,
+  y: ...
+};
+
+const MAP_RADIUS = ...;
+
+The exact values must be calculated based on the existing map/world dimensions.
+
+IMPORTANT:
+
+Do NOT use the viewport center as the boundary center unless the existing map is actually centered there.
+
+The boundary must be based on WORLD/MAP coordinates.
+
+==================================================
+3. MOVEMENT VALIDATION
+==================================================
+
+Every time the player attempts to move:
+
+1. Calculate the proposed/new player position.
+2. Calculate its distance from the map center.
+3. Check whether the new position is inside the allowed radius.
+4. If inside → allow movement.
+5. If outside → prevent movement.
+
+Use logic equivalent to:
+
+const dx = newX - MAP_CENTER.x;
+const dy = newY - MAP_CENTER.y;
+
+const distance = Math.sqrt(
+  dx * dx + dy * dy
+);
+
+if (distance <= MAP_RADIUS) {
+  // allow movement
+} else {
+  // block/clamp movement
+}
+
+However, adapt this to the actual coordinate system used by the existing project.
+
+==================================================
+4. DO NOT MAKE MOVEMENT FEEL BLOCKY
+==================================================
+
+Do NOT simply stop the character abruptly if possible.
+
+When the player reaches the boundary:
+
+- smoothly stop movement
+- preserve the valid position
+- prevent the character from crossing the boundary
+
+The player should never visually appear outside the playable zone.
+
+Avoid jittering.
+
+Avoid shaking.
+
+Avoid teleporting.
+
+Avoid snapping the player back a large distance.
+
+==================================================
+5. CHARACTER SIZE / HITBOX
+==================================================
+
+Take the player's visual size into account.
+
+The character's center should not be allowed to reach the exact mathematical edge if that would cause the character's body to visually cross the boundary.
+
+Use a small safety margin:
+
+const PLAYER_BOUNDARY_PADDING = ...;
+
+Effective radius:
+
+const effectiveRadius =
+  MAP_RADIUS - PLAYER_BOUNDARY_PADDING;
+
+This should keep the entire character inside the playable area.
+
+==================================================
+6. JOYSTICK SUPPORT
+==================================================
+
+This is VERY IMPORTANT.
+
+The same boundary must work with the existing virtual joystick.
+
+When the user moves the joystick toward the boundary:
+
+- player moves normally inside the zone
+- player stops at the boundary
+- player cannot cross it
+
+Do not disable the joystick.
+
+Do not change the joystick UI.
+
+Do not change its appearance.
+
+Only constrain the resulting player position.
+
+==================================================
+7. KEYBOARD SUPPORT
+==================================================
+
+If keyboard movement exists, apply the same boundary logic to:
+
+W
+A
+S
+D
+
+and/or:
+
+Arrow Up
+Arrow Down
+Arrow Left
+Arrow Right
+
+The exact same collision/boundary function should be reused.
+
+Do NOT implement separate boundary logic for each key.
+
+==================================================
+8. DIAGONAL MOVEMENT
+==================================================
+
+Make sure diagonal movement also respects the boundary.
+
+For example:
+
+UP + RIGHT
+
+must not allow the player to cross the circular boundary diagonally.
+
+Validate the final proposed position rather than checking only X and Y independently.
+
+==================================================
+9. CAMERA / WORLD MOVEMENT
+==================================================
+
+IMPORTANT:
+
+The boundary applies to the PLAYER'S WORLD POSITION.
+
+It should NOT simply restrict the browser viewport.
+
+If the existing game uses a moving camera:
+
+Player world position
+        ↓
+Boundary validation
+        ↓
+Camera follows player
+
+NOT:
+
+Camera position
+        ↓
+Boundary validation
+
+The player should remain inside the defined playable world regardless of camera movement.
+
+==================================================
+10. EXACT BOUNDARY FROM REFERENCE
+==================================================
+
+Use the attached screenshot to determine the approximate playable area.
+
+The red line indicates the intended limit.
+
+The final invisible boundary should approximately follow that same shape/size.
+
+Do NOT make the playable area significantly smaller.
+
+Do NOT make it significantly larger.
+
+The player should be able to reach all important locations shown inside the red boundary, including:
+
+- central Nyaya Nagri area
+- Right to Childhood
+- School Rights
+- Family & Community
+- Safe Zone
+- Story Adventure
+- Digital Safety
+- other locations contained inside the highlighted zone
+
+==================================================
+11. IMPORTANT LOCATIONS MUST REMAIN REACHABLE
+==================================================
+
+After implementing the boundary, test that the player can reach all major locations inside the intended zone.
+
+Do not accidentally place the boundary over/inside an important location.
+
+The boundary should enclose the entire playable map area shown in the screenshot.
+
+==================================================
+12. INVISIBLE IN FINAL UI
+==================================================
+
+DO NOT render:
+
+- red circle
+- red border
+- dotted boundary
+- translucent circle
+- debug overlay
+- canvas boundary
+- visible collision indicator
+
+The boundary should exist ONLY as code/data.
+
+For development, if you need debugging, make it controlled by a development-only flag such as:
+
+DEBUG_MAP_BOUNDARY = false;
+
+The production UI must have it disabled.
+
+==================================================
+13. REUSABLE FUNCTION
+==================================================
+
+Create a reusable function similar to:
+
+function isInsideMapBoundary(x, y) {
+  const dx = x - MAP_CENTER.x;
+  const dy = y - MAP_CENTER.y;
+
+  return Math.sqrt(dx * dx + dy * dy) <=
+    MAP_RADIUS - PLAYER_BOUNDARY_PADDING;
+}
+
+Then use it inside the existing movement update.
+
+If the project uses vectors:
+
+function isInsideMapBoundary(position) {
+  ...
+}
+
+Adapt the implementation to the existing architecture instead of blindly copying this code.
+
+==================================================
+14. MOVEMENT CLAMPING
+==================================================
+
+Prefer clamping the position to the boundary rather than simply rejecting movement if the movement system supports it.
+
+Conceptually:
+
+proposedPosition
+      ↓
+check boundary
+      ↓
+inside?
+ ┌────┴────┐
+YES        NO
+ ↓          ↓
+move       clamp to edge

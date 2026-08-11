@@ -1,0 +1,19 @@
+kind = "design-system"
+previewPath = "/nyaya-nagri-ds/"
+title = "Nyaya Nagri Design System"
+description = "Kid-friendly civic/legal-literacy design system extracted from the Nyaya Nagri app: warm cream surfaces, orange pill CTAs, navy chrome, Fredoka/Nunito type."
+version = "1.0.0"
+id = "artifacts/nyaya-nagri-ds"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/nyaya-nagri-ds/" ]
+localPort = 25023
+
+[services.development]
+run = "pnpm --filter @workspace/nyaya-nagri-ds run dev"
+
+[services.env]
+PORT = "25023"
+BASE_PATH = "/nyaya-nagri-ds/"

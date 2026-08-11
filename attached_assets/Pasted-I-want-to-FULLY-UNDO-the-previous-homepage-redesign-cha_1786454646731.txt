@@ -1,0 +1,253 @@
+I want to FULLY UNDO the previous homepage redesign changes.
+
+IMPORTANT:
+Restore the Nyaya Nagri homepage to the EXACT UI/design/state it had BEFORE the previous redesign prompt was implemented.
+
+Do NOT create a new design.
+Do NOT redesign anything.
+Do NOT improve anything.
+Do NOT make it "similar" to the old design.
+
+I want the PREVIOUS VERSION restored.
+
+==================================================
+1. ROLLBACK THE PREVIOUS REDESIGN
+==================================================
+
+The last redesign changed the homepage layout, scale, background composition, UI positioning, and visual hierarchy.
+
+FULLY REVERT those changes.
+
+Restore the homepage to the version that existed immediately BEFORE the previous redesign prompt.
+
+If the project has Git/version history, use the previous working version/commit if available.
+
+If Git history is not available, inspect the current code and reverse ONLY the changes introduced by the previous redesign.
+
+==================================================
+2. RESTORE ORIGINAL HOMEPAGE
+==================================================
+
+Restore the previous Nyaya Nagri homepage exactly as it was.
+
+Restore:
+
+- original background/world composition
+- original background positioning
+- original world scale
+- original courthouse size
+- original Lady Justice position
+- original buildings positions
+- original player character position
+- original sky balloon position
+- original AI Assistant position
+- original Get Help Now position
+- original ENTER button position
+- original tagline
+- original logo position
+- original player profile
+- original About button
+- original Settings button
+- original Map
+- original bottom navigation
+- original spacing
+- original sizing
+- original responsive behavior
+
+Do NOT use the latest redesigned screenshot as the target.
+
+The target is the version that existed BEFORE the previous redesign prompt.
+
+==================================================
+3. REMOVE REDESIGN-ONLY CHANGES
+==================================================
+
+Find CSS/components/layout changes that were introduced specifically for the redesign.
+
+Revert things such as:
+
+- new positioning rules
+- new scaling rules
+- new spacing
+- new card sizes
+- new layout containers
+- new background composition
+- new responsive rules
+- new UI hierarchy
+- new CTA positioning
+- new environment positioning
+- new asset layering
+
+Do not remove functionality that existed before.
+
+==================================================
+4. BACKGROUND
+==================================================
+
+Restore the ORIGINAL background implementation.
+
+IMPORTANT:
+
+Do NOT use the current redesigned background composition.
+
+Do NOT recreate the latest screenshot.
+
+Do NOT add new background layers.
+
+Do NOT add blur.
+
+Do NOT add rectangular image patches.
+
+Do NOT add new terrain layers.
+
+Simply restore the previous working background implementation that existed before the redesign.
+
+==================================================
+5. UI
+==================================================
+
+Restore the previous UI exactly.
+
+Especially restore:
+
+- Nyaya Nagri logo/card
+- Aditya / Player Rank 7 card
+- About
+- Settings
+- Map
+- ENTER button
+- tagline
+- AI Assistant
+- Get Help Now
+- Learn Rights
+- Help Others
+- Earn Badges
+
+Do not change their design or position unless that was already present before the redesign.
+
+==================================================
+6. AI ASSISTANT
+==================================================
+
+Keep the current AI Assistant functionality intact.
+
+Do NOT modify:
+
+- AI API
+- Gemini integration
+- chat logic
+- TTS
+- voice input
+- voice output
+- assistant state
+- assistant interactions
+
+Only restore its PREVIOUS visual position/size if the redesign changed them.
+
+==================================================
+7. GET HELP NOW
+==================================================
+
+Keep all existing functionality.
+
+Restore its previous:
+
+- position
+- size
+- spacing
+- styling
+- relationship with the AI Assistant
+
+Do not redesign it.
+
+==================================================
+8. FUNCTIONALITY MUST REMAIN INTACT
+==================================================
+
+Do NOT break:
+
+- navigation
+- routing
+- map
+- player movement
+- portals
+- story adventure
+- AI Assistant
+- TTS
+- voice
+- settings
+- About
+- Get Help Now
+- bottom navigation
+- animations
+
+This is a VISUAL ROLLBACK ONLY.
+
+==================================================
+9. DO NOT MAKE ASSUMPTIONS
+==================================================
+
+Do not interpret "restore previous UI" as:
+
+"make something similar to the old UI."
+
+I need the exact previous implementation wherever possible.
+
+Check:
+
+- Git history
+- previous component versions
+- previous CSS
+- previous asset positioning
+- previous responsive styles
+- previous background implementation
+
+Use the most recent working version BEFORE the redesign.
+
+==================================================
+10. IMPORTANT — DO NOT TOUCH OTHER WORK
+==================================================
+
+Only revert the homepage redesign changes.
+
+Do NOT rollback unrelated work that was done before or after the redesign.
+
+Preserve:
+
+- invisible map boundary implementation
+- AI Assistant asset changes
+- TTS/API fixes
+- other existing functionality
+
+ONLY revert the homepage visual redesign changes.
+
+==================================================
+11. FINAL CHECK
+==================================================
+
+After rollback, verify:
+
+✓ Homepage looks like the version BEFORE the redesign
+✓ Original background is restored
+✓ Original scale is restored
+✓ Original building positions are restored
+✓ Original character position is restored
+✓ Original UI positions are restored
+✓ Original ENTER button is restored
+✓ Original AI Assistant placement is restored
+✓ Original Get Help placement is restored
+✓ Original Map placement is restored
+✓ Original bottom navigation is restored
+✓ No new redesign elements remain
+✓ No redesigned background remains
+✓ No unrelated functionality is broken
+
+IMPORTANT:
+
+DO NOT redesign the homepage again.
+
+DO NOT use the current screenshot as a design reference.
+
+The goal is to return the project to the exact visual state it had BEFORE the previous homepage redesign prompt was applied.
+
+Before making changes, inspect the project history/code to determine what the previous version looked like, then restore that version.

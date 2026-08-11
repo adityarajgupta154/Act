@@ -54,23 +54,29 @@ export function HelpDialog({ variant = 'pill' }: { variant?: 'pill' | 'card' } =
         ) : (
           <button
             className={cn(
-              'pointer-events-auto flex w-full items-center justify-center gap-3 rounded-2xl md:w-auto',
-              'bg-gradient-to-b from-red-500 to-red-600 text-white px-4 py-2.5 md:px-5 md:py-3',
-              'ring-2 ring-white/40 border-b-4 border-red-800 shadow-[0_14px_28px_-12px_rgba(127,29,29,0.9)]',
-              'transition-all duration-150 hover:to-red-500 active:translate-y-0.5 active:border-b-2 touch-manipulation',
+              // Compact floating safety card (Aug 2026 compact-widget spec):
+              // forms ONE visual group with the Nyaya AI robot sitting
+              // directly above it. Deliberately smaller and calmer than the
+              // old banner — soft red/coral gradient, 22px radius, subtle
+              // shadow, small shield chip; no thick borders or arcade bevel.
+              'pointer-events-auto flex items-center gap-3 rounded-[22px] text-left',
+              'bg-gradient-to-br from-red-500 to-rose-600 text-white px-[18px] py-3.5',
+              'shadow-[0_10px_24px_-10px_rgba(127,29,29,0.55)]',
+              'transition-all duration-150 hover:from-red-400 hover:to-rose-500 active:scale-[0.98] touch-manipulation',
+              'md:min-w-[280px]',
               helpPulse && 'animate-pulse ring-4 ring-red-400/60'
             )}
             aria-label={t.getHelpNow}
           >
-            <span className="bg-white/20 rounded-full p-2 shrink-0 xl:p-2.5">
-              <ShieldAlert className="w-6 h-6 md:w-7 md:h-7 xl:w-8 xl:h-8" />
+            <span className="bg-white/20 rounded-full p-2 shrink-0">
+              <ShieldAlert className="w-5 h-5 md:w-6 md:h-6" aria-hidden />
             </span>
-            <span className="flex flex-col items-start text-left leading-tight">
-              <span className="font-display font-bold text-base md:text-lg xl:text-2xl">{t.getHelpNow}</span>
+            <span className="flex flex-col items-start leading-tight">
+              <span className="font-display font-bold text-lg md:text-xl">{t.getHelpNow}</span>
               {/* Canonical service names + numbers, identical in every
                   language (PRD §9): they are what a child reads out or dials. */}
-              <span className="mt-0.5 text-[11px] md:text-xs font-semibold text-white/95 xl:text-sm">Childline 1098</span>
-              <span className="text-[11px] md:text-xs font-semibold text-white/95 xl:text-sm">Cyber Crime 155260</span>
+              <span className="mt-0.5 text-[13px] md:text-sm font-semibold text-white/95">Childline 1098</span>
+              <span className="text-[13px] md:text-sm font-semibold text-white/95">Cyber Crime 155260</span>
             </span>
           </button>
         )}

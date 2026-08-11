@@ -47,25 +47,13 @@ export function HomeBackground() {
 
       {/* "Nyaya Nagri" airship from the reference composition (IMAGE 4) — a
           cutout of the USER'S OWN reference image (never regenerated art).
-          Aug 2026 animation task: it now DRIFTS slowly LEFT → RIGHT across
-          the whole sky band (~22s linear, exits right, invisibly re-enters
-          from the left, infinite) with a barely-there ~6px / 7s float on
-          the inner img — pure CSS keyframes in index.css. CSS was chosen
-          over framer-motion deliberately: the package is installed but
-          unused anywhere in src (the project's existing animation system
-          IS CSS), and the Home brief mandates pure HTML/CSS. The wrapper
-          keeps the ORIGINAL left/top/width anchors, so reduced-motion
-          (animation: none) shows the exact pre-task static composition.
+          STATIC by explicit user request (Aug 11, 2026): the earlier drift/
+          float animation was removed; the blimp simply sits at its original
+          composition spot in the sky band. Do not re-animate unless asked.
           Still md+ only — the phone composition deliberately has no blimp
-          (brief §14) and this task changes no other UI element. Sky band
-          only (top 10%): its path never nears the ENTER CTA at ~67dvh. */}
-      <div className="hidden md:block pointer-events-none absolute left-[68%] top-[10%] w-[13.5%] home-blimp-drift">
-        <img
-          src={blimp}
-          alt=""
-          draggable={false}
-          className="w-full select-none home-blimp-float"
-        />
+          (brief §14). */}
+      <div className="hidden md:block pointer-events-none absolute left-[68%] top-[10%] w-[13.5%]">
+        <img src={blimp} alt="" draggable={false} className="w-full select-none" />
       </div>
 
       {/* Very light bottom vignette — just enough to seat the CTA cluster on

@@ -1,0 +1,332 @@
+I need you to fix the current Text-to-Speech failure on the Story Adventure slide.
+
+Current error shown in UI:
+
+"Voice load nahi ho paayi. Dobara sunne ke liye tap karein."
+
+IMPORTANT:
+Do NOT change the UI design.
+
+I want to separate the Gemini API configuration for:
+
+1. AI Assistant
+2. Story Slide Text-to-Speech
+
+The AI Assistant must continue using its existing Gemini API key.
+
+The Story Adventure slide TTS must use a SEPARATE Gemini API key that I will provide.
+
+==================================================
+API ARCHITECTURE
+==================================================
+
+Existing:
+
+GEMINI_ASSISTANT_API_KEY
+→ AI Assistant
+
+New:
+
+GEMINI_TTS_API_KEY
+→ Story Slide Text-to-Speech
+
+Do NOT use GEMINI_ASSISTANT_API_KEY for TTS anymore.
+
+Create separate environment variables:
+
+GEMINI_ASSISTANT_API_KEY=existing_key
+
+GEMINI_TTS_API_KEY=new_tts_key
+
+Never hardcode either API key in frontend source code.
+
+Never expose the API keys in browser JavaScript.
+
+Use the existing backend/server-side API architecture to call Gemini securely.
+
+==================================================
+TTS DEBUGGING
+==================================================
+
+Before changing anything, inspect the current TTS implementation.
+
+Find:
+
+- TTS API call
+- Gemini model being used
+- request payload
+- response handling
+- audio/base64 extraction
+- MIME type handling
+- Blob creation
+- Audio object creation
+- play() call
+- error handling
+
+Do not blindly replace the implementation.
+
+Identify the exact reason why the current audio request/playback fails.
+
+==================================================
+API ERROR LOGGING
+==================================================
+
+Temporarily add detailed server-side logging.
+
+Log:
+
+- HTTP status
+- Gemini error response
+- selected model
+- whether audio data was returned
+- MIME type
+- response structure
+
+DO NOT log the API key.
+
+The frontend should receive a safe error message only.
+
+For example:
+
+{
+  "success": false,
+  "error": "TTS_REQUEST_FAILED",
+  "status": 429
+}
+
+==================================================
+TTS API KEY
+==================================================
+
+Use:
+
+process.env.GEMINI_TTS_API_KEY
+
+for all Story Adventure TTS requests.
+
+Do not accidentally fall back to:
+
+process.env.GEMINI_ASSISTANT_API_KEY
+
+unless I explicitly request a fallback.
+
+==================================================
+AUDIO HANDLING
+==================================================
+
+Verify that the Gemini TTS response actually contains audio data.
+
+Correctly handle the returned audio format.
+
+If the response contains base64 audio:
+
+1. Decode base64
+2. Convert to Uint8Array
+3. Create Blob with the correct MIME type
+4. Create object URL
+5. Assign it to an HTMLAudioElement
+6. Call play()
+
+Example conceptual flow:
+
+Gemini TTS
+    ↓
+audio bytes/base64
+    ↓
+Uint8Array
+    ↓
+Blob
+    ↓
+URL.createObjectURL()
+    ↓
+Audio()
+    ↓
+audio.play()
+
+Do not assume the response is MP3 if Gemini returns another audio format.
+
+Determine the actual MIME type from the API response.
+
+==================================================
+MODEL COMPATIBILITY
+==================================================
+
+Inspect the current Gemini TTS model.
+
+Make sure the model actually supports text-to-speech/audio generation for the API configuration being used.
+
+Do not use a normal text-only Gemini model and expect audio output.
+
+If the current model is deprecated, unavailable, or incompatible with the current API request, update it to a currently supported Gemini TTS model.
+
+Do not change the AI Assistant model unless necessary.
+
+==================================================
+BROWSER PLAYBACK
+==================================================
+
+After receiving valid audio:
+
+- ensure the audio URL is valid
+- ensure the Blob MIME type is correct
+- ensure the browser can play the format
+- handle autoplay restrictions
+- play audio only after a user interaction when required
+
+The "Dobara sunne ke liye tap karein" button must explicitly retry the TTS request.
+
+Do not simply retry the same broken audio URL.
+
+==================================================
+RETRY BEHAVIOR
+==================================================
+
+When the user clicks:
+
+"Dobara sunne ke liye tap karein"
+
+perform a NEW TTS request.
+
+Do not reuse a failed audio response.
+
+Use a small retry strategy for temporary failures such as:
+
+429
+500
+502
+503
+
+Maximum 2 retries.
+
+Use exponential backoff.
+
+Do NOT endlessly retry.
+
+For 400/403 errors, do not repeatedly retry.
+Show a useful error state instead.
+
+==================================================
+CACHE
+==================================================
+
+If appropriate, cache generated audio for the current slide.
+
+For example:
+
+slide ID + language + text
+
+can be used as a cache key.
+
+This prevents generating the same narration repeatedly.
+
+Do not cache failed requests.
+
+==================================================
+LANGUAGE
+==================================================
+
+The Story Adventure content is Hindi/Hinglish.
+
+Preserve the current Hindi/Hinglish narration behavior.
+
+Do not change the visible slide text.
+
+Make sure the TTS prompt instructs the model to naturally speak the provided Hindi/Hinglish text.
+
+Do not translate the text unless the existing application already does so.
+
+==================================================
+UI REQUIREMENT
+==================================================
+
+Keep the existing UI exactly as it is.
+
+Do not redesign:
+
+- slide
+- image
+- Next button
+- progress dots
+- typography
+- cards
+- colors
+- layout
+
+Only fix the underlying TTS functionality.
+
+The current error message can remain visually identical.
+
+==================================================
+SECURITY
+==================================================
+
+VERY IMPORTANT:
+
+Never expose:
+
+GEMINI_TTS_API_KEY
+
+to the browser.
+
+Do not put it in:
+
+- React component
+- Vite client environment variable
+- public folder
+- HTML
+- localStorage
+- frontend JavaScript
+
+If this is a Vite app, do NOT use:
+
+VITE_GEMINI_TTS_API_KEY
+
+because VITE_* variables can be exposed to the client bundle.
+
+The TTS request should go through the existing backend/server endpoint.
+
+==================================================
+ENVIRONMENT VARIABLES
+==================================================
+
+Update the Replit environment configuration to support:
+
+GEMINI_ASSISTANT_API_KEY
+GEMINI_TTS_API_KEY
+
+I will provide the new TTS key separately.
+
+Do not print the actual API key in logs or UI.
+
+==================================================
+FINAL TEST
+==================================================
+
+After implementation test:
+
+1. Open Story Adventure.
+2. Load a slide.
+3. Trigger narration.
+4. Confirm TTS request uses GEMINI_TTS_API_KEY.
+5. Confirm AI Assistant still uses GEMINI_ASSISTANT_API_KEY.
+6. Confirm audio is returned.
+7. Confirm audio is decoded correctly.
+8. Confirm audio plays.
+9. Click "Dobara sunne ke liye tap karein".
+10. Confirm a new TTS request is made.
+11. Test multiple slides.
+12. Test Hindi/Hinglish text.
+13. Test API failure.
+14. Test 429/temporary failure.
+15. Test browser refresh.
+
+Do not consider the task complete just because the API request returns HTTP 200.
+
+Verify that actual audio playback works in the browser.
+
+At the end, tell me:
+- which TTS model is being used
+- which backend endpoint handles TTS
+- whether TTS uses GEMINI_TTS_API_KEY
+- whether AI Assistant still uses GEMINI_ASSISTANT_API_KEY
+- the exact root cause of the previous "Voice load nahi ho paayi" error

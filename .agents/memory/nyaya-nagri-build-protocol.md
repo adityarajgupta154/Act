@@ -5,6 +5,8 @@ description: How the user drives this project — strict task-by-task flow with 
 
 The user pastes ONE task prompt at a time (Task 0 → 24) from `attached_assets/Replit_ClaudeFable_Build_Prompts_MASTER_*.md`. Do not skip ahead or rebuild earlier work.
 
+**Obey protocol bans SILENTLY.** The proposeFollowUpTasks ban stays in force, but NEVER write compliance markers like "[proposeFollowUpTasks: skip …]" in user-visible replies — the user saw that line in the Agent chat, assumed their app was leaking internal text, and filed a whole removal spec (Aug 11 2026). Skip banned tools without announcing it.
+
 **Why:** the user explicitly demanded this structure to prevent drift across a 25-task build for a Smart India Hackathon prototype.
 
 **How to apply, before every task:**

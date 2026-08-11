@@ -1,15 +1,15 @@
 /**
  * Gemini client (user-supplied key, NOT the Replit AI proxy).
  *
- * The user's requirement for Nyaya AI is explicit: use the Gemini API
- * with the GEMINI_API_KEY environment variable, server-side only. The key
- * never reaches the frontend; this module is only ever imported by the
- * api-server.
+ * ONE shared key scope (user order, Aug 11 2026 — REVERTED the earlier
+ * two-key split): GEMINI_API_KEY powers everything Gemini — Nyaya AI
+ * text/streaming/insights, Live voice token minting, AND Story Adventure
+ * TTS. The dedicated second TTS-key secret scope was removed on explicit
+ * user instruction; do not reintroduce a second key without a new order.
  *
- * Unlike the Anthropic integration lib (which throws at import time), this
- * client is LAZY on purpose: the api-server must keep serving the existing
- * persona routes even when GEMINI_API_KEY is missing — only the Nyaya AI
- * routes fail, explicitly, with a clear message.
+ * The key is server-side only; it never reaches the frontend. Clients stay
+ * LAZY so the api-server keeps serving non-Gemini routes even when the key
+ * is missing — Gemini routes then fail explicitly with a clear message.
  */
 import { GoogleGenAI } from "@google/genai";
 
@@ -23,7 +23,7 @@ export function getGemini(): GoogleGenAI {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error(
-      "GEMINI_API_KEY is not set. Add it as a secret so the Nyaya AI routes can call Gemini.",
+      "GEMINI_API_KEY is not set. Add it as a secret so the Nyaya AI and story narration routes can call Gemini.",
     );
   }
   if (!cached) {
@@ -36,7 +36,7 @@ let cachedAlpha: GoogleGenAI | null = null;
 
 /**
  * v1alpha client — required for ephemeral Live API session tokens
- * (authTokens.create). Same user key, still strictly server-side: only the
+ * (authTokens.create). Same key, still strictly server-side: only the
  * short-lived token it mints (NEVER the key) reaches the browser, which
  * uses it to open its own Live WebSocket directly with Google.
  */

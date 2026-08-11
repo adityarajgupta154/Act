@@ -1,0 +1,342 @@
+I have added a new AI Assistant robot image asset to the project.
+
+I want you to replace the existing AI Assistant / helper robot visual with this new asset while preserving all existing AI Assistant functionality.
+
+IMPORTANT:
+This is an asset replacement + UI integration task.
+Do NOT redesign the entire application.
+Do NOT change the AI Assistant's functionality, API logic, chat logic, voice functionality, or existing interactions.
+
+==================================================
+1. FIND THE EXISTING AI ASSISTANT
+==================================================
+
+First inspect the entire project and identify:
+
+- Existing AI Assistant component
+- Robot/helper mascot component
+- AI Assistant floating button
+- AI Assistant modal/chat panel
+- Existing robot image/asset
+- CSS/Tailwind classes controlling its size and position
+- Any animations attached to the assistant
+
+Find all references to the existing assistant asset.
+
+==================================================
+2. REPLACE ONLY THE VISUAL ASSET
+==================================================
+
+Use the newly uploaded AI Assistant robot image as the new mascot.
+
+Replace the existing robot image with the new asset.
+
+Do NOT create a duplicate AI Assistant.
+
+There must be only ONE active assistant button/component.
+
+Do NOT change:
+
+- AI Assistant API
+- Gemini API integration
+- chat functionality
+- TTS functionality
+- voice input
+- voice output
+- message handling
+- conversation state
+- open/close behavior
+- assistant logic
+
+Only replace the visual mascot.
+
+==================================================
+3. IMAGE TRANSPARENCY
+==================================================
+
+The new robot asset is intended to be used as a transparent mascot.
+
+If the asset contains any unwanted background:
+
+- remove the background
+- preserve the complete robot
+- preserve the orange/blue/white colors
+- preserve the face
+- preserve the raised hand
+- preserve the chest logo
+- preserve the original proportions
+
+The final asset should behave like a transparent PNG/WebP.
+
+Do NOT display a rectangular image background behind the robot.
+
+==================================================
+4. EXISTING ASSISTANT POSITION
+==================================================
+
+Keep the AI Assistant in approximately the same location where the existing assistant currently appears.
+
+However, because the new mascot has a larger body and raised hand, adjust its dimensions and positioning so the complete robot is visible.
+
+The robot should NOT be:
+
+- cropped
+- stretched
+- squashed
+- hidden behind another element
+- partially outside the viewport
+
+Use:
+
+object-fit: contain;
+
+and preserve the original aspect ratio.
+
+==================================================
+5. SIZE
+==================================================
+
+The new robot should feel like a mascot, not a giant image.
+
+Desktop:
+
+- approximately 80–120px visual height
+- adjust based on the existing UI
+- complete robot should be visible
+
+Tablet:
+
+- approximately 70–100px
+
+Mobile:
+
+- approximately 60–85px
+
+Do not blindly use these values if the existing layout requires different dimensions.
+
+The most important requirement is that the robot remains clearly visible without covering important UI.
+
+==================================================
+6. FLOATING ASSISTANT BUTTON
+==================================================
+
+If the current AI Assistant is displayed inside a circular floating button/container:
+
+Keep the interaction area and click behavior.
+
+You may adjust the container to accommodate the new mascot.
+
+The mascot should visually sit inside/above the assistant button naturally.
+
+Do NOT remove:
+
+- click/tap interaction
+- hover behavior
+- keyboard accessibility
+- focus state
+- tooltip
+- assistant open animation
+
+==================================================
+7. ANIMATION
+==================================================
+
+Preserve the existing assistant animation if one already exists.
+
+If the existing mascot has a subtle floating/bobbing animation, keep it.
+
+The new robot can have a very subtle idle animation:
+
+- 2–4px vertical movement
+- slow 3–4 second cycle
+- ease-in-out
+- infinite loop
+
+Do NOT add:
+
+- aggressive bouncing
+- spinning
+- shaking
+- flashing
+- excessive scaling
+- neon glow
+
+The mascot should feel friendly and alive.
+
+==================================================
+8. Z-INDEX
+==================================================
+
+Make sure the AI Assistant remains above the game/world environment.
+
+Recommended visual hierarchy:
+
+Game background
+↓
+Game buildings/environment
+↓
+Game UI
+↓
+AI Assistant
+↓
+Emergency/Get Help UI if applicable
+
+However, do not let the assistant cover important buttons.
+
+Adjust z-index based on the existing application.
+
+==================================================
+9. DO NOT CONFUSE AI ASSISTANT WITH GET HELP
+==================================================
+
+IMPORTANT:
+
+There are two different elements:
+
+1. AI Assistant robot
+2. Get Help Now emergency button
+
+Do NOT replace the Get Help Now button.
+
+Do NOT merge them.
+
+Do NOT change the emergency button.
+
+The new robot should remain the AI Assistant.
+
+==================================================
+10. EXISTING PAGES
+
+The new AI Assistant should work consistently across all pages where the existing assistant currently appears.
+
+Check at minimum:
+
+- Nyaya Nagri homepage
+- Main map
+- Story Adventure
+- Story/learning slides
+- Rights learning pages
+- Any other page where the existing assistant is rendered
+
+Do not create page-specific duplicates.
+
+If the project already has a shared Assistant component, update that shared component.
+
+==================================================
+11. RESPONSIVE BEHAVIOR
+
+Desktop:
+- mascot clearly visible
+- no cropping
+- comfortable spacing from edges
+
+Tablet:
+- scale down appropriately
+- keep interaction accessible
+
+Mobile:
+- reduce mascot size
+- keep enough margin from screen edges
+- do not cover navigation
+- do not cover Next buttons
+- do not cover important content
+- maintain touch target accessibility
+
+Use responsive CSS/Tailwind classes.
+
+==================================================
+12. ACCESSIBILITY
+
+Keep:
+
+- accessible button
+- aria-label
+- keyboard focus
+- screen-reader friendly label
+
+For example:
+
+aria-label="Open AI Assistant"
+
+Do not make the image itself the only accessible interaction.
+
+==================================================
+13. PERFORMANCE
+
+Use the optimized image asset.
+
+Do not repeatedly load the image.
+
+If appropriate:
+
+- import the asset normally
+- let the build system optimize it
+- avoid converting it to a huge unoptimized format
+
+Do not create unnecessary canvas rendering.
+
+==================================================
+14. IMPORTANT — DO NOT BREAK EXISTING AI
+
+The existing AI Assistant may already use Gemini/API functionality.
+
+DO NOT MODIFY that code.
+
+Specifically do not change:
+
+- Gemini API calls
+- API keys
+- model
+- prompts
+- conversation history
+- TTS
+- speech recognition
+- response generation
+- backend endpoints
+
+This task is ONLY replacing the assistant mascot UI.
+
+==================================================
+15. FINAL RESULT
+
+The final AI Assistant should look like the newly provided robot:
+
+- friendly 3D cartoon robot
+- white body
+- blue face
+- orange helmet
+- orange accents
+- blue side elements
+- raised waving hand
+- Nyaya Nagri-style chest emblem
+- cheerful expression
+
+It should integrate naturally with the existing Nyaya Nagri visual design.
+
+==================================================
+16. VERIFICATION
+
+After implementation verify:
+
+✓ Old robot asset is no longer displayed
+✓ New robot asset is displayed
+✓ No duplicate assistant exists
+✓ Robot is not cropped
+✓ Robot is not stretched
+✓ Transparent background works correctly
+✓ Existing AI Assistant opens normally
+✓ Chat still works
+✓ Existing voice/TTS functionality is untouched
+✓ Existing API integration is untouched
+✓ Robot works on desktop
+✓ Robot works on tablet
+✓ Robot works on mobile
+✓ Robot does not cover important UI
+✓ Existing animations still work
+✓ No unrelated components were changed
+
+IMPORTANT:
+First inspect the existing AI Assistant implementation and reuse the existing component.
+Do not build a second assistant system.
+
+Only replace and properly integrate the visual mascot asset.

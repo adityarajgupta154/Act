@@ -1,0 +1,379 @@
+I have attached screenshots showing a serious visual rendering issue on the Nyaya Nagri homepage.
+
+The left and right sides of the screen are showing large blurred/zoomed portions of the background instead of the clean game-world background.
+
+FIX THIS ISSUE WITHOUT REDESIGNING THE PAGE.
+
+==================================================
+PROBLEM
+==================================================
+
+In the attached screenshots, the main Nyaya Nagri game-world image is displayed correctly in the center, but both the LEFT and RIGHT edges contain:
+
+- large blurred versions of the same background
+- stretched/zoomed background fragments
+- visible vertical seams
+- duplicated background content
+- inconsistent image scaling
+
+This makes the page look broken.
+
+The blurred side areas must be completely removed.
+
+==================================================
+DESIRED RESULT
+==================================================
+
+The game background should occupy the ENTIRE viewport cleanly.
+
+There should be:
+
+NO blurred sidebars
+NO duplicated background
+NO stretched side images
+NO vertical seams
+NO empty areas
+NO visible image boundaries
+NO background fragments outside the main game world
+
+The final viewport should look like ONE continuous Nyaya Nagri world.
+
+==================================================
+1. INSPECT CURRENT BACKGROUND IMPLEMENTATION
+==================================================
+
+First inspect how the homepage background is currently implemented.
+
+Look for:
+
+- background-image
+- <img>
+- background layers
+- pseudo-elements
+- ::before
+- ::after
+- blur filters
+- backdrop-filter
+- CSS gradients
+- object-fit
+- background-size
+- background-position
+- overflow
+- absolute positioned background containers
+- duplicate background images
+- responsive background logic
+- mobile/desktop background variants
+
+Find the exact source of the blurred side areas.
+
+DO NOT blindly add another background over the problem.
+
+Fix the root cause.
+
+==================================================
+2. REMOVE BLURRED FALLBACK BACKGROUND
+==================================================
+
+If there is a blurred background layer being used to fill empty horizontal space, REMOVE it.
+
+For example, if the implementation contains something similar to:
+
+background-image: ...
+filter: blur(...);
+
+or:
+
+::before {
+  background-image: ...;
+  filter: blur(...);
+}
+
+or a duplicated full-screen background behind the main image,
+
+remove that fallback layer.
+
+The final page must not have blurred side backgrounds.
+
+==================================================
+3. FULL-SCREEN GAME WORLD
+==================================================
+
+The main game-world background should fill the complete viewport.
+
+Use a proper full-screen container:
+
+width: 100%;
+height: 100%;
+min-height: 100vh;
+
+The background/image should be rendered consistently across the entire viewport.
+
+If using an image:
+
+object-fit: cover;
+
+or an equivalent world/canvas rendering strategy should be used depending on the existing implementation.
+
+IMPORTANT:
+
+Do not distort the aspect ratio.
+
+Do not stretch the image horizontally.
+
+Do not create separate left/right filler images.
+
+==================================================
+4. IMPORTANT — PRESERVE GAME WORLD COMPOSITION
+==================================================
+
+Do NOT zoom the central world excessively just to hide the side issue.
+
+The central composition must remain visually similar to the current design:
+
+- courthouse centered
+- Lady Justice centered
+- Right to Childhood on left
+- Safe Zone on left
+- School Rights on right
+- Family & Community on right
+- Digital Safety on lower-right
+- player character lower-left/center
+- sky balloon upper-right
+- central ENTER button
+- bottom navigation
+- Get Help Now
+
+Fix the viewport/background rendering WITHOUT changing the intended composition.
+
+==================================================
+5. IF USING A FIXED-ASPECT IMAGE
+==================================================
+
+If the source background image has a fixed aspect ratio and the browser viewport has a different aspect ratio:
+
+DO NOT fill the extra space with a blurred copy.
+
+Instead choose the correct rendering behavior.
+
+Preferred order:
+
+1. Use the actual game-world background as a full-bleed image/world.
+2. Preserve aspect ratio.
+3. Crop only the necessary edges.
+4. Keep the important central composition visible.
+5. Never expose duplicated/blurred edges.
+
+For example, desktop landscape should use:
+
+width: 100%;
+height: 100%;
+object-fit: cover;
+object-position: center;
+
+But adapt this to the actual project implementation.
+
+==================================================
+6. CHECK IMAGE CONTAINER
+==================================================
+
+Make sure the parent game-world container has:
+
+position: relative;
+width: 100%;
+min-height: 100vh;
+overflow: hidden;
+
+The background must be contained inside this world container.
+
+Do not allow the background image to extend outside its intended container.
+
+==================================================
+7. CHECK RESPONSIVE BREAKPOINTS
+==================================================
+
+This issue appears to be caused by responsive behavior.
+
+Inspect all media queries and responsive classes.
+
+Check:
+
+- desktop
+- 1440px
+- 1280px
+- 1024px
+- tablet
+- mobile
+
+Make sure there is no breakpoint that creates a separate blurred background.
+
+The background should remain clean at every viewport width.
+
+==================================================
+8. DO NOT BLUR THE MAIN BACKGROUND
+==================================================
+
+The actual game-world image must remain sharp.
+
+Do NOT apply:
+
+filter: blur()
+backdrop-filter: blur()
+
+to the main background.
+
+Do NOT use opacity overlays that make the background look blurred.
+
+Only UI elements may use subtle shadows/blur if they already exist.
+
+==================================================
+9. CHECK FOR DUPLICATED BACKGROUND
+==================================================
+
+Search the code for duplicate references to the main background asset.
+
+For example:
+
+backgroundImage
+<img src={background}>
+background-image: url(...)
+::before
+::after
+
+If the same background is being rendered multiple times to fill the viewport, consolidate it.
+
+There should be ONE primary game-world background layer.
+
+==================================================
+10. PRESERVE EXISTING UI
+==================================================
+
+Do NOT change:
+
+- Nyaya Nagri logo
+- Aditya profile
+- About
+- Settings
+- Map
+- ENTER button
+- buildings
+- portals
+- character
+- sky balloon
+- AI Assistant
+- Get Help Now
+- bottom navigation
+- existing interactions
+- animations
+
+Only fix the broken background rendering.
+
+==================================================
+11. IMPORTANT: NO VISIBLE SEAMS
+==================================================
+
+After fixing the issue, inspect the entire left and right edges.
+
+There must be a continuous visual transition.
+
+Expected:
+
+┌─────────────────────────────────────────────┐
+│                                             │
+│        ONE CONTINUOUS GAME WORLD            │
+│                                             │
+└─────────────────────────────────────────────┘
+
+NOT:
+
+┌───────┬───────────────────────────┬─────────┐
+│ BLUR  │      GAME WORLD           │  BLUR   │
+│ COPY  │                           │  COPY   │
+└───────┴───────────────────────────┴─────────┘
+
+The second result is exactly what I want removed.
+
+==================================================
+12. CHECK FOR IMAGE CROPPING
+==================================================
+
+If the current central image is too narrow, determine whether the actual source asset is being rendered with:
+
+- incorrect width
+- max-width
+- fixed pixel width
+- fixed aspect ratio
+- incorrect container width
+
+Remove unnecessary constraints such as:
+
+max-width: 1600px;
+
+if they are causing the world to stop before reaching the viewport edges.
+
+The world should fill the available screen.
+
+==================================================
+13. GAME WORLD / CAMERA
+==================================================
+
+If this page is implemented as a game world with camera movement:
+
+Do not treat the background as a normal website hero image.
+
+The world should exist in world coordinates and the camera should display the appropriate region.
+
+Make sure the camera viewport is fully covered by the world.
+
+Do not create blurred background padding outside the playable world.
+
+If necessary, extend the actual terrain/world boundaries rather than using a blurred duplicate.
+
+==================================================
+14. FINAL VERIFICATION
+==================================================
+
+After making the fix, test the page at:
+
+1920 × 1080
+1600 × 900
+1440 × 900
+1280 × 720
+1024 × 768
+768 × 1024
+390 × 844
+
+For every viewport verify:
+
+✓ No blurred left side
+✓ No blurred right side
+✓ No duplicated background
+✓ No vertical seams
+✓ No stretched background
+✓ No empty background
+✓ Main world fills viewport
+✓ Central composition remains correct
+✓ Buildings remain visible
+✓ Player remains visible
+✓ UI remains functional
+✓ No layout shift
+✓ No horizontal scrollbar
+
+==================================================
+FINAL INSTRUCTION
+==================================================
+
+Use the attached screenshots as the ERROR REFERENCE.
+
+The screenshots clearly show the unwanted blurred/duplicated background strips on the left and right sides.
+
+Remove those strips completely.
+
+Do NOT redesign the homepage.
+
+Do NOT generate a new background.
+
+Do NOT add another blurred background.
+
+Fix the existing background rendering/layout so the actual Nyaya Nagri world cleanly fills the complete viewport from edge to edge.
+
+After fixing it, compare the result against the attached screenshots and make sure the blurred side areas are completely gone.

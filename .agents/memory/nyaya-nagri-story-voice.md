@@ -5,6 +5,11 @@ description: Story Adventure narration is GEMINI-ONLY — engine rules, failure/
 
 # Story Adventure voice — GEMINI-ONLY (strict)
 
+## Key scope: ONE shared GEMINI_API_KEY (user order, Aug 11 2026)
+**Rule:** story TTS + assistant share the single `GEMINI_API_KEY`. The earlier dedicated `GEMINI_TTS_API_KEY` scope is DEAD — never reintroduce a second Gemini key without an explicit new order.
+**Why:** user's original assistant key got revoked at Google (API_KEY_INVALID) and they explicitly ordered "remove the second TTS key, make it like before" — the split's quota-isolation rationale is superseded by that order; serialized generation + 429 backoff + polite prewarm are the remaining shared-key protections.
+**How to apply:** all Gemini accessors live in `lib/integrations-gemini-ai` (getGemini/getGeminiAlpha/isGeminiConfigured only); story smoke asserts client.ts contains no TTS-key scope and the route uses the shared accessors.
+
 **Rule: exactly ONE story voice engine — the Gemini clip controller (`storyAdventureVoice`). No speechSynthesis / browser TTS / fallback voice in the story path, EVER.**
 **Why:** the original design had a device-TTS fallback for Gemini quota windows; the user heard the robotic voice and explicitly rejected the whole fallback concept ("no fallback voice ever — retry chip instead"). Any reintroduction, even "temporary", violates an explicit user spec.
 **How to apply:** on any story-voice failure, stay SILENT and surface the amber retry chip; never reach for another engine. Story smoke enforces zero Web Speech literals in `src/story/*` (even comments) and that `storyVoice.ts` stays deleted.

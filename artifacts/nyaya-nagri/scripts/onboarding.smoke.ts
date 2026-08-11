@@ -432,7 +432,12 @@ assert(
 );
 
 // HUD displays: minimap marker + corner chip, and an Edit Avatar overlay.
-assert(hudSrc.includes('variant="face"'), 'HUD renders the avatar face (chip + minimap marker)');
+// Aug 2026 home redesign: the minimap card was EXTRACTED to src/ui/Minimap.tsx
+// (shared by HUD and Home), so the face-marker check follows it there and the
+// HUD check becomes "mounts the shared card".
+const minimapSrc = readFileSync(join(SRC, 'ui', 'Minimap.tsx'), 'utf8');
+assert(minimapSrc.includes('variant="face"'), 'minimap renders the avatar face marker');
+assert(hudSrc.includes('<Minimap />'), 'HUD mounts the shared minimap card');
 assert(hudSrc.includes('<AvatarEditOverlay />'), 'HUD mounts the Edit Avatar overlay');
 const settingsPanelSrc = readFileSync(join(SRC, 'ui', 'SettingsPanel.tsx'), 'utf8');
 assert(settingsPanelSrc.includes('openAvatarEdit'), 'Settings has an Edit Avatar entry');

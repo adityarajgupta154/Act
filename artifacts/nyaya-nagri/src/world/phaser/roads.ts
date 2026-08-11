@@ -156,6 +156,21 @@ export function buildRoads(scene: Phaser.Scene): void {
   for (const spec of laneSpecs()) paveLane(scene, spec);
 }
 
+/**
+ * The straight lane chords (plaza rim start -> location anchor) in unit
+ * space — road-avoidance geometry for the meadow scatter (terrain-polish
+ * task, Aug 2026). Uses the anchor itself as the far end (slightly LONGER
+ * than the painted lane): consumers keep clear of the doorstep strip too,
+ * which is exactly what "clean buffer around interactive objects" wants.
+ * Derived from the same laneSpecs as buildRoads — it can never drift.
+ */
+export function laneSegments(): Array<{ a: [number, number]; b: [number, number] }> {
+  return laneSpecs().map((spec) => ({
+    a: rimStart(spec.to[0], spec.to[1]),
+    b: spec.to,
+  }));
+}
+
 function paveLane(scene: Phaser.Scene, spec: LaneSpec): void {
   const [tx, tz] = spec.to;
   const p0 = rimStart(tx, tz);

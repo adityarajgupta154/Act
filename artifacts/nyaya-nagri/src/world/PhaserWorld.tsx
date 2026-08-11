@@ -34,6 +34,11 @@ import decorRocksUrl from '@/assets/world/decor-rocks.png';
 import decorLogUrl from '@/assets/world/decor-log.png';
 import decorMushroomUrl from '@/assets/world/decor-mushroom.png';
 import decorFenceUrl from '@/assets/world/decor-fence.png';
+// Terrain-polish task (Aug 2026): seamless meadow tile + scatter cutouts.
+import grassTileUrl from '@/assets/world/grass-tile.png';
+import decorBushAUrl from '@/assets/world/decor-bush-a.png';
+import decorBushBUrl from '@/assets/world/decor-bush-b.png';
+import decorTuftUrl from '@/assets/world/decor-tuft.png';
 
 export function PhaserWorld() {
   const joystickRef = useJoystick();
@@ -81,6 +86,10 @@ export function PhaserWorld() {
         'decor-log': decorLogUrl,
         'decor-mushroom': decorMushroomUrl,
         'decor-fence': decorFenceUrl,
+        'grass-tile': grassTileUrl,
+        'decor-bush-a': decorBushAUrl,
+        'decor-bush-b': decorBushBUrl,
+        'decor-tuft': decorTuftUrl,
       },
     });
     return () => {

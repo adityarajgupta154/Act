@@ -1262,7 +1262,7 @@ const EN: UIStrings = {
   leaderboardXp: (xp) => `${xp} XP`,
 
   homeTagline: 'Know Your Rights. Build Your Future.',
-  homeEnterCta: 'Enter Nyaya Nagri',
+  homeEnterCta: 'Enter',
   homeCentralBanner: 'Know Your Rights',
   homeLoading: 'Loading…',
   homeAbout: 'About',
@@ -1958,7 +1958,7 @@ const HI: UIStrings = {
   leaderboardXp: (xp) => `${xp} XP`,
 
   homeTagline: 'अपने अधिकार जानो। अपना भविष्य बनाओ।',
-  homeEnterCta: 'न्याय नगरी में चलो',
+  homeEnterCta: 'चलो',
   homeCentralBanner: 'अपने अधिकार जानो',
   homeLoading: 'लोड हो रहा है…',
   homeAbout: 'परिचय',

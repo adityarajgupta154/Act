@@ -1,0 +1,682 @@
+I want you to completely redesign the existing “Story Adventure” page to match the attached reference image as closely as possible.
+
+IMPORTANT:
+The attached reference image is the PRIMARY SOURCE OF TRUTH for the final UI.
+
+I want the final implementation to visually match the reference image extremely closely — layout, spacing, composition, proportions, colors, typography, cards, terrain, decorative elements, positioning, hierarchy, and overall visual language.
+
+Do NOT create your own interpretation of the design.
+Do NOT make it “similar”.
+Reproduce the visual composition of the reference as accurately as possible within the existing application's functionality.
+
+==================================================
+1. FIRST — ANALYZE THE REFERENCE IMAGE
+==================================================
+
+Before changing the code, carefully analyze the uploaded reference image.
+
+Identify:
+
+- overall viewport composition
+- background/terrain structure
+- main title position
+- subtitle position
+- top-left navigation button
+- top-left secondary button
+- top-right progress indicator
+- central adventure message
+- dotted adventure paths
+- Level 1 card
+- Level 2 card
+- circular level indicators
+- play button
+- environmental objects
+- trees
+- rocks
+- flowers
+- logs
+- grass islands
+- water/terrain elements
+- Digital Safety structure
+- bottom navigation
+- Get Help Now button
+- helper robot
+- shadows
+- gradients
+- blur
+- border radius
+- spacing
+- layering
+- z-index relationships
+
+Use the reference image as the exact visual blueprint.
+
+==================================================
+2. DO NOT DESTROY EXISTING FUNCTIONALITY
+==================================================
+
+The current page already contains working functionality.
+
+Preserve all existing:
+
+- routing
+- buttons
+- navigation
+- level interactions
+- progress logic
+- player data
+- help functionality
+- Learn Rights
+- Help Others
+- Earn Badges
+- level completion state
+- animations
+- responsive behavior
+- existing React components where reusable
+
+Only redesign the visual presentation and restructure components when necessary.
+
+Do not remove existing functionality just to make the design easier.
+
+==================================================
+3. BACKGROUND / WORLD DESIGN
+==================================================
+
+The current background looks unfinished and has large empty/flat areas.
+
+Replace the existing background presentation with a polished illustrated game-world environment matching the reference.
+
+The background should look like:
+
+- soft pastel fantasy environment
+- storybook educational game
+- lush green terrain
+- light cream/white open areas
+- soft green islands
+- winding paths
+- trees
+- bushes
+- flowers
+- rocks
+- logs
+- small environmental props
+- subtle shadows
+- soft atmospheric gradients
+- hand-painted/cartoon 3D illustration style
+
+IMPORTANT:
+
+Do NOT simply put the reference image itself as one giant background image.
+
+Instead, recreate the composition using layered assets/components wherever practical.
+
+==================================================
+4. REUSE EXISTING REFERENCE ASSETS
+==================================================
+
+The project contains/reference assets that can be reused.
+
+Inspect all existing image assets before creating replacements.
+
+For relevant assets such as:
+
+- trees
+- rocks
+- flowers
+- logs
+- bushes
+- houses
+- decorative objects
+- game characters
+- robot/helper
+- Digital Safety structure
+- environmental elements
+
+remove their unwanted background where necessary and use them as transparent foreground assets.
+
+The goal is to create a layered scene similar to the reference.
+
+For example:
+
+TREE PNG
+→ transparent background
+→ positioned on terrain
+
+ROCK PNG
+→ transparent background
+→ positioned naturally
+
+FLOWER CLUSTER
+→ transparent background
+→ scattered around terrain
+
+LOG
+→ transparent background
+→ placed near paths/trees
+
+HOUSE
+→ transparent background
+→ placed on a terrain island
+
+Do NOT keep rectangular image backgrounds around individual assets.
+
+If an asset already has transparency, preserve it.
+
+If an asset has a solid/background color that conflicts with the scene, isolate the foreground subject and use it as a transparent asset.
+
+==================================================
+5. TARGET COMPOSITION
+==================================================
+
+Match the reference composition closely.
+
+TOP CENTER:
+
+Large title:
+
+✨ Story Adventure ✨
+
+Below it:
+
+Har level ek naya adhikar sikhata hai.
+
+Use a dark navy/blue rounded playful font similar to the reference.
+
+Keep the title centered.
+
+Do not make it excessively large.
+
+==================================================
+6. TOP LEFT
+==================================================
+
+Create a circular white back button in the top-left.
+
+It should have:
+
+- white background
+- soft shadow
+- dark blue/gray back arrow
+- circular shape
+- clean spacing
+
+Below it place the small circular green leaf/environment button.
+
+Match the reference positioning.
+
+==================================================
+7. TOP RIGHT
+==================================================
+
+Create the progress indicator:
+
+⭐ 1 / 2 Complete
+
+Use:
+
+- white pill background
+- rounded corners
+- subtle shadow
+- yellow star
+- dark navy text
+
+Position it exactly like the reference.
+
+==================================================
+8. CENTRAL ADVENTURE MESSAGE
+==================================================
+
+Create the floating adventure message near the upper-center area.
+
+It should contain:
+
+- circular sparkle/star icon
+- white circular background
+- purple icon
+- white rounded message card
+- light purple dashed border
+
+Text:
+
+Naye adventures
+jald aa rahe hain...
+
+Match the reference:
+
+- icon on the left
+- text card beside it
+- soft shadow
+- rounded corners
+- purple accent
+- dashed border
+
+Add the small decorative dotted purple path leaving this area.
+
+==================================================
+9. ADVENTURE PATH
+==================================================
+
+Create the same visual path system as the reference.
+
+There should be a dotted/dashed route connecting the levels.
+
+Use:
+
+- rounded dash segments
+- soft purple path for the upper route
+- orange/yellow path for the lower route
+- smooth curved path
+- no sharp geometric corners
+
+The path should visually guide the user from Level 1 → Level 2.
+
+Use SVG/CSS if appropriate rather than a static raster line.
+
+==================================================
+10. LEVEL 1
+==================================================
+
+Create the completed Level 1 section near the lower-left/center.
+
+Circular badge:
+
+- large orange/yellow circular background
+- white trophy icon
+- white outer border
+- green completion check badge
+
+Small number badge:
+
+1
+
+Level card:
+
+LEVEL 1
+
+Right to Life
+
+Every Child Matters
+
+Completed
+
+Bahut badhiya! Aage badho.
+
+The card should be:
+
+- white
+- rounded
+- subtle shadow
+- clean
+- compact
+- highly readable
+
+Match the reference dimensions and hierarchy.
+
+==================================================
+11. LEVEL 2
+==================================================
+
+Create the Level 2 section near the upper-middle/right.
+
+Card:
+
+LEVEL 2
+
+Clean Water,
+Healthy Life
+
+Right to Health & Care
+
+[play icon] Shuru karo
+
+Next to the card:
+
+Large circular Play button.
+
+The play button should have:
+
+- white center
+- purple circular border
+- subtle shadow
+- purple play triangle
+- large enough to feel interactive
+
+Number badge:
+
+2
+
+Position everything like the reference.
+
+==================================================
+12. ENVIRONMENTAL WORLD
+==================================================
+
+The background should not feel like a blank website.
+
+It should feel like a playable story map.
+
+Add environmental composition around the UI:
+
+LEFT SIDE:
+- large tree
+- rocks
+- flowers
+- log
+- grass
+- bushes
+
+CENTER:
+- soft green terrain islands
+- winding cream paths
+- flowers
+- rocks
+- small bushes
+
+RIGHT SIDE:
+- trees
+- logs
+- flowers
+- small structures
+- Digital Safety landmark
+
+BOTTOM:
+- lush grass
+- flowers
+- environmental decorations
+- soft terrain
+
+Keep all environmental objects behind the UI.
+
+Do not let environmental objects interfere with text readability.
+
+==================================================
+13. DIGITAL SAFETY AREA
+==================================================
+
+Use the existing Digital Safety reference asset if available.
+
+Remove its unwanted background if necessary.
+
+Place it toward the lower-right area similar to the reference.
+
+It should appear like a small game-world landmark.
+
+Add:
+
+Digital Safety
+
+label beneath/near it.
+
+Do not redesign the actual asset unnecessarily.
+
+==================================================
+14. BOTTOM NAVIGATION
+==================================================
+
+Create the floating bottom navigation bar matching the reference.
+
+White rounded pill/container.
+
+Three options:
+
+📖 Learn Rights
+👥 Help Others
+🏆 Earn Badges
+
+Use small circular icon backgrounds.
+
+Keep the navigation centered horizontally.
+
+The bar should float above the environment.
+
+Use a subtle shadow.
+
+It should remain fixed/sticky at the bottom of the viewport.
+
+==================================================
+15. GET HELP NOW
+==================================================
+
+Keep the existing helper robot.
+
+Position the robot above/near the bottom-right area.
+
+Keep:
+
+Get Help Now
+
+button.
+
+Use the same red/orange-red visual style.
+
+It should be:
+
+- large pill
+- white shield icon
+- white text
+- subtle shadow
+- fixed to bottom-right
+- responsive
+
+Do not allow it to overlap the bottom navigation.
+
+==================================================
+16. VISUAL STYLE
+==================================================
+
+The final design should feel like:
+
+Premium children's educational adventure game
++
+Storybook fantasy map
++
+Modern SaaS-quality UI
+
+Use:
+
+- soft rounded cards
+- pastel colors
+- navy typography
+- purple accents
+- orange accents
+- green completion states
+- cream terrain
+- soft shadows
+- subtle gradients
+- clean spacing
+- playful but professional typography
+
+Avoid:
+
+- neon cyberpunk
+- dark theme
+- excessive gradients
+- excessive glassmorphism
+- excessive shadows
+- random animations
+- generic dashboard UI
+- flat CSS shapes where illustrated assets are available
+
+==================================================
+17. EXACT SPACING & POSITIONING
+==================================================
+
+The reference image should be treated as a visual coordinate map.
+
+Pay special attention to:
+
+- title vertical position
+- title-to-subtitle spacing
+- progress pill position
+- adventure message position
+- level card positions
+- distance between circular level badges and cards
+- dotted path positions
+- bottom navigation position
+- Get Help button position
+- environmental object placement
+- overall whitespace
+
+Do NOT randomly center everything.
+
+Recreate the same asymmetrical composition shown in the reference.
+
+==================================================
+18. RESPONSIVE DESIGN
+==================================================
+
+The reference is the desktop design target.
+
+Also create responsive versions for:
+
+- 1440px+
+- 1280px
+- 1024px
+- 768px
+- 480px
+- 375px
+
+On mobile:
+
+Do NOT simply shrink the desktop design.
+
+Instead:
+
+- maintain the same visual hierarchy
+- scale cards appropriately
+- reposition level cards
+- maintain readable text
+- keep bottom navigation accessible
+- keep Get Help Now accessible
+- prevent overlap
+- allow map/content scrolling if necessary
+
+The overall visual identity must remain consistent with the reference.
+
+==================================================
+19. IMPLEMENTATION
+==================================================
+
+First inspect the existing project architecture.
+
+Determine:
+
+- React/Vite/Next/etc.
+- existing CSS system
+- Tailwind usage
+- component structure
+- existing asset structure
+- existing map/background implementation
+- existing animations
+
+Reuse the existing technology stack.
+
+Do not install unnecessary dependencies.
+
+Prefer:
+
+- React components
+- Tailwind/CSS
+- SVG for paths
+- transparent PNG/WebP assets
+- CSS transforms
+- optimized layered backgrounds
+
+Use absolute positioning only where it makes sense for the game-map composition.
+
+Use relative positioning for the main world container.
+
+==================================================
+20. IMPORTANT ASSET RULE
+==================================================
+
+The attached reference image is NOT just inspiration.
+
+It is the visual target.
+
+The final implementation should look as close to it as technically possible.
+
+When existing project assets correspond to objects visible in the reference:
+
+1. Find the existing asset.
+2. Remove its unwanted background if required.
+3. Preserve the original subject.
+4. Export/use it as transparent.
+5. Position it according to the reference.
+6. Blend it naturally into the terrain.
+
+Do not replace a good existing asset with a random new icon.
+
+==================================================
+21. LAYERING / Z-INDEX
+==================================================
+
+Use a clear layer system:
+
+Layer 1:
+Background sky/ambient gradient
+
+Layer 2:
+Terrain
+
+Layer 3:
+Grass/flowers/environment
+
+Layer 4:
+Paths
+
+Layer 5:
+Buildings/landmarks
+
+Layer 6:
+Adventure route
+
+Layer 7:
+Level markers/cards
+
+Layer 8:
+HUD/UI
+
+Layer 9:
+Get Help / helper robot
+
+This prevents visual conflicts.
+
+==================================================
+22. FINAL QUALITY CHECK
+==================================================
+
+After implementation, compare the rendered page against the attached reference image.
+
+Check:
+
+✓ Overall composition
+✓ Colors
+✓ Spacing
+✓ Typography
+✓ Card sizes
+✓ Level positions
+✓ Path positions
+✓ Background terrain
+✓ Environmental assets
+✓ UI hierarchy
+✓ Shadows
+✓ Rounded corners
+✓ Responsive behavior
+✓ No unfinished grass
+✓ No rectangular asset backgrounds
+✓ No broken image assets
+✓ No overlapping UI
+✓ No unnecessary redesign
+
+If something visually differs significantly from the reference, correct it before finishing.
+
+IMPORTANT FINAL INSTRUCTION:
+
+Do not give me a generic redesign.
+
+I specifically want the existing page transformed into the same visual design language and composition as the attached reference image.
+
+Use the reference image as the PRIMARY DESIGN SOURCE and the existing project assets as SECONDARY SOURCES.
+
+Preserve functionality, but make the visual result as close to the reference as possible.

@@ -1,0 +1,536 @@
+I have attached multiple screenshots showing the current rendering problem on the Nyaya Nagri homepage.
+
+USE ALL ATTACHED SCREENSHOTS AS ERROR REFERENCES.
+
+There is a serious background rendering/composition bug that must be fixed properly.
+
+DO NOT redesign the homepage.
+DO NOT generate a new background.
+DO NOT add another workaround layer.
+
+Fix the ROOT CAUSE of the broken background rendering.
+
+========================================================
+CURRENT PROBLEM
+========================================================
+
+The screenshots show several different visual problems:
+
+1. Large blurred background areas on the LEFT side.
+2. Large blurred background areas on the RIGHT side.
+3. Multiple rectangular/square blocks appearing over the game world.
+4. Some blocks contain cropped pieces of the same background image.
+5. Some areas look sharp while adjacent areas are blurred.
+6. Visible seams exist between different background sections.
+7. Some rectangular sections are noticeably darker/lighter than surrounding terrain.
+8. The background appears to be duplicated and assembled from multiple cropped pieces.
+9. The AI Assistant and Get Help button are sometimes sitting over these broken rectangular background layers.
+10. The overall result looks like multiple images have been tiled/stacked instead of one continuous game world.
+
+THIS IS NOT ACCEPTABLE.
+
+The final page must contain ONE clean, continuous Nyaya Nagri game world.
+
+========================================================
+MOST IMPORTANT REQUIREMENT
+========================================================
+
+REMOVE ALL ARTIFICIAL BACKGROUND FILLER LAYERS.
+
+Do NOT use:
+
+- blurred copies of the background
+- duplicated background images
+- cropped background patches
+- rectangular background tiles
+- square image extensions
+- stretched background fragments
+- pseudo-element background copies
+- CSS blur used to fill empty space
+- duplicated <img> elements
+- screenshot fragments
+- background mosaics
+- manually positioned background rectangles
+
+There should NOT be any visible rectangular background patch anywhere on the page.
+
+========================================================
+1. INSPECT THE CURRENT IMPLEMENTATION
+========================================================
+
+Before changing anything, inspect the existing homepage code carefully.
+
+Find every place where the game background is rendered.
+
+Search for:
+
+- background-image
+- backgroundImage
+- <img>
+- <picture>
+- CSS background
+- ::before
+- ::after
+- filter: blur
+- backdrop-filter
+- opacity layers
+- absolute positioned images
+- duplicated image assets
+- background clones
+- fallback background
+- mobile background
+- desktop background
+- responsive background
+- map background
+- terrain background
+- world background
+- overflow containers
+
+Also search for the actual background image filename and identify every place where it is used.
+
+========================================================
+2. THERE SHOULD BE ONE PRIMARY BACKGROUND
+========================================================
+
+The Nyaya Nagri environment should have ONE primary continuous background/world layer.
+
+Conceptually:
+
+GAME WORLD
+└── ONE continuous terrain/background
+
+Above it:
+
+Buildings
+Characters
+Paths
+UI
+AI Assistant
+Get Help
+
+Do NOT construct the background like this:
+
+background
++ blurred background copy
++ left crop
++ right crop
++ rectangular patches
++ duplicated image
+
+That is exactly what is causing the current problem.
+
+========================================================
+3. REMOVE THE BLURRED SIDEBARS
+========================================================
+
+Completely remove the blurred left/right background areas.
+
+Search specifically for code similar to:
+
+filter: blur(...)
+
+background-filter
+backdrop-filter
+blur(...)
+scale(...)
+opacity(...)
+::before
+::after
+
+if those are being used to create background filler.
+
+Delete the filler implementation.
+
+The actual game-world background must remain sharp.
+
+There should be NO intentional blur on the background.
+
+========================================================
+4. REMOVE RECTANGULAR IMAGE PATCHES
+========================================================
+
+This is extremely important.
+
+The screenshots show obvious rectangular blocks containing:
+
+- grass
+- pathways
+- flowers
+- trees
+- terrain
+
+These look like cropped pieces of the original background being positioned independently.
+
+REMOVE THIS ENTIRE APPROACH.
+
+Do not try to hide the rectangles with blur.
+
+Do not round their corners.
+
+Do not make their opacity lower.
+
+Do not blend them.
+
+REMOVE them completely.
+
+Search for multiple absolute-positioned background/image elements and eliminate unnecessary duplicates.
+
+========================================================
+5. DO NOT USE CROPPED BACKGROUND FRAGMENTS
+========================================================
+
+If the current implementation contains things such as:
+
+<img src={background} ... />
+
+multiple times,
+
+or:
+
+backgroundImage: `url(...)`
+
+in multiple layers,
+
+or separate left/right/center background sections,
+
+consolidate them.
+
+There should be ONE authoritative world background.
+
+========================================================
+6. CORRECT WAY TO FILL THE VIEWPORT
+========================================================
+
+The background must fill the available game viewport naturally.
+
+If this is a static full-screen homepage:
+
+Use a single background/image layer with appropriate:
+
+width: 100%;
+height: 100%;
+object-fit: cover;
+
+or the equivalent appropriate implementation.
+
+Preserve aspect ratio.
+
+Do NOT stretch the image.
+
+Do NOT create filler copies.
+
+Do NOT create blurred edges.
+
+Do NOT duplicate the image to fill unused space.
+
+If cropping is necessary, crop the edges of the SINGLE background image.
+
+It is much better to crop a small portion of the world than to show artificial blurred/duplicated areas.
+
+========================================================
+7. IF THE PAGE IS A GAME WORLD
+========================================================
+
+If the existing page is actually implemented as a movable game world/camera:
+
+DO NOT treat the background as a normal webpage image.
+
+Instead:
+
+- the game world should have its own dimensions
+- the camera/viewport should show a region of that world
+- the world itself must contain enough terrain to cover the viewport
+- camera movement should reveal actual terrain
+- no blurred background should be rendered outside the world
+- no rectangular filler patches should be added
+
+If the current world is smaller than the viewport, fix the world/camera sizing instead of creating blurred copies.
+
+========================================================
+8. PRESERVE THE CURRENT DESIGN
+========================================================
+
+DO NOT change the actual visual design.
+
+Keep:
+
+- Nyaya Nagri logo
+- Aditya profile
+- About button
+- Settings button
+- Map
+- Courthouse
+- Lady Justice
+- Right to Childhood
+- Safe Zone
+- School Rights
+- Family & Community
+- Digital Safety
+- Player character
+- Sky balloon
+- ENTER button
+- AI Assistant
+- Get Help Now
+- Bottom navigation
+
+Only fix the broken background rendering.
+
+========================================================
+9. DO NOT MOVE UI TO HIDE THE PROBLEM
+========================================================
+
+Do NOT solve the issue by moving:
+
+- AI Assistant
+- Get Help Now
+- buildings
+- player
+- CTA
+- navigation
+
+The problem is the background rendering.
+
+Fix the background itself.
+
+========================================================
+10. CHECK Z-INDEX AND POSITIONING
+========================================================
+
+Some of the rectangular background patches appear to sit behind/around UI elements.
+
+Inspect z-index and absolute positioning.
+
+Make sure the final layer order is approximately:
+
+1. Game world/background
+2. Terrain/environment
+3. Buildings
+4. Character
+5. Game interactive elements
+6. Main UI
+7. AI Assistant
+8. Get Help Now
+
+Do not allow background fragments to appear as separate UI-like layers.
+
+========================================================
+11. CHECK CSS FOR COMMON CAUSES
+========================================================
+
+Look for and remove/fix problematic patterns such as:
+
+background-size: cover;
+combined with multiple background copies
+
+or:
+
+position: absolute;
+left: ...
+top: ...
+width: ...
+height: ...
+
+used for manually placing background fragments.
+
+Also inspect:
+
+overflow
+transform: scale()
+filter: blur()
+opacity
+mix-blend-mode
+mask-image
+clip-path
+
+Do not remove these blindly if they are used for legitimate UI.
+Only modify the ones responsible for the broken background.
+
+========================================================
+12. CHECK RESPONSIVE LOGIC
+========================================================
+
+The issue appears especially obvious at certain viewport sizes.
+
+Inspect every responsive breakpoint.
+
+Test:
+
+1920 × 1080
+1600 × 900
+1440 × 900
+1280 × 720
+1024 × 768
+768 × 1024
+430 × 932
+390 × 844
+
+At every size:
+
+- no blurred sidebars
+- no rectangular patches
+- no duplicated background
+- no seams
+- no stretched fragments
+
+========================================================
+13. IMPORTANT — DO NOT GENERATE NEW ASSETS
+========================================================
+
+Do NOT generate a new background image to solve this problem.
+
+Use the existing Nyaya Nagri background/world asset.
+
+The problem is the way the asset is currently being rendered.
+
+Fix the implementation.
+
+========================================================
+14. IF SOURCE IMAGE DOES NOT MATCH VIEWPORT ASPECT RATIO
+========================================================
+
+If the source image has a different aspect ratio than the viewport:
+
+DO NOT create:
+
+LEFT BLUR
++
+CENTER IMAGE
++
+RIGHT BLUR
+
+And DO NOT create:
+
+LEFT CROP
++
+CENTER IMAGE
++
+RIGHT CROP
+
+Instead use ONE image and crop it appropriately.
+
+For example:
+
+┌──────────────────────────────────────────┐
+│                                          │
+│          ONE CONTINUOUS IMAGE            │
+│                                          │
+└──────────────────────────────────────────┘
+
+The edges may crop slightly, but there must be no artificial filler.
+
+========================================================
+15. IMPORTANT — NO BLOCKS
+========================================================
+
+After implementation, zoom into the page and specifically inspect:
+
+LEFT EDGE
+RIGHT EDGE
+BOTTOM LEFT
+BOTTOM RIGHT
+AROUND AI ASSISTANT
+AROUND GET HELP NOW
+AROUND DIGITAL SAFETY
+AROUND FAMILY & COMMUNITY
+
+There must be ZERO:
+
+- square patches
+- rectangular patches
+- image seams
+- sharp image boundaries
+- duplicated terrain sections
+- blurry strips
+
+========================================================
+16. CLEAN UP UNUSED CODE
+========================================================
+
+After fixing the issue:
+
+Remove unused background layers/components that were previously being used for the broken filler system.
+
+Remove:
+
+- unused blurred background element
+- unused duplicate background component
+- unused background clone
+- unused patch/tile elements
+- unused CSS specifically created for these layers
+
+Do not leave the old broken implementation hidden underneath the new one.
+
+========================================================
+17. FINAL VISUAL REQUIREMENT
+========================================================
+
+The final result should look like a single professionally rendered game scene.
+
+Expected:
+
+┌────────────────────────────────────────────────────┐
+│                                                    │
+│              CONTINUOUS NYAYA NAGRI               │
+│                                                    │
+│     trees   buildings   paths   terrain            │
+│                                                    │
+│              courthouse                            │
+│                                                    │
+│     grass / flowers / environment                  │
+│                                                    │
+└────────────────────────────────────────────────────┘
+
+NOT:
+
+┌───────┬──────────────────────────────┬────────────┐
+│ BLUR  │      MAIN GAME IMAGE         │    BLUR    │
+│       │                              │            │
+├───────┤  RECTANGLE  RECTANGLE        ├────────────┤
+│ PATCH │      PATCH                   │   PATCH    │
+└───────┴──────────────────────────────┴────────────┘
+
+========================================================
+18. FINAL TEST
+========================================================
+
+After implementation:
+
+1. Open homepage.
+2. Inspect left edge.
+3. Inspect right edge.
+4. Inspect bottom edge.
+5. Inspect area behind AI Assistant.
+6. Inspect area behind Get Help Now.
+7. Resize browser.
+8. Scroll/camera move if applicable.
+9. Check desktop.
+10. Check mobile.
+
+Confirm:
+
+✓ No blur on left
+✓ No blur on right
+✓ No rectangular blocks
+✓ No square image patches
+✓ No duplicated background
+✓ No seams
+✓ No stretched terrain
+✓ No image fragments
+✓ No background overflow
+✓ One continuous world
+✓ Existing UI unchanged
+✓ Existing functionality unchanged
+
+IMPORTANT FINAL INSTRUCTION:
+
+Do not simply cover the broken areas with another background.
+
+Do not add more layers.
+
+Do not add blur.
+
+Do not duplicate the image.
+
+Find the code that is creating these artifacts and REMOVE/FIX that implementation.
+
+The attached screenshots are the exact error reference. The final result must have a clean, continuous, sharp Nyaya Nagri game world from edge to edge.

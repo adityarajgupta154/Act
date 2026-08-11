@@ -222,6 +222,13 @@ export class LiveVoiceEngine {
   private debug = false;
   private lat: Record<string, number> = {};
 
+  // DEV-only mic-level meter (debug flag only): peak level + frame count per
+  // ~2s window, logged to the console. Diagnoses "session listens but the
+  // device mic delivers silence" without touching the audio path.
+  private lvlPeak = 0;
+  private lvlFrames = 0;
+  private lvlLastLog = 0;
+
   constructor(callbacks: VoiceEngineCallbacks, opts?: { debugLatency?: boolean }) {
     this.cb = callbacks;
     this.debug = opts?.debugLatency === true;
@@ -240,6 +247,26 @@ export class LiveVoiceEngine {
   private latLog(msg: string): void {
     // eslint-disable-next-line no-console -- DEV-only latency diagnostics
     if (this.debug) console.debug(`[voice-latency] ${msg}`);
+  }
+
+  /** DEV-only: track the mic level so silent-device problems are provable. */
+  private meterFrame(frame: Float32Array): void {
+    for (let i = 0; i < frame.length; i += 16) {
+      const a = Math.abs(frame[i]);
+      if (a > this.lvlPeak) this.lvlPeak = a;
+    }
+    this.lvlFrames++;
+    const now = performance.now();
+    if (this.lvlLastLog === 0) this.lvlLastLog = now;
+    if (now - this.lvlLastLog >= 2000) {
+      this.latLog(
+        `mic-level peak=${this.lvlPeak.toFixed(4)} frames=${this.lvlFrames} ` +
+          `(${this.lvlPeak < 0.005 ? 'SILENT — device is not delivering audio' : 'audio flowing'})`,
+      );
+      this.lvlPeak = 0;
+      this.lvlFrames = 0;
+      this.lvlLastLog = now;
+    }
   }
 
   async start(): Promise<void> {
@@ -528,6 +555,7 @@ export class LiveVoiceEngine {
     }
     this.micNode.port.onmessage = (ev: MessageEvent<Float32Array>) => {
       if (this.disposed || !this.session) return;
+      if (this.debug) this.meterFrame(ev.data);
       try {
         // Keeps streaming while the model speaks — that is what makes
         // natural barge-in interruption possible (server-side VAD).
@@ -542,6 +570,17 @@ export class LiveVoiceEngine {
       }
     };
     this.micSource.connect(this.micNode);
+    if (this.debug) {
+      const track = this.mediaStream?.getAudioTracks()[0];
+      if (track) {
+        this.latLog(
+          `mic-track "${track.label || 'unknown'}" muted=${track.muted} ` +
+            `state=${track.readyState} micCtx=${this.micCtx?.state ?? 'n/a'}`,
+        );
+        track.onmute = () => this.latLog('mic-track MUTED by the system');
+        track.onunmute = () => this.latLog('mic-track unmuted');
+      }
+    }
     this.setState('listening');
     this.mark('listening');
     this.latLog(

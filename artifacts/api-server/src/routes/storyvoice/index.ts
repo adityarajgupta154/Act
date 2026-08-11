@@ -14,9 +14,14 @@
  *    synthesizes free text, so this cannot be abused as a TTS proxy, and
  *    only fixed hand-written story lines (digit-free, no helplines) can
  *    ever be spoken. Unknown id → 404.
- *  - Uses the SAME GEMINI_API_KEY configuration as the rest of the app
- *    (integrations-gemini-ai) — no second auth system; the key never
- *    leaves the server.
+ *  - Uses the ONE shared Gemini key (GEMINI_API_KEY) via
+ *    integrations-gemini-ai. The earlier dedicated second TTS-key secret
+ *    scope was REMOVED on explicit user order (Aug 11, 2026): a single
+ *    key powers assistant + story TTS, like the original design. The
+ *    quota discipline below (serialized generation, 429 backoff, polite
+ *    prewarm) is what protects that shared key. Missing key ⇒ explicit
+ *    503 TTS_NOT_CONFIGURED — no fallback. The key never leaves the
+ *    server.
  *
  * Performance model (story content is static):
  *  - Every generated clip is cached on disk keyed by voice+text hash —
@@ -114,6 +119,22 @@ let lastGenStart = 0;
 let genChain: Promise<unknown> = Promise.resolve();
 
 const isQuotaError = (err: unknown) => /429|RESOURCE_EXHAUSTED|quota/i.test(String(err));
+
+/** Upstream HTTP status from a @google/genai ApiError message (best effort). */
+function upstreamStatus(err: unknown): number | null {
+  const m = /"code"\s*:\s*(\d{3})/.exec(String(err));
+  return m ? Number(m[1]) : null;
+}
+
+/** 400/401/403-class = key/request problem — retrying is useless (user
+ *  spec: no retry loops on 400/403; show an explicit error instead). */
+function isFatalRequestError(err: unknown): boolean {
+  const code = upstreamStatus(err);
+  if (code !== null) return code === 400 || code === 401 || code === 403;
+  return /API key not valid|API_KEY_INVALID|PERMISSION_DENIED|UNAUTHENTICATED|INVALID_ARGUMENT/i.test(
+    String(err),
+  );
+}
 const inQuotaBackoff = () => Date.now() < quotaBackoffUntil;
 
 /** "Quota door is closed right now" — clients should fall back, not wait. */
@@ -131,7 +152,10 @@ function scheduleGeneration<T>(fn: () => Promise<T>): Promise<T> {
   return next;
 }
 
-async function generateOnce(model: string, entry: StoryVoiceManifestEntry): Promise<Buffer> {
+async function generateOnce(
+  model: string,
+  entry: StoryVoiceManifestEntry,
+): Promise<{ bytes: Buffer; mime: string }> {
   const res = await getGemini().models.generateContent({
     model,
     contents: [{ role: "user", parts: [{ text: `${STYLE_PREFIX}${entry.text}` }] }],
@@ -144,8 +168,52 @@ async function generateOnce(model: string, entry: StoryVoiceManifestEntry): Prom
   });
   const part = res.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data);
   const b64 = part?.inlineData?.data;
-  if (!b64) throw new Error("TTS returned no audio data");
-  return Buffer.from(b64, "base64");
+  if (!b64) {
+    // Diagnostics (task request): surface WHY there is no audio — the
+    // response structure only; never the key, never the spoken text.
+    logger.warn(
+      {
+        segment: entry.id,
+        model,
+        finishReason: res.candidates?.[0]?.finishReason ?? null,
+        partKinds: res.candidates?.[0]?.content?.parts?.map((p) => Object.keys(p).join("+")) ?? [],
+      },
+      "story-voice TTS returned no audio data",
+    );
+    throw new Error("TTS returned no audio data");
+  }
+  const mime = part?.inlineData?.mimeType ?? "";
+  const bytes = Buffer.from(b64, "base64");
+  logger.info(
+    { segment: entry.id, model, mime, bytes: bytes.length, hasAudio: true },
+    "story-voice TTS audio received",
+  );
+  return { bytes, mime };
+}
+
+/**
+ * Package Gemini TTS audio for disk/HTTP. L16/PCM (the documented TTS
+ * output) gets a WAV header at the rate the response DECLARES (never a
+ * blind 24kHz assumption — user spec); ready-made WAV passes through;
+ * anything else fails explicitly rather than writing bytes the browser
+ * can't actually play.
+ */
+function toWav(audio: { bytes: Buffer; mime: string }): Buffer {
+  const mime = audio.mime.toLowerCase();
+  if (mime.includes("wav")) return audio.bytes;
+  if (mime.includes("l16") || mime.includes("pcm") || mime.includes("linear16")) {
+    // PCM must DECLARE its sample rate — wrapping at a guessed rate would
+    // cache a chipmunked/slowed clip forever. Missing rate => explicit
+    // failure (never cached), same as a missing/unknown mime below.
+    const rate = /rate=(\d{4,6})/.exec(mime)?.[1];
+    if (!rate) {
+      throw new Error(
+        `TTS returned PCM without a declared rate ("${audio.mime}") — refusing to guess`,
+      );
+    }
+    return pcmToWav(audio.bytes, Number(rate));
+  }
+  throw new Error(`TTS returned unsupported audio mime "${audio.mime}"`);
 }
 
 /**
@@ -163,26 +231,41 @@ async function synthesizeToCache(entry: StoryVoiceManifestEntry): Promise<string
   let lastErr: unknown = null;
   for (let i = 0; i < attempts.length; i++) {
     try {
-      const pcm = await scheduleGeneration(() => {
+      const audio = await scheduleGeneration(() => {
         // Re-check at DEQUEUE time: another request may have closed the
         // quota door while this one sat in the generation queue — don't
         // burn a call into a known 429 wall.
         if (inQuotaBackoff()) throw new QuotaBusyError("story-voice quota backoff");
         return generateOnce(attempts[i], entry);
       });
-      writeFileSync(file, pcmToWav(pcm));
+      writeFileSync(file, toWav(audio));
       return file;
     } catch (err) {
       if (err instanceof QuotaBusyError) throw err; // queue-skip: no log spam, no window extension
       lastErr = err;
       logger.warn(
-        { segment: entry.id, model: attempts[i], attempt: i + 1, err: String(err).slice(0, 160) },
+        {
+          segment: entry.id,
+          model: attempts[i],
+          attempt: i + 1,
+          status: upstreamStatus(err),
+          err: String(err).slice(0, 160),
+        },
         "story-voice TTS attempt failed",
       );
       if (isQuotaError(err)) {
+        // Quota door: fail FAST and let the layered retries handle 429s
+        // (client re-fetch + chip tap = fresh request + prewarm re-tick
+        // after the window) — an in-process 429 sleep would hold the live
+        // request past the client's 12s fetch timeout for nothing.
         quotaBackoffUntil = Date.now() + QUOTA_BACKOFF_MS;
         throw new QuotaBusyError("story-voice quota exhausted");
       }
+      // Bad key / bad request: abort immediately, no more attempts.
+      if (isFatalRequestError(err)) throw err instanceof Error ? err : new Error(String(err));
+      // Transient (500/502/503/network): exponential pause before the next
+      // attempt (user spec: max 2 retries) on top of GEN_SPACING_MS.
+      if (i < attempts.length - 1) await new Promise((r) => setTimeout(r, 2_000 * 2 ** i));
     }
   }
   throw lastErr instanceof Error ? lastErr : new Error(String(lastErr));
@@ -244,7 +327,12 @@ function prewarmOrdered(): StoryVoiceManifestEntry[] {
 
 /** Boot-time prewarm — see "quota discipline" in the header. */
 function prewarm(): void {
-  if (!isGeminiConfigured()) return;
+  if (!isGeminiConfigured()) {
+    logger.warn(
+      "story-voice prewarm skipped — GEMINI_API_KEY is not set (single shared Gemini key — user order, Aug 11 2026)",
+    );
+    return;
+  }
   const missing = prewarmOrdered().filter((e) => !existsSync(cacheFile(e)));
   if (missing.length === 0) {
     logger.info({ total: STORY_VOICE_MANIFEST.length }, "story-voice cache already warm");
@@ -327,23 +415,34 @@ router.get("/story-adventure-voice/tts", async (req, res) => {
     res.status(404).json({ error: "Unknown story segment" });
     return;
   }
-  if (!isGeminiConfigured()) {
-    res.status(503).json({ error: "Story voice is not configured" });
+  lastDemandAt = Date.now();
+  const cachedClip = cacheFile(entry);
+  if (existsSync(cachedClip)) {
+    // Disk-cached clips involve NO Gemini call — they keep playing even
+    // when the Gemini key is missing or the quota door is closed, so an
+    // already-generated story never goes silent over key/quota state.
+    res.setHeader("Content-Type", "audio/wav");
+    res.setHeader("Cache-Control", "public, max-age=3600");
+    res.send(readFileSync(cachedClip));
     return;
   }
-  lastDemandAt = Date.now();
+  // From here on this is a cache MISS — generation needs the shared key.
+  if (!isGeminiConfigured()) {
+    res.status(503).json({ success: false, error: "TTS_NOT_CONFIGURED" });
+    return;
+  }
   const demandHead = entry.id.split("/")[0];
-  if (demandHead !== "chrome" && !existsSync(cacheFile(entry))) {
+  if (demandHead !== "chrome") {
     // A real child needs THIS block — re-anchor the prewarm onto it.
     // (chrome misses don't re-anchor: they're already the top tier.)
     demandKey = `${demandHead}|${entry.lang}`;
   }
-  if (!existsSync(cacheFile(entry)) && inQuotaBackoff()) {
+  if (inQuotaBackoff()) {
     // Fail FAST during a quota window: the client shows its retry chip
     // instantly instead of hanging into its fetch timeout (no fallback
     // voice exists — Gemini-only spec).
     res.setHeader("Retry-After", "30");
-    res.status(503).json({ error: "Story voice is busy" });
+    res.status(503).json({ success: false, error: "TTS_QUOTA_BUSY", status: 429 });
     return;
   }
   try {
@@ -354,15 +453,26 @@ router.get("/story-adventure-voice/tts", async (req, res) => {
   } catch (err) {
     if (err instanceof QuotaBusyError) {
       res.setHeader("Retry-After", "30");
-      res.status(503).json({ error: "Story voice is busy" });
+      res.status(503).json({ success: false, error: "TTS_QUOTA_BUSY", status: 429 });
       return;
     }
     // The client retries once, then goes SILENT + retry chip (never
-    // another voice engine — strict Gemini-only spec).
-    res.status(502).json({ error: "Story voice generation failed" });
+    // another voice engine — strict Gemini-only spec). Safe error shape
+    // only — no key, no upstream error text (user spec).
+    res.status(502).json({
+      success: false,
+      error: "TTS_REQUEST_FAILED",
+      status: upstreamStatus(err) ?? 502,
+    });
   }
 });
 
+// Boot-time key status (name only, never the value): story TTS shares the
+// single GEMINI_API_KEY with the assistant (user order, Aug 11 2026).
+logger.info(
+  { ttsKey: "GEMINI_API_KEY", configured: isGeminiConfigured() },
+  "story-voice key status",
+);
 prewarm();
 
 export default router;

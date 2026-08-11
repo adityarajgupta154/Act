@@ -1,8 +1,9 @@
 /**
  * Nyaya AI — "Your Rights Guide": the game's ONE AI assistant widget.
  *
- * The floating button is the user-supplied orange/white robot art
- * (assistant-bot.png, transparent PNG with its own circular frame — used
+ * The floating button is the user-supplied orange/white WAVING robot art
+ * (assistant-robot.webp, transparent waist-up mascot; assistant-robot-face.webp
+ * is a circular head crop of the SAME upload for the chat header — both used
  * directly, never recreated in CSS). Mounted on BOTH the Home screen and
  * the in-world HUD (same component, shared session history).
  *
@@ -75,7 +76,8 @@ import { streamNyayaAiChat, ChatStreamError } from './chatStream';
 import { LiveVoiceEngine, type VoiceState } from './voice/liveVoice';
 import { Mic, MicOff, Send, X, Volume2, VolumeX, Loader2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import assistantBotIcon from '@/assets/ui/assistant-bot.png';
+import assistantRobotArt from '@/assets/ui/assistant-robot.webp';
+import assistantFaceIcon from '@/assets/ui/assistant-robot-face.webp';
 import { setNarrationSuspended, useNarrationVoiceState } from '@/story/storyNarrationState';
 
 /** BCP-47 tag for the currently selected app language (speech APIs). */
@@ -83,16 +85,39 @@ function currentSpeechLang(): string {
   return settingsStore.getState().language === 'hi' ? 'hi-IN' : 'en-IN';
 }
 
-// --- Assistant face: user-supplied robot icon (transparent PNG, own circular
-// frame baked into the art — no extra background/border chrome behind it). ---
+// --- Assistant visuals: the user-supplied waving robot (Aug 2026 asset),
+// transparent art, no extra background/border chrome. Two derived views:
+// AvatarFace = CIRCULAR head badge (chat header — keeps the voice ring
+// geometry aligned); AvatarMascot = full waist-up mascot (closed bubble,
+// per the Aug 2026 home reference). Both are pixel-crops of the same
+// uploaded image — never generated art. ---
 function AvatarFace({ speaking, className }: { speaking: boolean; className?: string }) {
   return (
     <div className={cn("w-12 h-12 md:w-16 md:h-16 select-none", speaking ? "animate-bounce" : "", className)}>
       <img
-        src={assistantBotIcon}
+        src={assistantFaceIcon}
         alt=""
         draggable={false}
         className="w-full h-full object-contain pointer-events-none"
+      />
+    </div>
+  );
+}
+
+/**
+ * Full waist-up waving mascot for the CLOSED bubble. The art is wider than
+ * tall (raised hand), so callers size it with HEIGHT classes and width
+ * follows the aspect ratio. The asset is cut at the waist by nature; the
+ * bottom ~12% mask-fades so no hard edge ever shows.
+ */
+function AvatarMascot({ speaking, className }: { speaking: boolean; className?: string }) {
+  return (
+    <div className={cn("select-none", speaking ? "animate-bounce" : "", className)}>
+      <img
+        src={assistantRobotArt}
+        alt=""
+        draggable={false}
+        className="h-full w-auto object-contain pointer-events-none [-webkit-mask-image:linear-gradient(to_bottom,black_86%,transparent_100%)] [mask-image:linear-gradient(to_bottom,black_86%,transparent_100%)]"
       />
     </div>
   );
@@ -147,7 +172,13 @@ const MessageList = memo(function MessageList({ messages }: { messages: Message[
   );
 });
 
-export function AvatarWidget() {
+/**
+ * @param faceSize — optional Tailwind HEIGHT classes for the CLOSED bubble's
+ * mascot (width follows the art's aspect ratio). Home passes a larger set
+ * (the reference paints the robot big on the landing screen); the in-world
+ * HUD keeps the compact default.
+ */
+export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
   const { activeZoneId, activeLevel, activeStory } = useUIStore();
   const t = useStrings();
   const [isOpen, setIsOpen] = useState(false);
@@ -827,14 +858,14 @@ export function AvatarWidget() {
         </div>
       )}
 
-      {/* Bubble Toggle — the robot art carries its own circular frame, so the
-          button adds no background/border chrome; shadow follows the alpha.
+      {/* Bubble Toggle — full waving mascot (transparent art), so the button
+          adds no background/border chrome; the drop-shadow follows the alpha.
           Subtle idle float keeps it friendly without neon/glow effects. */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className={cn(
-            'rounded-full transition-all hover:scale-105 active:scale-95 animate-in zoom-in duration-300 touch-manipulation [filter:drop-shadow(0_6px_12px_rgba(30,41,59,0.35))]',
+            'rounded-3xl transition-all hover:scale-105 active:scale-95 animate-in zoom-in duration-300 touch-manipulation [filter:drop-shadow(0_6px_12px_rgba(30,41,59,0.35))]',
             storyNarration.speaking
               ? 'ring-4 ring-sky-300/70 shadow-[0_0_24px_rgba(125,211,252,0.8)]'
               : 'motion-safe:animate-[nyaya-float_4s_ease-in-out_infinite]',
@@ -844,7 +875,7 @@ export function AvatarWidget() {
           {/* While the story guide speaks, the robot IS the speaker —
               bounce + soft glow, no extra characters (spec: reuse the
               one existing assistant). */}
-          <AvatarFace speaking={storyNarration.speaking} className="w-14 h-14 md:w-20 md:h-20" />
+          <AvatarMascot speaking={storyNarration.speaking} className={faceSize ?? 'h-16 md:h-20'} />
         </button>
       )}
     </div>

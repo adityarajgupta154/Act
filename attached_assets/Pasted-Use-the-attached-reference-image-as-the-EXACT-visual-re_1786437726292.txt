@@ -1,0 +1,228 @@
+Use the attached reference image as the EXACT visual reference for the grass and terrain style.
+
+I want you to fix the unfinished / plain green grass areas across the ENTIRE Nyaya Nagri game map.
+
+IMPORTANT:
+Do NOT redesign the existing map.
+Do NOT change the existing buildings, houses, paths, water, characters, UI, labels, map markers, joystick, buttons, or gameplay elements.
+
+ONLY improve the grass/terrain background.
+
+### GOAL
+
+The current map contains large areas of flat, unfinished-looking green grass that look empty, artificial, and visually disconnected from the rest of the environment.
+
+Replace/fill those areas with a continuous, polished, game-quality grass terrain matching the attached reference image.
+
+The entire map should feel like ONE continuous world.
+
+### GRASS STYLE
+
+Use the attached reference image as the primary visual reference.
+
+The grass should have:
+
+- Rich lime-green and natural green tones
+- Soft painterly/cartoon texture
+- Dense small grass blades
+- Small clusters of yellow, white, pink, and orange flowers
+- Scattered tiny plants
+- Small bushes
+- Different sizes of rounded leafy bushes
+- Occasional rocks
+- Subtle darker/lighter grass patches
+- Soft natural ground variation
+- Small clusters of vegetation
+- Soft ambient shadows underneath trees and bushes
+- Slight color variation across the terrain
+- Hand-painted/isometric mobile game aesthetic
+- Bright, cheerful educational-game atmosphere
+
+The terrain should NOT look like a plain CSS green background.
+
+### VERY IMPORTANT — SEAMLESS TERRAIN
+
+The new grass must seamlessly connect with the existing terrain.
+
+There should be:
+
+- NO visible rectangular boundaries
+- NO hard edges
+- NO texture seams
+- NO repeating obvious tiles
+- NO sudden color changes
+- NO large empty flat-green regions
+- NO visible image boundaries
+- NO obvious pattern repetition
+
+The entire map should look like it was created as one large continuous game environment.
+
+### VEGETATION DISTRIBUTION
+
+Do NOT randomly cover everything with dense objects.
+
+Create natural variation:
+
+Approximately:
+- 45–55% open textured grass
+- 20–25% small grass/flower clusters
+- 10–15% bushes
+- 5–10% larger vegetation clusters
+- occasional rocks and small environmental details
+
+Keep enough open space so that the player can move around comfortably.
+
+Vegetation should be distributed organically rather than in a grid or repeated pattern.
+
+### EXISTING OBJECTS MUST REMAIN CLEAR
+
+Do NOT place vegetation over:
+
+- Houses
+- Buildings
+- Roads/pathways
+- Water
+- Bridges
+- Important landmarks
+- Player spawn position
+- NPCs
+- Interactive locations
+- Map markers
+- UI elements
+
+Keep a clean visual buffer around interactive objects.
+
+### PATH AND BUILDING EDGES
+
+Where grass meets an existing path, building, house, or water:
+
+Create a natural transition.
+
+Use:
+
+grass → small plants/flowers → subtle edge vegetation → path/building/water
+
+Avoid perfectly straight artificial grass boundaries.
+
+### LIGHTING
+
+Match the lighting of the existing map.
+
+Use:
+
+- Bright daytime lighting
+- Soft shadows
+- Warm sunlight
+- Slightly saturated colors
+- Consistent light direction
+
+Do NOT introduce a new lighting style.
+
+### CAMERA / STYLE
+
+Maintain the existing:
+
+- top-down/isometric perspective
+- camera angle
+- scale
+- world proportions
+- art direction
+
+The new terrain must look like it belongs to the same game.
+
+### PERFORMANCE
+
+This is a web-based game.
+
+Do NOT solve this by placing hundreds/thousands of individual DOM elements.
+
+Use an efficient approach such as:
+
+- optimized terrain texture
+- tiled/seamless texture
+- canvas rendering
+- sprite batching
+- optimized background layers
+- existing map rendering system
+
+depending on how the current project is implemented.
+
+Avoid unnecessary performance-heavy effects.
+
+### RESPONSIVENESS
+
+The grass terrain must cover the complete playable map area on:
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+There should never be a blank/flat green area exposed when the player moves the camera or viewport.
+
+### CAMERA MOVEMENT
+
+IMPORTANT:
+
+The grass/background must exist across the FULL playable world, not just the currently visible viewport.
+
+When the player moves:
+
+LEFT
+RIGHT
+UP
+DOWN
+
+the player should always see the same continuous polished grass environment.
+
+There must be no point where the background ends or becomes a plain green color.
+
+### DO NOT MODIFY UI
+
+Keep these exactly as they currently are:
+
+- Nyaya Nagri logo
+- Player profile
+- Map widget
+- Settings button
+- Joystick
+- Player/NPC character
+- Helper bot
+- Learn Rights button
+- Get Help Now button
+- Existing labels
+- Existing buildings
+- Existing paths
+- Existing water
+
+Only improve the terrain/grass background.
+
+### REFERENCE IMAGE
+
+Use the attached image as the visual reference for:
+
+- grass texture
+- color palette
+- flower density
+- bush style
+- environmental detail
+- ground variation
+- overall visual richness
+
+Do NOT copy the UI from the reference image.
+
+Only use its ENVIRONMENT / TERRAIN / GRASS STYLE as inspiration.
+
+### FINAL RESULT
+
+The final map should look like a polished mobile educational adventure game.
+
+Before:
+Large flat green unfinished areas.
+
+After:
+A continuous, richly textured, colorful grass world with subtle flowers, bushes, rocks and natural terrain variation throughout the entire playable map.
+
+The transition between the existing map elements and the new grass must be completely seamless.
+
+First inspect the existing map/background implementation, then modify the minimum amount of code/assets necessary to achieve this result.

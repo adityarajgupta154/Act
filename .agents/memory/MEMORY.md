@@ -1,7 +1,7 @@
-- [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — user pastes Tasks 0-24 one at a time; re-read PRD §9 (+§4 if legal content) before EVERY task; hard safety rules apply forever.
+- [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — Tasks 0-24 one at a time; re-read PRD §9 (+§4 legal) before EVERY task; hard safety rules forever; obey bans SILENTLY (no markers in chat).
 - [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — ELEVEN smokes + api safety smoke; curl api on own PORT; headless voice WS probe; zone/level checklists; e2e unlock recipe; map/story/help/profile=open seams; literal-grep rot; HI JSON language:'hi'.
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
-- [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — art is USER-SUPPLIED, verbatim; extra elements = cutouts of their refs; signs at 40-48% vh (overlays above/below); pango for Devanagari baking.
+- [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — ORIGINAL home-city.webp + boy sprite + blimp restored after TWO same-day rollbacks; v2/v3/map1 + extra home chrome DEAD, never resurrect unasked.
 - [World monuments](nyaya-nagri-world-monuments.md) — landmark swap recipe: transparent gen → trim+resize, ZONE_ART = exact px; ring/labels/locks code-side, pads+shadows GONE (never re-add); 2400x2960 ring shot.
 - [Reference-frame layout](nyaya-nagri-reference-layout.md) — measure the frame as vh fractions; 100dvh not %, panel min-h in vh + flex-1 rows; vh coefficient rules short screens, rem cap rules tall.
 - [GitHub push setup](github-push-setup.md) — push via x-access-token credential helper with $GITHUB_PERSONAL_ACCESS_TOKEN ($ACT backup); platform gitPush dead end (connected account lacks write access).
@@ -10,6 +10,8 @@
 - [Story level map](nyaya-nagri-story-levels.md) — map is pure STORY_LEVELS data (id literals smoke-banned); celebration transient vs unlock persistent; word-lead 4-option ceiling; shared spoken pools stay count-neutral.
 - [Nyaya AI assistant](nyaya-nagri-nyayaai.md) — ONE assistant; text 3.5-flash, Live voice native-audio (ephemeral tokens, holdback, fail-closed guard, VAD+latency rules inside); corpus never holds helpline digits.
 - [Nyaya streaming chat](nyaya-nagri-streaming-chat.md) — NDJSON twin route gates the ACCUMULATED reply BEFORE each delta forward; shared prepareChat stops gate drift; client newest-wins epoch+abort; lazy headers.
-- [Agent platform quirks](agent-platform-quirks.md) — durable scope has no setTimeout (wrap in impure fn); zombie testing subagent can wedge the 1-slot pool — disclose and move on.
+- [Agent platform quirks](agent-platform-quirks.md) — no setTimeout in durable scope; zombie testing job wedges 1-slot pool; requestSecrets can no-op on existing secrets (fingerprint-verify; rename=loss risk).
 - [Nyaya insights system](nyaya-nagri-insights.md) — evidence gates count MEASURED sessions only; AI-cache fingerprint covers EVERY summarized input; cache keyed lang:audience; local-PIN gate = user-approved deviation.
-- [Nyaya story voice guide](nyaya-nagri-story-voice.md) — GEMINI-ONLY story voice (fallback TTS deleted by user spec); failure ⇒ silent retry chip + no onDone; engine-free state store; prime in gesture.
+- [Nyaya story voice guide](nyaya-nagri-story-voice.md) — GEMINI-ONLY voice; single shared GEMINI_API_KEY (TTS-key split reverted by user 2026-08-11, never re-add); failure ⇒ silent retry chip, no onDone.
+- [Seamless ground tiles](seamless-tile-recipe.md) — roll+cross-patch magick recipe, per-channel mean-match to base hex, second TileSprite at 1.41x/0.45a kills grid repetition.
+- [Workspace lib d.ts staleness](workspace-lib-dts-staleness.md) — new lib/* exports ⇒ TS2305 in consumers until `tsc -p lib/<name>` regens dist d.ts (composite refs; implicit-any cascade).
