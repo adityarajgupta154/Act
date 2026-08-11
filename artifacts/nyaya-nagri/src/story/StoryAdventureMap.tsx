@@ -76,7 +76,7 @@ import { progressStore } from '@/data/progressStore';
 import { useSettings } from '@/data/settingsStore';
 import { useStrings } from '@/i18n/strings';
 import { cn } from '@/lib/utils';
-import { STORY_LEVELS, isStoryLevelUnlockedIn, type StoryLevelDef } from './storyData';
+import { STORY_LEVELS, getStoryLevel, isStoryLevelUnlockedIn, type StoryLevelDef } from './storyData';
 
 type NodeState = 'completed' | 'unlocked' | 'locked';
 type CinePhase = 'banner' | 'path' | 'lockglow' | 'unlock' | 'cta';
@@ -130,13 +130,13 @@ export function StoryAdventureMap() {
 function MapScreen({ celebration }: { celebration: { completedId: string } | null }) {
   const t = useStrings();
   const { language } = useSettings();
-  const [storyProgress, setStoryProgress] = useState(
-    () => progressStore.getState().storyProgress,
-  );
-  useEffect(() => progressStore.subscribe((s) => setStoryProgress(s.storyProgress)), []);
+  const [progress, setProgress] = useState(() => progressStore.getState());
+  useEffect(() => progressStore.subscribe(setProgress), []);
 
-  const playable = STORY_LEVELS.filter((l) => l.slides.length > 0);
-  const doneCount = playable.filter((l) => storyProgress[l.id]).length;
+  // Full snapshot (not just storyProgress): the video-gated unlock rule
+  // also reads completedZones + videosWatched (still the ONE lock rule).
+  const storyProgress = progress.storyProgress;
+  const doneCount = STORY_LEVELS.filter((l) => storyProgress[l.id]).length;
 
   /* ------------------------- unlock cinematic ------------------------- */
   const completedIdx = celebration
@@ -176,7 +176,10 @@ function MapScreen({ celebration }: { celebration: { completedId: string } | nul
   const stateOf = (level: StoryLevelDef): NodeState => {
     if (holdLockedId === level.id) return 'locked';
     if (storyProgress[level.id]) return 'completed';
-    if (level.slides.length > 0 && isStoryLevelUnlockedIn(storyProgress, level.id)) {
+    // Slide-less teasers can still be UNLOCKED (video-gated castle flow):
+    // the node flips to ready while openStory keeps refusing to open it
+    // until slides ship — a tap shows the coming-soon note instead.
+    if (isStoryLevelUnlockedIn(progress, level.id)) {
       return 'unlocked';
     }
     return 'locked';
@@ -212,7 +215,7 @@ function MapScreen({ celebration }: { celebration: { completedId: string } | nul
     // next level to play, else the top of the trail.
     const focusId =
       celebration?.completedId ??
-      playable.find((l) => !storyProgress[l.id] && isStoryLevelUnlockedIn(storyProgress, l.id))
+      STORY_LEVELS.find((l) => !storyProgress[l.id] && isStoryLevelUnlockedIn(progress, l.id))
         ?.id ??
       STORY_LEVELS[STORY_LEVELS.length - 1]?.id;
     if (focusId) {
@@ -281,25 +284,33 @@ function MapScreen({ celebration }: { celebration: { completedId: string } | nul
 
   const playLevel = (levelId: string) => {
     if (clicksBlocked) return;
+    // Unlocked-but-slide-less teaser (story content still being written):
+    // a friendly note instead of a silent dead tap — openStory would
+    // refuse the slide-less level anyway (fail-closed guard unchanged).
+    const level = getStoryLevel(levelId);
+    if (level && level.slides.length === 0) {
+      flashMapNote('soon');
+      return;
+    }
     clearStoryCelebration();
     // openStory re-checks the lock rules (fail-closed) and primes the ONE
     // story audio path inside this tap gesture.
     openStory(levelId);
   };
 
-  /* --------------------- locked-node feedback note --------------------- */
-  const [lockedNote, setLockedNote] = useState(false);
-  const lockedNoteTimer = useRef<number | null>(null);
+  /* ---------------- locked / coming-soon feedback note ----------------- */
+  const [mapNote, setMapNote] = useState<'locked' | 'soon' | null>(null);
+  const mapNoteTimer = useRef<number | null>(null);
   useEffect(
     () => () => {
-      if (lockedNoteTimer.current !== null) window.clearTimeout(lockedNoteTimer.current);
+      if (mapNoteTimer.current !== null) window.clearTimeout(mapNoteTimer.current);
     },
     [],
   );
-  const flashLockedNote = () => {
-    setLockedNote(true);
-    if (lockedNoteTimer.current !== null) window.clearTimeout(lockedNoteTimer.current);
-    lockedNoteTimer.current = window.setTimeout(() => setLockedNote(false), 2200);
+  const flashMapNote = (kind: 'locked' | 'soon') => {
+    setMapNote(kind);
+    if (mapNoteTimer.current !== null) window.clearTimeout(mapNoteTimer.current);
+    mapNoteTimer.current = window.setTimeout(() => setMapNote(null), 2200);
   };
 
   /* ------------------------------ render ------------------------------ */
@@ -325,7 +336,7 @@ function MapScreen({ celebration }: { celebration: { completedId: string } | nul
         language={language}
         onPlay={() => playLevel(level.id)}
         onLockedClick={() => {
-          if (!clicksBlocked) flashLockedNote();
+          if (!clicksBlocked) flashMapNote('locked');
         }}
         nodeRef={(el) => {
           nodeRefs.current[level.id] = el;
@@ -447,19 +458,25 @@ function MapScreen({ celebration }: { celebration: { completedId: string } | nul
         </div>
         <span className="flex items-center gap-1.5 bg-white px-3 md:px-4 py-1.5 md:py-2 rounded-full shadow-md border border-slate-100 text-sm font-bold text-[#0b2a52] shrink-0">
           <Star className="w-4 h-4 fill-amber-400 text-amber-400" aria-hidden="true" />
-          {t.storyMapLevelsDone(doneCount, playable.length)}
+          {t.storyMapLevelsDone(doneCount, STORY_LEVELS.length)}
         </span>
       </div>
 
-      {/* Locked-node feedback (§11): child-friendly, auto-dismisses. */}
+      {/* Locked-node / coming-soon feedback (§11): child-friendly, auto-dismisses. */}
       <div
         aria-live="polite"
         className="pointer-events-none absolute inset-x-0 top-20 md:top-24 z-20 flex justify-center px-4"
       >
-        {lockedNote && (
+        {mapNote && (
           <div className="flex items-center gap-2 bg-white/95 border border-slate-200 shadow-lg rounded-full px-4 py-2 animate-in fade-in slide-in-from-top-2 duration-300">
-            <Lock className="w-4 h-4 text-slate-400" aria-hidden="true" />
-            <span className="text-sm font-bold text-[#0b2a52]">{t.storyMapLockedToast}</span>
+            {mapNote === 'locked' ? (
+              <Lock className="w-4 h-4 text-slate-400" aria-hidden="true" />
+            ) : (
+              <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
+            )}
+            <span className="text-sm font-bold text-[#0b2a52]">
+              {mapNote === 'locked' ? t.storyMapLockedToast : t.storyMapComingSoon}
+            </span>
           </div>
         )}
       </div>
@@ -625,6 +642,13 @@ function AdventureLevel({
   const t = useStrings();
   const prev = index > 0 ? STORY_LEVELS[index - 1] : null;
   const right = index % 2 === 1; // serpentine: even levels sit left, odd right
+  // Which rule locks this node (§11 hint): a video-gated level names its
+  // castle zone; the sequential chain names the previous level.
+  const lockedHint = level.unlockRequires
+    ? t.completeFirst(t.zones[level.unlockRequires.zoneId]?.name ?? '')
+    : prev
+      ? t.storyLockedHint(prev.title[language])
+      : '';
 
   const disc = (
     <span
@@ -762,9 +786,9 @@ function AdventureLevel({
           {t.storyMapPlayCta}
         </span>
       )}
-      {state === 'locked' && prev && (
+      {state === 'locked' && lockedHint && (
         <span className="mt-1 block text-[11px] md:text-xs font-medium text-slate-400">
-          {t.storyLockedHint(prev.title[language])}
+          {lockedHint}
         </span>
       )}
     </span>

@@ -35,6 +35,7 @@ import { buildNyayaAiSystemPrompt } from "./prompt";
 import { retrievePassages } from "./retrieve";
 import { buildContextLines } from "./context";
 import { registerVoiceRoutes } from "./voice";
+import { registerSarvamVoiceRoute } from "./sarvam-voice";
 import { type AgeBand } from "../avatar/prompt";
 import {
   scanForDistress,
@@ -335,5 +336,8 @@ router.post("/nyaya-ai/chat-stream", async (req, res) => {
 // Real-time voice conversation (Gemini Live API): ephemeral session tokens
 // + the deterministic transcript guard. Same router, same safety modules.
 registerVoiceRoutes(router);
+
+// Sarvam AI turn-based voice pipeline (STT → LLM → TTS, Hindi-first).
+registerSarvamVoiceRoute(router);
 
 export default router;

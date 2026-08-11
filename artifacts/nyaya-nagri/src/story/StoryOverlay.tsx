@@ -66,7 +66,7 @@ function devSeamParams(): {
   const p = new URLSearchParams(window.location.search);
   if (p.get('story') !== 'open' || p.get('view') === 'map') return null;
   return {
-    level: p.get('level') ?? 'right-to-life',
+    level: p.get('level') ?? 'right-to-childhood',
     slide: Number(p.get('slide') ?? '0') || 0,
     pick: p.get('pick'),
     voice: p.get('voice'),

@@ -380,11 +380,11 @@ function walk(dir: string): string[] {
   });
 }
 const allSrcFiles = walk(SRC).filter((p) => /\.(ts|tsx)$/.test(p));
-// The Live-Voice engine (approved Nyaya AI voice feature) is the ONE
+// The Sarvam voice engine (approved Nyaya AI voice feature) is the ONE
 // permitted getUserMedia caller — MICROPHONE only. The photo/camera ban
 // stays absolute everywhere else, and the engine itself is asserted
 // audio-only just below (no `video:` key, no ImageCapture).
-const VOICE_ENGINE_SUFFIX = join('avatar', 'voice', 'liveVoice.ts');
+const VOICE_ENGINE_SUFFIX = join('avatar', 'voice', 'sarvamVoice.ts');
 for (const bad of ['type="file"', 'getUserMedia', 'capture=', 'ImageCapture']) {
   assert(
     allSrcFiles.every(
@@ -395,7 +395,7 @@ for (const bad of ['type="file"', 'getUserMedia', 'capture=', 'ImageCapture']) {
     `no ${bad} anywhere in src (no photo upload / camera access)`,
   );
 }
-const voiceEngineSrc = readFileSync(join(SRC, 'avatar', 'voice', 'liveVoice.ts'), 'utf8');
+const voiceEngineSrc = readFileSync(join(SRC, 'avatar', 'voice', 'sarvamVoice.ts'), 'utf8');
 assert(
   !/video\s*:/.test(voiceEngineSrc) && !voiceEngineSrc.includes('ImageCapture'),
   'voice engine getUserMedia is AUDIO-ONLY (no video key, no ImageCapture)',

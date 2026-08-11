@@ -39,7 +39,7 @@ function walk(dir: string, out: string[] = []): string[] {
 }
 
 const widget = read('src/avatar/AvatarWidget.tsx');
-const voiceEngine = read('src/avatar/voice/liveVoice.ts');
+const voiceEngine = read('src/avatar/voice/sarvamVoice.ts');
 const gameCtx = read('src/avatar/gameContext.ts');
 const hud = read('src/ui/HUD.tsx');
 const home = read('src/home/HomeScreen.tsx');
@@ -96,53 +96,83 @@ check(
 );
 check('idle float animation (subtle, motion-safe)', widget.includes('nyaya-float') && css.includes('@keyframes nyaya-float'));
 
-console.log('— real-time voice (Gemini Live, ephemeral tokens) —');
-check('voice mode wired (LiveVoiceEngine + tap toggle)', widget.includes('new LiveVoiceEngine') && widget.includes('toggleVoice'));
-check('token minted server-side (raw nyayaAiVoiceToken client fn)', widget.includes('nyayaAiVoiceToken({'));
-check(
-  'transcript safety guard wired for BOTH roles',
-  widget.includes('nyayaAiVoiceGuard(') &&
-    voiceEngine.includes("'user'") &&
-    voiceEngine.includes("'model'") &&
-    voiceEngine.includes('guardText'),
+console.log('— real-time voice (Sarvam turn-based pipeline) —');
+check('voice mode wired (SarvamVoiceEngine + tap toggle)', widget.includes('new SarvamVoiceEngine') && widget.includes('toggleVoice'));
+const sarvamRoute = readFileSync(
+  join(ROOT, '../api-server/src/routes/nyayaai/sarvam-voice.ts'),
+  'utf8',
 );
 check(
-  'guard runs INCREMENTALLY while transcripts stream (mid-utterance)',
-  voiceEngine.includes('scheduleIncrementalGuard') &&
-    voiceEngine.includes('INC_GUARD_DEBOUNCE_MS'),
+  'turn-based server pipeline — no client tokens, no direct Sarvam calls',
+  voiceEngine.includes("fetch('/api/nyaya-ai/sarvam-voice'") &&
+    !voiceEngine.includes('SARVAM_API_KEY') &&
+    !voiceEngine.includes('api.sarvam.ai') &&
+    !widget.includes('nyayaAiVoiceToken'),
 );
 check(
-  'guard failure fails CLOSED (voice ends; never unguarded voice)',
-  voiceEngine.includes('FAILS CLOSED') &&
-    !voiceEngine.toLowerCase().includes('fail open') &&
-    !voiceEngine.toLowerCase().includes('fails open'),
+  'SARVAM key stays server-side only (never in the client bundle)',
+  sarvamRoute.includes('SARVAM_API_KEY') && !widget.includes('SARVAM'),
+);
+let liveVoiceGone = false;
+try {
+  read('src/avatar/voice/liveVoice.ts');
+} catch {
+  liveVoiceGone = true;
+}
+check('Gemini Live client engine DELETED (Sarvam is the ONE voice path)', liveVoiceGone);
+check(
+  'safety gates run SERVER-side on BOTH directions (distress in, canonical out)',
+  sarvamRoute.includes('scanForDistress') &&
+    sarvamRoute.includes('requiresCanonicalEscalation') &&
+    sarvamRoute.includes('from "../avatar/safety"'),
 );
 check(
-  'model text appended only after clean verdict (guard-before-append)',
-  voiceEngine.includes('finalizeModel'),
+  'PII redacted before the LLM sees ANY role (message + history)',
+  sarvamRoute.includes('redactPii(userTranscript)') &&
+    sarvamRoute.includes('redactPii(t.content)'),
 );
 check(
-  'model AUDIO held back until first clean verdicts (playback holdback)',
-  voiceEngine.includes('audioHoldback') &&
-    voiceEngine.includes('pendingAudio') &&
-    voiceEngine.includes('maybeReleaseAudio'),
+  'escalation fails CLOSED: server flag ends the voice session client-side',
+  voiceEngine.includes('onEscalated') &&
+    voiceEngine.includes('data.escalated') &&
+    sarvamRoute.includes('escalated: true'),
 );
 check(
-  'holdback is bounded: unverifiable audio DISCARDED, never played raw',
-  voiceEngine.includes('HOLDBACK_MAX_WAIT_MS') && voiceEngine.includes('armHoldbackTimer'),
+  'model reply is gated BEFORE TTS ever runs (gate → synthesize order)',
+  sarvamRoute.indexOf('requiresCanonicalEscalation(modelText)') > 0 &&
+    sarvamRoute.indexOf('requiresCanonicalEscalation(modelText)') <
+      sarvamRoute.indexOf('sarvamTts(modelText'),
 );
 check(
-  'stale verdicts cannot cross turns (epoch-scoped gate state)',
-  voiceEngine.includes('turnEpoch') && voiceEngine.includes('userEpoch'),
+  'TTS playback decodes via Web Audio decodeAudioData (garbled-audio fix pinned)',
+  voiceEngine.includes('decodeAudioData'),
 );
-check("engine connects with v1alpha ephemeral token as key", voiceEngine.includes("apiVersion: 'v1alpha'"));
-check('16kHz PCM mic in / 24kHz native audio out', voiceEngine.includes('16000') && voiceEngine.includes('24000'));
+check(
+  'every turn fetch is time-bounded (AbortSignal.timeout — never hangs in thinking)',
+  voiceEngine.includes('AbortSignal.timeout('),
+);
+check(
+  'Sarvam models pinned server-side (saarika STT + bulbul TTS + anushka voice)',
+  sarvamRoute.includes('saarika:v2.5') &&
+    sarvamRoute.includes('bulbul:v2') &&
+    sarvamRoute.includes('anushka'),
+);
+check(
+  'single turn failure never kills the session (back to listening, no crash)',
+  voiceEngine.includes("Don't kill the session on a single turn failure"),
+);
+check(
+  '16kHz mic capture (Sarvam STT contract) packed as WAV client-side',
+  voiceEngine.includes('MIC_SAMPLE_RATE = 16_000') && voiceEngine.includes('packWavBase64'),
+);
+check(
+  'mic-denied maps to the friendly error kind (NotAllowedError handled)',
+  voiceEngine.includes('NotAllowedError') && voiceEngine.includes("'mic-denied'"),
+);
 check(
   'AudioWorklet capture (no deprecated ScriptProcessor)',
   voiceEngine.includes('AudioWorkletNode') && !voiceEngine.includes('createScriptProcessor'),
 );
-check('gapless scheduled playback queue', voiceEngine.includes('nextStartTime'));
-check('barge-in interruption clears audio queue', voiceEngine.includes('interrupted') && voiceEngine.includes('stopPlayback'));
 check(
   'live transcripts land in the shared chat thread',
   widget.includes('onUserTranscript') && widget.includes('onModelTranscript'),
@@ -194,9 +224,9 @@ check(
     widget.includes('appendAssistantMessage(reply, true)'),
 );
 check(
-  'full cleanup: mic tracks, session, both AudioContexts',
+  'full cleanup: mic tracks, worklet port, both AudioContexts',
   voiceEngine.includes('getTracks') &&
-    voiceEngine.includes('session?.close') &&
+    voiceEngine.includes('port.close()') &&
     voiceEngine.includes('micCtx?.close') &&
     voiceEngine.includes('playCtx?.close') &&
     widget.includes('voiceEngineRef.current?.stop()'),
@@ -212,36 +242,19 @@ check(
   'voice API calls bypass react-query (no widget re-render per guard call)',
   !widget.includes('useNyayaAiVoiceToken') && !widget.includes('useNyayaAiVoiceGuard'),
 );
-const voiceRouteSrc = readFileSync(
-  join(ROOT, '../api-server/src/routes/nyayaai/voice.ts'),
-  'utf8',
-);
-// Exact-value match, not mere presence: a constrained token REJECTS a
-// live.connect config that conflicts with it, so the two silence windows
-// (server constraint vs client VAD_SILENCE_MS) drifting apart would break
-// voice entirely. Same for the sensitivity enum.
-const serverSilence = voiceRouteSrc.match(/silenceDurationMs:\s*(\d+)/)?.[1];
-const clientSilence = voiceEngine.match(/VAD_SILENCE_MS = (\d+)/)?.[1];
+// Turn-based pipeline: VAD lives ENTIRELY client-side now — there is no
+// server silence-window to pair with (that drift class died with the
+// Live engine). The engine sends a turn only after real speech and
+// hard-caps runaway recordings.
 check(
-  `VAD silence window IDENTICAL on both sides (server=${serverSilence ?? '?'} client=${clientSilence ?? '?'})`,
-  serverSilence !== undefined && serverSilence === clientSilence,
+  'VAD thresholds sane: 800ms silence end, 250ms min speech, 30s hard cap',
+  voiceEngine.includes('SILENCE_DURATION_MS = 800') &&
+    voiceEngine.includes('MIN_SPEECH_MS = 250') &&
+    voiceEngine.includes('MAX_RECORD_MS = 30_000'),
 );
 check(
-  'VAD end-of-speech sensitivity HIGH on both sides',
-  voiceRouteSrc.includes('END_SENSITIVITY_HIGH') && voiceEngine.includes('END_SENSITIVITY_HIGH'),
-);
-check(
-  'connect watchdog present (never spins in connecting forever)',
-  voiceEngine.includes('CONNECT_TIMEOUT_MS'),
-);
-check(
-  'connect watchdog armed only AFTER mic grant (permission dialog exempt)',
-  voiceEngine.indexOf('this.connectTimer = setTimeout') > voiceEngine.indexOf("this.mark('mic')"),
-);
-check(
-  'user utterance flushed when model transcript starts (early user-gate)',
-  voiceEngine.indexOf('this.flushUser()') <
-    voiceEngine.indexOf('this.modelBuf += sc.outputTranscription.text'),
+  'turn timeout is generous but finite (25s — STT+LLM+TTS round trip)',
+  voiceEngine.includes('AbortSignal.timeout(25_000)'),
 );
 check(
   'DEV-only latency instrumentation injected by widget (engine never reads env)',
@@ -249,17 +262,8 @@ check(
     widget.includes('debugLatency: import.meta.env?.DEV === true'),
 );
 check(
-  'token mint overlaps getUserMedia ONLY when permission already granted',
-  voiceEngine.includes("perm?.state === 'granted'") &&
-    voiceEngine.includes('await (earlyToken ?? this.cb.getToken())') &&
-    voiceEngine.indexOf("perm?.state === 'granted'") <
-      voiceEngine.indexOf('await navigator.mediaDevices.getUserMedia'),
-);
-check(
-  'early-mint + mic acquisition are DISPOSAL-safe (no post-close mint or mic leak)',
-  voiceEngine.indexOf('closed while the (fast) query ran') <
-    voiceEngine.indexOf("perm?.state === 'granted'") &&
-    voiceEngine.includes('for (const track of stream.getTracks())'),
+  'mic acquisition is DISPOSAL-safe (no leaked tracks if closed mid-grant)',
+  voiceEngine.includes('if (this.disposed) { for (const t of stream.getTracks()) t.stop(); return; }'),
 );
 
 console.log('— mounts: robot is the ONLY floating assistant —');
@@ -311,11 +315,8 @@ check(
   }),
 );
 check(
-  '@google/genai imported ONLY by the voice engine (ephemeral token use)',
-  allSrcFiles.every((f) => {
-    if (f.endsWith(join('avatar', 'voice', 'liveVoice.ts'))) return true;
-    return !readFileSync(f, 'utf8').includes('@google/genai');
-  }),
+  '@google/genai NEVER imported client-side (voice goes through the server)',
+  allSrcFiles.every((f) => !readFileSync(f, 'utf8').includes('@google/genai')),
 );
 check(
   'voice engine never reads env/secrets itself',

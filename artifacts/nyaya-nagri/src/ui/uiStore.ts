@@ -147,6 +147,24 @@ export function exitZone() {
 }
 
 /**
+ * Leave the zone interior AND land on the Story Adventure map in one
+ * gesture (the video-flow unlock CTA). Mirrors exitZone()'s fade exactly;
+ * the map opens mid-fade so the reveal rides the same transition, while
+ * openStoryMap()'s guard chain stays intact for every other caller.
+ */
+export function exitZoneToStoryMap() {
+  if (state.isTransitioning) return;
+  uiStore.set({ isTransitioning: true, fadeOpacity: 1, activeLevel: null });
+
+  setTimeout(() => {
+    uiStore.set({ activeZoneId: null, fadeOpacity: 0, storyMapOpen: true });
+    setTimeout(() => {
+      uiStore.set({ isTransitioning: false });
+    }, 300);
+  }, 300);
+}
+
+/**
  * Story Adventure entry (Aug 2026). Lock rules are enforced HERE too —
  * exactly like enterZone — so no UI path (including URL/state seams) can
  * open a locked or slide-less story level. The overlay itself animates in;
@@ -156,7 +174,7 @@ export function openStory(storyId: string, initialSlide = 0) {
   if (state.isTransitioning || state.activeZoneId || state.activeStory) return;
   const level = getStoryLevel(storyId);
   if (!level || level.slides.length === 0) return;
-  if (!isStoryLevelUnlockedIn(progressStore.getState().storyProgress, storyId)) return;
+  if (!isStoryLevelUnlockedIn(progressStore.getState(), storyId)) return;
   // Still inside the tap/E-key gesture here: unlock the ONE story audio
   // path for iOS/Safari (the Gemini clip element — the only story voice)
   // BEFORE the overlay's first auto-narration effect runs outside of it.

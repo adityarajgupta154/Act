@@ -15,7 +15,8 @@ import '@fontsource/lexend/700.css';
 // attributes to <html> before first render.
 import '@/data/settingsStore';
 import { initAmbientAudio } from '@/audio/ambient';
-import { openHelp } from '@/ui/uiStore';
+import { openHelp, enterZone } from './ui/uiStore';
+import { ZONES } from './world/zones';
 
 // Calm, mutable ambient loop (Task 13) — starts after the first user
 // gesture (browser autoplay policy); toggled from Settings.
@@ -51,10 +52,18 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('stor
   const doneIds = (new URLSearchParams(window.location.search).get('done') ?? '')
     .split(',')
     .filter(Boolean);
+  const zoneIds = (new URLSearchParams(window.location.search).get('zones') ?? '')
+    .split(',')
+    .filter(Boolean);
+  const watchedIds = (new URLSearchParams(window.location.search).get('watched') ?? '')
+    .split(',')
+    .filter(Boolean);
   progressStore.update({
     onboarded: true,
     ageBand: '12-15',
     storyProgress: Object.fromEntries(doneIds.map((id) => [id, true])),
+    completedZones: Object.fromEntries(zoneIds.map((id) => [id, true])),
+    videosWatched: Object.fromEntries(watchedIds.map((id) => [id, true])),
   });
 }
 
@@ -74,6 +83,31 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('help
 // expanded profile panel over the map. Never active in production builds.
 if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('profile') === 'open') {
   progressStore.update({ onboarded: true, ageBand: '12-15' });
+}
+
+// Dev-only screenshot/e2e seam (same spirit): `?zone=<id>` boots an
+// onboarded child straight INSIDE a zone interior — the headless capture
+// browser cannot render WebGL, so it cannot walk the 3D world to a gate.
+// Lets the video-first castle flow (VIDEO → quiz) be photographed.
+// HomePage skips the landing screen for this param too. Never in production.
+{
+  const zoneSeam = import.meta.env.DEV
+    ? new URLSearchParams(window.location.search).get('zone')
+    : null;
+  if (zoneSeam) {
+    // enterZone validates the zone-unlock rule (seams cannot bypass locks),
+    // so complete every zone BEFORE the target — same as a real playthrough.
+    const before = ZONES.slice(
+      0,
+      Math.max(0, ZONES.findIndex((z) => z.id === zoneSeam)),
+    );
+    progressStore.update({
+      onboarded: true,
+      ageBand: '12-15',
+      completedZones: Object.fromEntries(before.map((z) => [z.id, true])),
+    });
+    enterZone(zoneSeam);
+  }
 }
 
 createRoot(document.getElementById('root')!).render(<App />);

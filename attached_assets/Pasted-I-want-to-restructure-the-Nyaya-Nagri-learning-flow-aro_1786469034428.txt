@@ -1,0 +1,550 @@
+I want to restructure the Nyaya Nagri learning flow around the "Right to Childhood" castle.
+
+IMPORTANT:
+This is an implementation task.
+Do NOT generate any images.
+Do NOT redesign the existing UI unnecessarily.
+Use the existing project components, assets, routing, state management, and styling wherever possible.
+
+I have already added the "Right to Childhood" educational video to the Replit project.
+
+I also already have the 3 quiz/question screens for this learning flow.
+
+KEEP THE EXISTING QUESTIONS EXACTLY AS THEY ARE.
+
+Do NOT rewrite, replace, reorder, or redesign the existing questions.
+
+==================================================
+1. NEW RIGHT TO CHILDHOOD FLOW
+==================================================
+
+The "Right to Childhood" castle on the Nyaya Nagri map should become the entry point for this learning journey.
+
+When the user clicks the:
+
+"Right to Childhood"
+
+castle/portal:
+
+open the Right to Childhood learning flow.
+
+The flow should be:
+
+RIGHT TO CHILDHOOD CASTLE
+        ↓
+RIGHT TO CHILDHOOD VIDEO
+        ↓
+QUIZ QUESTION 1
+        ↓
+QUIZ QUESTION 2
+        ↓
+QUIZ QUESTION 3
+        ↓
+ALL QUESTIONS COMPLETED
+        ↓
+RIGHT TO CHILDHOOD LEVEL UNLOCKED
+        ↓
+STORY ADVENTURE
+        ↓
+RIGHT TO CHILDHOOD LEVEL
+
+==================================================
+2. VIDEO
+==================================================
+
+I have already uploaded the Right to Childhood video into the Replit project.
+
+Find the uploaded video asset and use it in the Right to Childhood learning flow.
+
+Do NOT create a placeholder video.
+
+Do NOT replace the uploaded video.
+
+Do NOT generate a new video.
+
+The video should play BEFORE the quiz questions.
+
+Flow:
+
+1. User enters Right to Childhood.
+2. Video screen opens.
+3. User watches/finishes the video.
+4. After the video, continue to the existing 3 questions.
+
+Use the actual uploaded video asset.
+
+==================================================
+3. VIDEO COMPLETION
+==================================================
+
+The quiz should not appear immediately when the video screen opens.
+
+The user should first see the video.
+
+After the video has finished, enable/show:
+
+"Continue" / "Next"
+
+or the existing appropriate continuation control.
+
+If the project already has a video completion mechanism, reuse it.
+
+Do NOT add unnecessary controls if the existing design already has a suitable one.
+
+The video should remain responsive and fit naturally inside the existing learning UI.
+
+==================================================
+4. EXISTING 3 QUESTIONS
+==================================================
+
+VERY IMPORTANT:
+
+The existing 3 questions already implemented in the project must remain EXACTLY as they currently are.
+
+Do NOT change:
+
+- question text
+- answer options
+- question order
+- illustrations/images
+- answer logic
+- existing question UI
+- wording
+- styling unless absolutely required for the new flow
+
+The questions should simply be connected after the Right to Childhood video.
+
+Flow:
+
+Video
+→ Existing Question 1
+→ Existing Question 2
+→ Existing Question 3
+
+==================================================
+5. QUESTION COMPLETION
+==================================================
+
+After the user completes all 3 existing questions:
+
+determine that the Right to Childhood learning activity has been completed.
+
+The user should NOT need to manually unlock anything.
+
+Completion should automatically trigger the unlock state.
+
+For example:
+
+rightToChildhoodCompleted = true
+
+Use the project's existing state/storage architecture if available.
+
+Do NOT create an unnecessary new backend system if the current project already has suitable state management.
+
+==================================================
+6. UNLOCK STORY ADVENTURE LEVEL
+==================================================
+
+After all 3 questions are completed successfully, unlock a Story Adventure level named exactly:
+
+"Right to Childhood"
+
+This is important.
+
+The level name should be:
+
+Right to Childhood
+
+Do NOT name it:
+
+Childhood Rights
+Right of Childhood
+Child Rights
+Childhood Adventure
+
+Use exactly:
+
+Right to Childhood
+
+==================================================
+7. STORY ADVENTURE CHANGES
+==================================================
+
+IMPORTANT:
+
+REMOVE ALL CURRENT STORY ADVENTURE LEVELS.
+
+The Story Adventure screen should no longer show the existing levels that are currently there.
+
+Remove the existing level data/cards/nodes from the Story Adventure.
+
+Do NOT delete the Story Adventure feature itself.
+
+Instead, make it start with the new:
+
+"Right to Childhood"
+
+level.
+
+The Story Adventure should now be structured around the new unlocked Right to Childhood content.
+
+==================================================
+8. INITIAL LOCKED/UNLOCKED STATE
+==================================================
+
+Before the user completes the Right to Childhood video + 3 questions:
+
+The Story Adventure:
+
+"Right to Childhood"
+
+level should be LOCKED.
+
+Show an appropriate locked state using the existing Story Adventure design system.
+
+For example:
+
+🔒 Right to Childhood
+
+After the user completes all 3 questions:
+
+the level becomes:
+
+✓ Right to Childhood
+UNLOCKED
+
+Use the existing level/card styling rather than creating a completely different UI.
+
+==================================================
+9. UNLOCK MUST PERSIST
+==================================================
+
+The unlock state should persist when the user:
+
+- navigates away
+- returns to the map
+- opens Story Adventure again
+- refreshes the page
+
+Use the project's existing persistence mechanism.
+
+If the project currently uses localStorage/Zustand/context/Firebase/etc., reuse the existing architecture.
+
+Do NOT create duplicate state systems.
+
+For example:
+
+rightToChildhoodCompleted
+
+should remain true after refresh.
+
+==================================================
+10. MAP → STORY ADVENTURE CONNECTION
+==================================================
+
+The Right to Childhood castle on the main Nyaya Nagri map should remain the entry point.
+
+The user flow should be intuitive:
+
+MAP
+ ↓
+Right to Childhood Castle
+ ↓
+Video
+ ↓
+3 Existing Questions
+ ↓
+Completion
+ ↓
+Story Adventure unlocked
+ ↓
+Right to Childhood Level
+
+Do NOT create duplicate Right to Childhood entries.
+
+There should be one canonical Right to Childhood learning journey.
+
+==================================================
+11. RIGHT TO CHILDHOOD LEVEL
+==================================================
+
+Inside Story Adventure, create the new level:
+
+"Right to Childhood"
+
+This level is intentionally being created as a structure for future content.
+
+For now, create the level and its content architecture cleanly.
+
+I will add conditional images/content later.
+
+Therefore make the level easy to extend.
+
+Use a structure that can later support things such as:
+
+- conditional images
+- conditional text
+- multiple slides
+- scenarios
+- additional questions
+- branching content
+- completion state
+
+Do NOT hardcode the future content now.
+
+==================================================
+12. FUTURE CONDITIONAL CONTENT
+==================================================
+
+I will later add conditional images and other content to the Right to Childhood level.
+
+Prepare the component/data structure so that future content can be added without rewriting the entire Story Adventure system.
+
+For example, conceptually:
+
+RightToChildhoodLevel
+    ├── intro
+    ├── slides
+    ├── conditionalImages
+    ├── scenarios
+    ├── questions
+    └── completion
+
+But use the project's existing architecture if it already has an equivalent structure.
+
+Do NOT introduce unnecessary complexity.
+
+==================================================
+13. DO NOT CHANGE EXISTING QUESTION CONTENT
+==================================================
+
+Again:
+
+The 3 existing questions are already correct.
+
+KEEP THEM EXACTLY AS THEY ARE.
+
+Only connect them to the new Right to Childhood video/level flow.
+
+If the existing questions are currently used somewhere else, make sure their existing implementation is not broken.
+
+==================================================
+14. REMOVE OLD STORY ADVENTURE DATA
+==================================================
+
+Find the source of the current Story Adventure levels.
+
+It may be:
+
+- an array
+- JSON
+- constants
+- component data
+- local state
+- database data
+
+Remove the old level entries from the Story Adventure.
+
+Do NOT leave invisible/unused old levels rendered.
+
+There should be no old:
+
+Level 1
+Level 2
+Level 3
+etc.
+
+from the previous Story Adventure implementation unless they are specifically part of the new Right to Childhood flow.
+
+==================================================
+15. STORY ADVENTURE UI
+==================================================
+
+Keep the existing Story Adventure visual design.
+
+Do NOT redesign the whole screen.
+
+Only update the content/data so that it represents:
+
+Right to Childhood
+
+Use the existing:
+
+- level card
+- lock state
+- progress indicator
+- navigation
+- buttons
+- animations
+- typography
+- layout
+
+where possible.
+
+==================================================
+16. COMPLETION LOGIC
+==================================================
+
+The completion condition must be:
+
+Video completed
++
+Question 1 completed
++
+Question 2 completed
++
+Question 3 completed
+=
+Right to Childhood unlocked
+
+Do NOT unlock the level after only watching the video.
+
+Do NOT unlock it after only answering one question.
+
+Do NOT unlock it when the page is opened.
+
+All required steps must be completed.
+
+==================================================
+17. ERROR / RETRY BEHAVIOR
+==================================================
+
+If the existing questions have answer validation:
+
+preserve the existing behavior.
+
+Do NOT change how correct/incorrect answers currently work.
+
+If a user gets a question wrong, follow the existing question behavior.
+
+Only after the existing 3-question flow reaches its current completion state should the unlock happen.
+
+==================================================
+18. NAVIGATION
+==================================================
+
+After completing the 3 questions:
+
+provide the existing appropriate completion/navigation behavior.
+
+The user should be able to continue into Story Adventure.
+
+Do NOT force unexpected redirects.
+
+If the current learning flow has a completion screen, integrate the unlock there.
+
+==================================================
+19. DO NOT BREAK OTHER FEATURES
+==================================================
+
+Do NOT break:
+
+- Nyaya Nagri map
+- player movement
+- map boundaries
+- Right to Childhood castle
+- other map buildings
+- AI Assistant
+- Get Help Now
+- TTS
+- voice functionality
+- Gemini/API integration
+- About
+- Settings
+- navigation
+- existing quiz components
+- Story Adventure routing
+
+Only restructure the Right to Childhood → Video → Quiz → Story Adventure unlock flow.
+
+==================================================
+20. IMPLEMENTATION STRATEGY
+==================================================
+
+Before coding:
+
+1. Inspect the current project structure.
+2. Find the Right to Childhood castle click handler.
+3. Find the uploaded Right to Childhood video.
+4. Find the existing 3 questions.
+5. Find the Story Adventure component.
+6. Find the current Story Adventure level data.
+7. Find the existing progress/unlock state system.
+8. Reuse existing architecture wherever possible.
+
+Then implement the new flow.
+
+Do NOT create duplicate components if suitable existing components already exist.
+
+==================================================
+21. FINAL EXPECTED FLOW
+==================================================
+
+The final behavior must be:
+
+USER OPENS MAP
+        ↓
+CLICKS "RIGHT TO CHILDHOOD"
+        ↓
+RIGHT TO CHILDHOOD VIDEO
+        ↓
+VIDEO COMPLETES
+        ↓
+EXISTING QUESTION 1
+        ↓
+EXISTING QUESTION 2
+        ↓
+EXISTING QUESTION 3
+        ↓
+QUESTIONS COMPLETED
+        ↓
+RIGHT TO CHILDHOOD UNLOCKED
+        ↓
+STORY ADVENTURE
+        ↓
+RIGHT TO CHILDHOOD LEVEL
+
+==================================================
+22. FINAL VERIFICATION
+==================================================
+
+Test the complete flow from beginning to end.
+
+Verify:
+
+✓ Right to Childhood castle opens the correct flow
+✓ Uploaded video is used
+✓ Video appears before questions
+✓ Video completion works
+✓ Existing Question 1 is unchanged
+✓ Existing Question 2 is unchanged
+✓ Existing Question 3 is unchanged
+✓ All 3 questions must be completed
+✓ Story Adventure unlocks only after completion
+✓ Level name is exactly "Right to Childhood"
+✓ Old Story Adventure levels are removed
+✓ Right to Childhood starts locked before completion
+✓ Right to Childhood becomes unlocked after completion
+✓ Unlock persists after refresh
+✓ Story Adventure opens correctly
+✓ Existing navigation still works
+✓ No duplicate levels exist
+✓ No duplicate Right to Childhood flow exists
+✓ AI Assistant still works
+✓ TTS still works
+✓ Map still works
+✓ No unrelated UI has been changed
+
+IMPORTANT FINAL INSTRUCTION:
+
+Do not redesign the application.
+
+Do not change the existing 3 questions.
+
+Do not generate new images.
+
+Use the Right to Childhood video I already uploaded.
+
+Remove the existing Story Adventure levels and replace that structure with the new "Right to Childhood" level.
+
+Build the flow so that the video + existing 3 questions are the prerequisite for unlocking the Right to Childhood Story Adventure level.

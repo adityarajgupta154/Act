@@ -24,27 +24,13 @@ description: The game's ONE AI assistant (robot AvatarWidget, Gemini) — model 
 ## Game context (personalization without PII)
 Client sends stable zone IDS + counts + capped nickname/lesson title (`src/avatar/gameContext.ts`); server maps ids→names via ZONE_TOPICS (single source) and PII-redacts free-text fields. Never send coins/XP, real names, or free-text zone names from the client.
 
-## Real-time voice (Gemini Live, Aug 2026)
-- Live-capable model on this key: **`gemini-2.5-flash-native-audio-preview-09-2025` only** (text chat's gemini-3.5-flash has no Live support). Voice `Leda`.
-- Key format: Google's newer **`AQ.`-prefix keys (53 chars) work on the Gemini Developer API** (models.list 200, Live connect, full voice round-trip verified 2026-08-11) — never assume AIza-only. Dev runs on an AQ key since then; prod may lag on the previous key until a republish. A dead `GOOGLE_API_KEY` secret may linger (only the user can delete secrets) — harmless because every construction passes explicit apiKey, but it triggers the SDK's "Using GOOGLE_API_KEY" env warning.
-- "Session reaches listening but ZERO inputTranscriptions ever, all sessions" ⇒ suspect the DEVICE mic before code: proven case was OS-level mute (`track.muted=true`, level 0.0000) while getUserMedia succeeded and WS was healthy. Discriminate Google-vs-device with the headless speech probe (dev-testing memory), then read the DEV mic-level logs liveVoice now emits (debugLatency-gated: track label/muted + 2s peak-level lines).
-- Ephemeral tokens: v1alpha `authTokens.create` + `liveConnectConstraints` — model, voice, transcriptions and the FULL systemInstruction (plain string works) lock at mint; the client's connect config must mirror the constraints. uses:1 → acquire mic permission BEFORE minting or a denied mic burns the token.
-- Preview Live models throttle under rapid repeated sessions: turnComplete with ZERO audio/transcript (setupComplete → empty modelTurn → generationComplete → turnComplete). Config-independent — verify with a byte-identical known-good direct mint before touching code; a cooldown fixes it.
-- Streamed-audio safety gating (architect-approved after 4 review rounds): playback HOLDBACK — queue each turn's audio until the child's utterance AND the first model-transcript slice both pass the deterministic guard (fast-path check ≈ one round-trip); gate state is EPOCH-scoped per turn/utterance (stale verdicts must never release later audio — including dedupe fast paths); a bounded timer DISCARDS unverifiable audio (never plays raw); incremental re-checks run mid-turn; guard failure fails CLOSED (session ends, friendly message). Raw model text appends only after a clean verdict.
-- Residual limits to disclose, not "fix": a modified client can skip a client-called guard (inherent to direct browser→Google streaming; locked prompt is the first defense), and post-release mid-turn content can play ~debounce+RTT before an incremental verdict stops it.
-
-## Voice latency rules (Aug 2026, optimize AROUND the holdback — never weaken it)
-- VAD end-of-speech: `realtimeInputConfig.automaticActivityDetection` (END_SENSITIVITY_HIGH + silenceDurationMs 600) locked in token constraints AND mirrored byte-identical in the client connect config — drift breaks connect (constrained tokens reject conflicts). nyayaai smoke asserts the exact-value match on both sides.
-- Widget voice calls use RAW orval client fns (`nyayaAiVoiceToken`/`nyayaAiVoiceGuard`), NEVER react-query hooks: each incremental guard call would flip mutation state and re-render the whole widget over the game canvas. `voiceState` alone drives voice UI.
-- Connect watchdog (10s → friendly connect-failed) is armed only AFTER getUserMedia resolves — the permission dialog (a child reading it) must never count against it.
-- `flushUser()` fires on the FIRST outputTranscription slice (model turn started ⇒ utterance final), so the user-gate verdict dispatches before the first audio chunk; holdback release then usually waits only on the model first-slice fast-path.
-- DEV latency logs (`[voice-latency]`): widget injects `debugLatency: import.meta.env?.DEV === true`; the engine never reads env itself (smoke-enforced). All marks are no-ops when off.
-- Token prefetch at WIDGET-OPEN stays REJECTED (uses:1 burns unused, game context locked at mint goes stale). But MIC-TAP mint may OVERLAP getUserMedia when `navigator.permissions` reports 'granted' — no prompt can appear, so the 2-min session-start window can't be outlived; prompt-possible/denied/API-missing paths stay strictly mic-first (Aug 2026 latency task, ~450ms saved per start).
-- Chat routes have bounded upstream waits: classic = whole-call `AbortSignal.timeout`; stream = FIRST-CHUNK-only bound per attempt (a total-stream timeout would kill healthy long replies; client's stall timer covers mid-stream death). Both → existing retry/friendly-502 paths.
-- Measured Aug 2026 (:8080 direct): token mint ~420-480ms, chat-stream first-delta ~1.1s, classic total ~1.3-1.6s. TTFT ≈ model floor — the 8-12k-char safety system prompt is NOT the bottleneck; don't trim it for latency.
-
 ## Build/codegen quirks
 - orval@8 emits zod-v4 syntax (`zod.int()`) for OpenAPI `type: integer`, which breaks against installed zod 3.25 — **use `type: number` + min/max in openapi.yaml**.
 - Gemini/Anthropic SDKs matching build.mjs external globs must be direct api-server package.json deps or the esbuild bundle fails at runtime.
 - Codegen lives at `lib/api-spec` → `pnpm run codegen` (orval), not a root script.
 - Shared safety module stays at `routes/avatar/safety.ts` (EN/HI/GU) — `routes/avatar/` still exists for shared modules even though its route file is gone; persona + nyayaai import from it.
+## Voice (Sarvam turn-based — replaced Gemini Live, Aug 2026)
+Detail lives in [nyaya-sarvam-voice.md](nyaya-sarvam-voice.md). Rules that belong to THIS assistant:
+- Voice and text are the SAME assistant and share the SAME safety module + persona — a voice turn is gated on the transcript BEFORE any TTS is synthesized.
+- `@google/genai` is banned CLIENT-wide (the Live client is deleted); Gemini runs server-side only. Legacy voice-token/guard routes stay mounted-but-unused deliberately — removing them is a separate decision.
+- **Lesson:** a voice-engine swap rots greps in EVERY smoke (nyayaai voice/latency sections, onboarding camera-ban exemption) — sweep all smokes for old-engine literals the moment the swap lands, not when they fail.

@@ -1,5 +1,5 @@
 - [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — Tasks 0-24 one at a time; re-read PRD §9 (+§4 legal) before EVERY task; hard safety rules forever; obey bans SILENTLY (no markers in chat).
-- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — ELEVEN smokes + api safety smoke; curl api on own PORT; headless voice WS probe; zone/level checklists; e2e unlock recipe; map/story/help/profile=open seams; literal-grep rot; HI JSON language:'hi'.
+- [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — ELEVEN client smokes (*.smoke.ts* glob; 2 are .tsx renders) + FOUR api; ?zone/&zones/&watched + map/story/help/profile seams; own-PORT curls; engine swaps rot greps; HI JSON language:'hi'.
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
 - [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — ORIGINAL home-city.webp + boy sprite + blimp restored after TWO same-day rollbacks; v2/v3/map1 + extra home chrome DEAD, never resurrect unasked.
 - [World monuments](nyaya-nagri-world-monuments.md) — landmark swap recipe: transparent gen → trim+resize, ZONE_ART = exact px; ring/labels/locks code-side, pads+shadows GONE (never re-add); 2400x2960 ring shot.
@@ -7,11 +7,12 @@
 - [GitHub push setup](github-push-setup.md) — push via x-access-token credential helper with $GITHUB_PERSONAL_ACCESS_TOKEN ($ACT backup); platform gitPush dead end (connected account lacks write access).
 - [Nyaya Nagri certificates](nyaya-nagri-certificates.md) — derived-state reconcile at both store ingresses + boot write-back; doc inline-hex only; Devanagari faces explicitly loaded pre-capture.
 - [Level-flow rollout](nyaya-nagri-level-flow-rollout.md) — zone3 is the approved reference; 6 zones await user OK; narration-intro transform recipe + save-compat + validator rules inside.
-- [Story level map](nyaya-nagri-story-levels.md) — map is pure STORY_LEVELS data (id literals smoke-banned); celebration transient vs unlock persistent; word-lead 4-option ceiling; shared spoken pools stay count-neutral.
-- [Nyaya AI assistant](nyaya-nagri-nyayaai.md) — ONE assistant; text 3.5-flash, Live voice native-audio (ephemeral tokens, holdback, fail-closed guard, VAD+latency rules inside); corpus never holds helpline digits.
+- [Story level map](nyaya-nagri-story-levels.md) — pure STORY_LEVELS data (id literals smoke-banned); video-gated unlockRequires DERIVED (seek-proof watch credit); celebration transient vs unlock persistent; word-lead 4-option ceiling.
+- [Nyaya AI assistant](nyaya-nagri-nyayaai.md) — ONE assistant; text 3.5-flash; voice = Sarvam turn-based server pipeline (Live client DELETED, token routes legacy-unused); corpus never holds helpline digits.
 - [Nyaya streaming chat](nyaya-nagri-streaming-chat.md) — NDJSON twin route gates the ACCUMULATED reply BEFORE each delta forward; shared prepareChat stops gate drift; client newest-wins epoch+abort; lazy headers.
 - [Agent platform quirks](agent-platform-quirks.md) — no setTimeout in durable scope; zombie testing job wedges 1-slot pool; requestSecrets can no-op on existing secrets (fingerprint-verify; rename=loss risk).
 - [Nyaya insights system](nyaya-nagri-insights.md) — evidence gates count MEASURED sessions only; AI-cache fingerprint covers EVERY summarized input; cache keyed lang:audience; local-PIN gate = user-approved deviation.
 - [Nyaya story voice guide](nyaya-nagri-story-voice.md) — GEMINI-ONLY voice; single shared GEMINI_API_KEY (TTS-key split reverted by user 2026-08-11, never re-add); failure ⇒ silent retry chip, no onDone.
+- [Nyaya Sarvam voice engine](nyaya-sarvam-voice.md) — saarika STT → text-chat safety gates → Gemini → bulbul TTS; gate BEFORE TTS; rate-limited + strict bounds (no auth by design); 5MB body; fail-closed client.
 - [Seamless ground tiles](seamless-tile-recipe.md) — roll+cross-patch magick recipe, per-channel mean-match to base hex, second TileSprite at 1.41x/0.45a kills grid repetition.
 - [Workspace lib d.ts staleness](workspace-lib-dts-staleness.md) — new lib/* exports ⇒ TS2305 in consumers until `tsc -p lib/<name>` regens dist d.ts (composite refs; implicit-any cascade).

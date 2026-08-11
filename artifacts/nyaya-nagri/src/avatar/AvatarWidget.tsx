@@ -62,8 +62,6 @@
 import React, { useState, useEffect, useRef, memo } from 'react';
 import {
   useNyayaAiChat,
-  nyayaAiVoiceToken,
-  nyayaAiVoiceGuard,
 } from '@workspace/api-client-react';
 import { progressStore } from '@/data/progressStore';
 import { useUIStore, triggerHelpPulse, openHelp } from '@/ui/uiStore';
@@ -73,7 +71,7 @@ import { getStrings, useStrings } from '@/i18n/strings';
 import { getZoneGreeting, getLevelGreeting } from '@/i18n/greetings';
 import { buildGameContext } from './gameContext';
 import { streamNyayaAiChat, ChatStreamError } from './chatStream';
-import { LiveVoiceEngine, type VoiceState } from './voice/liveVoice';
+import { SarvamVoiceEngine, type VoiceState } from './voice/sarvamVoice';
 import { Mic, MicOff, Send, X, Volume2, VolumeX, Loader2, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import assistantRobotArt from '@/assets/ui/assistant-robot.webp';
@@ -205,14 +203,9 @@ export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
   const [retryText, setRetryText] = useState<string | null>(null);
 
   const chatMutation = useNyayaAiChat();
-  // Voice deliberately calls the RAW api-client fns (nyayaAiVoiceToken /
-  // nyayaAiVoiceGuard) instead of react-query hooks: every incremental guard
-  // round-trip during speech would otherwise flip mutation state and
-  // re-render this whole widget over the game canvas (perf spec: voice
-  // networking stays OUT of the React render path; voiceState alone drives UI).
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  // Imperative live-voice engine — non-null only while a session runs.
-  const voiceEngineRef = useRef<LiveVoiceEngine | null>(null);
+  // Imperative Sarvam voice engine — non-null only while a session runs.
+  const voiceEngineRef = useRef<SarvamVoiceEngine | null>(null);
 
   // Newest-question-wins machinery: the abort handle of the in-flight send,
   // a supersede epoch (stale completions must never touch fresh state), the
@@ -594,49 +587,46 @@ export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
     cancelInFlight(true);
     setRetryText(null);
     const language = settingsStore.getState().language;
-    const engine = new LiveVoiceEngine({
-      getToken: async () => {
-        // The server locks the model + child-safe system prompt (safety
-        // rules + approved corpus + this safe game context) INSIDE the
-        // single-use ephemeral token; no key or prompt ever reaches us.
-        return await nyayaAiVoiceToken({
-          language,
-          ageBand: progressStore.getState().ageBand,
-          gameContext: buildGameContext(),
-        });
+    const engine = new SarvamVoiceEngine(
+      {
+        onState: (s) => setVoiceState(s),
+        onUserTranscript: (text) =>
+          setMessages((prev) => [...prev, { role: 'user', content: text } as Message]),
+        onModelTranscript: (text) =>
+          setMessages((prev) => [...prev, { role: 'assistant', content: text } as Message]),
+        onEscalated: (reply) => {
+          // Engine has already stopped. Same escalation contract as text chat:
+          // canonical hard-coded helpline text + Get Help Now screen.
+          voiceEngineRef.current = null;
+          setVoiceState('idle');
+          if (reply) appendAssistantMessage(reply, true);
+          triggerHelpPulse();
+          openHelp();
+        },
+        onError: (kind) => {
+          voiceEngineRef.current = null;
+          setVoiceState('idle');
+          const bundle = getStrings(settingsStore.getState().language);
+          appendAssistantMessage(
+            kind === 'mic-denied'
+              ? bundle.nyayaAiMicDeniedVoice
+              : kind === 'unavailable'
+                ? bundle.nyayaAiVoiceUnavailable
+                : bundle.nyayaAiVoiceConnectFail,
+          );
+        },
       },
-      guardText: async (text, role) =>
-        nyayaAiVoiceGuard({ text: text.slice(0, 2000), role, language }),
-      onState: (s) => setVoiceState(s),
-      onUserTranscript: (text) =>
-        setMessages((prev) => [...prev, { role: 'user', content: text } as Message]),
-      onModelTranscript: (text) =>
-        setMessages((prev) => [...prev, { role: 'assistant', content: text } as Message]),
-      onEscalated: (reply) => {
-        // Engine has already fully stopped itself. Same escalation contract
-        // as text chat: canonical hard-coded helpline text (never the
-        // model's voice) + the real Get Help screen, one tap away.
-        voiceEngineRef.current = null;
-        setVoiceState('idle');
-        if (reply) appendAssistantMessage(reply, true);
-        triggerHelpPulse();
-        openHelp();
+      {
+        language,
+        ageBand: progressStore.getState().ageBand,
+        gameContext: buildGameContext(),
+        getHistory: () =>
+          messages
+            .slice(-6)
+            .map((m) => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.content })),
+        debugLatency: import.meta.env?.DEV === true,
       },
-      onError: (kind) => {
-        // Engine has already cleaned up. Friendly, typed-chat-first copy —
-        // never a raw WebSocket/technical error (spec).
-        voiceEngineRef.current = null;
-        setVoiceState('idle');
-        const bundle = getStrings(settingsStore.getState().language);
-        appendAssistantMessage(
-          kind === 'mic-denied'
-            ? bundle.nyayaAiMicDeniedVoice
-            : kind === 'unavailable'
-              ? bundle.nyayaAiVoiceUnavailable
-              : bundle.nyayaAiVoiceConnectFail,
-        );
-      },
-    }, { debugLatency: import.meta.env?.DEV === true });
+    );
     voiceEngineRef.current = engine;
     void engine.start();
   };

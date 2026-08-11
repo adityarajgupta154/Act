@@ -39,7 +39,8 @@ export default function HomePage() {
       params.get('map') === 'open' ||
       params.get('story') === 'open' ||
       params.get('help') === 'open' ||
-      params.get('profile') === 'open'
+      params.get('profile') === 'open' ||
+      params.has('zone')
     );
   });
 

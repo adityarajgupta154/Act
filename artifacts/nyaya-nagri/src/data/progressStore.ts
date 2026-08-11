@@ -65,10 +65,18 @@ export interface ProgressState {
   levelProgress: Record<string, boolean>;
   /**
    * Story Adventure completions (Aug 2026), keyed by story level id (e.g.
-   * "right-to-life"). Same boolean-map shape and load-time sanitizing as
+   * "right-to-childhood"). Same boolean-map shape and load-time sanitizing as
    * completedZones; written only by completeStoryLevel().
    */
   storyProgress: Record<string, boolean>;
+  /**
+   * Learning videos watched to the END (Aug 2026 video-first zone flow),
+   * keyed by video id (e.g. "right-to-childhood"). Same boolean-map shape
+   * and load-time sanitizing as storyProgress; written only by
+   * markVideoWatched(). One half of the video-gated story unlock rule —
+   * the other half is the zone's quiz completion (engine-written).
+   */
+  videosWatched: Record<string, boolean>;
   /**
    * Task 15: Practice/Replay attempt counts, keyed "zoneId:levelId".
    * Kept SEPARATE from quizScores on purpose — replays never touch the
@@ -141,6 +149,7 @@ function defaultState(): ProgressState {
     quizScores: {},
     levelProgress: {},
     storyProgress: {},
+    videosWatched: {},
     replayCounts: {},
     preAnswersByQuest: {},
     activityScores: {},
@@ -278,6 +287,7 @@ class LocalStorageAdapter implements StorageAdapter {
         levelProgress,
         completedZones,
         storyProgress: sanitizeRecord(parsed.storyProgress, isBool),
+        videosWatched: sanitizeRecord(parsed.videosWatched, isBool),
         replayCounts: sanitizeRecord(parsed.replayCounts, isCount),
         preAnswersByQuest: sanitizeRecord(parsed.preAnswersByQuest, isAnswerList),
         activityScores: sanitizeRecord(parsed.activityScores, isScorePair),
@@ -417,6 +427,21 @@ class ProgressStore {
     this.update({
       storyProgress: { ...this.state.storyProgress, [storyId]: true },
       badges: { ...this.state.badges, [`story-${storyId}`]: true },
+    });
+  }
+
+  /**
+   * Video-first zone flow (Aug 2026): the zone's learning video finished
+   * playing to the END. Keyed by video id (not zone id) so a future zone
+   * can reuse or ship several videos. Idempotent like completeStoryLevel.
+   * This flag is one half of the video-gated story unlock rule — the
+   * other half (zone completion) stays engine-written; the unlock itself
+   * is DERIVED by storyData's lock rule, never stored.
+   */
+  markVideoWatched(videoId: string): void {
+    if (this.state.videosWatched[videoId]) return;
+    this.update({
+      videosWatched: { ...this.state.videosWatched, [videoId]: true },
     });
   }
 

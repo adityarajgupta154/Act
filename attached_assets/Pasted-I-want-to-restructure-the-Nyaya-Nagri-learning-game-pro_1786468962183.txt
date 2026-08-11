@@ -1,0 +1,692 @@
+I want to restructure the Nyaya Nagri learning/game progression system.
+
+IMPORTANT:
+This is an implementation task.
+Do NOT generate any images.
+Do NOT redesign the entire UI.
+Use the existing Nyaya Nagri visual style and existing components wherever possible.
+
+The main requirement is:
+
+RIGHT TO CHILDHOOD CASTLE
+        ↓
+   INTRO VIDEO
+        ↓
+   3 QUIZ QUESTIONS
+        ↓
+ QUIZ COMPLETED SUCCESSFULLY
+        ↓
+ STORY ADVENTURE
+        ↓
+ RIGHT TO CHILDHOOD LEVEL UNLOCKED
+        ↓
+ LEVEL CONTENT / CONDITIONAL IMAGES
+
+========================================================
+1. REMOVE THE CURRENT STORY ADVENTURE LEVELS
+========================================================
+
+First inspect the existing "Story Adventure" implementation.
+
+Currently it contains multiple existing levels/cards.
+
+Remove the current hardcoded/demo level progression from Story Adventure.
+
+Remove the existing levels such as:
+
+- Level 1
+- Level 2
+- Level 3
+- and any other currently hardcoded Story Adventure levels
+
+Do NOT delete the Story Adventure feature itself.
+
+The Story Adventure page should remain, but it should now start with the new:
+
+"Right to Childhood"
+
+level.
+
+Remove old dummy/demo level data from:
+
+- UI
+- level cards
+- progress counters
+- unlock conditions
+- level navigation
+- completion state
+- hardcoded arrays/constants
+- old story content
+
+Do not leave old levels hidden with CSS.
+
+Actually remove them from the active progression system.
+
+========================================================
+2. RIGHT TO CHILDHOOD CASTLE
+========================================================
+
+The existing "Right to Childhood" castle/building on the Nyaya Nagri map should become the entry point for this learning journey.
+
+When the player clicks/taps the:
+
+"Right to Childhood"
+
+castle/portal,
+
+open the Right to Childhood learning flow.
+
+Do NOT create a separate unrelated page if the project already has a reusable learning/story flow.
+
+Reuse the existing navigation architecture where appropriate.
+
+========================================================
+3. RIGHT TO CHILDHOOD LEARNING FLOW
+========================================================
+
+The complete flow should be:
+
+RIGHT TO CHILDHOOD CASTLE
+        ↓
+INTRODUCTION / VIDEO
+        ↓
+VIDEO COMPLETED
+        ↓
+3 QUIZ QUESTIONS
+        ↓
+QUIZ COMPLETED
+        ↓
+RIGHT TO CHILDHOOD STORY ADVENTURE LEVEL UNLOCKED
+
+The player should NOT be able to directly unlock the Story Adventure level without completing the required flow.
+
+========================================================
+4. VIDEO STEP
+========================================================
+
+When the player enters Right to Childhood:
+
+Show a video/learning introduction first.
+
+Create a dedicated video step/component.
+
+For now, prepare the system so I can add the actual video later.
+
+Use a clear placeholder/configuration approach.
+
+For example:
+
+rightToChildhoodVideo = {
+    videoUrl: "",
+    title: "Right to Childhood",
+    description: "Learn about the Right to Childhood"
+}
+
+Do NOT hardcode a fake external video URL.
+
+I will add the actual video later.
+
+The component must gracefully handle an empty video URL.
+
+========================================================
+5. VIDEO COMPLETION
+========================================================
+
+Track whether the video has been completed.
+
+The player should proceed to the quiz after the video completion requirement is satisfied.
+
+If the existing project has video playback tracking, reuse it.
+
+Otherwise implement a clean local state/progression mechanism.
+
+Do NOT mark the entire Right to Childhood level as completed merely because the video was opened.
+
+The required order is:
+
+Video completed
+→ Quiz
+→ Quiz completed
+→ Level unlocked
+
+========================================================
+6. THREE QUIZ QUESTIONS
+========================================================
+
+After the video, show exactly 3 quiz questions.
+
+For now, create the quiz structure in a configurable data model.
+
+Example structure:
+
+const rightToChildhoodQuiz = [
+  {
+    id: 1,
+    question: "...",
+    options: ["...", "...", "...", "..."],
+    correctAnswer: 0
+  },
+  {
+    id: 2,
+    question: "...",
+    options: ["...", "...", "...", "..."],
+    correctAnswer: 1
+  },
+  {
+    id: 3,
+    question: "...",
+    options: ["...", "...", "...", "..."],
+    correctAnswer: 2
+  }
+];
+
+IMPORTANT:
+
+Do NOT invent complicated quiz content.
+
+Keep the questions easily replaceable because I may provide the final questions/content later.
+
+The architecture should allow me to change:
+
+- question
+- options
+- correct answer
+- explanation
+- optional image
+
+without modifying the quiz component itself.
+
+========================================================
+7. QUIZ BEHAVIOR
+========================================================
+
+The quiz should behave like a proper 3-question learning assessment.
+
+Requirements:
+
+- Show one question at a time.
+- Allow the user to select an answer.
+- Prevent accidental submission without selecting an answer.
+- Provide clear selected state.
+- Move to the next question after answering.
+- Track the number of correct answers.
+- Show final quiz result.
+
+Use a clean child-friendly UI consistent with Nyaya Nagri.
+
+Do NOT create a dark/cyberpunk design.
+
+========================================================
+8. QUIZ COMPLETION CONDITION
+========================================================
+
+The Right to Childhood Story Adventure level should unlock only after the quiz is successfully completed.
+
+Use a clear completion condition.
+
+Recommended:
+
+quizCompleted === true
+
+The exact pass condition should be configurable.
+
+For the initial implementation, make it:
+
+3/3 correct = completed/unlocked
+
+Do NOT unlock the Story Adventure level after only 1 or 2 correct answers.
+
+If the user does not achieve the required score:
+
+Show a retry option.
+
+Example:
+
+"Quiz complete"
+"3 / 3 correct"
+"Right to Childhood unlocked!"
+
+OR:
+
+"Try again"
+"Watch the lesson again and retry the quiz."
+
+========================================================
+9. STORY ADVENTURE UNLOCK
+========================================================
+
+After successful quiz completion:
+
+Unlock exactly one Story Adventure level:
+
+"Right to Childhood"
+
+The Story Adventure page should display something like:
+
+LEVEL 1
+
+Right to Childhood
+
+[UNLOCKED]
+
+The level must no longer appear locked.
+
+Before completion, it should appear as:
+
+Right to Childhood
+🔒 Locked
+
+Complete the video and 3-question quiz to unlock.
+
+After completion:
+
+Right to Childhood
+✓ Unlocked
+
+========================================================
+10. STORY ADVENTURE DATA MODEL
+========================================================
+
+Do NOT hardcode the Story Adventure UI separately from the progression logic.
+
+Create a configurable level structure.
+
+For example:
+
+const storyAdventureLevels = [
+  {
+    id: "right-to-childhood",
+    title: "Right to Childhood",
+    subtitle: "...",
+    status: "locked",
+    unlockRequirement: {
+      type: "quiz",
+      quizId: "right-to-childhood-quiz"
+    }
+  }
+];
+
+The UI should derive its state from the progression data.
+
+This will make it easy to add future levels later.
+
+========================================================
+11. CONDITIONAL IMAGES — PREPARE THE SYSTEM
+========================================================
+
+I will add conditional images/content later.
+
+Prepare the Right to Childhood level so it supports conditional content.
+
+Do NOT generate images now.
+
+The architecture should allow something like:
+
+{
+  id: "scene-1",
+  text: "...",
+  image: "...",
+  condition: {
+    type: "...",
+    value: "..."
+  }
+}
+
+or an equivalent clean structure.
+
+The level component should be able to render:
+
+- text
+- image
+- optional image
+- conditional image
+- question
+- choice
+- completion state
+
+later without requiring a complete rewrite.
+
+========================================================
+12. CONDITIONAL IMAGE REQUIREMENT
+========================================================
+
+Do not hardcode the future conditional-image logic to a single image.
+
+Create a reusable mechanism.
+
+For example:
+
+contentItem = {
+    id: "childhood-scene-1",
+    type: "image",
+    src: "...",
+    condition: ...
+}
+
+If no condition is provided:
+
+render normally.
+
+If a condition is provided:
+
+render only when the condition is satisfied.
+
+Keep this system extensible.
+
+I will provide the actual image/content conditions later.
+
+========================================================
+13. PROGRESSION STATE
+========================================================
+
+The following progression states must be tracked separately:
+
+rightToChildhoodVideoStarted
+rightToChildhoodVideoCompleted
+rightToChildhoodQuizStarted
+rightToChildhoodQuizCompleted
+rightToChildhoodQuizScore
+rightToChildhoodLevelUnlocked
+rightToChildhoodLevelCompleted
+
+Do NOT collapse everything into one boolean.
+
+The progression should represent the actual learning flow.
+
+========================================================
+14. PERSISTENCE
+========================================================
+
+If the existing project already has a progression/state persistence mechanism, reuse it.
+
+Otherwise use the existing project's appropriate state persistence solution.
+
+The unlock should survive:
+
+- page navigation
+- Story Adventure → Map navigation
+- refresh
+
+wherever the existing application expects player progress to persist.
+
+Do NOT introduce a completely new database/backend system unless absolutely necessary.
+
+If the project currently uses localStorage for game progression, use the same mechanism.
+
+========================================================
+15. MAP INTEGRATION
+========================================================
+
+The Right to Childhood castle should reflect the player's progression.
+
+Before completion:
+
+Right to Childhood
+🔒 / appropriate locked state
+
+After successful quiz:
+
+Right to Childhood
+✓ / unlocked state
+
+If the existing map already has lock/unlock indicators, reuse them.
+
+Do NOT create duplicate castle markers.
+
+========================================================
+16. CLICK FLOW
+========================================================
+
+Expected behavior:
+
+Player opens Nyaya Nagri
+        ↓
+Clicks Right to Childhood castle
+        ↓
+Right to Childhood learning screen opens
+        ↓
+Video plays
+        ↓
+Video completed
+        ↓
+3-question quiz opens
+        ↓
+Player answers all 3
+        ↓
+3/3 correct
+        ↓
+Success state
+        ↓
+Right to Childhood Story Adventure level unlocks
+        ↓
+Player can enter the level
+
+The player should never get stuck between these states.
+
+========================================================
+17. BACK BUTTON / NAVIGATION
+========================================================
+
+Make sure the player can safely navigate backward.
+
+For example:
+
+Quiz
+→ Back
+→ Video
+
+Video
+→ Back
+→ Nyaya Nagri Map
+
+Story Adventure
+→ Back
+→ Nyaya Nagri Map
+
+Do not lose progression when navigating backward.
+
+If the video has already been completed, do not unnecessarily force the user to repeat it unless the existing product logic requires it.
+
+========================================================
+18. REMOVE OLD PROGRESSION LOGIC
+========================================================
+
+Search for old Story Adventure progression logic.
+
+Remove or replace:
+
+- old level arrays
+- old level IDs
+- old completion counters
+- old "1 / 2 Complete" logic
+- old Level 1 / Level 2 content
+- old unlock conditions
+- old story data
+- old demo quiz logic
+- old dummy progress indicators
+
+Do NOT leave conflicting progression systems active.
+
+There should be ONE source of truth for Story Adventure progression.
+
+========================================================
+19. PROGRESS UI
+========================================================
+
+Update the Story Adventure progress indicator.
+
+Do NOT continue showing something like:
+
+"1 / 2 Complete"
+
+if there are no longer two old levels.
+
+The progress UI must dynamically reflect the new level structure.
+
+For now, if there is only one level:
+
+Before unlock:
+"0 / 1 Complete"
+
+After unlock:
+"0 / 1 Complete"
+
+After completing the actual level:
+"1 / 1 Complete"
+
+Or use an equivalent clear progression display.
+
+Do not hardcode an old progress count.
+
+========================================================
+20. COMPONENT ARCHITECTURE
+========================================================
+
+Before implementing, inspect existing components.
+
+Prefer reusable components such as:
+
+- StoryAdventure
+- StoryLevel
+- LearningVideo
+- Quiz
+- QuizQuestion
+- LevelCard
+- ProgressTracker
+- MapLocation
+
+Reuse existing components where appropriate.
+
+Do NOT create multiple duplicate versions of the same functionality.
+
+========================================================
+21. DO NOT CHANGE UNRELATED FEATURES
+========================================================
+
+Do NOT modify:
+
+- Nyaya Nagri homepage design
+- background
+- buildings
+- player movement
+- invisible map boundary
+- AI Assistant
+- Get Help Now
+- TTS
+- Gemini/API integration
+- voice functionality
+- Map
+- Settings
+- About
+- other existing navigation
+
+Only modify the Story Adventure / Right to Childhood progression flow required for this feature.
+
+========================================================
+22. ERROR HANDLING
+========================================================
+
+Handle:
+
+- video unavailable
+- empty video URL
+- quiz answer not selected
+- invalid quiz data
+- user leaves the flow
+- page refresh
+- already completed quiz
+- already unlocked level
+
+Do not show broken images or broken video players.
+
+========================================================
+23. FINAL IMPLEMENTATION CHECK
+========================================================
+
+Before finishing, verify this exact flow:
+
+TEST 1:
+
+Open Right to Childhood castle.
+
+Expected:
+→ Video screen.
+
+TEST 2:
+
+Complete video.
+
+Expected:
+→ 3-question quiz.
+
+TEST 3:
+
+Answer 1 question.
+
+Expected:
+→ Progress remains incomplete.
+
+TEST 4:
+
+Answer 2 questions.
+
+Expected:
+→ Level remains locked.
+
+TEST 5:
+
+Answer all 3 correctly.
+
+Expected:
+→ Quiz completed.
+→ Right to Childhood Story Adventure level unlocked.
+
+TEST 6:
+
+Open Story Adventure.
+
+Expected:
+→ Only the new Right to Childhood level is present.
+→ All old/demo levels are removed.
+
+TEST 7:
+
+Refresh the browser.
+
+Expected:
+→ Unlock/progress state is preserved according to the existing persistence system.
+
+TEST 8:
+
+Return to map.
+
+Expected:
+→ Right to Childhood castle reflects unlocked state.
+
+========================================================
+FINAL REQUIREMENT
+========================================================
+
+Implement the new learning progression as a clean, extensible system:
+
+RIGHT TO CHILDHOOD CASTLE
+        ↓
+VIDEO
+        ↓
+3 QUESTIONS
+        ↓
+3/3 CORRECT
+        ↓
+UNLOCK RIGHT TO CHILDHOOD
+        ↓
+STORY ADVENTURE LEVEL
+        ↓
+CONDITIONAL CONTENT / IMAGES LATER
+
+Remove all existing Story Adventure demo levels and their old progression logic.
+
+Do NOT generate images.
+Do NOT redesign unrelated UI.
+Do NOT break existing functionality.
+
+Build the architecture cleanly so I can later provide the actual video, quiz questions, conditional images, and story content without needing to rewrite the core components.

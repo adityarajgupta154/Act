@@ -585,6 +585,11 @@ export interface UIStrings {
   storyMapReplayCta: string;
   storyMapNewAdventure: string;
   storyMapAllDone: string;
+  // Video-first castle flow (Aug 2026): video screen + story unlock card.
+  videoWatchFirst: string;
+  videoWatchedTag: string;
+  storyUnlockedHeading: string;
+  openStoryAdventure: string;
   storyMapContinueCta: string;
   storyMapPlayLevelCta: (n: number) => string;
   storyMapLevelsDone: (done: number, total: number) => string;
@@ -1290,6 +1295,10 @@ const EN: UIStrings = {
   storyMapReplayCta: 'Dobara khelo',
   storyMapNewAdventure: 'New Adventure Unlocked!',
   storyMapAllDone: 'Saari kahaniyan complete!',
+  videoWatchFirst: 'Watch the video, then continue',
+  videoWatchedTag: 'Video watched',
+  storyUnlockedHeading: 'New Story Unlocked!',
+  openStoryAdventure: 'Go to Story Adventure',
   storyMapContinueCta: 'Continue Adventure',
   storyMapPlayLevelCta: (n) => `Play Level ${n}`,
   storyMapLevelsDone: (done, total) => `${done} / ${total} Complete`,
@@ -1986,6 +1995,10 @@ const HI: UIStrings = {
   storyMapReplayCta: 'दोबारा खेलो',
   storyMapNewAdventure: 'नया एडवेंचर अनलॉक हुआ!',
   storyMapAllDone: 'सारी कहानियाँ पूरी!',
+  videoWatchFirst: 'पहले वीडियो देखो, फिर आगे बढ़ो',
+  videoWatchedTag: 'वीडियो देख लिया',
+  storyUnlockedHeading: 'नई कहानी अनलॉक हो गई!',
+  openStoryAdventure: 'स्टोरी एडवेंचर खोलो',
   storyMapContinueCta: 'एडवेंचर जारी रखो',
   storyMapPlayLevelCta: (n) => `लेवल ${n} खेलो`,
   storyMapLevelsDone: (done, total) => `${done} / ${total} पूरे`,

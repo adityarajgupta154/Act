@@ -54,6 +54,20 @@ export interface StorySlide {
   choices?: StoryChoice[];
 }
 
+/**
+ * Explicit unlock requirement for VIDEO-GATED levels (Aug 2026 castle
+ * flow). When present it REPLACES the sequential previous-level rule:
+ * the level opens only once the named zone is complete (final quiz
+ * passed — engine-written) AND the named video was watched to the end
+ * (progressStore.markVideoWatched). Both halves, fail-closed.
+ */
+export interface StoryUnlockRequirement {
+  /** Zone whose recorded completion is required (e.g. 'zone2'). */
+  zoneId: string;
+  /** progressStore.videosWatched key (see src/quests/videoFlows.ts). */
+  videoId: string;
+}
+
 export interface StoryLevelDef {
   id: string;
   /** 1-based display number ("Level 1"). */
@@ -63,6 +77,8 @@ export interface StoryLevelDef {
   subtitle: StoryText;
   /** The right unlocked on completion — shown as "<reward> Unlocked!". */
   reward: StoryText;
+  /** Video-gated unlock (castle flow); absent = sequential chain rule. */
+  unlockRequires?: StoryUnlockRequirement;
   /** Empty = "coming soon" teaser: shown on the level map but never openable. */
   slides: StorySlide[];
 }
@@ -73,7 +89,8 @@ export interface StoryLevelDef {
  * is optional-chained for the same reason (undefined under tsx).
  */
 const STORY_ART_BASE = `${import.meta.env?.BASE_URL ?? '/'}story/`;
-const storyArt = (file: string) => `${STORY_ART_BASE}${file}`;
+/** Exported for future slide entries (teaser era: no slides reference it). */
+export const storyArt = (file: string) => `${STORY_ART_BASE}${file}`;
 
 /**
  * The registry — the ONE place future story levels get added (task §5/§15:
@@ -83,198 +100,20 @@ const storyArt = (file: string) => `${STORY_ART_BASE}${file}`;
  */
 export const STORY_LEVELS: StoryLevelDef[] = [
   {
-    id: 'right-to-life',
+    id: 'right-to-childhood',
     number: 1,
-    title: { en: 'Right to Life', hi: 'जीने का अधिकार' },
-    subtitle: { en: 'Every Child Matters', hi: 'हर बच्चा ज़रूरी है' },
-    reward: { en: 'Right to Life', hi: 'जीने का अधिकार' },
-    slides: [
-      {
-        id: 'intro',
-        type: 'INTRO',
-        image: storyArt('s1-intro.webp'),
-        caption: {
-          en: 'School se ghar lautte waqt Riya ek naye gaon ke raste se guzarti hai.',
-          hi: 'स्कूल से घर लौटते वक़्त रिया एक नए गाँव के रास्ते से गुज़रती है।',
-        },
-        // Spoken opener (voice-guide spec's own script for slide 1).
-        narration: {
-          en: 'Riya school se ghar wapas aa rahi hai. Raste mein use ek chhota sa gaon dikhai deta hai, jahan kuch bachche khel rahe hain.',
-          hi: 'रिया स्कूल से घर वापस आ रही है। रास्ते में उसे एक छोटा सा गाँव दिखाई देता है, जहाँ कुछ बच्चे खेल रहे हैं।',
-        },
-      },
-      {
-        id: 'problem',
-        type: 'STORY',
-        image: storyArt('s2-problem.webp'),
-        caption: {
-          en: 'Riya ki nazar Aman par padti hai. Aman bahut kamzor lag raha tha aur use zaroori care nahi mil pa rahi thi.',
-          hi: 'रिया की नज़र अमन पर पड़ती है। अमन बहुत कमज़ोर लग रहा था और उसे ज़रूरी देखभाल नहीं मिल पा रही थी।',
-        },
-      },
-      {
-        id: 'dialogue',
-        type: 'DIALOGUE',
-        image: storyArt('s3-dialogue.webp'),
-        caption: {
-          en: "Riya ne Aman se pucha, 'Tum theek ho? Kya tumhe kisi madad ki zaroorat hai?'",
-          hi: "रिया ने अमन से पूछा, 'तुम ठीक हो? क्या तुम्हें किसी मदद की ज़रूरत है?'",
-        },
-      },
-      {
-        id: 'choice',
-        type: 'CHOICE',
-        // Deliberately image-free: the CHOICE slide IS the "game screen".
-        image: null,
-        caption: {
-          en: 'Riya ke paas ek decision tha — kya wo Aman ki madad karegi?',
-          hi: 'रिया के पास एक फ़ैसला था — क्या वो अमन की मदद करेगी?',
-        },
-        // Spoken BEFORE the question (voice-guide spec STEP 1 script).
-        questionIntro: {
-          en: 'Riya ke saamne ab ek important decision hai. Aman ko madad ki zaroorat hai. Ab dekhte hain Riya kya faisla karti hai.',
-          hi: 'रिया के सामने अब एक ज़रूरी फ़ैसला है। अमन को मदद की ज़रूरत है। अब देखते हैं रिया क्या फ़ैसला करती है।',
-        },
-        choices: [
-          {
-            id: 'ignore',
-            label: { en: 'Chup chaap aage badh jao', hi: 'चुपचाप आगे बढ़ जाओ' },
-            correct: false,
-            feedback: {
-              en: 'Riya agar Aman ko ignore kar de, to use zaroori madad nahi mil paayegi.',
-              hi: 'रिया अगर अमन को नज़रअंदाज़ कर दे, तो उसे ज़रूरी मदद नहीं मिल पाएगी।',
-            },
-          },
-          {
-            id: 'help',
-            label: { en: 'Aman ke liye help bulao', hi: 'अमन के लिए मदद बुलाओ' },
-            correct: true,
-            feedback: {
-              en: 'Bilkul! Kisi bachche ko zaroori madad ki zaroorat ho, to kisi trusted adult ya doctor ki help lena important hai.',
-              hi: 'बिल्कुल! किसी बच्चे को ज़रूरी मदद की ज़रूरत हो, तो किसी भरोसेमंद बड़े या डॉक्टर की मदद लेना ज़रूरी है।',
-            },
-          },
-        ],
-      },
-      {
-        id: 'result',
-        type: 'RESULT',
-        image: storyArt('s5-result.webp'),
-        caption: {
-          en: 'Riya ne seekha ki har bacche ko jeene, health care aur zaroori madad ka adhikar hota hai.',
-          hi: 'रिया ने सीखा कि हर बच्चे को जीने, सेहत की देखभाल और ज़रूरी मदद का अधिकार होता है।',
-        },
-      },
-    ],
-  },
-  {
-    id: 'right-to-health',
-    number: 2,
-    title: { en: 'Clean Water, Healthy Life', hi: 'साफ़ पानी, सेहतमंद ज़िंदगी' },
-    subtitle: { en: 'Right to Health & Care', hi: 'सेहत और देखभाल का अधिकार' },
-    reward: { en: 'Right to Health & Care', hi: 'सेहत और देखभाल का अधिकार' },
-    // Continues DIRECTLY from Level 1 (same Riya + Aman story): Aman is a
-    // little better now, and Riya starts seeing the village's wider health
-    // and clean-water problem. Captions are the child's lines, verbatim.
-    slides: [
-      {
-        id: 'water',
-        type: 'INTRO',
-        image: storyArt('s6-water.webp'),
-        caption: {
-          en: 'Riya ne dekha ki gaon ke kai bachche saaf paani aur achhi health facilities ki kami ka saamna kar rahe hain.',
-          hi: 'रिया ने देखा कि गाँव के कई बच्चे साफ़ पानी और अच्छी स्वास्थ्य सुविधाओं की कमी का सामना कर रहे हैं।',
-        },
-        // Spoken opener bridges from Level 1 (task: SAME ongoing story).
-        narration: {
-          en: 'Aman ki tabiyat ab thodi behtar hai. Aaj Riya Aman ke saath gaon mein ghoom rahi hai. Tabhi wo dekhti hai ki kuch bachche ek purane handpump se ganda paani bhar rahe hain.',
-          hi: 'अमन की तबियत अब थोड़ी बेहतर है। आज रिया अमन के साथ गाँव में घूम रही है। तभी वो देखती है कि कुछ बच्चे एक पुराने हैंडपंप से गंदा पानी भर रहे हैं।',
-        },
-      },
-      {
-        id: 'sick',
-        type: 'STORY',
-        image: storyArt('s7-sick.webp'),
-        caption: {
-          en: 'Doosre bachche bhi baar-baar bimaar ho rahe the kyunki unhe saaf paani aur sahi care nahi mil rahi thi.',
-          hi: 'दूसरे बच्चे भी बार-बार बीमार हो रहे थे क्योंकि उन्हें साफ़ पानी और सही देखभाल नहीं मिल रही थी।',
-        },
-        narration: {
-          en: 'Ek ghar mein ek chhota baccha bimaar leta hua hai, aur uski maa uski dekhbhal kar rahi hai. Riya chinta se dekh rahi hai — ganda paani peene se bachche baar-baar bimaar ho rahe hain.',
-          hi: 'एक घर में एक छोटा बच्चा बीमार लेटा हुआ है, और उसकी माँ उसकी देखभाल कर रही है। रिया चिंता से देख रही है — गंदा पानी पीने से बच्चे बार-बार बीमार हो रहे हैं।',
-        },
-      },
-      {
-        id: 'meeting',
-        type: 'DIALOGUE',
-        image: storyArt('s8-meeting.webp'),
-        caption: {
-          en: 'Riya ne decide kiya ki wo problem ko ignore nahi karegi. Usne bade logon se madad maangi.',
-          hi: 'रिया ने तय किया कि वो प्रॉब्लम को नज़रअंदाज़ नहीं करेगी। उसने बड़े लोगों से मदद माँगी।',
-        },
-        narration: {
-          en: 'Riya apne teacher, doctor aur gaon ke logon ke saath baithkar baat karti hai. Wo sabko batati hai ki bachchon ko saaf paani aur sahi care ki zaroorat hai.',
-          hi: 'रिया अपने टीचर, डॉक्टर और गाँव के लोगों के साथ बैठकर बात करती है। वो सबको बताती है कि बच्चों को साफ़ पानी और सही देखभाल की ज़रूरत है।',
-        },
-      },
-      {
-        id: 'choice',
-        type: 'CHOICE',
-        // Deliberately image-free: the CHOICE slide IS the "game screen".
-        image: null,
-        caption: {
-          en: 'Riya kya kare?',
-          hi: 'रिया क्या करे?',
-        },
-        // Spoken BEFORE the question — carries the child's moral line
-        // ("Ek achha decision…") verbatim, per the Level 2 script.
-        questionIntro: {
-          en: 'Riya ke saamne ab ek bada decision hai. Ek achha decision kai bachchon ki zindagi badal sakta hai. Ab dekhte hain Riya kya faisla karti hai.',
-          hi: 'रिया के सामने अब एक बड़ा फ़ैसला है। एक अच्छा फ़ैसला कई बच्चों की ज़िंदगी बदल सकता है। अब देखते हैं रिया क्या फ़ैसला करती है।',
-        },
-        choices: [
-          {
-            id: 'ignore',
-            label: { en: 'Problem ko ignore karo', hi: 'प्रॉब्लम को नज़रअंदाज़ करो' },
-            correct: false,
-            feedback: {
-              en: 'Riya agar problem ko ignore karegi, to Aman aur doosre bachchon ko help nahi mil paayegi.',
-              hi: 'रिया अगर प्रॉब्लम को नज़रअंदाज़ करेगी, तो अमन और दूसरे बच्चों को मदद नहीं मिल पाएगी।',
-            },
-          },
-          {
-            id: 'only-self',
-            label: { en: 'Sirf khud ke liye paani bachao', hi: 'सिर्फ़ खुद के लिए पानी बचाओ' },
-            correct: false,
-            feedback: {
-              en: 'Sirf apne liye paani bachane se doosre bachchon ki problem waise hi rahegi. Sab ke liye milkar solution dhoondhna zyada behtar hai.',
-              hi: 'सिर्फ़ अपने लिए पानी बचाने से दूसरे बच्चों की प्रॉब्लम वैसे ही रहेगी। सबके लिए मिलकर हल ढूँढना ज़्यादा बेहतर है।',
-            },
-          },
-          {
-            id: 'health-camp',
-            label: {
-              en: 'Health camp aur clean water ke liye help lo',
-              hi: 'हेल्थ कैंप और साफ़ पानी के लिए मदद लो',
-            },
-            correct: true,
-            feedback: {
-              en: 'Bilkul sahi! Ek achha decision kai bachchon ki zindagi badal sakta hai. Health camp aur clean water se poore gaon ke bachchon ko madad milegi.',
-              hi: 'बिल्कुल सही! एक अच्छा फ़ैसला कई बच्चों की ज़िंदगी बदल सकता है। हेल्थ कैंप और साफ़ पानी से पूरे गाँव के बच्चों को मदद मिलेगी।',
-            },
-          },
-        ],
-      },
-      {
-        id: 'result',
-        type: 'RESULT',
-        image: storyArt('s10-health.webp'),
-        caption: {
-          en: 'Riya ne seekha ki har bacche ko health care, clean water aur safe environment milna chahiye.',
-          hi: 'रिया ने सीखा कि हर बच्चे को हेल्थ केयर, साफ़ पानी और सुरक्षित माहौल मिलना चाहिए।',
-        },
-      },
-    ],
+    title: { en: 'Right to Childhood', hi: 'बचपन का अधिकार' },
+    subtitle: { en: 'Every Child Deserves a Childhood', hi: 'हर बच्चे को बचपन का हक़ है' },
+    reward: { en: 'Right to Childhood', hi: 'बचपन का अधिकार' },
+    // Unlocked by the Right to Childhood castle flow (learning video +
+    // final quiz), NOT by the sequential chain — see isStoryLevelUnlockedIn.
+    unlockRequires: { zoneId: 'zone2', videoId: 'right-to-childhood' },
+    // Story content ships later: empty slides = the map's teaser node
+    // (never openable — openStory refuses slide-less levels), while the
+    // unlock state above still flips the node from locked to ready the
+    // moment video + quiz are done. Future slides/scenarios drop into
+    // THIS entry, data-only — no UI change (registry ethos, task §5/§15).
+    slides: [],
   },
 ];
 
@@ -316,18 +155,42 @@ export function getStoryLevel(id: string): StoryLevelDef | undefined {
 }
 
 /**
- * Single pure lock rule (mirrors zones' isZoneUnlockedIn): the first story
- * level is always open; each later one needs the previous level completed.
- * Completed levels stay replayable, like zones.
+ * Progress snapshot the lock rule reads. Structurally satisfied by the
+ * full ProgressState, so call sites pass progressStore.getState() (or a
+ * subscribed copy) and every unlock input rides ONE object.
+ */
+export interface StoryUnlockProgress {
+  storyProgress: Record<string, boolean>;
+  /** Zone completions (engine-written) — read by video-gated levels. */
+  completedZones?: Record<string, boolean>;
+  /** Videos watched to the end (markVideoWatched) — video-gated levels. */
+  videosWatched?: Record<string, boolean>;
+}
+
+/**
+ * Single pure lock rule (mirrors zones' isZoneUnlockedIn). A level with
+ * an explicit unlockRequires opens once its castle flow is done — zone
+ * complete AND video watched, fail-closed when either half is missing.
+ * Levels without one keep the sequential rule: first always open, later
+ * ones need the previous completed. Completed levels stay replayable.
  */
 export function isStoryLevelUnlockedIn(
-  storyProgress: Record<string, boolean>,
+  progress: StoryUnlockProgress,
   storyId: string,
 ): boolean {
   const idx = STORY_LEVELS.findIndex((l) => l.id === storyId);
   if (idx < 0) return false;
+  if (progress.storyProgress[storyId]) return true;
+  const level = STORY_LEVELS[idx];
+  if (level.unlockRequires) {
+    const { zoneId, videoId } = level.unlockRequires;
+    return (
+      progress.completedZones?.[zoneId] === true &&
+      progress.videosWatched?.[videoId] === true
+    );
+  }
   if (idx === 0) return true;
-  return !!storyProgress[STORY_LEVELS[idx - 1].id];
+  return !!progress.storyProgress[STORY_LEVELS[idx - 1].id];
 }
 
 /**
@@ -337,7 +200,7 @@ export function isStoryLevelUnlockedIn(
  * `storyId` is just the proximity sentinel WorldScene publishes.
  */
 export const STORY_ENTRANCE = {
-  storyId: 'right-to-life',
+  storyId: 'right-to-childhood',
   /** Logical [x, z] units — must match the WorldScene HOUSES entry. */
   position: [16, -12] as [number, number],
 };

@@ -3,13 +3,13 @@
  * Run: pnpm dlx tsx scripts/story.smoke.ts
  *
  * Asserts the story-level invariants:
- *  - Level 1 "Right to Life": exactly 5 slides in INTRO → STORY → DIALOGUE
- *    → CHOICE → RESULT order; the child's captions kept VERBATIM; exactly
- *    two choices with exactly ONE hard-coded correct answer (PRD §9.8) and
- *    gentle feedback on both branches (§9.6).
- *  - Level 2 "Clean Water, Healthy Life": the full 5-slide arc, captions
- *    VERBATIM, THREE options with exactly ONE correct, the task's own
- *    "ignore" feedback line + moral-line placements, and its art files.
+ *  - The ONE story level "Right to Childhood": video-gated teaser (no
+ *    slides yet), the task's EXACT title, unlockRequires pinned to the
+ *    zone2 castle flow; right-to-life / right-to-health are REMOVED.
+ *  - Video-first castle flow: ZONE_VIDEO_FLOWS ↔ story unlockRequires can
+ *    never drift, the mp4 ships in public/video/, the watched flag writes
+ *    ONLY via real-playback credit, the SAME final quiz runs through QuestPlayer (found
+ *    by kind), and Continue stays locked until the video ends.
  *  - Level map (Candy-Crush progression): generated from STORY_LEVELS with
  *    ZERO hard-coded level ids, ONE lock rule, locked-node hints, unlock
  *    cinematic gating, and the map/overlay/world DEV seams.
@@ -37,7 +37,7 @@
  *    the manager has ONE fetch site (audio by manifest id — no free text,
  *    no keys), device-voice fallback stays wired, suspend silences it too.
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { STRINGS } from '../src/i18n/strings';
@@ -49,6 +49,7 @@ import {
   getStoryLevel,
   isStoryLevelUnlockedIn,
 } from '../src/story/storyData';
+import { ZONE_VIDEO_FLOWS, getZoneVideoFlow } from '../src/quests/videoFlows';
 import { setNarrationSuspended } from '../src/story/storyNarrationState';
 import { REMINDER_DELAYS_MS } from '../src/story/useStoryNarrator';
 import {
@@ -80,79 +81,32 @@ const DEVANAGARI_RE = /[\u0900-\u097F]/;
 const EMOJI_RE =
   /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{1F1E6}-\u{1F1FF}]/u;
 
-// --- Level 1 data: shape + VERBATIM captions --------------------------------
-const L1 = getStoryLevel('right-to-life');
-assert(!!L1, 'Level 1 "right-to-life" exists');
-assert(L1!.number === 1, 'Level 1 is numbered 1');
-assert(L1!.slides.length === 5, 'Level 1 has exactly 5 slides');
+// --- The ONE story level: "Right to Childhood" (video-gated teaser) ----------
+// The old right-to-life / right-to-health levels are REMOVED (task order,
+// Aug 2026): the castle's learning video + final quiz now feed a single
+// video-gated level. Its slides ship later — until then it is a teaser
+// node on the map (visible, unlockable, never openable).
+const RTC = 'right-to-childhood';
+const rtc = getStoryLevel(RTC);
+assert(!!rtc, 'the "right-to-childhood" story level exists');
+assert(rtc!.number === 1, 'it is Level 1 (the chain restarts here)');
+assert(rtc!.title.en === 'Right to Childhood', 'EN title EXACTLY "Right to Childhood" (task wording)');
+assert(DEVANAGARI_RE.test(rtc!.title.hi), 'HI title is Devanagari');
 assert(
-  L1!.slides.map((s) => s.type).join(',') === 'INTRO,STORY,DIALOGUE,CHOICE,RESULT',
-  'slide types run INTRO → STORY → DIALOGUE → CHOICE → RESULT',
+  rtc!.subtitle.en === 'Every Child Deserves a Childhood',
+  'map subtitle names the promise it teaches',
 );
-assert(L1!.reward.en === 'Right to Life', 'reward name is "Right to Life"');
-
-const CAPTIONS_VERBATIM = [
-  'School se ghar lautte waqt Riya ek naye gaon ke raste se guzarti hai.',
-  'Riya ki nazar Aman par padti hai. Aman bahut kamzor lag raha tha aur use zaroori care nahi mil pa rahi thi.',
-  "Riya ne Aman se pucha, 'Tum theek ho? Kya tumhe kisi madad ki zaroorat hai?'",
-  'Riya ke paas ek decision tha — kya wo Aman ki madad karegi?',
-  'Riya ne seekha ki har bacche ko jeene, health care aur zaroori madad ka adhikar hota hai.',
-];
-CAPTIONS_VERBATIM.forEach((want, i) => {
-  assert(L1!.slides[i].caption.en === want, `slide ${i + 1} EN caption is verbatim`);
-});
-
-// --- Slide artwork: the child's own files, wired verbatim --------------------
-// (Under tsx, import.meta.env is undefined, so storyData's BASE_URL falls
-// back to '/' — the URLs below are exact.)
-const ART_SLIDES: Array<[number, string]> = [
-  [0, 's1-intro.webp'],
-  [1, 's2-problem.webp'],
-  [2, 's3-dialogue.webp'],
-  [4, 's5-result.webp'],
-];
-for (const [i, file] of ART_SLIDES) {
-  assert(
-    L1!.slides[i].image === `/story/${file}`,
-    `slide ${i + 1} uses the user's own art (${file})`,
-  );
-  let bytes = 0;
-  try {
-    bytes = readFileSync(join(here, '../public/story', file)).length;
-  } catch {
-    bytes = 0;
-  }
-  assert(bytes > 10_000, `public/story/${file} exists and is non-trivial`);
-}
+assert(rtc!.reward.en === 'Right to Childhood', 'reward names the right it teaches');
+assert(rtc!.slides.length === 0, 'teaser era: NO slides yet (content ships later, data-only)');
 assert(
-  L1!.slides[3].image === null,
-  'CHOICE slide stays image-free — that slide IS the game screen',
+  rtc!.unlockRequires?.zoneId === 'zone2' &&
+    rtc!.unlockRequires?.videoId === 'right-to-childhood',
+  'unlock is video-gated: zone2 (castle) completion + the learning video',
 );
-
-// --- The decision: two choices, ONE hard-coded correct (PRD §9.8) -----------
-const choiceSlide = L1!.slides[3];
-assert(!!choiceSlide.choices && choiceSlide.choices.length === 2, 'choice slide has exactly 2 options');
-const [wrong, right] = choiceSlide.choices!;
+assert(STORY_LEVELS.length === 1, 'STORY_LEVELS holds ONLY the new level (old levels removed, not hidden)');
 assert(
-  choiceSlide.choices!.filter((c) => c.correct).length === 1,
-  'exactly ONE choice is marked correct — hard-coded, never computed',
-);
-assert(
-  wrong.label.en === 'Chup chaap aage badh jao' && wrong.correct === false,
-  'wrong choice label verbatim + correct:false',
-);
-assert(
-  right.label.en === 'Aman ke liye help bulao' && right.correct === true,
-  'correct choice label verbatim + correct:true',
-);
-assert(
-  wrong.feedback.en === 'Riya agar Aman ko ignore kar de, to use zaroori madad nahi mil paayegi.',
-  'gentle wrong-choice feedback verbatim (no guilt language)',
-);
-assert(
-  right.feedback.en ===
-    'Bilkul! Kisi bachche ko zaroori madad ki zaroorat ho, to kisi trusted adult ya doctor ki help lena important hai.',
-  'correct-choice feedback verbatim',
+  !getStoryLevel('right-to-life') && !getStoryLevel('right-to-health'),
+  'right-to-life / right-to-health are GONE from the registry',
 );
 
 // --- Hindi twins: present, Devanagari, no emojis -----------------------------
@@ -175,82 +129,6 @@ for (const level of STORY_LEVELS) {
   }
 }
 
-// --- Level 2: "Clean Water, Healthy Life" — the full 5-slide story ------------
-const L2 = getStoryLevel('right-to-health');
-assert(!!L2 && L2!.number === 2, 'Level 2 "right-to-health" exists, numbered 2');
-assert(L2!.title.en === 'Clean Water, Healthy Life', 'L2 title verbatim (task §6)');
-assert(L2!.reward.en === 'Right to Health & Care', 'L2 reward is "Right to Health & Care"');
-assert(L2!.slides.length === 5, 'Level 2 has the full 5-slide arc');
-assert(
-  L2!.slides.map((s) => s.type).join(',') === 'INTRO,STORY,DIALOGUE,CHOICE,RESULT',
-  'L2 follows the SAME arc as L1 (scalable pattern, no special-casing)',
-);
-const L2_CAPTIONS_VERBATIM = [
-  'Riya ne dekha ki gaon ke kai bachche saaf paani aur achhi health facilities ki kami ka saamna kar rahe hain.',
-  'Doosre bachche bhi baar-baar bimaar ho rahe the kyunki unhe saaf paani aur sahi care nahi mil rahi thi.',
-  'Riya ne decide kiya ki wo problem ko ignore nahi karegi. Usne bade logon se madad maangi.',
-  'Riya kya kare?',
-  'Riya ne seekha ki har bacche ko health care, clean water aur safe environment milna chahiye.',
-];
-L2_CAPTIONS_VERBATIM.forEach((want, i) => {
-  assert(L2!.slides[i].caption.en === want, `L2 slide ${i + 1} EN caption is verbatim`);
-});
-
-// L2 artwork: the child's own converted files, wired verbatim.
-const L2_ART: Array<[number, string]> = [
-  [0, 's6-water.webp'],
-  [1, 's7-sick.webp'],
-  [2, 's8-meeting.webp'],
-  [4, 's10-health.webp'],
-];
-for (const [i, file] of L2_ART) {
-  assert(
-    L2!.slides[i].image === `/story/${file}`,
-    `L2 slide ${i + 1} uses the user's art (${file})`,
-  );
-  let bytes = 0;
-  try {
-    bytes = readFileSync(join(here, '../public/story', file)).length;
-  } catch {
-    bytes = 0;
-  }
-  assert(bytes > 10_000, `public/story/${file} exists and is non-trivial`);
-}
-const l2Choice = L2!.slides[3];
-assert(l2Choice.image === null, 'L2 CHOICE slide stays image-free — it IS the game screen');
-assert(
-  !!l2Choice.choices && l2Choice.choices.length === 3,
-  'L2 decision offers THREE options (task §10)',
-);
-assert(
-  l2Choice.choices!.filter((c) => c.correct).length === 1,
-  'L2: exactly ONE choice is marked correct — hard-coded, never computed',
-);
-const [l2Ignore, l2Self, l2Right] = l2Choice.choices!;
-assert(
-  l2Ignore.label.en === 'Problem ko ignore karo' && l2Ignore.correct === false,
-  'L2 wrong option 1 verbatim ("ignore")',
-);
-assert(
-  l2Self.label.en === 'Sirf khud ke liye paani bachao' && l2Self.correct === false,
-  'L2 wrong option 2 verbatim ("only self")',
-);
-assert(
-  l2Right.label.en === 'Health camp aur clean water ke liye help lo' && l2Right.correct === true,
-  'L2 correct option verbatim',
-);
-assert(
-  l2Ignore.feedback.en ===
-    'Riya agar problem ko ignore karegi, to Aman aur doosre bachchon ko help nahi mil paayegi.',
-  "L2 \"ignore\" feedback is the task's own line, verbatim (§12)",
-);
-assert(l2Self.feedback.en.trim().length > 0, 'L2 "only self" branch has gentle feedback too');
-assert(
-  l2Choice.questionIntro!.en.includes('Ek achha decision kai bachchon ki zindagi badal sakta hai.') &&
-    l2Right.feedback.en.includes('Ek achha decision kai bachchon ki zindagi badal sakta hai.'),
-  "the script's moral line rides the spoken intro AND the on-screen correct feedback, verbatim",
-);
-
 // Level-map metadata + option ceiling across ALL levels (data-driven map).
 for (const level of STORY_LEVELS) {
   assert(
@@ -264,64 +142,86 @@ for (const level of STORY_LEVELS) {
     }
   }
 }
-assert(L1!.subtitle.en === 'Every Child Matters', 'L1 subtitle "Every Child Matters" (task §6 example)');
-assert(L2!.subtitle.en === 'Right to Health & Care', 'L2 subtitle names the right it teaches');
 
-assert(isStoryLevelUnlockedIn({}, 'right-to-life'), 'L1 is always unlocked');
-assert(!isStoryLevelUnlockedIn({}, 'right-to-health'), 'L2 locked while L1 incomplete');
+// --- The ONE lock rule: video-gated = zone complete AND video watched --------
+assert(!isStoryLevelUnlockedIn({ storyProgress: {} }, RTC), 'level starts LOCKED (nothing done)');
 assert(
-  isStoryLevelUnlockedIn({ 'right-to-life': true }, 'right-to-health'),
-  'L2 unlocks once L1 is complete',
+  !isStoryLevelUnlockedIn({ storyProgress: {}, completedZones: { zone2: true } }, RTC),
+  'castle quiz alone is NOT enough (video half missing — fail-closed)',
 );
-assert(!isStoryLevelUnlockedIn({}, 'no-such-story'), 'unknown story id is never unlocked');
+assert(
+  !isStoryLevelUnlockedIn(
+    { storyProgress: {}, videosWatched: { 'right-to-childhood': true } },
+    RTC,
+  ),
+  'video alone is NOT enough (quiz half missing — fail-closed)',
+);
+assert(
+  isStoryLevelUnlockedIn(
+    {
+      storyProgress: {},
+      completedZones: { zone2: true },
+      videosWatched: { 'right-to-childhood': true },
+    },
+    RTC,
+  ),
+  'zone completion + video watched UNLOCK the level',
+);
+assert(
+  isStoryLevelUnlockedIn({ storyProgress: { 'right-to-childhood': true } }, RTC),
+  'a completed level stays unlocked (replayable) without re-checking the gates',
+);
+assert(
+  !isStoryLevelUnlockedIn({ storyProgress: {} }, 'no-such-story'),
+  'unknown story id is never unlocked',
+);
 
-// --- openStory guard chain (uiStore) -----------------------------------------
-openStory('right-to-health');
+// --- openStory guard chain (uiStore) + persistence ----------------------------
+openStory(RTC);
 assert(
   uiStore.getState().activeStory === null,
-  'openStory refuses the LOCKED Level 2 (fail-closed even though slides exist now)',
+  'openStory refuses the LOCKED video-gated level (fail-closed)',
 );
-openStory('right-to-life', 2);
-assert(
-  uiStore.getState().activeStory?.id === 'right-to-life' &&
-    uiStore.getState().activeStory?.initialSlide === 2,
-  'openStory opens Level 1 (with the seam slide index)',
-);
-openStory('right-to-life');
-assert(
-  uiStore.getState().activeStory?.initialSlide === 2,
-  'openStory is a no-op while a story is already open',
-);
-closeStory();
-assert(uiStore.getState().activeStory === null, 'closeStory clears the overlay state');
 
-// --- Persistence: completeStoryLevel + badge, idempotent ---------------------
 assert(
-  Object.keys(progressStore.getState().storyProgress).length === 0,
-  'fresh state starts with empty storyProgress',
+  Object.keys(progressStore.getState().storyProgress).length === 0 &&
+    Object.keys(progressStore.getState().videosWatched).length === 0,
+  'fresh state: empty storyProgress AND empty videosWatched',
 );
-progressStore.completeStoryLevel('right-to-life');
+progressStore.markVideoWatched('right-to-childhood');
 assert(
-  progressStore.getState().storyProgress['right-to-life'] === true,
-  'completeStoryLevel records the completion',
+  progressStore.getState().videosWatched['right-to-childhood'] === true,
+  'markVideoWatched records the watch-to-end flag',
 );
+const afterWatch = progressStore.getState();
+progressStore.markVideoWatched('right-to-childhood');
+assert(progressStore.getState() === afterWatch, 'markVideoWatched is idempotent (no-op rewrite)');
+openStory(RTC);
 assert(
-  progressStore.getState().badges['story-right-to-life'] === true,
+  uiStore.getState().activeStory === null,
+  'video alone still cannot open the level (zone half missing)',
+);
+
+progressStore.completeStoryLevel(RTC);
+assert(progressStore.getState().storyProgress[RTC] === true, 'completeStoryLevel records the completion');
+assert(
+  progressStore.getState().badges['story-right-to-childhood'] === true,
   'the reward badge rides the same atomic write',
 );
 const afterFirst = progressStore.getState();
-progressStore.completeStoryLevel('right-to-life');
+progressStore.completeStoryLevel(RTC);
+assert(progressStore.getState() === afterFirst, 'completeStoryLevel is idempotent (second call is a no-op)');
 assert(
-  progressStore.getState() === afterFirst,
-  'completeStoryLevel is idempotent (second call is a no-op)',
+  isStoryLevelUnlockedIn(progressStore.getState(), RTC),
+  'the store snapshot satisfies the lock rule structurally (ONE object, ONE rule)',
 );
-openStory('right-to-health');
+openStory(RTC);
 assert(
-  uiStore.getState().activeStory?.id === 'right-to-health',
-  'L1 completion truly unlocks Level 2 — openStory admits it now',
+  uiStore.getState().activeStory === null,
+  'openStory STILL refuses the slide-less teaser even when unlocked — no premature story',
 );
 closeStory();
-assert(uiStore.getState().activeStory === null, 'closeStory clears Level 2 too');
+assert(uiStore.getState().activeStory === null, 'closeStory stays a safe no-op');
 
 // --- Geometry: entrance matches the decor house, prompts never overlap -------
 assert(
@@ -348,6 +248,8 @@ for (const rel of [
   '../src/story/StoryAdventureMap.tsx',
   '../src/story/storyNarrationState.ts',
   '../src/story/useStoryNarrator.ts',
+  '../src/quests/videoFlows.ts',
+  '../src/quests/VideoQuestFlow.tsx',
 ]) {
   const src = read(rel);
   assert(
@@ -388,6 +290,10 @@ assert(hud.includes('storyEnterCta'), 'prompt uses the enter CTA string');
 assert(
   hud.includes('openStoryMap()') && !/openStory\(nearbyStoryId\)/.test(hud),
   'the door prompt opens the LEVEL MAP too',
+);
+assert(
+  hud.includes('getZoneVideoFlow') && hud.includes('<VideoQuestFlow'),
+  'zone interiors registered in videoFlows run the video-first screen (others keep LevelSelect)',
 );
 
 const overlay = read('../src/story/StoryOverlay.tsx');
@@ -437,17 +343,22 @@ assert(
   store.includes('sanitizeRecord(parsed.storyProgress, isBool)'),
   'storyProgress is sanitized at the load ingress',
 );
+assert(
+  store.includes('sanitizeRecord(parsed.videosWatched, isBool)'),
+  'videosWatched is sanitized at the load ingress (same rule as storyProgress)',
+);
 
 const mainSrc = read('../src/main.tsx');
 assert(mainSrc.includes("get('story') === 'open'"), 'main.tsx boots the ?story=open seam');
-assert(mainSrc.includes("get('done')"), 'seam can pre-complete levels (&done=) for map/L2 captures');
+assert(mainSrc.includes("get('done')"), 'seam can pre-complete levels (&done=) for map captures');
 
 // --- Level map component: data-driven, deterministic, silent -------------------
 const mapSrc = read('../src/story/StoryAdventureMap.tsx');
 assert(
   mapSrc.includes('STORY_LEVELS') &&
     !mapSrc.includes("'right-to-life'") &&
-    !mapSrc.includes("'right-to-health'"),
+    !mapSrc.includes("'right-to-health'") &&
+    !mapSrc.includes("'right-to-childhood'"),
   'level map generates from STORY_LEVELS with ZERO hard-coded level ids (task §5/§15)',
 );
 assert(mapSrc.includes('isStoryLevelUnlockedIn'), 'node states derive from the ONE lock rule (§16)');
@@ -465,17 +376,136 @@ assert(
   'the level map is SILENT — no voice on map/completion surfaces (voice spec §8)',
 );
 assert(mapSrc.includes("get('view') !== 'map'"), 'map DEV seam (&view=map) present');
+assert(
+  mapSrc.includes("flashMapNote('soon')") && mapSrc.includes('storyMapComingSoon'),
+  'tapping an unlocked-but-slide-less teaser flashes the coming-soon note (no dead tap)',
+);
+assert(
+  mapSrc.includes('completeFirst') && mapSrc.includes('unlockRequires'),
+  'video-gated locked nodes name the ZONE that opens them (not a previous level)',
+);
 
 const uiWiring = read('../src/ui/uiStore.ts');
 assert(
   uiWiring.includes('storyMapOpen') && uiWiring.includes('celebrateStoryCompletion'),
   'uiStore owns the map-open + celebration state (transient; the unlock itself is progressStore)',
 );
+assert(
+  uiWiring.includes('exitZoneToStoryMap'),
+  'uiStore owns the zone → story-map handoff (same fade as exitZone)',
+);
 
 const progressScreen = read('../src/ui/ProgressScreen.tsx');
 assert(
   progressScreen.includes('storyAdventuresHeading') && progressScreen.includes('STORY_LEVELS'),
   'My Progress shows the Story Adventures section',
+);
+
+// --- Video-first castle flows: the two registries can never drift -------------
+assert(ZONE_VIDEO_FLOWS.length >= 1, 'the Right to Childhood castle flow is registered');
+for (const flow of ZONE_VIDEO_FLOWS) {
+  assert(
+    ZONES.some((z) => z.id === flow.zoneId),
+    `flow ${flow.videoId}: zone "${flow.zoneId}" exists in the world`,
+  );
+  const target = getStoryLevel(flow.storyLevelId);
+  assert(!!target, `flow ${flow.videoId}: its story level "${flow.storyLevelId}" exists`);
+  assert(
+    target!.unlockRequires?.zoneId === flow.zoneId &&
+      target!.unlockRequires?.videoId === flow.videoId,
+    `flow ${flow.videoId}: story unlockRequires mirrors the flow EXACTLY`,
+  );
+  let videoBytes = 0;
+  try {
+    videoBytes = statSync(join(here, '../public/video', flow.videoFile)).size;
+  } catch {
+    videoBytes = 0;
+  }
+  assert(videoBytes > 100_000, `public/video/${flow.videoFile} ships real footage`);
+}
+for (const level of STORY_LEVELS) {
+  if (!level.unlockRequires) continue;
+  assert(
+    ZONE_VIDEO_FLOWS.some(
+      (f) =>
+        f.zoneId === level.unlockRequires!.zoneId && f.videoId === level.unlockRequires!.videoId,
+    ),
+    `${level.id}: a zone flow actually writes both of its unlock inputs`,
+  );
+}
+assert(
+  getZoneVideoFlow('zone2')?.videoId === 'right-to-childhood',
+  'zone2 interior routes to the castle video flow',
+);
+assert(
+  getZoneVideoFlow('no-such-zone') === null,
+  'non-video zones fall through to the level-select screen',
+);
+
+const flowSrc = read('../src/quests/VideoQuestFlow.tsx');
+// The gate is a POLICY, so test the policy, not the handler wiring alone:
+// the pure tracker is exercised with synthetic media timelines, including
+// the seek-to-end bypass an architect review caught in the naive
+// onEnded-only version.
+const { createWatchTracker } = await import('../src/quests/videoFlows');
+{
+  const full = createWatchTracker();
+  let done = false;
+  for (let tSec = 0; tSec <= 120 && !done; tSec += 0.25) done = full.onTime(tSec, 120);
+  assert(done, 'watch tracker: uninterrupted real playback earns completion');
+
+  const skipper = createWatchTracker();
+  skipper.onTime(0, 120);
+  skipper.onTime(0.5, 120);
+  skipper.onSeek(119.5);
+  assert(
+    !skipper.onTime(119.9, 120) && !skipper.onTime(120, 120),
+    'watch tracker: seek-to-end + onEnded does NOT count as watched',
+  );
+  assert(skipper.watchedSeconds() < 2, 'watch tracker: a jump credits no watch time');
+
+  const jumper = createWatchTracker();
+  jumper.onTime(1, 120);
+  assert(
+    !jumper.onTime(119, 120) && !jumper.onTime(120, 120),
+    'watch tracker: a swallowed seeking event still cannot smuggle credit (tick cap)',
+  );
+
+  const nan = createWatchTracker();
+  assert(!nan.onTime(5, Number.NaN), 'watch tracker: broken metadata (NaN duration) never completes');
+}
+assert(
+  flowSrc.includes('createWatchTracker()') &&
+    flowSrc.includes('onTimeUpdate={(e) => creditTime(e.currentTarget)}') &&
+    flowSrc.includes("onSeeking={(e) => trackerRef.current.onSeek(e.currentTarget.currentTime)}") &&
+    flowSrc.includes('onRateChange=') &&
+    flowSrc.includes('e.currentTarget.playbackRate = 1') &&
+    !flowSrc.includes('onEnded={() => progressStore.markVideoWatched'),
+  'video stage wires the credit tracker (timeupdate + seeking + 1x rate lock; no naive onEnded-only write)',
+);
+assert(
+  flowSrc.includes('<QuestPlayer') && flowSrc.includes("l.kind === 'quiz'"),
+  'the SAME final quiz runs through QuestPlayer, found by KIND (questions untouched)',
+);
+assert(
+  flowSrc.includes('disabled={!watched'),
+  'Continue stays disabled until the video is watched (video BEFORE quiz, enforced)',
+);
+assert(
+  flowSrc.includes('practice: quizPassed'),
+  'a replay of an already-passed quiz runs as practice — recorded scores never overwritten',
+);
+assert(
+  flowSrc.includes('enterLevel(') && flowSrc.includes('clearLevel()'),
+  'the AI companion rides the SAME enterLevel/clearLevel signals as LevelSelect',
+);
+assert(
+  flowSrc.includes('exitZoneToStoryMap'),
+  'the unlock celebration can jump straight to the Story Adventure map',
+);
+assert(
+  !/fetch\(|@workspace\/api-client|GoogleGenAI|genai|openai/i.test(flowSrc),
+  'video flow is deterministic — the mp4 is fixed user content, never AI/fetched',
 );
 
 // --- Chrome strings: EN/HI parity, Devanagari, no emojis ----------------------
@@ -508,6 +538,11 @@ const CHROME_KEYS = [
   'storyVoiceReplay',
   'storyVoiceRetry',
   'storyVoicePreparing',
+  // Video-first castle flow chrome (video screen + unlock celebration).
+  'videoWatchFirst',
+  'videoWatchedTag',
+  'storyUnlockedHeading',
+  'openStoryAdventure',
 ] as const;
 for (const key of CHROME_KEYS) {
   const en = STRINGS.en[key] as string;
@@ -645,28 +680,6 @@ for (const text of spokenLines) {
   assert(!/[0-9०-९]/.test(text), `spoken line stays digit-free: "${text.slice(0, 44)}"`);
 }
 
-// --- Voice guide: Level-1 narration twins (spec's own scripts) -----------------
-const introSlide = L1!.slides[0];
-assert(
-  !!introSlide.narration && DEVANAGARI_RE.test(introSlide.narration!.hi),
-  'slide 1 has a spoken opener with a Devanagari HI twin',
-);
-assert(
-  !!choiceSlide.questionIntro && DEVANAGARI_RE.test(choiceSlide.questionIntro!.hi),
-  'CHOICE slide has a spoken question intro with a Devanagari HI twin',
-);
-const l2Intro = L2!.slides[0];
-assert(
-  !!l2Intro.narration &&
-    l2Intro.narration!.en.includes('Aman ki tabiyat ab thodi behtar hai') &&
-    DEVANAGARI_RE.test(l2Intro.narration!.hi),
-  'L2 opener narrates the Level-1 continuity (Aman better now) with an HI twin',
-);
-assert(
-  !!l2Choice.questionIntro && DEVANAGARI_RE.test(l2Choice.questionIntro!.hi),
-  'L2 CHOICE slide has a spoken question intro with a Devanagari HI twin',
-);
-
 // --- Voice guide: quest narrator untouched, narration defaults ON --------------
 assert(
   typeof questSpeak === 'function' && typeof stopSpeaking === 'function',
@@ -742,8 +755,14 @@ assert(widgetSrc.includes('useNarrationVoiceState'), 'assistant bubble reacts wh
 // --- Gemini story voice: segment catalog ↔ server manifest (drift guard) ------
 const catalog = enumerateAllStorySegments();
 assert(
-  catalog.length >= 60,
-  'segment catalog covers the FULL Level 1 + Level 2 read (60+ lines EN+HI)',
+  catalog.length >= 2,
+  'segment catalog still carries the shared voice chrome through the teaser era',
+);
+assert(
+  catalog.every(
+    (s) => s.id.split('/')[0] === 'chrome' || STORY_LEVELS.some((l) => l.id === s.id.split('/')[0]),
+  ),
+  'every catalogued segment belongs to the chrome pool or a REGISTERED story level',
 );
 assert(new Set(catalog.map((s) => s.id)).size === catalog.length, 'segment ids are unique');
 const enCount = catalog.filter((s) => s.id.endsWith('/en')).length;
@@ -756,26 +775,15 @@ assert(
   catalog.every((s) => !/[0-9\u0966-\u096F]/.test(s.text)),
   'every catalogued spoken line is digit-free (PRD §9 — helplines live in Get Help only)',
 );
-assert(
-  ['chrome/yourturn/en', 'chrome/yourturn/hi'].every((id) => catalog.some((s) => s.id === id)),
-  '"your turn" close-out cue is catalogued in both languages',
-);
-assert(
-  catalog.some(
-    (s) =>
-      s.id === 'right-to-life/choice/opt-0/en' &&
-      s.text.startsWith(STRINGS.en.storyVoiceOptionOne),
-  ),
-  'option lines are catalogued WITH the spoken option prefix',
-);
-assert(
-  catalog.some(
-    (s) =>
-      s.id === 'right-to-health/choice/opt-2/en' &&
-      s.text.startsWith(STRINGS.en.storyVoiceOptionThree),
-  ),
-  'the THIRD option is catalogued with the word-form "Option three" prefix (digits stay banned)',
-);
+// The "your turn" cue (like the option-prefix chrome) enumerates only
+// alongside CHOICE slides — in the teaser era the catalog is the shared
+// reminder pool alone. The moment slides ship, this assert re-arms.
+if (STORY_LEVELS.some((l) => l.slides.some((s) => s.type === 'CHOICE'))) {
+  assert(
+    ['chrome/yourturn/en', 'chrome/yourturn/hi'].every((id) => catalog.some((s) => s.id === id)),
+    '"your turn" close-out cue is catalogued in both languages',
+  );
+}
 
 const manifestSrc = read('../../api-server/src/routes/storyvoice/story-voice-manifest.ts');
 const manifest = JSON.parse(

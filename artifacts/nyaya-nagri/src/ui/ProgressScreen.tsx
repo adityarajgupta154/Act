@@ -248,7 +248,7 @@ export function ProgressPanel({
           <ul className="flex flex-col gap-3">
             {STORY_LEVELS.map((level, i) => {
               const done = !!storyProgress[level.id];
-              const unlocked = isStoryLevelUnlockedIn(storyProgress, level.id);
+              const unlocked = isStoryLevelUnlockedIn({ ...progress, storyProgress }, level.id);
               const prev = i > 0 ? STORY_LEVELS[i - 1] : null;
               return (
                 <li
@@ -282,7 +282,15 @@ export function ProgressPanel({
                         done ? 'text-green-600' : unlocked ? 'text-orange-500' : 'text-slate-400',
                       )}
                     >
-                      {done ? t.zoneComplete : unlocked ? t.zoneReady : prev ? t.storyLockedHint(prev.title[language]) : t.zoneLocked}
+                      {done
+                        ? t.zoneComplete
+                        : unlocked
+                          ? t.zoneReady
+                          : level.unlockRequires
+                            ? t.completeFirst(t.zones[level.unlockRequires.zoneId]?.name ?? '')
+                            : prev
+                              ? t.storyLockedHint(prev.title[language])
+                              : t.zoneLocked}
                     </p>
                   </div>
                 </li>

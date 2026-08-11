@@ -109,7 +109,13 @@ An orphaned tester can hold the single slot across sessions/compaction indefinit
 - Catalog/strings edits → regen manifest (`pnpm exec tsx scripts/generate-story-voice-manifest.ts` from nyaya-nagri) or the story smoke's drift guard fails by design.
 
 ## Latency probing (chat + voice-token)
-- Node probe against `http://localhost:8080/api` directly: time voice-token mint (POST `/nyaya-ai/voice-token` `{language}`), chat-stream headers→first NDJSON delta→done (POST `/nyaya-ai/chat-stream` `{message, language}`), classic chat total. SPACE the two chat calls ~20s apart (free-tier ~5 req/min on the chat model). Aug 2026 healthy floors: mint ~420-480ms, stream first-delta ~1.1s, classic ~1.3-1.6s — TTFT is model floor, treat bigger numbers as regressions.
+- Node probe against `http://localhost:8080/api` directly: chat-stream headers→first NDJSON delta→done (POST `/nyaya-ai/chat-stream` `{message, language}`), classic chat total. SPACE the two chat calls ~20s apart (free-tier ~5 req/min on the chat model). Aug 2026 healthy floors: stream first-delta ~1.1s, classic ~1.3-1.6s — TTFT is model floor, treat bigger numbers as regressions.
 - In-browser stage timings come free in DEV console: `[voice-latency]` (tap→listening breakdown, per-turn user-final→first-audio) and `[chat-latency]` (send→first-delta→done, fallback marker) — ask for a copy-paste of these lines instead of guessing.
 
 - Screenshot tool saves FULL-RES capture (e.g. 2400x2960 jpg) while the chat preview is downscaled — run `magick identify` on the saved file BEFORE cropping zoom-ins; crop coords eyeballed from the preview land in the wrong region.
+
+## Aug 2026 addendum — seams & battery deltas
+- Dev seams (main.tsx): `?zone=<id>` marks all PRIOR zones complete then enterZone (lock rules + fade still apply; HomePage skips landing on the param). Story seam extras: `&zones=` (completedZones) + `&watched=` (videosWatched) for the video-gated unlock.
+- Api battery is FOUR smokes (safety, avatar.safety, persona.safety, ratelimit). Ratelimit = clock-injected policy tests + wiring greps (admission mounted in app.ts BEFORE express.json; the route holds NO allow() call). Grep lesson: bare function names hit DEFINITIONS — match call sites (`await fn(`).
+- Story smoke unit-tests the pure watch-credit tracker (seek-to-end + onEnded bypass is the regression case) — "watched" is earned playback, not an onEnded event.
+- Voice-token mint probing is DEAD (Sarvam era; token routes mounted-but-unused). Sarvam route needs real audio to probe — prefer the browser `[voice-latency]` console lines.

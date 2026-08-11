@@ -37,6 +37,8 @@ import { Minimap } from './Minimap';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
 import { LevelSelect } from '@/quests/LevelSelect';
+import { VideoQuestFlow } from '@/quests/VideoQuestFlow';
+import { getZoneVideoFlow } from '@/quests/videoFlows';
 import { getLevelStatuses } from '@/quests/levels';
 
 /** Task 13: has the onboarding (intro, age band, guardian consent) run? */
@@ -142,19 +144,25 @@ function StoryPrompt() {
   const { nearbyStoryId, activeStory, storyMapOpen } = useUIStore();
   const { language } = useSettings();
   const t = useStrings();
-  const [storyProgress, setStoryProgress] = useState(
-    () => progressStore.getState().storyProgress,
-  );
-  useEffect(() => progressStore.subscribe((s) => setStoryProgress(s.storyProgress)), []);
+  const [progress, setProgress] = useState(() => progressStore.getState());
+  useEffect(() => progressStore.subscribe(setProgress), []);
 
   if (!nearbyStoryId || activeStory || storyMapOpen) return null;
-  const playable = STORY_LEVELS.filter((l) => l.slides.length > 0);
-  const doneCount = playable.filter((l) => storyProgress[l.id]).length;
+  // Slide-less teasers COUNT here (video-gated castle flow): the prompt
+  // previews the next unlockable level even before its slides ship.
+  const storyProgress = progress.storyProgress;
+  const doneCount = STORY_LEVELS.filter((l) => storyProgress[l.id]).length;
   const next =
-    playable.find(
-      (l) => !storyProgress[l.id] && isStoryLevelUnlockedIn(storyProgress, l.id),
+    STORY_LEVELS.find(
+      (l) => !storyProgress[l.id] && isStoryLevelUnlockedIn(progress, l.id),
     ) ?? null;
-  const allDone = playable.length > 0 && doneCount === playable.length;
+  const allDone = STORY_LEVELS.length > 0 && doneCount === STORY_LEVELS.length;
+  // A still-locked video-gated level names the zone that opens it.
+  const firstLocked =
+    STORY_LEVELS.find((l) => !storyProgress[l.id] && l.unlockRequires) ?? null;
+  const lockedZoneName = firstLocked?.unlockRequires
+    ? (t.zones[firstLocked.unlockRequires.zoneId]?.name ?? '')
+    : '';
 
   return (
     <div className="bg-white px-6 py-4 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-center gap-3 pointer-events-auto animate-in slide-in-from-bottom-4 duration-200">
@@ -167,7 +175,13 @@ function StoryPrompt() {
             {t.storyAdventure}
           </span>
           <span className="block text-sm font-semibold text-slate-500">
-            {next ? `${t.levelN(next.number)} — ${next.title[language]}` : t.storyMapAllDone}
+            {next
+              ? `${t.levelN(next.number)} — ${next.title[language]}`
+              : allDone
+                ? t.storyMapAllDone
+                : lockedZoneName
+                  ? t.completeFirst(lockedZoneName)
+                  : t.storyMapComingSoon}
           </span>
         </span>
       </div>
@@ -236,6 +250,22 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
           {t.backToMap}
         </button>
       </div>
+    );
+  }
+
+  // Video-first castle flow (Aug 2026): zones registered in videoFlows run
+  // VIDEO → final quiz (same questions, same engine finalization) instead
+  // of the level-select screen. Ordering (video BEFORE quiz) is enforced
+  // inside the flow component; the global Get Help Now pill stays above.
+  const videoFlow = getZoneVideoFlow(zoneId);
+  if (videoFlow) {
+    return (
+      <VideoQuestFlow
+        flow={videoFlow}
+        quest={quest}
+        zoneName={zoneStrings?.name ?? zone.name}
+        zoneTheme={zoneStrings?.theme ?? zone.theme}
+      />
     );
   }
 
