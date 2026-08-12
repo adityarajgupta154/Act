@@ -433,6 +433,15 @@ for (const flow of ZONE_GAME_FLOWS) {
     ZONES.some((z) => z.id === flow.zoneId),
     `flow ${flow.videoId}: zone "${flow.zoneId}" exists in the world`,
   );
+  if (flow.storyLevelId === null) {
+    // Flows with NO story reward (zone1's Safe Path maze): the null is
+    // deliberate — no story level may quietly ride this flow's gate.
+    assert(
+      !STORY_LEVELS.some((l) => l.unlockRequires?.videoId === flow.videoId),
+      `flow ${flow.videoId}: null storyLevelId means no story level rides its gate`,
+    );
+    continue;
+  }
   const target = getStoryLevel(flow.storyLevelId);
   assert(!!target, `flow ${flow.videoId}: its story level "${flow.storyLevelId}" exists`);
   assert(
@@ -512,8 +521,9 @@ assert(
   'the SAME final quiz runs through QuestPlayer, found by KIND (questions untouched)',
 );
 assert(
-  flowSrc.includes('disabled={!gameDone'),
-  'Continue stays disabled until the game is completed (game BEFORE quiz, enforced)',
+  flowSrc.includes('const continueReady = gameDone &&') &&
+    flowSrc.includes('disabled={!continueReady}'),
+  'Continue stays disabled until the game is completed (game BEFORE the rest, enforced)',
 );
 assert(
   flowSrc.includes('practice: quizPassed'),

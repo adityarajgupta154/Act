@@ -1,0 +1,565 @@
+Create a polished, child-friendly **2D educational puzzle/maze game** based on **POCSO Act awareness and child safety**, designed for the Nyaya Nagri educational platform.
+
+The game must feel like a REAL PLAYABLE PUZZLE GAME, NOT a quiz or static educational screen.
+
+## GAME CONCEPT
+
+The player controls a cute child-friendly cartoon character.
+
+The objective is:
+
+**START → SAFELY NAVIGATE THE PATH → END / SAFE ZONE**
+
+The character must travel through a maze-like environment.
+
+There should be multiple possible paths, but some paths contain **POCSO-related unsafe situations/obstacles**.
+
+The player must identify the safe path and guide the character around dangerous/incorrect choices.
+
+The game should teach:
+
+**Recognize → Avoid → Choose Safe Action → Reach Safety**
+
+Do NOT visually depict sexual abuse or explicit situations.
+
+All POCSO-related situations must be represented through safe, symbolic, age-appropriate visual storytelling.
+
+---
+
+# VISUAL STYLE
+
+Use a colorful, polished children's educational adventure-game style.
+
+Visual direction:
+
+* Bright blue/purple sky
+* Green grassy environment
+* Soft clouds
+* Trees
+* Flowers
+* Playground/school elements
+* Rounded game UI
+* Friendly cartoon characters
+* Clean vector/illustrated appearance
+* Soft shadows
+* Colorful but not overly saturated
+* Premium educational-game quality
+
+The overall feeling should be:
+
+**Safe + Friendly + Adventure + Learning**
+
+Avoid making the game dark, scary, violent, or disturbing.
+
+---
+
+# GAME BOARD
+
+Create a large central maze/puzzle area.
+
+At the top:
+
+### “SAFE PATH ADVENTURE”
+
+Subtitle:
+
+**“Help the character reach the Safe Zone!”**
+
+Add a small instruction:
+
+**“Choose the safe path and avoid unsafe situations.”**
+
+---
+
+# START
+
+Place a clearly visible START area on the left/top side.
+
+Example:
+
+🟢 START
+
+with a cheerful child character standing there.
+
+The character should be visually distinct and easy to control.
+
+---
+
+# END
+
+Place the destination on the opposite side.
+
+Example:
+
+🛡️ SAFE ZONE
+
+or:
+
+🏠 TRUSTED ADULT
+
+The destination should look warm, bright and safe.
+
+Use:
+
+* shield icon
+* heart
+* trusted adult / safe environment
+* bright green glow
+
+The character wins when reaching this destination.
+
+---
+
+# MAZE / PATH
+
+Create a visually clear maze with approximately 4–6 possible paths.
+
+Some paths should be safe.
+
+Some paths should lead toward obstacles.
+
+The player must decide which path to take.
+
+Use:
+
+* paths
+* bridges
+* intersections
+* arrows
+* checkpoints
+* blocked routes
+
+Do NOT make the maze impossibly complicated.
+
+It should be understandable for children.
+
+---
+
+# POCSO-RELATED OBSTACLES
+
+Place several obstacles throughout the maze.
+
+Each obstacle represents an unsafe situation in a simple, non-graphic way.
+
+Examples:
+
+## OBSTACLE 1 — SECRET REQUEST
+
+Show a phone/chat symbol with a speech bubble:
+
+**“Don't tell anyone about this.”**
+
+Place a red warning sign:
+
+🚩 UNSAFE
+
+The character must avoid this path.
+
+Educational concept:
+
+**Children should tell a trusted adult when someone asks them to keep an uncomfortable or unsafe secret.**
+
+---
+
+## OBSTACLE 2 — UNSAFE ONLINE CONTACT
+
+Show a smartphone with an unknown person/message.
+
+Message:
+
+**“Send me your private photo.”**
+
+Add:
+
+🚫 DO NOT SHARE
+
+The path should be visually blocked.
+
+Do NOT show explicit imagery.
+
+---
+
+## OBSTACLE 3 — UNCOMFORTABLE SITUATION
+
+Show a child looking uncomfortable while an adult/person is standing too close.
+
+Use a visual boundary circle around the child.
+
+Add:
+
+**“Your body belongs to you.”**
+
+and:
+
+🛑 STOP
+
+Keep the scene completely non-sexual and age-appropriate.
+
+---
+
+## OBSTACLE 4 — BRIBE / SECRET
+
+Show an unknown person offering a gift box.
+
+Speech bubble:
+
+**“I'll give you a gift. Don't tell anyone.”**
+
+Add:
+
+🚩 RED FLAG
+
+The player should understand that this is an unsafe situation.
+
+---
+
+## OBSTACLE 5 — TRUSTED ADULT
+
+Instead of making every adult an obstacle, include a SAFE checkpoint.
+
+Show:
+
+👩 Parent / 👨 Teacher / 👩‍🏫 Trusted Adult
+
+with:
+
+**“You can talk to me.”**
+
+This should be a GREEN safe route.
+
+This is important so the game teaches children that trusted adults are a source of help.
+
+---
+
+# PATH COLOR LANGUAGE
+
+Use subtle visual cues but do not make the answer immediately obvious.
+
+Safe paths:
+
+* soft green
+* blue
+* normal path
+
+Unsafe paths:
+
+* orange/red warning markers
+* 🚩 symbols
+* blocked sections
+
+However, the player should still need to understand the situation.
+
+Do not simply make the correct path green from the beginning.
+
+---
+
+# GAME MECHANIC
+
+The player controls the character using:
+
+* Arrow keys on desktop
+* WASD on desktop
+* Swipe/touch controls on mobile
+
+The character moves through the maze.
+
+When approaching an obstacle:
+
+Pause the character.
+
+Show a small situation card.
+
+Example:
+
+### 🚩 RED FLAG
+
+**“Someone asks you to keep an uncomfortable secret.”**
+
+Then provide two actions:
+
+🛡️ **Tell a trusted adult**
+
+or
+
+🚫 **Keep it secret**
+
+The player must choose the safe action.
+
+Correct choice:
+
+✓ Safe choice!
+
+Character continues.
+
+Wrong choice:
+
+⚠️ Think again!
+
+Character returns to the previous checkpoint.
+
+IMPORTANT:
+
+The game should NOT become a traditional quiz.
+
+The situation card should appear as part of the maze gameplay and directly affect the character's movement.
+
+---
+
+# CHECKPOINT SYSTEM
+
+Add 3–5 checkpoints.
+
+Example:
+
+START
+↓
+Checkpoint 1
+↓
+Checkpoint 2
+↓
+Checkpoint 3
+↓
+SAFE ZONE
+
+If the player makes a wrong decision, return them to the latest checkpoint instead of restarting the entire game.
+
+This makes the game more enjoyable.
+
+---
+
+# REWARD SYSTEM
+
+Add:
+
+⭐ Score
+
+❤️ Safety lives
+
+🏆 Progress
+
+Example:
+
+Correct safe decision:
+
+**+100 ⭐**
+
+Avoiding an unsafe obstacle:
+
+**+50 ⭐**
+
+Reaching a trusted adult:
+
+**+100 ⭐**
+
+Do not make the scoring complicated.
+
+---
+
+# CHARACTER ANIMATION
+
+The player character should have simple animations:
+
+* Idle
+* Walking
+* Happy
+* Worried
+* Success
+
+When the player chooses a safe path:
+
+Character continues walking.
+
+When approaching an unsafe obstacle:
+
+Character stops and shows a concerned/thinking animation.
+
+When reaching the Safe Zone:
+
+Character celebrates.
+
+---
+
+# COMPLETION SCREEN
+
+When the player successfully reaches the destination:
+
+Show a celebration screen.
+
+### 🎉 YOU REACHED SAFETY!
+
+Subtext:
+
+**“Great job! You recognized unsafe situations and chose safe actions.”**
+
+Show:
+
+⭐ Final Score
+
+🛡️ Safe Choices
+
+🏆 Safety Champion
+
+Buttons:
+
+**PLAY AGAIN**
+
+**NEXT LEVEL**
+
+**BACK TO MAP**
+
+Add a friendly mascot celebrating with the player.
+
+---
+
+# EDUCATIONAL FEEDBACK
+
+After completing the game, show a short learning summary.
+
+Example:
+
+### WHAT YOU LEARNED
+
+🛡️ You can say NO to unsafe situations.
+
+👨‍👩‍👧 Talk to a trusted adult when something feels wrong.
+
+📱 Stay safe when talking to people online.
+
+🚩 Recognize warning signs.
+
+❤️ Your safety matters.
+
+Keep the explanations short and child-friendly.
+
+---
+
+# GAME LEVELS
+
+Design the system so additional levels can be added.
+
+Example:
+
+### LEVEL 1
+
+Recognize unsafe secrets
+
+### LEVEL 2
+
+Online safety
+
+### LEVEL 3
+
+Personal boundaries
+
+### LEVEL 4
+
+Trusted adults
+
+### LEVEL 5
+
+Mixed safety challenge
+
+Each level should introduce a different maze and different situations.
+
+---
+
+# IMPORTANT CONTENT SAFETY
+
+This is an educational game about the POCSO Act.
+
+DO NOT show:
+
+* sexual acts
+* explicit nudity
+* graphic abuse
+* disturbing violence
+* sexualized children
+* graphic crime scenes
+
+Instead use:
+
+* warning symbols
+* chat messages
+* uncomfortable situations
+* boundary indicators
+* trusted adults
+* safe/unsafe paths
+* simple educational language
+
+The purpose is to teach **recognition, prevention, and help-seeking**, not to depict abuse.
+
+---
+
+# UI ELEMENTS
+
+Top-left:
+
+⬅ Back
+
+Top-center:
+
+**SAFE PATH ADVENTURE**
+
+Top-right:
+
+⭐ 350
+
+❤️ 3
+
+Bottom:
+
+**Level 1 / 5**
+
+Progress bar:
+
+●━━●━━○━━○━━○
+
+Optional:
+
+💡 HINT
+
+The Hint system can briefly highlight a relevant safe route but should NOT automatically solve the puzzle.
+
+---
+
+# DESIGN REQUIREMENT
+
+The final result must immediately communicate that this is an actual game.
+
+The gameplay should visually demonstrate:
+
+**MOVE CHARACTER**
+
+↓
+
+**REACH INTERSECTION**
+
+↓
+
+**IDENTIFY SITUATION**
+
+↓
+
+**AVOID UNSAFE PATH**
+
+↓
+
+**CHOOSE SAFE ACTION**
+
+↓
+
+**CONTINUE**
+
+↓
+
+**REACH SAFE ZONE**
+
+This should feel like a **small educational adventure/maze game**, not a multiple-choice quiz.
+
+Create the interface with enough visual hierarchy and spacing that the maze remains the main focus.
+
+Use the existing Nyaya Nagri mascot and visual identity if available.
+
+Do not redesign the entire application.
+
+Create this as a new playable POCSO awareness game that can be integrated into the existing Nyaya Nagri level/map system.

@@ -4,6 +4,7 @@ description: Durable-runtime and subagent-pool gotchas (not project-specific).
 ---
 
 - Durable (top-level) CodeExecution scope has NO `setTimeout` — wrap sleeps/polling loops in a `"use impure"` async function.
+- `generateImage` callback: the file param is `outputPath` (NOT `path`) — `path` fails schema validation instantly and the printed jobId is dead. Aspect ratio may be ignored (squares come back); design for square.
 - The testing-subagent pool is 1-concurrent, and a zombie job from a PREVIOUS session can wedge it: `waitForJob` AND `cancelJob` both bounce with "already running". No self-serve fix found — after a couple of cancel attempts, proceed without e2e and disclose it instead of burning retries.
 - `requestSecrets` for an ALREADY-EXISTING secret can silently no-op: the form lets the user "confirm" without changing the value, and "added or confirmed" fires anyway (saw 4 no-ops in a row, Aug 2026). Verify with an 8-char sha256 fingerprint of the env value from a fresh shell — never print values. A secret name that does NOT exist yet forces real value entry, so deleting-then-re-adding (or a fresh name) breaks the loop.
 - NEVER advise users to fix a key by RENAMING a secret in the pane — a fumbled rename deleted the only valid key's value permanently. Safer ladder: (1) fresh key at the provider into a fresh-named/deleted-then-readded secret, (2) careful paste. Also: validate key FORMAT server-side (39-char `AIza…` shape) to separate bad-paste from provider-revoked.

@@ -311,3 +311,70 @@ select {
   .ch-shake, .ch-pop, .ch-sparkle, .ch-star-pop, .ch-score-pop, .ch-hint-pulse { animation: none; }
   .ch-float { animation: none; }
 }
+
+/* ---------------------------------------------------------------------
+   "Safe Path Adventure" maze game (Aug 2026) — zone1 POCSO lesson. Pure
+   CSS motion; prefers-reduced-motion switches everything off below. */
+@keyframes sp-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+.sp-shake { animation: sp-shake 0.5s ease-in-out; }
+
+@keyframes sp-pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.sp-pop { animation: sp-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@keyframes sp-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.sp-float { animation: sp-float 3.2s ease-in-out infinite; }
+
+@keyframes sp-star-pop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.sp-star-pop { animation: sp-star-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@keyframes sp-score-pop {
+  0% { transform: translateY(4px); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-22px); opacity: 0; }
+}
+.sp-score-pop { animation: sp-score-pop 1s ease-out forwards; }
+
+@keyframes sp-hint-pulse {
+  0%, 100% { box-shadow: inset 0 0 0 2px rgba(251, 191, 36, 0.2); }
+  50% { box-shadow: inset 0 0 0 4px rgba(251, 191, 36, 0.95); }
+}
+.sp-hint-pulse { animation: sp-hint-pulse 0.8s ease-in-out 3; }
+
+@keyframes sp-goal-glow {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.55)); }
+  50% { filter: drop-shadow(0 0 14px rgba(251, 191, 36, 0.95)); }
+}
+.sp-goal-glow { animation: sp-goal-glow 1.8s ease-in-out infinite; }
+
+@keyframes sp-confetti {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0.6; }
+}
+.sp-confetti { animation: sp-confetti 3.2s linear forwards; }
+
+@keyframes sp-bob {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.02); }
+}
+.sp-bob { animation: sp-bob 1.6s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .sp-shake, .sp-pop, .sp-star-pop, .sp-score-pop, .sp-hint-pulse, .sp-confetti { animation: none; }
+  .sp-float, .sp-goal-glow, .sp-bob { animation: none; }
+}

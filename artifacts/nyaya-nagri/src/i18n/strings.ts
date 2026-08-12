@@ -121,6 +121,50 @@ export interface UIStrings {
   chMascotIntro: string;
   chMascotWrong: string;
   chMascotDistractor: string;
+  // "Safe Path Adventure" maze game (zone1) — sp* chrome strings only;
+  // the game's content text lives in src/games/safepath/content.ts
+  // (hard-coded EN+HI inline, PRD §9.8).
+  spTitle: string;
+  spTagline: string;
+  spAwarenessTag: string;
+  spInstruction: string;
+  spMission1: string;
+  spMission2: string;
+  spMission3: string;
+  spMoveKeys: string;
+  spMoveTouch: string;
+  spMoveUp: string;
+  spMoveDown: string;
+  spMoveLeft: string;
+  spMoveRight: string;
+  spStartCta: string;
+  spStart: string;
+  spSafeZone: string;
+  spLevelLabel: (n: number, total: number) => string;
+  spLivesAria: (n: number) => string;
+  spHintNone: string;
+  spHowSafe: string;
+  spTipsHeading: string;
+  spTalkReminder: string;
+  spSafeChoice: string;
+  spThinkAgain: string;
+  spBackToCheckpoint: string;
+  spOkThanks: string;
+  spLivesOut: string;
+  spLivesOutSub: string;
+  spTryAgain: string;
+  spReached: string;
+  spReachedSub: string;
+  spQuizTitle: string;
+  spQuizProgress: (n: number, total: number) => string;
+  spChampion: string;
+  spResultSub: string;
+  spGameScore: string;
+  spQuizScore: string;
+  spSafeDecisions: string;
+  spWhatLearned: string;
+  spNextLevel: string;
+  spComingSoon: string;
   questComplete: string;
   youGotXofY: (score: number, total: number) => string;
   unlockedNext: (zoneName: string) => string;
@@ -792,6 +836,48 @@ const EN: UIStrings = {
   chMascotIntro: 'Drag each picture to its right place!',
   chMascotWrong: 'Think again — where does it truly belong?',
   chMascotDistractor: 'That one does not belong anywhere here.',
+  spTitle: 'Safe Path Adventure',
+  spTagline: 'Find the safe path and reach the Safe Zone!',
+  spAwarenessTag: 'POCSO safety awareness',
+  spInstruction: 'Walk the path. Choose what keeps you safe!',
+  spMission1: 'Walk the path and watch for signs',
+  spMission2: 'Answer safety questions to clear the way',
+  spMission3: 'Reach the glowing Safe Zone',
+  spMoveKeys: 'Move: arrow keys or WASD',
+  spMoveTouch: 'Move: tap the arrows or swipe',
+  spMoveUp: 'Move up',
+  spMoveDown: 'Move down',
+  spMoveLeft: 'Move left',
+  spMoveRight: 'Move right',
+  spStartCta: 'Start the adventure',
+  spStart: 'START',
+  spSafeZone: 'SAFE ZONE',
+  spLevelLabel: (n, total) => `Level ${n} of ${total}`,
+  spLivesAria: (n) => `Hearts left: ${n}`,
+  spHintNone: 'No hints left',
+  spHowSafe: 'How to stay safe?',
+  spTipsHeading: 'Ways to stay safe',
+  spTalkReminder:
+    'If anything feels wrong, tell a trusted adult. You are never in trouble for telling the truth.',
+  spSafeChoice: 'Safe choice!',
+  spThinkAgain: 'Think again. It is okay — try once more!',
+  spBackToCheckpoint: 'Back to the last checkpoint',
+  spOkThanks: 'Okay!',
+  spLivesOut: "Let's try that path again!",
+  spLivesOutSub: 'Every hero practices. Start from your checkpoint.',
+  spTryAgain: 'Try again',
+  spReached: 'You reached the Safe Zone!',
+  spReachedSub: 'You made safe choices all the way.',
+  spQuizTitle: 'Safety Check',
+  spQuizProgress: (n, total) => `Question ${n} of ${total}`,
+  spChampion: 'Safety Champion!',
+  spResultSub: 'You finished the Safe Path Adventure!',
+  spGameScore: 'Game score',
+  spQuizScore: 'Safety check',
+  spSafeDecisions: 'Safe decisions',
+  spWhatLearned: 'What you learned',
+  spNextLevel: 'Next level',
+  spComingSoon: 'More levels coming soon!',
   questComplete: 'Quest Complete!',
   youGotXofY: (score, total) => `You got ${score} out of ${total}!`,
   unlockedNext: (zoneName) => `You unlocked the next area: ${zoneName}`,
@@ -1542,6 +1628,48 @@ const HI: UIStrings = {
   chMascotIntro: 'हर तस्वीर को उसकी सही जगह खींचो!',
   chMascotWrong: 'फिर से सोचो — यह सच में कहाँ आती है?',
   chMascotDistractor: 'वह तस्वीर यहाँ किसी जगह नहीं आती।',
+  spTitle: 'सुरक्षित राह का सफ़र',
+  spTagline: 'सुरक्षित राह चुनो और सेफ ज़ोन तक पहुँचो!',
+  spAwarenessTag: 'पॉक्सो सुरक्षा जागरूकता',
+  spInstruction: 'राह पर चलो। वही चुनो जो सुरक्षित रखे!',
+  spMission1: 'राह पर चलो और संकेतों पर ध्यान दो',
+  spMission2: 'सुरक्षा सवालों के जवाब देकर राह खोलो',
+  spMission3: 'चमकते सेफ ज़ोन तक पहुँचो',
+  spMoveKeys: 'चलने के लिए: तीर कुंजियाँ या WASD',
+  spMoveTouch: 'चलने के लिए: तीर बटन दबाओ या स्वाइप करो',
+  spMoveUp: 'ऊपर चलो',
+  spMoveDown: 'नीचे चलो',
+  spMoveLeft: 'बाएँ चलो',
+  spMoveRight: 'दाएँ चलो',
+  spStartCta: 'सफ़र शुरू करो',
+  spStart: 'शुरू',
+  spSafeZone: 'सेफ ज़ोन',
+  spLevelLabel: (n, total) => `स्तर ${n} / ${total}`,
+  spLivesAria: (n) => `दिल बाकी: ${n}`,
+  spHintNone: 'हिंट खत्म',
+  spHowSafe: 'सुरक्षित कैसे रहें?',
+  spTipsHeading: 'सुरक्षित रहने के तरीके',
+  spTalkReminder:
+    'कुछ भी गलत लगे तो किसी भरोसेमंद बड़े को बताओ। सच बताने पर तुम कभी मुसीबत में नहीं पड़ोगे।',
+  spSafeChoice: 'सुरक्षित चुनाव!',
+  spThinkAgain: 'फिर से सोचो। कोई बात नहीं — एक बार और!',
+  spBackToCheckpoint: 'पिछले पड़ाव से फिर शुरू',
+  spOkThanks: 'ठीक है!',
+  spLivesOut: 'चलो, वह राह फिर से आज़माएँ!',
+  spLivesOutSub: 'हर हीरो अभ्यास करता है। अपने पड़ाव से शुरू करो।',
+  spTryAgain: 'फिर कोशिश करो',
+  spReached: 'तुम सेफ ज़ोन पहुँच गए!',
+  spReachedSub: 'तुमने पूरे रास्ते सुरक्षित चुनाव किए।',
+  spQuizTitle: 'सुरक्षा जाँच',
+  spQuizProgress: (n, total) => `सवाल ${n} / ${total}`,
+  spChampion: 'सुरक्षा चैंपियन!',
+  spResultSub: 'तुमने सुरक्षित राह का सफ़र पूरा किया!',
+  spGameScore: 'गेम स्कोर',
+  spQuizScore: 'सुरक्षा जाँच',
+  spSafeDecisions: 'सुरक्षित फैसले',
+  spWhatLearned: 'तुमने क्या सीखा',
+  spNextLevel: 'अगला स्तर',
+  spComingSoon: 'और स्तर जल्द आ रहे हैं!',
   questComplete: 'क्वेस्ट पूरी हुई!',
   youGotXofY: (score, total) => `तुमने ${total} में से ${score} सही किए!`,
   unlockedNext: (zoneName) => `नया इलाका खुल गया: ${zoneName}`,

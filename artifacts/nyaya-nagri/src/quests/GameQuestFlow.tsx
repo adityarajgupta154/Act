@@ -1,22 +1,26 @@
 /**
- * Game-first zone flow (Aug 2026) — the Right to Childhood castle.
+ * Game-first zone flow (Aug 2026) — one component, every game-first zone.
  *
- * Castle tap → the "Right or Wrong?" MINI-GAME (replaces the old learning
- * video — user order, Aug 2026) → the SAME final quiz level (questions,
- * options, order and UI untouched — QuestPlayer runs it) → story-unlock
- * celebration for the gated Story Adventure level.
+ * Zone tap → that zone's PLAYABLE GAME (zone2: the "Right or Wrong?"
+ * castle; zone1: the "Safe Path Adventure" POCSO maze — registry:
+ * gameFlows.ts) → then whatever the flow's continueTo says:
+ *   'quiz'   → the SAME final quiz level (QuestPlayer — zone2's quest is
+ *              game + quiz only) → story-unlock celebration.
+ *   'levels' → the zone's regular LevelSelect arc (zone1 keeps its story,
+ *              decision and quiz levels exactly as authored).
  *
  * Ordering is enforced HERE: a fresh entry (gate not yet earned) drops
  * STRAIGHT into the game, and Continue stays disabled until one full game
  * run completes. All progression writes stay with the existing
- * single-authority paths: finalizeLevel() inside QuestPlayer (quiz + zone
+ * single-authority paths: finalizeLevel() inside QuestPlayer (levels + zone
  * completion) and progressStore.markVideoWatched() — the lesson-gate flag.
  * The flag (and its videosWatched home) keeps its historical name for
  * save-compat: it used to mean "watched the video", it now means "finished
- * the castle game" — same key, same unlock semantics, so old saves keep
- * their progress. The Story Adventure unlock is DERIVED from those two
- * flags by the ONE lock rule in storyData — nothing here writes unlock
- * state directly.
+ * the zone's game" — same key, same unlock semantics, so old saves keep
+ * their progress. Story Adventure unlocks stay DERIVED from those flags by
+ * the ONE lock rule in storyData — nothing here writes unlock state
+ * directly, and flows with storyLevelId null (zone1) simply have no story
+ * reward to celebrate.
  *
  * Game content is hard-coded (PRD §9.8 — never AI-generated at runtime).
  * The global Get Help Now pill (HUD, z-50) stays visible above this
@@ -24,12 +28,16 @@
  */
 import React, { useEffect, useState } from 'react';
 import { QuestPlayer } from './QuestPlayer';
+import { LevelSelect } from './LevelSelect';
 import { levelKey } from './engine';
 import type { Quest } from './schema';
 import type { ZoneGameFlow } from './gameFlows';
 import { RightToChildhoodGame } from '@/games/childhood/RightToChildhoodGame';
+import { SafePathGame } from '@/games/safepath/SafePathGame';
 import landingBgUrl from '@/assets/games/childhood/ch-landing-bg.webp';
 import landingBannerUrl from '@/assets/games/childhood/ch-complete-banner.webp';
+import spLandingBgUrl from '@/assets/games/safepath/sp-park-bg.webp';
+import spLandingBannerUrl from '@/assets/games/safepath/sp-complete-banner.webp';
 import { getStoryLevel } from '@/story/storyData';
 import { progressStore } from '@/data/progressStore';
 import { exitZone, exitZoneToStoryMap, enterLevel, clearLevel } from '@/ui/uiStore';
@@ -47,7 +55,8 @@ import {
 } from 'lucide-react';
 
 // Mockup title treatment: words cycle violet → orange → green (fits the
-// 3-word EN "Right to Childhood" and HI "बचपन का अधिकार" alike).
+// 3-word EN "Right to Childhood" and HI "बचपन का अधिकार" alike — and the
+// zone1 titles the same way).
 const TITLE_WORD_COLORS = [
   'text-violet-600',
   'text-orange-500',
@@ -77,19 +86,22 @@ export function GameQuestFlow({
   const quizLevel = quizIndex >= 0 ? quest.levels[quizIndex] : null;
 
   // The lesson gate: historically "video watched", now EARNED by finishing
-  // one full "Right or Wrong?" run (key name kept for save-compat).
+  // one full game run (key name kept for save-compat).
   const gameDone = !!progress.videosWatched[flow.videoId];
   const quizPassed =
     !!progress.completedZones[quest.zoneId] ||
     (quizLevel != null &&
       !!progress.levelProgress[levelKey(quest.zoneId, quizLevel.levelId)]);
-  const storyLevel = getStoryLevel(flow.storyLevelId);
+  // Flows with NO story reward carry storyLevelId null (zone1) — nothing
+  // to look up, nothing to celebrate.
+  const storyLevel = flow.storyLevelId ? getStoryLevel(flow.storyLevelId) : undefined;
   const unlockedNow = gameDone && quizPassed;
 
-  // practice is captured at quiz START (like LevelSelect): a replay of an
-  // already-passed quiz never overwrites recorded scores (engine rule).
-  const [quizRun, setQuizRun] = useState<{ practice: boolean } | null>(null);
+  // practice is captured at level START (like LevelSelect): a replay of an
+  // already-passed level never overwrites recorded scores (engine rule).
+  const [run, setRun] = useState<{ levelIndex: number; practice: boolean } | null>(null);
   const [justUnlocked, setJustUnlocked] = useState(false);
+  const [showLevels, setShowLevels] = useState(false);
   // GAME FIRST: a fresh entry (gate not yet earned) mounts the game
   // immediately; re-entries land on the landing card (replay optional).
   const [playingGame, setPlayingGame] = useState(
@@ -104,32 +116,47 @@ export function GameQuestFlow({
     // Signal the AI companion BEFORE mounting the player, so the level
     // greeting appears as the level opens (same as the LevelSelect path).
     enterLevel(quest.zoneId, quizIndex, quizLevel.kind);
-    setQuizRun({ practice: quizPassed });
+    setRun({ levelIndex: quizIndex, practice: quizPassed });
   };
 
-  /* ----------------------------- quiz stage ----------------------------- */
-  if (quizRun && quizLevel) {
-    // Same centred stage as ZoneInterior's QuestPlayer mount: the quiz
-    // board / completion cards centre themselves inside it on desktop.
+  const openLevels = () => {
+    if (!progressStore.getState().videosWatched[flow.videoId]) return;
+    setShowLevels(true);
+  };
+
+  /* ----------------------------- level stage ---------------------------- */
+  if (run && quest.levels[run.levelIndex]) {
+    // Same centred stage as ZoneInterior's QuestPlayer mount: the level
+    // boards / completion cards centre themselves inside it on desktop.
     return (
       <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
         <QuestPlayer
-          key={`${quest.questId}:${quizIndex}:${quizRun.practice}`}
+          key={`${quest.questId}:${run.levelIndex}:${run.practice}`}
           quest={quest}
-          levelIndex={quizIndex}
-          practice={quizRun.practice}
+          levelIndex={run.levelIndex}
+          practice={run.practice}
           onExit={() => {
             clearLevel();
             const now = progressStore.getState();
+            const isQuizRun = run.levelIndex === quizIndex;
             const passedNow =
-              !!now.completedZones[quest.zoneId] ||
-              !!now.levelProgress[levelKey(quest.zoneId, quizLevel.levelId)];
-            // The celebration card fires only on a FRESH pass (not replays),
-            // mirroring the map cinematic's fresh-completion-only rule.
+              isQuizRun &&
+              (!!now.completedZones[quest.zoneId] ||
+                (quizLevel != null &&
+                  !!now.levelProgress[levelKey(quest.zoneId, quizLevel.levelId)]));
+            // The celebration card fires only on a FRESH pass (not replays)
+            // of a flow that actually gates a story level, mirroring the
+            // map cinematic's fresh-completion-only rule.
             const freshUnlock =
-              !quizRun.practice && passedNow && !!now.videosWatched[flow.videoId];
-            setQuizRun(null);
+              isQuizRun &&
+              !run.practice &&
+              passedNow &&
+              !!now.videosWatched[flow.videoId] &&
+              !!storyLevel;
+            const cameFromLevels = flow.continueTo === 'levels';
+            setRun(null);
             if (freshUnlock) setJustUnlocked(true);
+            else if (cameFromLevels) setShowLevels(true);
           }}
         />
       </div>
@@ -138,6 +165,19 @@ export function GameQuestFlow({
 
   /* ----------------------------- game stage ----------------------------- */
   if (playingGame) {
+    if (flow.zoneId === 'zone1') {
+      return (
+        <SafePathGame
+          onComplete={() => progressStore.markVideoWatched(flow.videoId)}
+          onContinue={() => {
+            setPlayingGame(false);
+            if (flow.continueTo === 'levels') setShowLevels(true);
+            else startQuiz();
+          }}
+          onExit={() => setPlayingGame(false)}
+        />
+      );
+    }
     return (
       <RightToChildhoodGame
         onComplete={() => progressStore.markVideoWatched(flow.videoId)}
@@ -184,17 +224,45 @@ export function GameQuestFlow({
     );
   }
 
+  /* ----------------------------- levels stage --------------------------- */
+  // 'levels' flows (zone1): after the game gate is earned, Continue opens
+  // the zone's REGULAR level arc — the exact LevelSelect other zones use,
+  // so the authored story/decision/quiz levels stay untouched.
+  if (showLevels) {
+    return (
+      <LevelSelect
+        quest={quest}
+        zoneName={zoneName}
+        zoneTheme={zoneTheme}
+        onStart={(levelIndex, practice) => {
+          const level = quest.levels[levelIndex];
+          if (!level) return;
+          enterLevel(quest.zoneId, levelIndex, level.kind);
+          setRun({ levelIndex, practice });
+        }}
+      />
+    );
+  }
+
   /* ---------------------------- landing stage --------------------------- */
   // Re-entry surface (the fresh path skips it — see playingGame's initial
-  // value): replay the game, continue to the quiz, or hop to the story.
+  // value): replay the game, continue onward, or hop to the story.
   // Storybook layout from the user's mockup (Aug 2026): full-bleed park
-  // scene, cream card with shield badge, tricolor title, sunrise banner.
+  // scene, cream card with shield badge, tricolor title, banner panel.
   // The bottom-right of the screen is deliberately left to the live Nyaya
   // AI launcher (the mockup's waving robot IS that widget — don't double it).
+  const isSafePath = flow.zoneId === 'zone1';
+  const brandBg = isSafePath ? spLandingBgUrl : landingBgUrl;
+  const brandBanner = isSafePath ? spLandingBannerUrl : landingBannerUrl;
+  const brandTitle = isSafePath ? t.spTitle : t.chTitle;
+  const brandTagline = isSafePath ? t.spTagline : t.chTagline;
+  const brandTag = isSafePath ? t.spAwarenessTag : t.chAwarenessTag;
+  const continueReady = gameDone && (flow.continueTo === 'levels' || quizIndex >= 0);
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-auto">
       <img
-        src={landingBgUrl}
+        src={brandBg}
         alt=""
         aria-hidden
         draggable={false}
@@ -220,20 +288,20 @@ export function GameQuestFlow({
           <div className="bg-[#FFFDF8] rounded-[2rem] shadow-2xl border border-orange-100 animate-in zoom-in-95 duration-300 max-h-[calc(100dvh-5.5rem)] overflow-y-auto px-4 pt-9 pb-5 md:px-8 md:pt-10 md:pb-7 flex flex-col gap-3.5 md:gap-4">
             <div className="text-center">
               <h2 className="font-display font-extrabold text-3xl md:text-5xl leading-tight">
-                {t.chTitle.split(' ').map((word, i) => (
+                {brandTitle.split(' ').map((word, i) => (
                   <span key={i} className={TITLE_WORD_COLORS[i % TITLE_WORD_COLORS.length]}>
                     {i > 0 ? ' ' : ''}
                     {word}
                   </span>
                 ))}
               </h2>
-              <p className="text-sm md:text-lg text-slate-700 font-bold mt-1.5">{t.chTagline}</p>
+              <p className="text-sm md:text-lg text-slate-700 font-bold mt-1.5">{brandTagline}</p>
               <p className="text-xs md:text-sm text-violet-500 font-bold mt-0.5">
-                ({t.chAwarenessTag})
+                ({brandTag})
               </p>
             </div>
 
-            {/* Game panel — the castle's step 1. Tapping it (re)opens the game. */}
+            {/* Game panel — step 1. Tapping it (re)opens the game. */}
             <button
               type="button"
               onClick={() => setPlayingGame(true)}
@@ -241,7 +309,7 @@ export function GameQuestFlow({
               className="relative w-full rounded-2xl overflow-hidden shadow-md border border-orange-100 aspect-[16/6] group touch-manipulation shrink-0"
             >
               <img
-                src={landingBannerUrl}
+                src={brandBanner}
                 alt=""
                 aria-hidden
                 draggable={false}
@@ -286,11 +354,11 @@ export function GameQuestFlow({
                   {t.backToMap}
                 </button>
                 <button
-                  onClick={startQuiz}
-                  disabled={!gameDone || quizIndex < 0}
+                  onClick={() => (flow.continueTo === 'levels' ? openLevels() : startQuiz())}
+                  disabled={!continueReady}
                   className={cn(
                     'px-8 py-3.5 rounded-full font-bold text-lg flex items-center gap-2 touch-manipulation transition-transform',
-                    gameDone && quizIndex >= 0
+                    continueReady
                       ? 'bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white shadow-lg shadow-orange-500/30 active:scale-95'
                       : 'bg-slate-200 text-slate-400 cursor-not-allowed',
                   )}

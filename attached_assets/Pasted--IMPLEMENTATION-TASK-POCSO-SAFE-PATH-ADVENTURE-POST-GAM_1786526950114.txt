@@ -1,0 +1,971 @@
+# IMPLEMENTATION TASK — POCSO “SAFE PATH ADVENTURE” + POST-GAME QUIZ
+
+I am building an educational project called **Nyaya Nagri**.
+
+I want to implement a REAL playable game called:
+
+# “Safe Path Adventure”
+
+This game teaches children age-appropriate safety awareness related to the **POCSO Act**.
+
+I am providing a reference image with this prompt.
+
+IMPORTANT:
+Use the provided reference image as the **visual and layout reference**, but DO NOT simply place the image as the game background and pretend it is playable.
+
+The actual game must be implemented as interactive HTML/CSS/React components.
+
+The reference image shows the desired visual style, maze structure, characters, obstacles, Safe Zone, score, hints, and overall game-world design.
+
+---
+
+# 1. MAIN GAME FLOW
+
+The complete experience must work like this:
+
+```text
+Nyaya Nagri
+      ↓
+POCSO / Safe Path Adventure
+      ↓
+GAME INTRO
+      ↓
+PLAYABLE MAZE
+      ↓
+PLAYER REACHES SAFE ZONE
+      ↓
+GAME COMPLETION ANIMATION
+      ↓
+POCSO AWARENESS QUIZ
+      ↓
+QUIZ RESULT
+      ↓
+LEARNING SUMMARY
+      ↓
+NEXT LEVEL / BACK TO MAP
+```
+
+IMPORTANT:
+
+The quiz should NOT appear before the game.
+
+The user must first PLAY the maze game.
+
+Only after successfully reaching the Safe Zone should the quiz appear.
+
+This is important because the goal is to demonstrate to the jury that this is an actual game followed by an educational assessment.
+
+---
+
+# 2. USE THE PROVIDED IMAGE AS DESIGN REFERENCE
+
+I will upload/provide the generated Safe Path Adventure image.
+
+Use it as a visual reference for:
+
+* overall composition
+* color palette
+* maze style
+* character style
+* obstacle cards
+* Safe Zone
+* UI placement
+* typography
+* visual hierarchy
+* educational game aesthetic
+
+Do NOT use the entire image as a static screenshot.
+
+Recreate the interface using actual components.
+
+If individual visual assets are needed, create reusable asset containers/components so the images can later be replaced easily.
+
+---
+
+# 3. GAME INTRO SCREEN
+
+Before starting the game, show a short introduction.
+
+Title:
+
+## SAFE PATH ADVENTURE
+
+Subtitle:
+
+**Help the character reach the Safe Zone!**
+
+Short explanation:
+
+**“Choose safe paths, recognize warning signs, and reach a trusted safe place.”**
+
+Button:
+
+### PLAY GAME
+
+Optional:
+
+* Level 1 / 5
+* ⭐ Starting Score
+* ❤️ 3 Lives
+
+The mascot should briefly explain:
+
+**“Look carefully! Some paths are safe, while others have warning signs.”**
+
+Do not make this a long tutorial.
+
+---
+
+# 4. ACTUAL PLAYABLE MAZE
+
+After clicking PLAY GAME, show the actual game.
+
+The main game area should resemble the provided reference image.
+
+Create a maze/path system.
+
+The player controls a friendly child character.
+
+START:
+
+```text
+🟢 START
+```
+
+Destination:
+
+```text
+🛡️ SAFE ZONE
+```
+
+The player must physically move the character through the maze.
+
+Desktop controls:
+
+* Arrow keys
+* WASD
+
+Mobile:
+
+* On-screen directional controls or swipe/touch controls
+
+Do NOT rely only on keyboard controls.
+
+---
+
+# 5. PLAYER MOVEMENT
+
+The character should move smoothly through the maze.
+
+Implement collision detection.
+
+The character should NOT be able to walk through:
+
+* maze walls
+* blocked areas
+* obstacle barriers
+
+Movement should feel like a simple children's adventure game.
+
+Keep controls easy.
+
+Do not make the maze excessively difficult.
+
+---
+
+# 6. MAZE STRUCTURE
+
+Create a clear maze with:
+
+* Start
+* Multiple intersections
+* Safe routes
+* Unsafe routes
+* Checkpoints
+* Obstacles
+* Safe Zone
+
+The player should have to make decisions.
+
+The maze should not simply be:
+
+START → straight line → END.
+
+There must be meaningful route choices.
+
+---
+
+# 7. POCSO-RELATED SAFETY OBSTACLES
+
+The obstacles should teach safety concepts without depicting abuse.
+
+IMPORTANT SAFETY RULE:
+
+DO NOT show:
+
+* sexual acts
+* nudity
+* graphic abuse
+* sexualized children
+* graphic violence
+* explicit abuse scenes
+
+Use symbolic, age-appropriate situations.
+
+Examples:
+
+### OBSTACLE A — SECRET REQUEST
+
+Show:
+
+📱 Phone
+
+Message:
+
+**“Don't tell anyone about this.”**
+
+Warning:
+
+🚩 RED FLAG
+
+When the player approaches, pause the character and show a small interaction.
+
+---
+
+### OBSTACLE B — UNSAFE ONLINE REQUEST
+
+Show:
+
+📱 Chat interface
+
+Message:
+
+**“Send me a private photo.”**
+
+Show:
+
+🚫 DO NOT SHARE
+
+The player must make a safe decision.
+
+---
+
+### OBSTACLE C — GIFT / SECRET
+
+Show:
+
+🎁 Gift
+
+Message:
+
+**“I'll give you a gift. Don't tell anyone.”**
+
+Show:
+
+🚩 RED FLAG
+
+---
+
+### OBSTACLE D — PERSONAL BOUNDARY
+
+Use a completely non-graphic illustration showing a child indicating discomfort and a visible personal-space boundary.
+
+Message:
+
+**“You can say NO when something makes you uncomfortable.”**
+
+---
+
+### SAFE CHECKPOINT
+
+Include a trusted adult checkpoint.
+
+Example:
+
+👩 Trusted Adult
+
+Message:
+
+**“You can talk to me if something feels wrong.”**
+
+This should be a safe route.
+
+---
+
+# 8. INTERACTION WITH OBSTACLES
+
+When the player reaches an obstacle:
+
+PAUSE CHARACTER MOVEMENT.
+
+Open a small interaction card.
+
+Example:
+
+## 🚩 RED FLAG
+
+“Someone asks you to keep an uncomfortable secret.”
+
+Buttons:
+
+### 🛡️ Tell a trusted adult
+
+### 🤐 Keep it secret
+
+This is NOT the main quiz.
+
+It is an in-game decision.
+
+If correct:
+
+* green feedback
+* ✓ Safe choice!
+* +100 points
+* short positive animation
+* obstacle becomes cleared
+* player can continue
+
+If wrong:
+
+* orange/red warning
+* gentle shake
+* “Think again.”
+* return player to previous checkpoint
+* do not end the game
+
+Do not shame the player.
+
+---
+
+# 9. CHECKPOINT SYSTEM
+
+Create 3–4 checkpoints.
+
+Example:
+
+START
+↓
+CHECKPOINT 1
+↓
+CHECKPOINT 2
+↓
+CHECKPOINT 3
+↓
+SAFE ZONE
+
+If the player makes a wrong decision:
+
+Return them to the latest checkpoint.
+
+Do NOT restart the complete game.
+
+---
+
+# 10. SCORE
+
+Show score in the top-right.
+
+Example:
+
+⭐ 350
+
+Correct safe decision:
+
++100
+
+Reaching checkpoint:
+
++50
+
+Reaching Safe Zone:
+
++200
+
+Use a small score animation.
+
+Do not make scoring complicated.
+
+---
+
+# 11. LIVES
+
+Use 3 lives:
+
+❤️ ❤️ ❤️
+
+A wrong decision can optionally remove one life.
+
+However, avoid harsh punishment.
+
+If all lives are lost:
+
+Show:
+
+**“Let's try that path again!”**
+
+Button:
+
+### TRY AGAIN
+
+Reset to the latest checkpoint rather than restarting everything.
+
+---
+
+# 12. HINT SYSTEM
+
+Add:
+
+💡 HINT
+
+Example:
+
+**Hint × 2**
+
+When clicked, briefly highlight the safest route or relevant safe interaction.
+
+Do NOT automatically solve the maze.
+
+The hint should help the player learn.
+
+---
+
+# 13. SAFE ZONE
+
+The final destination must be visually rewarding.
+
+Use:
+
+🛡️ SAFE ZONE
+
+Show:
+
+* trusted adult
+* school/safe place
+* shield
+* warm colors
+* glow
+* celebration particles
+
+When the player reaches the Safe Zone:
+
+Stop the maze.
+
+Trigger:
+
+* character celebration
+* stars
+* gentle confetti
+* success sound if available
+* score animation
+
+Show:
+
+# 🎉 YOU REACHED SAFETY!
+
+Subtext:
+
+**“Great job! You recognized warning signs and chose safer actions.”**
+
+Button:
+
+### CONTINUE
+
+---
+
+# 14. IMPORTANT — AFTER GAME, OPEN QUIZ
+
+This is a mandatory part of the implementation.
+
+After the player reaches the Safe Zone and clicks CONTINUE:
+
+Open the **POCSO Awareness Quiz**.
+
+The quiz should feel like the educational second stage of the game.
+
+Flow:
+
+```text
+MAZE GAME COMPLETE
+        ↓
+SUCCESS SCREEN
+        ↓
+CONTINUE
+        ↓
+POCSO AWARENESS QUIZ
+```
+
+Do NOT show the quiz while the maze is still active.
+
+---
+
+# 15. POCSO AWARENESS QUIZ
+
+Create 5 short questions.
+
+The quiz should test what the player learned from the game.
+
+Do NOT use overly technical legal language.
+
+Questions should be child-friendly.
+
+Example:
+
+### Question 1
+
+**If someone asks you to keep an uncomfortable secret, what should you do?**
+
+A. Keep it secret
+B. Tell a trusted adult ✓
+C. Meet the person alone
+
+---
+
+### Question 2
+
+**What should you do if something online makes you uncomfortable?**
+
+A. Tell a trusted adult ✓
+B. Share more information
+C. Keep chatting secretly
+
+---
+
+### Question 3
+
+**Can you say NO when something makes you uncomfortable?**
+
+A. Yes ✓
+B. No
+C. Only sometimes
+
+---
+
+### Question 4
+
+**Who can you talk to if you feel unsafe?**
+
+A. A trusted adult ✓
+B. Nobody
+C. A stranger online
+
+---
+
+### Question 5
+
+**What is an important safety rule?**
+
+A. Keep unsafe secrets
+B. Ask for help when something feels wrong ✓
+C. Always meet online contacts alone
+
+Keep the language simple.
+
+---
+
+# 16. QUIZ UI
+
+Do NOT make the quiz look like a boring exam.
+
+Keep the same game-world visual style.
+
+Show:
+
+**POCSO SAFETY CHECK**
+
+Progress:
+
+Question 1 / 5
+
+Question card:
+
+Large readable question.
+
+Answers as interactive cards.
+
+When selected:
+
+Correct:
+
+✓ Great job!
+
+Wrong:
+
+⚠️ Let's think about that.
+
+Then show a very short explanation.
+
+---
+
+# 17. QUIZ SCORING
+
+The maze score and quiz score should be separate.
+
+Example:
+
+### GAME SCORE
+
+⭐ 450
+
+### QUIZ SCORE
+
+⭐ 4 / 5
+
+Then calculate a final result.
+
+Example:
+
+**Safety Champion ⭐⭐⭐**
+
+---
+
+# 18. FINAL RESULT SCREEN
+
+After the quiz:
+
+Show:
+
+# 🏆 SAFETY CHAMPION!
+
+Example:
+
+**You completed the Safe Path Adventure!**
+
+Game:
+
+⭐ 450 points
+
+Quiz:
+
+4 / 5
+
+Safe decisions:
+
+3 / 3
+
+Then:
+
+### WHAT YOU LEARNED
+
+🛡️ Recognize warning signs.
+
+👨‍👩‍👧 Talk to a trusted adult.
+
+📱 Stay safe online.
+
+❤️ Your boundaries matter.
+
+🚩 Ask for help when something feels wrong.
+
+Buttons:
+
+### PLAY AGAIN
+
+### NEXT LEVEL
+
+### BACK TO MAP
+
+---
+
+# 19. MULTIPLE LEVEL ARCHITECTURE
+
+Build the game so that more levels can be added later.
+
+Example:
+
+Level 1:
+**Recognize Warning Signs**
+
+Level 2:
+**Online Safety**
+
+Level 3:
+**Personal Boundaries**
+
+Level 4:
+**Trusted Adults**
+
+Level 5:
+**Mixed Safety Adventure**
+
+Each level should have:
+
+* different maze
+* different obstacles
+* different safe paths
+* different in-game decisions
+* 5-question quiz
+
+Do not hard-code everything into one giant component.
+
+Keep level data separate.
+
+---
+
+# 20. REACT COMPONENT STRUCTURE
+
+First inspect the existing Replit project.
+
+Reuse existing architecture.
+
+Suggested structure:
+
+```text
+src/
+  components/
+    SafePathGame/
+      SafePathGame.jsx
+      GameMaze.jsx
+      Player.jsx
+      MazeObstacle.jsx
+      Checkpoint.jsx
+      SafeZone.jsx
+      SafetyDecisionModal.jsx
+      GameHUD.jsx
+      GameSuccess.jsx
+
+    POCSOQuiz/
+      POCSOQuiz.jsx
+      QuizQuestion.jsx
+      QuizResult.jsx
+
+  data/
+    safePathLevels.js
+    pocsoQuestions.js
+```
+
+If the project uses TypeScript, use `.tsx`.
+
+Do not create duplicate components if equivalent components already exist.
+
+---
+
+# 21. STATE MANAGEMENT
+
+Track:
+
+```text
+gameStarted
+playerPosition
+currentLevel
+score
+lives
+currentCheckpoint
+obstaclesCleared
+decisions
+gameCompleted
+showSuccess
+showQuiz
+quizQuestion
+quizScore
+quizCompleted
+```
+
+The important state transition is:
+
+```text
+gameStarted = true
+        ↓
+player reaches Safe Zone
+        ↓
+gameCompleted = true
+        ↓
+showSuccess = true
+        ↓
+user clicks Continue
+        ↓
+showQuiz = true
+```
+
+---
+
+# 22. ROUTING
+
+If the existing app uses React Router:
+
+Create an appropriate route.
+
+For example:
+
+```text
+/pocso/safe-path
+/pocso/safe-path/quiz
+```
+
+But first inspect the existing routing structure and follow the project's existing naming conventions.
+
+Do not break any current routes.
+
+---
+
+# 23. RESPONSIVE DESIGN
+
+Desktop:
+
+Large maze.
+
+Mobile:
+
+Maze should scale appropriately.
+
+Provide mobile controls.
+
+The quiz must also work perfectly on mobile.
+
+Minimum touch target:
+
+44px.
+
+Do not make the player depend on tiny buttons.
+
+---
+
+# 24. AUDIO
+
+If the existing project has audio support:
+
+Use:
+
+* movement sound
+* safe decision sound
+* wrong decision sound
+* checkpoint sound
+* completion sound
+
+Add:
+
+🔊 Sound toggle
+
+If audio is not already implemented, make the system modular and do not introduce unnecessary dependencies.
+
+---
+
+# 25. IMPORTANT VISUAL RULE
+
+The uploaded reference image is a DESIGN REFERENCE.
+
+Do NOT:
+
+* use the screenshot as the complete game
+* make the maze a static image
+* create fake buttons that do nothing
+* make the player click random areas of the screenshot
+
+Instead:
+
+BUILD THE GAME MECHANICALLY.
+
+The maze, character, obstacles, checkpoints, Safe Zone, score and quiz must be actual interactive components.
+
+---
+
+# 26. PERFORMANCE
+
+Keep the game lightweight.
+
+Avoid unnecessary large dependencies.
+
+Use existing dependencies where possible.
+
+Optimize images.
+
+Do not create a massive canvas game engine unless the existing project already uses one.
+
+A React/CSS/DOM based game is sufficient.
+
+---
+
+# 27. FINAL TESTING
+
+Before considering the implementation complete, verify:
+
+### GAME
+
+✓ Play Game works
+✓ Character moves
+✓ Keyboard controls work
+✓ Mobile controls work
+✓ Maze collision works
+✓ Character cannot walk through walls
+✓ Obstacles trigger correctly
+✓ Safety decision appears
+✓ Correct decision works
+✓ Wrong decision works
+✓ Checkpoints work
+✓ Lives work
+✓ Score works
+✓ Hint works
+✓ Safe Zone works
+✓ Completion animation works
+
+### QUIZ
+
+✓ Quiz opens ONLY after game completion
+✓ 5 questions load
+✓ Answers work
+✓ Correct/wrong feedback works
+✓ Quiz score works
+✓ Progress indicator works
+✓ Final result works
+
+### NAVIGATION
+
+✓ Play Again works
+✓ Next Level works
+✓ Back to Map works
+✓ Existing routes are not broken
+
+### QUALITY
+
+✓ No console errors
+✓ No broken images
+✓ No broken assets
+✓ Responsive desktop layout
+✓ Responsive mobile layout
+✓ Smooth animations
+✓ No unnecessary dependencies
+
+---
+
+# MOST IMPORTANT REQUIREMENT
+
+The jury should be able to see the following clearly:
+
+**This is NOT a quiz with gamification.**
+
+It is:
+
+### A REAL EDUCATIONAL ADVENTURE GAME
+
+The player:
+
+**moves a character**
+
+→
+
+**explores a maze**
+
+→
+
+**encounters safety situations**
+
+→
+
+**makes decisions**
+
+→
+
+**avoids unsafe paths**
+
+→
+
+**reaches the Safe Zone**
+
+→
+
+**then completes a POCSO awareness quiz**
+
+→
+
+**gets a final score and learning summary**
+
+Implement this entire flow inside the existing Nyaya Nagri application without rewriting or breaking the existing project.
