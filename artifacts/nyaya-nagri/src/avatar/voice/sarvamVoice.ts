@@ -37,10 +37,14 @@ interface SarvamVoiceOptions {
 }
 
 // VAD thresholds
-const SPEECH_THRESHOLD = 0.015;     // RMS amplitude to start recording
-const SILENCE_DURATION_MS = 800;    // ms of silence before sending
-const MIN_SPEECH_MS = 250;          // ignore micro-bursts (noise)
-const MAX_RECORD_MS = 30_000;       // max single utterance
+// Keep turn-taking quick for the preview and for lower-end phones. Browser
+// noise suppression already removes most background noise, so the old 800ms
+// tail made every answer feel delayed and the higher threshold missed quiet
+// Hindi speech on some laptop mics.
+const SPEECH_THRESHOLD = 0.008;     // RMS amplitude to start recording
+const SILENCE_DURATION_MS = 450;    // ms of silence before sending
+const MIN_SPEECH_MS = 200;          // ignore micro-bursts (noise)
+const MAX_RECORD_MS = 15_000;       // short child-friendly turn
 const FFT_SIZE = 256;
 const MIC_SAMPLE_RATE = 16_000;     // Sarvam STT expects 16kHz
 
@@ -317,7 +321,10 @@ export class SarvamVoiceEngine {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
-        signal: AbortSignal.timeout(25_000),
+        // STT + Gemini + TTS is intentionally bounded. A dead upstream must
+        // return control to the child instead of leaving the widget stuck in
+        // "Thinking..." for half a minute.
+        signal: AbortSignal.timeout(15_000),
       });
 
       if (this.disposed) return;
@@ -377,9 +384,11 @@ export class SarvamVoiceEngine {
       if (this.disposed) return;
       // eslint-disable-next-line no-console
       if (this.opts.debugLatency) console.debug('[sarvam-voice] turn error', err);
-      // Don't kill the session on a single turn failure — just go back to listening
+      // Do not silently pretend the turn worked. Returning to listening with
+      // no message made preview users think the mic was broken. The widget
+      // shows a friendly retry line and can be started again with one tap.
       this.inflight = false;
-      this.setState('listening');
+      this.fail('connect-failed');
     }
   }
 

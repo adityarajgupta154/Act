@@ -29,7 +29,9 @@ import {
 const SARVAM_STT_URL = "https://api.sarvam.ai/speech-to-text";
 const SARVAM_TTS_URL = "https://api.sarvam.ai/text-to-speech";
 const CHAT_MODEL = "gemini-3.5-flash";
-const UPSTREAM_TIMEOUT_MS = 20_000;
+// Voice replies are deliberately short; keep the whole turn bounded so a
+// preview never sits in "Thinking..." behind a slow upstream.
+const UPSTREAM_TIMEOUT_MS = 12_000;
 
 /** Build a minimal WAV header around raw PCM16 data. */
 function buildWavHeader(dataLen: number, sampleRate: number): Buffer {
@@ -74,7 +76,7 @@ async function sarvamStt(
     method: "POST",
     headers: { "api-subscription-key": key },
     body: form,
-    signal: AbortSignal.timeout(15_000),
+    signal: AbortSignal.timeout(8_000),
   });
   if (!res.ok) {
     const err = await res.text().catch(() => res.statusText);
@@ -97,7 +99,7 @@ async function sarvamTts(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      inputs: [text.slice(0, 500)], // Bulbul limit
+      inputs: [text.slice(0, 300)], // short voice reply; Bulbul limit is higher
       target_language_code: languageCode,
       speaker: "anushka",          // warm female voice
       model: "bulbul:v2",
@@ -281,7 +283,7 @@ export function registerSarvamVoiceRoute(router: IRouter): void {
             contents,
             config: {
               systemInstruction,
-              maxOutputTokens: 512, // shorter replies → faster TTS
+              maxOutputTokens: 180, // voice prompt already limits to 1–3 sentences
               temperature: 0.4,
               thinkingConfig: { thinkingBudget: 0 },
               abortSignal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),

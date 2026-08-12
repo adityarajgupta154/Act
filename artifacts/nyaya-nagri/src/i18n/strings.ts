@@ -71,6 +71,7 @@ export interface UIStrings {
   questionXofY: (current: number, total: number) => string;
   correct: string;
   notQuite: string;
+  correctAnswerWas: string;
   continueLabel: string;
   whatWillYouDo: string;
   questComplete: string;
@@ -696,6 +697,7 @@ const EN: UIStrings = {
   questionXofY: (current, total) => `Question ${current} of ${total}`,
   correct: 'Correct!',
   notQuite: 'Not quite!',
+  correctAnswerWas: 'The right answer:',
   continueLabel: 'Continue',
   whatWillYouDo: 'What will you do?',
   questComplete: 'Quest Complete!',
@@ -1400,6 +1402,7 @@ const HI: UIStrings = {
   questionXofY: (current, total) => `सवाल ${current} (कुल ${total})`,
   correct: 'सही!',
   notQuite: 'पूरा सही नहीं!',
+  correctAnswerWas: 'सही जवाब:',
   continueLabel: 'आगे बढ़ो',
   whatWillYouDo: 'तुम क्या करोगे?',
   questComplete: 'क्वेस्ट पूरी हुई!',

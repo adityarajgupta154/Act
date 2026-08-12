@@ -1,0 +1,59 @@
+Q: "React kyun? Android app kyun nahi banaya?"
+
+"Reach. A browser app runs on school computer labs, shared family phones, anything — no install, no Play Store account, no storage space needed. For a child-safety tool, removing the install barrier IS the distribution strategy."
+
+Q: "Phaser kya hai? Unity kyun nahi?"
+
+"Phaser is a web-native 2D game engine — open source, no licensing, loads in seconds. Unity WebGL builds are 30–50MB+ and need powerful devices; Phaser runs smoothly on low-end phones, which is exactly rural India's hardware."
+
+Q: "TypeScript kyun?"
+
+"Legal content is safety-critical — TypeScript catches content-structure mistakes at compile time, before a child ever sees them. Every quiz, scene, and helpline entry is type-checked."
+
+Q: "html2canvas + jsPDF ka kya role hai?"
+
+"Certificates generate entirely in the browser — bilingual, with Hindi fonts embedded. Nothing goes to a server, so a certificate never carries personal data anywhere."
+
+BACKEND line se
+Q: "Express 5 hi kyun? / Backend itna simple kyun?"
+
+"Deliberately boring. One stateless Express server, Zod validation on every input, structured logging. For child safety you want a backend you can audit in an afternoon."
+
+Q: "pnpm monorepo kyun?"
+
+"Frontend, backend and design system share one repo — shared types mean the safety contract between client and server can't silently drift."
+
+AI AND ML line se (sabse zyada drilling yahin hogi)
+Q: "Model fine-tune kyun nahi kiya?"
+
+"Fine-tuning bakes knowledge invisibly into weights — you can't audit it. Our curated India Code corpus is a reviewable text file: every legal fact the AI cites, a human approved. Grounding beats fine-tuning for auditability."
+
+Q: "Gemini Flash kyun, Pro/GPT-4 kyun nahi?"
+
+"Children ask short questions and need fast answers — Flash gives low latency at a fraction of the cost, and corpus grounding covers the knowledge. We pay for speed and safety, not for size we don't need."
+
+Q: "Do alag TTS kyun — Gemini TTS aur Sarvam dono?"
+
+"Different jobs. Story narration is pre-scripted, so Gemini TTS gives cinematic quality there. Live voice chat needs an Indian-language specialist with fast turnaround — that's Sarvam. Right tool per job."
+
+Q: "Streaming chat mein safety kaise? Chunk toh nikal jayega."
+
+"The gate runs on the accumulated reply before every chunk is forwarded — the moment anything trips, the stream stops. A child can never see an ungated word."
+
+Q: "Curated corpus kitna bada hai / kaise banaya?"
+
+"Hand-reviewed summaries of the seven acts we teach, written at child reading level, with real section citations from India Code. Small by design — we'd rather cover seven laws perfectly than five hundred badly."
+
+API SERVICES / DATABASE / AUTH lines se
+(Pichhle answer ke Q3–Q5 yahi cover karte hain — "None by design" ko feature ki tarah bolna hai, weakness nahi. Ek naya angle:)
+
+Q: "Kal ko school-level dashboards chahiye honge — bina DB ke kaise?"
+
+"That's an opt-in layer, not a redesign. The stateless core stays; a school edition can add aggregated, consented analytics on top. We started from zero data because you can always add collection with consent — you can never un-leak data you shouldn't have had."
+
+DEPLOYMENT: Local — ⚠️ ye line sabse weak hai, yahan zaroor poke karenge
+Q: "Local matlab? Production plan kya hai?"
+
+"The prototype runs locally for this demo, but it's cloud-ready today — static frontend plus one stateless Node server, deployable to any standard host with one command. Stateless means horizontal scaling is trivial: no database to shard, no sessions to sync. Hosting cost stays near zero."
+
+Tip: agar time mile to bolo "we can deploy it live during Q&A if you'd like" — confidence dikhta hai (aur aapka Replit deploy sach mein ready hai).

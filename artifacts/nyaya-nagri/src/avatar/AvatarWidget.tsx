@@ -532,6 +532,12 @@ export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
         // Gemini took too long — never freeze: friendly line + retry chip.
         appendAssistantMessage(bundle.guideResting);
         setRetryText(userText);
+      } else if (streamKind === 'http') {
+        // An upstream/API failure is not a streaming-transport failure.
+        // Retrying the same Gemini call through /chat here used to double the
+        // wait (and double quota usage) when the provider returned 429/5xx.
+        appendAssistantMessage(bundle.guideResting);
+        setRetryText(userText);
       } else {
         // Streaming transport unavailable (old browser/buffering proxy) →
         // AUTOMATIC fallback to the classic JSON route. Same real API and

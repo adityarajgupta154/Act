@@ -88,6 +88,9 @@ export function QuestPlayer({
           session.lastQuizFeedback.correct ? t.correct : t.notQuite,
           session.lastQuizFeedback.explanation,
         );
+        if (!session.lastQuizFeedback.correct && q) {
+          parts.push(t.correctAnswerWas, q.options[q.correctIndex]);
+        }
       } else if (q) {
         parts.push(q.question, ...q.options);
       }
@@ -105,6 +108,9 @@ export function QuestPlayer({
           session.recapFeedback.correct ? t.recapGotIt : t.recapTryAgainIntro,
           session.recapFeedback.explanation,
         );
+        if (!session.recapFeedback.correct && item) {
+          parts.push(t.correctAnswerWas, item.options[item.correctIndex]);
+        }
       } else if (item) {
         parts.push(item.summary, item.question, ...item.options);
       }
@@ -373,6 +379,19 @@ export function QuestPlayer({
                   <p className="text-lg text-slate-700 leading-relaxed font-medium">
                     {feedback.explanation}
                   </p>
+                  {!feedback.correct && (
+                    <div className="mt-4 p-4 rounded-xl bg-green-50 border-2 border-green-200 flex items-start gap-3">
+                      <CheckCircle2 className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-bold text-green-700 uppercase tracking-wide mb-1">
+                          {t.correctAnswerWas}
+                        </p>
+                        <p className="text-lg text-slate-800 leading-relaxed font-medium">
+                          {item.options[item.correctIndex]}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <button
@@ -446,6 +465,19 @@ export function QuestPlayer({
                   <p className="text-lg text-slate-700 leading-relaxed font-medium">
                     {feedback.explanation}
                   </p>
+                  {!feedback.correct && (
+                    <div className="mt-4 p-4 rounded-xl bg-green-50 border-2 border-green-200 flex items-start gap-3">
+                      <CheckCircle2 className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-sm font-bold text-green-700 uppercase tracking-wide mb-1">
+                          {t.correctAnswerWas}
+                        </p>
+                        <p className="text-lg text-slate-800 leading-relaxed font-medium">
+                          {question.options[question.correctIndex]}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               <button
