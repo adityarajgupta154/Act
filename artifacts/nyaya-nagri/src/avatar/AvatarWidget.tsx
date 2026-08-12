@@ -338,7 +338,7 @@ export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
 
   // STRICT story/assistant separation (story-voice bug-fix spec): the
   // moment a Story Adventure opens, the chat panel closes. A panel left
-  // open (often force-opened by an earlier zone greeting) sits invisibly
+  // open (opened by the child earlier) sits invisibly
   // BEHIND the fullscreen story overlay while its suspension silences
   // every slide and question read — the child hears nothing and cannot
   // see why. Story open ⇒ the story guide owns the speakers. The child
@@ -356,7 +356,9 @@ export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
     if (activeZoneId && activeZoneId !== prevZoneRef.current && !activeStory) {
       const zone = getZone(activeZoneId);
       if (zone) {
-        setIsOpen(true);
+        // User order (Aug 2026): NEVER force-open the panel — the bot stays
+        // closed until the child taps it. The zone greeting is appended
+        // quietly, exactly like the level greetings below.
         // Greeting language = the language selected when the zone is entered.
         const lang = settingsStore.getState().language;
         const bundle = getStrings(lang);

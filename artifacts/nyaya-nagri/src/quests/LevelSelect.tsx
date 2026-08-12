@@ -37,7 +37,6 @@ import {
   Sparkles,
   type LucideIcon,
 } from 'lucide-react';
-import guideBoyUrl from '@/assets/home/guide-boy.webp';
 
 // ── Kind metadata ─────────────────────────────────────────────────────────────
 
@@ -126,20 +125,6 @@ function LeftDecor() {
   );
 }
 
-/** Right panel decoration: mascot boy. Shown on lg+ only. */
-function RightDecor() {
-  return (
-    <div className="hidden lg:flex flex-col items-end justify-end pointer-events-none select-none h-full">
-      <img
-        src={guideBoyUrl}
-        alt=""
-        className="h-56 w-auto object-contain drop-shadow-xl"
-        draggable={false}
-      />
-    </div>
-  );
-}
-
 // ── Main component ────────────────────────────────────────────────────────────
 
 export function LevelSelect({
@@ -218,11 +203,6 @@ export function LevelSelect({
         {/* Left decoration (lg+) */}
         <div className="hidden lg:flex absolute left-6 top-1/2 -translate-y-1/2 flex-col items-center gap-4 z-0">
           <LeftDecor />
-        </div>
-
-        {/* Right decoration (lg+) */}
-        <div className="hidden lg:flex absolute right-4 bottom-0 items-end z-0">
-          <RightDecor />
         </div>
 
         {/* Level cards column — centred, sits above decorations */}

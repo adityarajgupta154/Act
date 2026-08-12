@@ -34,3 +34,5 @@ Detail lives in [nyaya-sarvam-voice.md](nyaya-sarvam-voice.md). Rules that belon
 - Voice and text are the SAME assistant and share the SAME safety module + persona — a voice turn is gated on the transcript BEFORE any TTS is synthesized.
 - `@google/genai` is banned CLIENT-wide (the Live client is deleted); Gemini runs server-side only. Legacy voice-token/guard routes stay mounted-but-unused deliberately — removing them is a separate decision.
 - **Lesson:** a voice-engine swap rots greps in EVERY smoke (nyayaai voice/latency sections, onboarding camera-ban exemption) — sweep all smokes for old-engine literals the moment the swap lands, not when they fail.
+
+- Zone-entry greetings must NEVER force-open the chat panel (user order Aug 2026: "by default off rahe"): greeting appends quietly like level greetings; the ONLY setIsOpen(true) is the launcher button click. Do not "restore" auto-open when touching greeting UX.
