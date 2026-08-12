@@ -7,7 +7,7 @@ description: zone1 POCSO maze game — architecture, content-safety copy rules, 
 
 - `src/games/safepath/`: `content.ts` (pure bilingual data, no imports), `logic.ts` (pure engine), `data.ts` (webp bindings + DEV missing-binding check), `SafePathGame.tsx` (phases intro → maze → success → quiz → result).
 - Flow: zone1 entry in `gameFlows.ts` uses `continueTo: 'levels'` + `storyLevelId: null` — game-first gate, Continue opens LevelSelect (zone2 castle keeps `'quiz'` + story unlock). Gate credit = the ONE `markVideoWatched` literal in GameQuestFlow; smokes pin these.
-- Verification: `scripts/safepath.smoke.ts` (~951 checks: BFS grid invariants, deterministic L1 walkthrough end-score 550/2-star, wiring greps, asset >1000B). Dev seams: `/?zone=zone1` fresh → game mounts; `&watched=safe-path-adventure` → landing card.
+- Verification: `scripts/safepath.smoke.ts` (~964 checks: BFS grid invariants, deterministic L1 walkthrough end-score 550/2-star, wiring greps, asset >1000B). Dev seams: `/?zone=zone1` fresh → game mounts; `&watched=safe-path-adventure` → landing card.
 
 ## Intro screen (reference recreation, Aug 2026)
 - Intro + success share ONE `SpSceneryLayers` scenery component (a `schoolSide` prop flips the CSS school corner). NEVER fork the festive backdrop markup — both reference screens live in one visual world. **Why:** forked copies drift; the user's two reference images share the same park scene.
@@ -26,6 +26,7 @@ Questions and answer OPTIONS must never use scared/scary/blame/trouble/fault lan
   **Why:** the label means "of choices MADE, how many safe"; a level-total denominator under-reports whenever an obstacle isn't on the taken path, and attempt-based can never show a false perfect.
 - `spDidItSub` carries ONE `|SZ|` marker per language; component splits on it to color the Safe Zone word (HI word order differs). Smoke pins exactly-one-marker — translators must keep it.
 - DEV seam `?zone=zone1&spphase=success`: import.meta.env.DEV-gated (ungated = prod shortcut past the game into the quiz). Seeds a display-only demo session (NOT a fully valid terminal SpSession — success view reads only score/safe/wrong; keep it that way or build a real terminal state).
+
 
 ## Shared completion panel (2026-08-12 — landing-card reuse)
 - ONE `SpCompletionPanel` renders the reference design on BOTH surfaces: the in-game success phase (cream shell, max-w-3xl) AND zone1's completed landing card in GameQuestFlow. NEVER fork the markup — edit the panel and both surfaces update. Landing renders narrower (it sits inside the zone card frame) BY DESIGN; the panel is fluid — architect's "make widths identical" was rejected.
