@@ -15,7 +15,7 @@ import '@fontsource/lexend/700.css';
 // attributes to <html> before first render.
 import '@/data/settingsStore';
 import { initAmbientAudio } from '@/audio/ambient';
-import { openHelp, enterZone } from './ui/uiStore';
+import { openHelp, enterZone, openRightWrong } from './ui/uiStore';
 import { ZONES } from './world/zones';
 
 // Calm, mutable ambient loop (Task 13) — starts after the first user
@@ -85,11 +85,23 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('prof
   progressStore.update({ onboarded: true, ageBand: '12-15' });
 }
 
+// Dev-only screenshot/e2e seam (same spirit): `?game=rightwrong` boots an
+// onboarded child with the "Right or Wrong?" mini-game overlay open — the
+// game is pure DOM, so the headless capture browser can photograph it
+// without WebGL. HomePage skips the landing screen for this param too.
+// Never active in production builds.
+if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('game') === 'rightwrong') {
+  progressStore.update({ onboarded: true, ageBand: '12-15' });
+  openRightWrong();
+}
+
 // Dev-only screenshot/e2e seam (same spirit): `?zone=<id>` boots an
 // onboarded child straight INSIDE a zone interior — the headless capture
 // browser cannot render WebGL, so it cannot walk the 3D world to a gate.
-// Lets the video-first castle flow (VIDEO → quiz) be photographed.
-// HomePage skips the landing screen for this param too. Never in production.
+// Lets the game-first castle flow (GAME → quiz) be photographed —
+// `&watched=<id,id>` pre-earns the lesson gate so the landing card's
+// Continue state is reachable too. HomePage skips the landing screen for
+// this param too. Never in production.
 {
   const zoneSeam = import.meta.env.DEV
     ? new URLSearchParams(window.location.search).get('zone')
@@ -101,10 +113,14 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('prof
       0,
       Math.max(0, ZONES.findIndex((z) => z.id === zoneSeam)),
     );
+    const watchedIds = (new URLSearchParams(window.location.search).get('watched') ?? '')
+      .split(',')
+      .filter(Boolean);
     progressStore.update({
       onboarded: true,
       ageBand: '12-15',
       completedZones: Object.fromEntries(before.map((z) => [z.id, true])),
+      videosWatched: Object.fromEntries(watchedIds.map((id) => [id, true])),
     });
     enterZone(zoneSeam);
   }

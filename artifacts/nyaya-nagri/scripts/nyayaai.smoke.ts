@@ -158,8 +158,12 @@ check(
     sarvamRoute.includes('anushka'),
 );
 check(
-  'single turn failure never kills the session (back to listening, no crash)',
-  voiceEngine.includes("Don't kill the session on a single turn failure"),
+  // Aug 2026: turn errors no longer fake a return to listening — that made
+  // kids think the mic was broken. The engine fails CLOSED and the widget
+  // shows a friendly one-tap retry (checked separately below).
+  'turn failure fails CLOSED: friendly retry line, never a silent fake-listen',
+  voiceEngine.includes("this.fail('connect-failed')") &&
+    voiceEngine.includes('shows a friendly retry line'),
 );
 check(
   '16kHz mic capture (Sarvam STT contract) packed as WAV client-side',
@@ -246,15 +250,26 @@ check(
 // server silence-window to pair with (that drift class died with the
 // Live engine). The engine sends a turn only after real speech and
 // hard-caps runaway recordings.
+// Exact tuning values get re-tuned for latency; the INVARIANT is that each
+// threshold exists and stays inside child-friendly sane bounds.
+const vadConst = (name: string) => {
+  const m = voiceEngine.match(new RegExp(`${name} = ([\\d_]+)`));
+  return m ? Number(m[1].replace(/_/g, '')) : NaN;
+};
+const vadSilence = vadConst('SILENCE_DURATION_MS');
+const vadMinSpeech = vadConst('MIN_SPEECH_MS');
+const vadMaxRecord = vadConst('MAX_RECORD_MS');
 check(
-  'VAD thresholds sane: 800ms silence end, 250ms min speech, 30s hard cap',
-  voiceEngine.includes('SILENCE_DURATION_MS = 800') &&
-    voiceEngine.includes('MIN_SPEECH_MS = 250') &&
-    voiceEngine.includes('MAX_RECORD_MS = 30_000'),
+  `VAD thresholds sane: ${vadSilence}ms silence end (300-900), ${vadMinSpeech}ms min speech (100-400), ${vadMaxRecord / 1000}s hard cap (10-30)`,
+  vadSilence >= 300 && vadSilence <= 900 &&
+    vadMinSpeech >= 100 && vadMinSpeech <= 400 &&
+    vadMaxRecord >= 10_000 && vadMaxRecord <= 30_000,
 );
+const turnTimeoutMatch = voiceEngine.match(/AbortSignal\.timeout\((\d[\d_]*)\)/);
+const turnTimeoutMs = turnTimeoutMatch ? Number(turnTimeoutMatch[1].replace(/_/g, '')) : NaN;
 check(
-  'turn timeout is generous but finite (25s — STT+LLM+TTS round trip)',
-  voiceEngine.includes('AbortSignal.timeout(25_000)'),
+  `turn timeout finite + snappy (${turnTimeoutMs / 1000}s, bounds 8-25 — STT+LLM+TTS round trip)`,
+  turnTimeoutMs >= 8_000 && turnTimeoutMs <= 25_000,
 );
 check(
   'DEV-only latency instrumentation injected by widget (engine never reads env)',

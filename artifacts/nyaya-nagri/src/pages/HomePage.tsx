@@ -40,6 +40,7 @@ export default function HomePage() {
       params.get('story') === 'open' ||
       params.get('help') === 'open' ||
       params.get('profile') === 'open' ||
+      params.get('game') === 'rightwrong' ||
       params.has('zone')
     );
   });

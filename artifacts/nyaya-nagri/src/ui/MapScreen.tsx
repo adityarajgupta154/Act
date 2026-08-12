@@ -26,12 +26,13 @@ import {
   MapPin,
   Scale,
   School,
+  Play,
   Sparkles,
   Users,
   X,
   type LucideIcon,
 } from 'lucide-react';
-import { useUIStore, closeMap, openMap, enterZone } from './uiStore';
+import { useUIStore, closeMap, openMap, enterZone, openRightWrong } from './uiStore';
 import { getZoneStates } from '@/world/zones';
 import { progressStore } from '@/data/progressStore';
 import { useStrings } from '@/i18n/strings';
@@ -424,8 +425,21 @@ export function MapOverlay() {
           )}
         </div>
 
+        {/* "Right or Wrong?" mini-game entry — lives on the map card so it
+            feels part of the city, not a random floating button. */}
+        <div className="shrink-0 mt-2 md:mt-3 flex justify-center">
+          <button
+            type="button"
+            onClick={() => { closeMap(); openRightWrong(); }}
+            className="flex items-center gap-2.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 active:scale-95 text-white font-display font-bold text-sm md:text-base rounded-2xl px-5 py-2.5 shadow-lg transition-all touch-manipulation focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-violet-300"
+          >
+            <Play className="w-4 h-4 md:w-5 md:h-5 fill-white" />
+            {t.rwTitle} — {t.rwPlayCta}
+          </button>
+        </div>
+
         {/* Legend */}
-        <div className="shrink-0 mt-2.5 md:mt-4 mx-auto inline-flex items-center gap-3 md:gap-6 bg-white rounded-full border border-slate-200 shadow-md px-4 md:px-7 py-2 md:py-2.5">
+        <div className="shrink-0 mt-2 md:mt-2.5 mx-auto inline-flex items-center gap-3 md:gap-6 bg-white rounded-full border border-slate-200 shadow-md px-4 md:px-7 py-2 md:py-2.5">
           <span className="flex items-center gap-2">
             <span className="w-7 h-7 rounded-full border-2 border-sky-300 bg-sky-50 overflow-hidden grid place-content-center shrink-0">
               {avatar ? (

@@ -31,6 +31,101 @@ function FeedbackColor(outcome: ChoiceOutcome) {
   }
 }
 
+/**
+ * Shared game-board chrome for every decision/quiz surface. The old quiz
+ * panels used the same plain white card as settings screens, which made the
+ * learning loop feel disconnected from the city. This is CSS-only game art:
+ * no stock/watermarked artwork is needed, and the legal copy remains exactly
+ * the same.
+ */
+function GameQuizShell({
+  ribbonLabel,
+  title,
+  progress,
+  icon,
+  leaveLabel,
+  onLeave,
+  prompt,
+  answers,
+}: {
+  ribbonLabel: string;
+  title: string;
+  progress?: string;
+  icon?: React.ReactNode;
+  leaveLabel: string;
+  onLeave: () => void;
+  prompt: React.ReactNode;
+  answers: React.ReactNode;
+}) {
+  return (
+    <div className="relative pointer-events-auto flex h-[82dvh] max-h-[min(100%,780px)] w-full max-w-3xl flex-col overflow-hidden rounded-[2rem] border-4 border-white/80 bg-gradient-to-b from-sky-500 via-cyan-400 to-sky-500 p-2 shadow-2xl animate-in slide-in-from-bottom-4 duration-300 md:p-4">
+      {/* Lightweight CSS clouds keep the board lively without another asset. */}
+      <div aria-hidden="true" className="pointer-events-none absolute -left-8 top-16 h-20 w-44 rounded-full bg-white/20 blur-sm" />
+      <div aria-hidden="true" className="pointer-events-none absolute -right-12 bottom-20 h-24 w-56 rounded-full bg-white/20 blur-sm" />
+      <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 h-3 w-3 rounded-full bg-white/50 shadow-[80px_80px_0_2px_rgba(255,255,255,0.35),-120px_120px_0_1px_rgba(255,255,255,0.3)]" />
+
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col p-2 md:p-3">
+        <div className="mb-5 flex shrink-0 items-center justify-between gap-3 px-1 text-white">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border-2 border-white/70 bg-white/90 text-sky-700 shadow-md">
+              {icon ?? <Star className="h-6 w-6 fill-current" />}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate font-display text-lg font-bold drop-shadow-sm md:text-xl">{title}</p>
+              {progress && <p className="text-xs font-bold uppercase tracking-[0.16em] text-white/85">{progress}</p>}
+            </div>
+          </div>
+          <button
+            onClick={onLeave}
+            className="min-h-11 shrink-0 rounded-full border-2 border-white/70 bg-white/85 px-4 py-2 text-xs font-bold text-slate-700 shadow-sm transition-colors hover:bg-white active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white md:text-sm"
+          >
+            {leaveLabel}
+          </button>
+        </div>
+
+        <div className="relative flex min-h-0 flex-1 flex-col overflow-y-auto px-1 pb-1">
+          <div className="relative z-10 mb-5 pt-5 md:pt-7">
+            <div className="absolute left-5 right-5 top-0 z-20 flex items-center justify-center md:left-16 md:right-16">
+              <div className="relative w-full -rotate-1 rounded-xl border-4 border-lime-950/70 bg-lime-500 px-5 py-2 text-center font-display text-xl font-bold uppercase tracking-[0.12em] text-white shadow-[0_5px_0_rgba(54,83,20,0.5)] md:text-3xl">
+                <span className="drop-shadow-[0_2px_0_rgba(0,0,0,0.35)]">{ribbonLabel}</span>
+              </div>
+            </div>
+            <div className="rounded-[1.35rem] border-4 border-amber-950/75 bg-amber-950 p-2 shadow-xl">
+              <div className="rounded-[1rem] border-2 border-amber-200/80 bg-amber-100 px-4 pb-5 pt-11 text-slate-800 shadow-inner md:px-7 md:pb-7 md:pt-12">
+                {prompt}
+              </div>
+            </div>
+          </div>
+
+          <div className="relative z-10 pb-2">{answers}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GameAnswerButton({
+  index,
+  onClick,
+  children,
+}: {
+  index: number;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="group flex w-full items-start gap-3 rounded-2xl border-4 border-amber-950/75 bg-yellow-300 px-3 py-3 text-left text-base font-bold leading-relaxed text-amber-950 shadow-[0_5px_0_rgba(120,53,15,0.55)] transition-all hover:-translate-y-0.5 hover:bg-yellow-200 hover:shadow-[0_7px_0_rgba(120,53,15,0.55)] active:translate-y-1 active:shadow-[0_2px_0_rgba(120,53,15,0.55)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-sky-600 touch-manipulation md:items-center md:px-4 md:py-4 md:text-lg"
+    >
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-orange-950/60 bg-orange-500 font-display text-lg text-white shadow-sm md:h-10 md:w-10">
+        {String.fromCharCode(65 + index)}
+      </span>
+      <span className="pt-0.5">{children}</span>
+    </button>
+  );
+}
+
 export function QuestPlayer({
   quest: questProp,
   levelIndex,
@@ -329,83 +424,73 @@ export function QuestPlayer({
     if (!item) return null;
 
     return (
-      <div className="bg-white p-6 md:p-10 rounded-3xl shadow-xl max-w-3xl w-full border border-slate-100 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto flex flex-col h-[80vh] md:h-auto">
-        <div className="flex justify-between items-center mb-6 shrink-0">
-          <h2 className="font-display font-bold text-2xl text-slate-800 flex items-center gap-3">
-            <Lightbulb className="w-7 h-7 text-amber-500" />
-            {t.recapTitle}
-          </h2>
-          <span className="text-sm font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-full uppercase tracking-wide shrink-0">
-            {t.recapXofY(session.recapIndex + 1, session.recapQueue.length)}
-          </span>
-        </div>
-
-        <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
-          <div className="bg-amber-50 rounded-2xl p-6 md:p-8 mb-6 border border-amber-100">
-            <p className="text-lg md:text-xl font-medium text-slate-800 leading-relaxed">
-              {item.summary}
+      <GameQuizShell
+        ribbonLabel={t.ribbonRecap}
+        title={t.recapTitle}
+        progress={t.recapXofY(session.recapIndex + 1, session.recapQueue.length)}
+        icon={<Lightbulb className="h-6 w-6 fill-current text-amber-500" />}
+        leaveLabel={t.leaveQuest}
+        onLeave={handleLeave}
+        prompt={(
+          <>
+            <div className="mb-4 rounded-2xl border-2 border-amber-300 bg-amber-200/70 p-4 md:p-5">
+              <p className="text-base font-bold leading-relaxed text-amber-950 md:text-lg">
+                {item.summary}
+              </p>
+            </div>
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-orange-700">
+              {t.ribbonQuestion}
             </p>
-          </div>
-
-          <h3 className="text-xl md:text-2xl font-medium text-slate-700 leading-relaxed mb-4">
-            {item.question}
-          </h3>
-
-          {!feedback ? (
-            <div className="flex flex-col gap-3">
+            <h3 className="text-xl font-bold leading-relaxed text-slate-800 md:text-2xl">
+              {item.question}
+            </h3>
+          </>
+        )}
+        answers={(
+          !feedback ? (
+            <div className="flex flex-col gap-4">
               {item.options.map((opt, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSession(answerRecapQuestion(session, idx))}
-                  className="text-left w-full p-4 md:p-5 rounded-2xl border-2 border-slate-100 hover:border-amber-300 hover:bg-amber-50 active:bg-amber-100 transition-all text-lg font-medium text-slate-700 shadow-sm touch-manipulation"
-                >
+                <GameAnswerButton key={idx} index={idx} onClick={() => setSession(answerRecapQuestion(session, idx))}>
                   {opt}
-                </button>
+                </GameAnswerButton>
               ))}
             </div>
           ) : (
-            <div className={cn("p-6 rounded-2xl border-2 animate-in zoom-in-95 duration-200",
-                feedback.correct ? "bg-green-50 border-green-200" : "bg-sky-50 border-sky-200")}>
+            <div className={cn("rounded-2xl border-4 p-5 shadow-xl animate-in zoom-in-95 duration-200 md:p-6",
+                feedback.correct ? "border-emerald-800/60 bg-emerald-100" : "border-sky-800/50 bg-sky-100")}>
               <div className="flex items-start gap-4">
                 {feedback.correct ? (
-                  <CheckCircle2 className="w-8 h-8 text-green-600 shrink-0 mt-1" />
+                  <CheckCircle2 className="h-8 w-8 shrink-0 text-emerald-700" />
                 ) : (
-                  <Lightbulb className="w-8 h-8 text-sky-500 shrink-0 mt-1" />
+                  <Lightbulb className="h-8 w-8 shrink-0 text-sky-700" />
                 )}
                 <div>
-                  <h4 className={cn("font-bold text-xl mb-2", feedback.correct ? "text-green-700" : "text-sky-700")}>
+                  <h4 className="mb-2 font-display text-xl font-bold text-slate-800">
                     {feedback.correct ? t.recapGotIt : t.recapTryAgainIntro}
                   </h4>
-                  <p className="text-lg text-slate-700 leading-relaxed font-medium">
+                  <p className="text-base font-semibold leading-relaxed text-slate-700 md:text-lg">
                     {feedback.explanation}
                   </p>
                   {!feedback.correct && (
-                    <div className="mt-4 p-4 rounded-xl bg-green-50 border-2 border-green-200 flex items-start gap-3">
-                      <CheckCircle2 className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-bold text-green-700 uppercase tracking-wide mb-1">
-                          {t.correctAnswerWas}
-                        </p>
-                        <p className="text-lg text-slate-800 leading-relaxed font-medium">
-                          {item.options[item.correctIndex]}
-                        </p>
-                      </div>
+                    <div className="mt-4 rounded-xl border-2 border-emerald-700/40 bg-emerald-100 p-4">
+                      <p className="mb-1 text-xs font-bold uppercase tracking-wide text-emerald-800">{t.correctAnswerWas}</p>
+                      <p className="text-base font-bold leading-relaxed text-slate-800 md:text-lg">
+                        {item.options[item.correctIndex]}
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
               <button
                 onClick={() => setSession(acknowledgeRecapFeedback(session))}
-                className={cn("mt-6 px-6 py-3 rounded-full font-bold text-white shadow-sm flex items-center gap-2 transition-transform active:scale-95 touch-manipulation",
-                  feedback.correct ? "bg-green-600 hover:bg-green-700" : "bg-sky-500 hover:bg-sky-600"
-                )}
+                className="mt-5 flex items-center gap-2 rounded-full bg-sky-600 px-6 py-3 font-bold text-white shadow-md transition-transform hover:bg-sky-700 active:scale-95 touch-manipulation"
               >
-                {t.continueLabel} <ArrowRight className="w-5 h-5" />
+                {t.continueLabel} <ArrowRight className="h-5 w-5" />
               </button>
             </div>
-          )}
-        </div>
-      </div>
+          )
+        )}
+      />
     );
   }
 
@@ -417,81 +502,74 @@ export function QuestPlayer({
     const feedback = session.lastQuizFeedback;
 
     return (
-      <div className="bg-white p-6 md:p-10 rounded-3xl shadow-xl max-w-3xl w-full border border-slate-100 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto flex flex-col h-[80vh] md:h-auto">
-        <div className="flex justify-between items-center mb-6 shrink-0">
-          <h2 className="font-display font-bold text-2xl text-slate-800">
-            {isPost ? t.postQuizTitle : t.preQuizTitle}
-          </h2>
-          <button onClick={handleLeave} className="text-slate-400 hover:text-slate-600 font-medium px-4 py-2 bg-slate-100 rounded-full transition-colors text-sm">
-            {t.leaveQuest}
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto min-h-0 mb-6 flex flex-col justify-center">
-          <div className="mb-8">
-            <span className="inline-block px-3 py-1 bg-orange-100 text-orange-600 rounded-full text-sm font-bold mb-4 uppercase tracking-wide">
+      <GameQuizShell
+        ribbonLabel={isPost ? t.ribbonReview : t.ribbonQuestion}
+        title={isPost ? t.postQuizTitle : t.preQuizTitle}
+        progress={t.questionXofY(qIndex + 1, quest.quizQuestions.length)}
+        icon={
+          isPost
+            ? <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+            : <Star className="h-6 w-6 fill-current text-amber-500" />
+        }
+        leaveLabel={t.leaveQuest}
+        onLeave={handleLeave}
+        prompt={(
+          <>
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.18em] text-orange-700">
               {t.questionXofY(qIndex + 1, quest.quizQuestions.length)}
-            </span>
-            <h3 className="text-xl md:text-2xl font-medium text-slate-700 leading-relaxed">
+            </p>
+            <h3 className="text-xl font-bold leading-relaxed text-slate-800 md:text-2xl">
               {question.question}
             </h3>
-          </div>
-
-          {!feedback ? (
-            <div className="flex flex-col gap-3">
+          </>
+        )}
+        answers={(
+          !feedback ? (
+            <div className="flex flex-col gap-4">
               {question.options.map((opt, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSession(answerQuizQuestion(session, idx))}
-                  className="text-left w-full p-4 md:p-5 rounded-2xl border-2 border-slate-100 hover:border-sky-300 hover:bg-sky-50 active:bg-sky-100 transition-all text-lg font-medium text-slate-700 shadow-sm touch-manipulation"
-                >
+                <GameAnswerButton key={idx} index={idx} onClick={() => setSession(answerQuizQuestion(session, idx))}>
                   {opt}
-                </button>
+                </GameAnswerButton>
               ))}
             </div>
           ) : (
-            <div className={cn("p-6 rounded-2xl border-2 animate-in zoom-in-95 duration-200",
-                feedback.correct ? "bg-green-50 border-green-200" : "bg-orange-50 border-orange-200")}>
+            <div className={cn("rounded-2xl border-4 p-5 shadow-xl animate-in zoom-in-95 duration-200 md:p-6",
+                feedback.correct ? "border-emerald-800/60 bg-emerald-100" : "border-orange-800/50 bg-orange-100")}>
               <div className="flex items-start gap-4">
                 {feedback.correct ? (
-                  <CheckCircle2 className="w-8 h-8 text-green-600 shrink-0 mt-1" />
+                  <CheckCircle2 className="h-8 w-8 shrink-0 text-emerald-700" />
                 ) : (
-                  <XCircle className="w-8 h-8 text-orange-500 shrink-0 mt-1" />
+                  <XCircle className="h-8 w-8 shrink-0 text-orange-700" />
                 )}
                 <div>
-                  <h4 className={cn("font-bold text-xl mb-2", feedback.correct ? "text-green-700" : "text-orange-700")}>
+                  <h4 className="mb-2 font-display text-xl font-bold text-slate-800">
                     {feedback.correct ? t.correct : t.notQuite}
                   </h4>
-                  <p className="text-lg text-slate-700 leading-relaxed font-medium">
+                  <p className="text-base font-semibold leading-relaxed text-slate-700 md:text-lg">
                     {feedback.explanation}
                   </p>
                   {!feedback.correct && (
-                    <div className="mt-4 p-4 rounded-xl bg-green-50 border-2 border-green-200 flex items-start gap-3">
-                      <CheckCircle2 className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-bold text-green-700 uppercase tracking-wide mb-1">
-                          {t.correctAnswerWas}
-                        </p>
-                        <p className="text-lg text-slate-800 leading-relaxed font-medium">
-                          {question.options[question.correctIndex]}
-                        </p>
-                      </div>
+                    <div className="mt-4 rounded-xl border-2 border-emerald-700/40 bg-emerald-100 p-4">
+                      <p className="mb-1 text-xs font-bold uppercase tracking-wide text-emerald-800">{t.correctAnswerWas}</p>
+                      <p className="text-base font-bold leading-relaxed text-slate-800 md:text-lg">
+                        {question.options[question.correctIndex]}
+                      </p>
                     </div>
                   )}
                 </div>
               </div>
               <button
                 onClick={() => setSession(acknowledgeQuizFeedback(session))}
-                className={cn("mt-6 px-6 py-3 rounded-full font-bold text-white shadow-sm flex items-center gap-2 transition-transform active:scale-95 touch-manipulation",
-                  feedback.correct ? "bg-green-600 hover:bg-green-700" : "bg-orange-500 hover:bg-orange-600"
+                className={cn("mt-5 flex items-center gap-2 rounded-full px-6 py-3 font-bold text-white shadow-md transition-transform active:scale-95 touch-manipulation",
+                  feedback.correct ? "bg-emerald-600 hover:bg-emerald-700" : "bg-orange-600 hover:bg-orange-700"
                 )}
               >
-                {t.continueLabel} <ArrowRight className="w-5 h-5" />
+                {t.continueLabel} <ArrowRight className="h-5 w-5" />
               </button>
             </div>
-          )}
-        </div>
-      </div>
+          )
+        )}
+      />
     );
   }
 
@@ -543,81 +621,71 @@ export function QuestPlayer({
     if (!scene) return null;
 
     return (
-      <div className="bg-white p-6 md:p-10 rounded-3xl shadow-xl max-w-3xl w-full border border-slate-100 animate-in slide-in-from-bottom-4 duration-300 pointer-events-auto flex flex-col h-[80vh] md:h-auto">
-        <div className="flex justify-between items-center mb-6 shrink-0 border-b border-slate-100 pb-4">
-          <h2 className="font-display font-bold text-2xl text-slate-800">
-            {quest.title}
-          </h2>
-          <button onClick={handleLeave} className="text-slate-400 hover:text-slate-600 font-medium px-4 py-2 bg-slate-100 rounded-full transition-colors text-sm">
-            {t.leaveQuest}
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto min-h-0 flex flex-col">
-          <div className="bg-sky-50 rounded-2xl p-6 md:p-8 mb-8 border border-sky-100">
+      <GameQuizShell
+        ribbonLabel={t.whatWillYouDo}
+        title={quest.title}
+        progress={scene.stageLabel ?? undefined}
+        icon={<Lightbulb className="h-6 w-6 fill-current text-amber-500" />}
+        leaveLabel={t.leaveQuest}
+        onLeave={handleLeave}
+        prompt={(
+          <>
             {scene.stageLabel && (
-              <span className="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-sm font-bold mb-4 uppercase tracking-wide">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-orange-700">
                 {scene.stageLabel}
-              </span>
+              </p>
             )}
-            <p className="text-xl md:text-2xl font-medium text-slate-800 leading-relaxed">
+            <p className="text-xl font-bold leading-relaxed text-slate-800 md:text-2xl">
               {scene.narration}
             </p>
-          </div>
+          </>
+        )}
+        answers={(
+          <>
+            {/* Task 17: optional role-play interview remains outside scoring
+                and progression, but shares the same quiz-board shell. */}
+            {scene.persona && (
+              <PersonaInterview
+                key={scene.sceneId}
+                persona={scene.persona}
+                ageBand={quest.ageBand}
+                language={questLang}
+              />
+            )}
 
-          {/* Task 17: optional role-play interview — a side conversation
-              that never affects choices, scoring, or progression. Keyed by
-              scene so each persona appearance starts fresh (and the
-              disclaimer is shown anew every time). */}
-          {scene.persona && (
-            <PersonaInterview
-              key={scene.sceneId}
-              persona={scene.persona}
-              ageBand={quest.ageBand}
-              language={questLang}
-            />
-          )}
-
-          {scene.choices.length === 0 ? (
-            /* Task 26: narration-only story panel — no decisions here, just
-               one Continue that walks to the next panel (or completes the
-               level at the border). */
-            <div className="flex justify-end mt-auto">
-              <button
-                onClick={() => setSession(continueScene(session))}
-                className="bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white px-8 py-3.5 rounded-full font-bold text-lg shadow-md flex items-center gap-2 transition-transform active:scale-95 touch-manipulation"
-              >
-                {t.continueLabel} <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          ) : !feedback ? (
-            <div className="flex flex-col gap-3 mt-auto">
-              <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">{t.whatWillYouDo}</h3>
-              {scene.choices.map((choice, idx) => (
+            {scene.choices.length === 0 ? (
+              <div className="flex justify-end">
                 <button
-                  key={idx}
-                  onClick={() => setSession(chooseSceneOption(session, idx))}
-                  className="text-left w-full p-4 md:p-5 rounded-2xl border-2 border-slate-100 hover:border-orange-300 hover:bg-orange-50 active:bg-orange-100 transition-all text-lg font-medium text-slate-700 shadow-sm touch-manipulation"
+                  onClick={() => setSession(continueScene(session))}
+                  className="flex items-center gap-2 rounded-full bg-orange-600 px-7 py-3.5 text-lg font-bold text-white shadow-md transition-transform hover:bg-orange-700 active:scale-95 touch-manipulation"
                 >
-                  {choice.text}
+                  {t.continueLabel} <ArrowRight className="h-5 w-5" />
                 </button>
-              ))}
-            </div>
-          ) : (
-            <div className={cn("p-6 rounded-2xl border-2 mt-auto animate-in zoom-in-95 duration-200", FeedbackColor(feedback.outcome))}>
-              <p className="text-lg md:text-xl font-medium leading-relaxed mb-6">
-                {feedback.feedback}
-              </p>
-              <button
-                onClick={() => setSession(acknowledgeSceneFeedback(session))}
-                className="bg-white/50 hover:bg-white/80 text-current px-6 py-3 rounded-full font-bold shadow-sm border border-current/20 flex items-center gap-2 transition-transform active:scale-95 touch-manipulation"
-              >
-                {t.continueLabel} <ArrowRight className="w-5 h-5" />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
+              </div>
+            ) : !feedback ? (
+              <div className="flex flex-col gap-4">
+                {scene.choices.map((choice, idx) => (
+                  <GameAnswerButton key={idx} index={idx} onClick={() => setSession(chooseSceneOption(session, idx))}>
+                    {choice.text}
+                  </GameAnswerButton>
+                ))}
+              </div>
+            ) : (
+              <div className={cn("rounded-2xl border-4 p-5 shadow-xl animate-in zoom-in-95 duration-200 md:p-6", FeedbackColor(feedback.outcome))}>
+                <p className="mb-6 text-base font-bold leading-relaxed md:text-xl">
+                  {feedback.feedback}
+                </p>
+                <button
+                  onClick={() => setSession(acknowledgeSceneFeedback(session))}
+                  className="flex items-center gap-2 rounded-full bg-white/70 px-6 py-3 font-bold text-current shadow-sm transition-transform hover:bg-white active:scale-95 touch-manipulation"
+                >
+                  {t.continueLabel} <ArrowRight className="h-5 w-5" />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+      />
     );
   }
 

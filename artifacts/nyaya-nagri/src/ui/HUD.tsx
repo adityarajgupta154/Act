@@ -16,6 +16,7 @@ import {
   BadgeCheck,
 } from 'lucide-react';
 import { useUIStore, enterZone, exitZone, openProgress, openSettings, openCommunity, openStoryMap, enterLevel, clearLevel } from './uiStore';
+import { RightWrongGame } from '@/games/rightwrong/RightWrongGame';
 import { ProgressOverlay } from './ProgressScreen';
 import { MapOverlay } from './MapScreen';
 import { StoryOverlay } from '@/story/StoryOverlay';
@@ -37,9 +38,13 @@ import { Minimap } from './Minimap';
 import { resolveQuest } from '@/quests/registry';
 import { QuestPlayer } from '@/quests/QuestPlayer';
 import { LevelSelect } from '@/quests/LevelSelect';
-import { VideoQuestFlow } from '@/quests/VideoQuestFlow';
-import { getZoneVideoFlow } from '@/quests/videoFlows';
+import { GameQuestFlow } from '@/quests/GameQuestFlow';
+import { getZoneGameFlow } from '@/quests/gameFlows';
 import { getLevelStatuses } from '@/quests/levels';
+// Quiz-screen backdrop (Aug 2026): generated in-house doodle scene (books,
+// pencil, lightbulb, hills) — replaces the plain frosted slate backdrop so
+// every level/quiz surface sits in a playful classroom-sky world.
+import quizDoodleBgUrl from '@/assets/ui/quiz-doodle-bg.webp';
 
 /** Task 13: has the onboarding (intro, age band, guardian consent) run? */
 function useOnboarded(): boolean {
@@ -148,7 +153,7 @@ function StoryPrompt() {
   useEffect(() => progressStore.subscribe(setProgress), []);
 
   if (!nearbyStoryId || activeStory || storyMapOpen) return null;
-  // Slide-less teasers COUNT here (video-gated castle flow): the prompt
+  // Slide-less teasers COUNT here (game-gated castle flow): the prompt
   // previews the next unlockable level even before its slides ship.
   const storyProgress = progress.storyProgress;
   const doneCount = STORY_LEVELS.filter((l) => storyProgress[l.id]).length;
@@ -157,7 +162,7 @@ function StoryPrompt() {
       (l) => !storyProgress[l.id] && isStoryLevelUnlockedIn(progress, l.id),
     ) ?? null;
   const allDone = STORY_LEVELS.length > 0 && doneCount === STORY_LEVELS.length;
-  // A still-locked video-gated level names the zone that opens it.
+  // A still-locked game-gated level names the zone that opens it.
   const firstLocked =
     STORY_LEVELS.find((l) => !storyProgress[l.id] && l.unlockRequires) ?? null;
   const lockedZoneName = firstLocked?.unlockRequires
@@ -253,15 +258,16 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
     );
   }
 
-  // Video-first castle flow (Aug 2026): zones registered in videoFlows run
-  // VIDEO → final quiz (same questions, same engine finalization) instead
-  // of the level-select screen. Ordering (video BEFORE quiz) is enforced
-  // inside the flow component; the global Get Help Now pill stays above.
-  const videoFlow = getZoneVideoFlow(zoneId);
-  if (videoFlow) {
+  // Game-first castle flow (Aug 2026): zones registered in gameFlows run
+  // the "Right or Wrong?" GAME → final quiz (same questions, same engine
+  // finalization) instead of the level-select screen. Ordering (game
+  // BEFORE quiz) is enforced inside the flow component; the global Get
+  // Help Now pill stays above.
+  const gameFlow = getZoneGameFlow(zoneId);
+  if (gameFlow) {
     return (
-      <VideoQuestFlow
-        flow={videoFlow}
+      <GameQuestFlow
+        flow={gameFlow}
         quest={quest}
         zoneName={zoneStrings?.name ?? zone.name}
         zoneTheme={zoneStrings?.theme ?? zone.theme}
@@ -289,7 +295,7 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
 }
 
 export function HUD() {
-  const { activeZoneId, fadeOpacity } = useUIStore();
+  const { activeZoneId, fadeOpacity, rightWrongOpen } = useUIStore();
   const t = useStrings();
   const onboarded = useOnboarded();
 
@@ -391,9 +397,13 @@ export function HUD() {
         </div>
       )}
 
-      {/* Interior View Overlay */}
+      {/* Interior View Overlay — doodle-scene backdrop behind every level
+          select / quiz / game screen (bg-sky-100 shows while it loads). */}
       {activeZoneId && (
-        <div className="absolute inset-0 z-30 pointer-events-auto bg-slate-50/95 backdrop-blur-md flex items-center justify-center p-6">
+        <div
+          className="absolute inset-0 z-30 pointer-events-auto bg-sky-100 bg-cover bg-center flex items-center justify-center p-4 md:p-6"
+          style={{ backgroundImage: `url(${quizDoodleBgUrl})` }}
+        >
           <ZoneInterior zoneId={activeZoneId} />
         </div>
       )}
@@ -436,6 +446,13 @@ export function HUD() {
       {/* Story Adventure overlay (z-30, Aug 2026) — the house slide-show;
           fully deterministic content. Get Help Now (z-50) stays on top */}
       <StoryOverlay />
+
+      {/* "Right or Wrong?" playable mini-game (z-30, Aug 2026) — pure DOM
+          overlay, no WebGL; the headless capture browser can screenshot it.
+          Mounted after StoryOverlay so it paints above if both are ever true
+          (guard in openRightWrong ensures they can't be, but belt+braces).
+          Get Help Now (z-50) stays on top always. */}
+      {rightWrongOpen && <RightWrongGame />}
 
       {/* Onboarding (z-20, Task 13) — covers the world until the guardian
           consent step completes; Get Help Now (z-50) stays on top even here */}

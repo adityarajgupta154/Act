@@ -115,7 +115,12 @@ An orphaned tester can hold the single slot across sessions/compaction indefinit
 - Screenshot tool saves FULL-RES capture (e.g. 2400x2960 jpg) while the chat preview is downscaled — run `magick identify` on the saved file BEFORE cropping zoom-ins; crop coords eyeballed from the preview land in the wrong region.
 
 ## Aug 2026 addendum — seams & battery deltas
-- Dev seams (main.tsx): `?zone=<id>` marks all PRIOR zones complete then enterZone (lock rules + fade still apply; HomePage skips landing on the param). Story seam extras: `&zones=` (completedZones) + `&watched=` (videosWatched) for the video-gated unlock.
+- Dev seams (main.tsx): `?zone=<id>` marks all PRIOR zones complete then enterZone (lock rules + fade still apply; HomePage skips landing on the param); `&watched=<id,csv>` also works on the zone seam and pre-earns the castle lesson gate (historical `videosWatched` name) by writing the map DIRECTLY — deliberately not via markVideoWatched, so the story smoke's write-site enumeration stays clean. `?zone=zone2` fresh = Right-or-Wrong game mounts immediately; `?zone=zone2&watched=right-to-childhood` = landing card with Continue enabled. Story seam extras: `&zones=` (completedZones) + `&watched=` for the castle-gated unlock.
 - Api battery is FOUR smokes (safety, avatar.safety, persona.safety, ratelimit). Ratelimit = clock-injected policy tests + wiring greps (admission mounted in app.ts BEFORE express.json; the route holds NO allow() call). Grep lesson: bare function names hit DEFINITIONS — match call sites (`await fn(`).
-- Story smoke unit-tests the pure watch-credit tracker (seek-to-end + onEnded bypass is the regression case) — "watched" is earned playback, not an onEnded event.
+- Story smoke pins the GAME-FIRST castle policy (video + watch tracker DELETED Aug 2026): fresh entry mounts the game, src-wide enumeration keeps markVideoWatched( to store+flow only, Continue `disabled={!gameDone`, no `<video`, and `public/video/` must NOT exist.
 - Voice-token mint probing is DEAD (Sarvam era; token routes mounted-but-unused). Sarvam route needs real audio to probe — prefer the browser `[voice-latency]` console lines.
+
+## Unlock-rule + tuning-literal smoke refits (2026-08-12)
+- `levels.smoke.ts` is now unlockAfter-AWARE: it derives each next zone's prerequisite from `ZONES` (mirroring `isZoneUnlockedIn`) instead of assuming strict order; the legacy-save section asserts zone2 waits for zone0 even with zone1 complete. Future `unlockAfter` changes are followed automatically.
+- `nyayaai.smoke.ts` VAD + turn-timeout checks are RANGE-based (silence 300-900ms, min speech 100-400ms, record cap 10-30s, timeout 8-25s) — latency tuning no longer rots them. Lesson: when tuning constants change, refit smokes to the invariant RANGE, not the new literal.
+- Turn-failure check asserts fail-closed (`this.fail('connect-failed')` + the friendly-retry comment) — the old "silent return to listening" behavior is intentionally gone.

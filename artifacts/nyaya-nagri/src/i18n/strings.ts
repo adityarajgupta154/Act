@@ -74,6 +74,41 @@ export interface UIStrings {
   correctAnswerWas: string;
   continueLabel: string;
   whatWillYouDo: string;
+  // Game-board quiz chrome (Aug 2026 redesign): ribbon/kicker labels.
+  // Ribbons render uppercase via CSS, so values stay sentence-case.
+  ribbonQuestion: string;
+  ribbonReview: string;
+  ribbonRecap: string;
+  /**
+   * "Right or Wrong?" playable mini-game (Aug 2026). Game vocabulary on
+   * purpose — Round/Score/Streak/Stars, never "question/quiz" (jury
+   * feedback: it must feel like a game, not an assessment).
+   */
+  rwTitle: string;
+  rwHeading: string;
+  rwSubheading: string;
+  rwRound: (n: number, total: number) => string;
+  rwScoreLabel: string;
+  rwOr: string;
+  rwGreatChoice: string;
+  rwThatsTheOne: string;
+  rwTryAgain: string;
+  rwStreakBonus: (bonus: number) => string;
+  rwLawChipLabel: string;
+  rwYouDidIt: string;
+  rwRightsProtected: (n: number, total: number) => string;
+  rwKnowRights: string;
+  rwFinalScore: string;
+  rwBestScore: (score: number) => string;
+  rwPlayAgain: string;
+  rwBackHome: string;
+  rwPlayCta: string;
+  rwSoundOn: string;
+  rwSoundOff: string;
+  rwExitLabel: string;
+  rwMascotThink: string;
+  rwMascotCorrect: string;
+  rwTagline: string;
   questComplete: string;
   youGotXofY: (score: number, total: number) => string;
   unlockedNext: (zoneName: string) => string;
@@ -587,8 +622,8 @@ export interface UIStrings {
   storyMapNewAdventure: string;
   storyMapAllDone: string;
   // Video-first castle flow (Aug 2026): video screen + story unlock card.
-  videoWatchFirst: string;
-  videoWatchedTag: string;
+  gamePlayFirst: string;
+  gameCompletedTag: string;
   storyUnlockedHeading: string;
   openStoryAdventure: string;
   storyMapContinueCta: string;
@@ -700,6 +735,34 @@ const EN: UIStrings = {
   correctAnswerWas: 'The right answer:',
   continueLabel: 'Continue',
   whatWillYouDo: 'What will you do?',
+  ribbonQuestion: 'Question',
+  ribbonReview: 'Review',
+  ribbonRecap: 'Recap',
+  rwTitle: 'Right or Wrong?',
+  rwHeading: 'Which one is RIGHT?',
+  rwSubheading: 'Choose the picture that shows a right every child has.',
+  rwRound: (n, total) => `Round ${n} of ${total}`,
+  rwScoreLabel: 'Score',
+  rwOr: 'or',
+  rwGreatChoice: 'Great choice!',
+  rwThatsTheOne: 'Yes — that is the right one!',
+  rwTryAgain: 'Hmm, look closely and try again!',
+  rwStreakBonus: (bonus) => `Streak bonus +${bonus}!`,
+  rwLawChipLabel: 'The law says',
+  rwYouDidIt: 'You did it!',
+  rwRightsProtected: (n, total) => `${n} of ${total} rights protected!`,
+  rwKnowRights: 'You know your rights!',
+  rwFinalScore: 'Final score',
+  rwBestScore: (score) => `Best: ${score}`,
+  rwPlayAgain: 'Play again',
+  rwBackHome: 'Back to the city',
+  rwPlayCta: 'Play',
+  rwSoundOn: 'Sound on',
+  rwSoundOff: 'Sound off',
+  rwExitLabel: 'Leave the game',
+  rwMascotThink: 'Think carefully — choose what is right for every child.',
+  rwMascotCorrect: 'You are doing great!',
+  rwTagline: 'Learn. Choose. Protect rights!',
   questComplete: 'Quest Complete!',
   youGotXofY: (score, total) => `You got ${score} out of ${total}!`,
   unlockedNext: (zoneName) => `You unlocked the next area: ${zoneName}`,
@@ -1297,8 +1360,8 @@ const EN: UIStrings = {
   storyMapReplayCta: 'Dobara khelo',
   storyMapNewAdventure: 'New Adventure Unlocked!',
   storyMapAllDone: 'Saari kahaniyan complete!',
-  videoWatchFirst: 'Watch the video, then continue',
-  videoWatchedTag: 'Video watched',
+  gamePlayFirst: 'Play the game, then continue',
+  gameCompletedTag: 'Game completed',
   storyUnlockedHeading: 'New Story Unlocked!',
   openStoryAdventure: 'Go to Story Adventure',
   storyMapContinueCta: 'Continue Adventure',
@@ -1405,6 +1468,34 @@ const HI: UIStrings = {
   correctAnswerWas: 'सही जवाब:',
   continueLabel: 'आगे बढ़ो',
   whatWillYouDo: 'तुम क्या करोगे?',
+  ribbonQuestion: 'सवाल',
+  ribbonReview: 'पुनरावृत्ति',
+  ribbonRecap: 'दोहराएं',
+  rwTitle: 'सही या गलत?',
+  rwHeading: 'कौन सा सही है?',
+  rwSubheading: 'वह तस्वीर चुनो जो हर बच्चे का हक दिखाती है।',
+  rwRound: (n, total) => `राउंड ${n} / ${total}`,
+  rwScoreLabel: 'स्कोर',
+  rwOr: 'या',
+  rwGreatChoice: 'बहुत बढ़िया!',
+  rwThatsTheOne: 'हाँ — यही सही है!',
+  rwTryAgain: 'ध्यान से देखो और फिर कोशिश करो!',
+  rwStreakBonus: (bonus) => `लगातार सही! बोनस +${bonus}`,
+  rwLawChipLabel: 'कानून कहता है',
+  rwYouDidIt: 'तुमने कर दिखाया!',
+  rwRightsProtected: (n, total) => `${total} में से ${n} हक सुरक्षित!`,
+  rwKnowRights: 'तुम अपने हक जानते हो!',
+  rwFinalScore: 'कुल स्कोर',
+  rwBestScore: (score) => `बेस्ट: ${score}`,
+  rwPlayAgain: 'फिर से खेलो',
+  rwBackHome: 'शहर वापस चलो',
+  rwPlayCta: 'खेलो',
+  rwSoundOn: 'आवाज़ चालू',
+  rwSoundOff: 'आवाज़ बंद',
+  rwExitLabel: 'गेम से बाहर जाओ',
+  rwMascotThink: 'ध्यान से सोचो — वही चुनो जो हर बच्चे के लिए सही है।',
+  rwMascotCorrect: 'तुम बहुत अच्छा कर रहे हो!',
+  rwTagline: 'सीखो। चुनो। हक बचाओ!',
   questComplete: 'क्वेस्ट पूरी हुई!',
   youGotXofY: (score, total) => `तुमने ${total} में से ${score} सही किए!`,
   unlockedNext: (zoneName) => `नया इलाका खुल गया: ${zoneName}`,
@@ -1998,8 +2089,8 @@ const HI: UIStrings = {
   storyMapReplayCta: 'दोबारा खेलो',
   storyMapNewAdventure: 'नया एडवेंचर अनलॉक हुआ!',
   storyMapAllDone: 'सारी कहानियाँ पूरी!',
-  videoWatchFirst: 'पहले वीडियो देखो, फिर आगे बढ़ो',
-  videoWatchedTag: 'वीडियो देख लिया',
+  gamePlayFirst: 'पहले गेम खेलो, फिर आगे बढ़ो',
+  gameCompletedTag: 'गेम पूरा हो गया',
   storyUnlockedHeading: 'नई कहानी अनलॉक हो गई!',
   openStoryAdventure: 'स्टोरी एडवेंचर खोलो',
   storyMapContinueCta: 'एडवेंचर जारी रखो',

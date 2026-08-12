@@ -58,13 +58,14 @@ export interface StorySlide {
  * Explicit unlock requirement for VIDEO-GATED levels (Aug 2026 castle
  * flow). When present it REPLACES the sequential previous-level rule:
  * the level opens only once the named zone is complete (final quiz
- * passed — engine-written) AND the named video was watched to the end
- * (progressStore.markVideoWatched). Both halves, fail-closed.
+ * passed — engine-written) AND the castle's lesson gate was earned by
+ * finishing the "Right or Wrong?" game (progressStore.markVideoWatched —
+ * historical name, kept for save-compat). Both halves, fail-closed.
  */
 export interface StoryUnlockRequirement {
   /** Zone whose recorded completion is required (e.g. 'zone2'). */
   zoneId: string;
-  /** progressStore.videosWatched key (see src/quests/videoFlows.ts). */
+  /** progressStore.videosWatched key (see src/quests/gameFlows.ts). */
   videoId: string;
 }
 

@@ -3,13 +3,15 @@
  * Run: pnpm dlx tsx scripts/story.smoke.ts
  *
  * Asserts the story-level invariants:
- *  - The ONE story level "Right to Childhood": video-gated teaser (no
+ *  - The ONE story level "Right to Childhood": castle-gated teaser (no
  *    slides yet), the task's EXACT title, unlockRequires pinned to the
  *    zone2 castle flow; right-to-life / right-to-health are REMOVED.
- *  - Video-first castle flow: ZONE_VIDEO_FLOWS ↔ story unlockRequires can
- *    never drift, the mp4 ships in public/video/, the watched flag writes
- *    ONLY via real-playback credit, the SAME final quiz runs through QuestPlayer (found
- *    by kind), and Continue stays locked until the video ends.
+ *  - Game-first castle flow (learning video DELETED — user order, Aug
+ *    2026): ZONE_GAME_FLOWS ↔ story unlockRequires can never drift, no
+ *    mp4 ships (public/video/ is gone), the lesson-gate flag writes ONLY
+ *    via the game's completion callback, the SAME final quiz runs through
+ *    QuestPlayer (found by kind), and Continue stays locked until the
+ *    game is done.
  *  - Level map (Candy-Crush progression): generated from STORY_LEVELS with
  *    ZERO hard-coded level ids, ONE lock rule, locked-node hints, unlock
  *    cinematic gating, and the map/overlay/world DEV seams.
@@ -37,7 +39,7 @@
  *    the manager has ONE fetch site (audio by manifest id — no free text,
  *    no keys), device-voice fallback stays wired, suspend silences it too.
  */
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { STRINGS } from '../src/i18n/strings';
@@ -49,7 +51,7 @@ import {
   getStoryLevel,
   isStoryLevelUnlockedIn,
 } from '../src/story/storyData';
-import { ZONE_VIDEO_FLOWS, getZoneVideoFlow } from '../src/quests/videoFlows';
+import { ZONE_GAME_FLOWS, getZoneGameFlow } from '../src/quests/gameFlows';
 import { setNarrationSuspended } from '../src/story/storyNarrationState';
 import { REMINDER_DELAYS_MS } from '../src/story/useStoryNarrator';
 import {
@@ -81,10 +83,10 @@ const DEVANAGARI_RE = /[\u0900-\u097F]/;
 const EMOJI_RE =
   /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{1F1E6}-\u{1F1FF}]/u;
 
-// --- The ONE story level: "Right to Childhood" (video-gated teaser) ----------
+// --- The ONE story level: "Right to Childhood" (castle-gated teaser) ---------
 // The old right-to-life / right-to-health levels are REMOVED (task order,
-// Aug 2026): the castle's learning video + final quiz now feed a single
-// video-gated level. Its slides ship later — until then it is a teaser
+// Aug 2026): the castle's mini-game + final quiz now feed a single
+// castle-gated level. Its slides ship later — until then it is a teaser
 // node on the map (visible, unlockable, never openable).
 const RTC = 'right-to-childhood';
 const rtc = getStoryLevel(RTC);
@@ -101,7 +103,7 @@ assert(rtc!.slides.length === 0, 'teaser era: NO slides yet (content ships later
 assert(
   rtc!.unlockRequires?.zoneId === 'zone2' &&
     rtc!.unlockRequires?.videoId === 'right-to-childhood',
-  'unlock is video-gated: zone2 (castle) completion + the learning video',
+  'unlock is castle-gated: zone2 completion + the game gate (historical videoId key)',
 );
 assert(STORY_LEVELS.length === 1, 'STORY_LEVELS holds ONLY the new level (old levels removed, not hidden)');
 assert(
@@ -143,18 +145,18 @@ for (const level of STORY_LEVELS) {
   }
 }
 
-// --- The ONE lock rule: video-gated = zone complete AND video watched --------
+// --- The ONE lock rule: castle-gated = zone complete AND game done -----------
 assert(!isStoryLevelUnlockedIn({ storyProgress: {} }, RTC), 'level starts LOCKED (nothing done)');
 assert(
   !isStoryLevelUnlockedIn({ storyProgress: {}, completedZones: { zone2: true } }, RTC),
-  'castle quiz alone is NOT enough (video half missing — fail-closed)',
+  'castle quiz alone is NOT enough (game half missing — fail-closed)',
 );
 assert(
   !isStoryLevelUnlockedIn(
     { storyProgress: {}, videosWatched: { 'right-to-childhood': true } },
     RTC,
   ),
-  'video alone is NOT enough (quiz half missing — fail-closed)',
+  'the game gate alone is NOT enough (quiz half missing — fail-closed)',
 );
 assert(
   isStoryLevelUnlockedIn(
@@ -165,7 +167,7 @@ assert(
     },
     RTC,
   ),
-  'zone completion + video watched UNLOCK the level',
+  'zone completion + the earned game gate UNLOCK the level',
 );
 assert(
   isStoryLevelUnlockedIn({ storyProgress: { 'right-to-childhood': true } }, RTC),
@@ -180,7 +182,7 @@ assert(
 openStory(RTC);
 assert(
   uiStore.getState().activeStory === null,
-  'openStory refuses the LOCKED video-gated level (fail-closed)',
+  'openStory refuses the LOCKED castle-gated level (fail-closed)',
 );
 
 assert(
@@ -191,7 +193,7 @@ assert(
 progressStore.markVideoWatched('right-to-childhood');
 assert(
   progressStore.getState().videosWatched['right-to-childhood'] === true,
-  'markVideoWatched records the watch-to-end flag',
+  'markVideoWatched records the lesson-gate flag (historical name — the game earns it now)',
 );
 const afterWatch = progressStore.getState();
 progressStore.markVideoWatched('right-to-childhood');
@@ -199,7 +201,7 @@ assert(progressStore.getState() === afterWatch, 'markVideoWatched is idempotent 
 openStory(RTC);
 assert(
   uiStore.getState().activeStory === null,
-  'video alone still cannot open the level (zone half missing)',
+  'the game gate alone still cannot open the level (zone half missing)',
 );
 
 progressStore.completeStoryLevel(RTC);
@@ -248,8 +250,8 @@ for (const rel of [
   '../src/story/StoryAdventureMap.tsx',
   '../src/story/storyNarrationState.ts',
   '../src/story/useStoryNarrator.ts',
-  '../src/quests/videoFlows.ts',
-  '../src/quests/VideoQuestFlow.tsx',
+  '../src/quests/gameFlows.ts',
+  '../src/quests/GameQuestFlow.tsx',
 ]) {
   const src = read(rel);
   assert(
@@ -292,8 +294,8 @@ assert(
   'the door prompt opens the LEVEL MAP too',
 );
 assert(
-  hud.includes('getZoneVideoFlow') && hud.includes('<VideoQuestFlow'),
-  'zone interiors registered in videoFlows run the video-first screen (others keep LevelSelect)',
+  hud.includes('getZoneGameFlow') && hud.includes('<GameQuestFlow'),
+  'zone interiors registered in gameFlows run the game-first screen (others keep LevelSelect)',
 );
 
 const overlay = read('../src/story/StoryOverlay.tsx');
@@ -382,7 +384,7 @@ assert(
 );
 assert(
   mapSrc.includes('completeFirst') && mapSrc.includes('unlockRequires'),
-  'video-gated locked nodes name the ZONE that opens them (not a previous level)',
+  'castle-gated locked nodes name the ZONE that opens them (not a previous level)',
 );
 
 const uiWiring = read('../src/ui/uiStore.ts');
@@ -401,9 +403,9 @@ assert(
   'My Progress shows the Story Adventures section',
 );
 
-// --- Video-first castle flows: the two registries can never drift -------------
-assert(ZONE_VIDEO_FLOWS.length >= 1, 'the Right to Childhood castle flow is registered');
-for (const flow of ZONE_VIDEO_FLOWS) {
+// --- Game-first castle flows: the two registries can never drift --------------
+assert(ZONE_GAME_FLOWS.length >= 1, 'the Right to Childhood castle flow is registered');
+for (const flow of ZONE_GAME_FLOWS) {
   assert(
     ZONES.some((z) => z.id === flow.zoneId),
     `flow ${flow.videoId}: zone "${flow.zoneId}" exists in the world`,
@@ -415,18 +417,17 @@ for (const flow of ZONE_VIDEO_FLOWS) {
       target!.unlockRequires?.videoId === flow.videoId,
     `flow ${flow.videoId}: story unlockRequires mirrors the flow EXACTLY`,
   );
-  let videoBytes = 0;
-  try {
-    videoBytes = statSync(join(here, '../public/video', flow.videoFile)).size;
-  } catch {
-    videoBytes = 0;
-  }
-  assert(videoBytes > 100_000, `public/video/${flow.videoFile} ships real footage`);
 }
+// The learning video is DELETED (user order, Aug 2026): the game IS the
+// lesson. No mp4 may quietly return — the whole public/video/ dir is gone.
+assert(
+  !existsSync(join(here, '../public/video')),
+  'public/video/ is GONE — the castle lesson is the game, not a video',
+);
 for (const level of STORY_LEVELS) {
   if (!level.unlockRequires) continue;
   assert(
-    ZONE_VIDEO_FLOWS.some(
+    ZONE_GAME_FLOWS.some(
       (f) =>
         f.zoneId === level.unlockRequires!.zoneId && f.videoId === level.unlockRequires!.videoId,
     ),
@@ -434,62 +435,62 @@ for (const level of STORY_LEVELS) {
   );
 }
 assert(
-  getZoneVideoFlow('zone2')?.videoId === 'right-to-childhood',
-  'zone2 interior routes to the castle video flow',
+  getZoneGameFlow('zone2')?.videoId === 'right-to-childhood',
+  'zone2 interior routes to the castle game flow',
 );
 assert(
-  getZoneVideoFlow('no-such-zone') === null,
-  'non-video zones fall through to the level-select screen',
+  getZoneGameFlow('no-such-zone') === null,
+  'non-game zones fall through to the level-select screen',
 );
 
-const flowSrc = read('../src/quests/VideoQuestFlow.tsx');
-// The gate is a POLICY, so test the policy, not the handler wiring alone:
-// the pure tracker is exercised with synthetic media timelines, including
-// the seek-to-end bypass an architect review caught in the naive
-// onEnded-only version.
-const { createWatchTracker } = await import('../src/quests/videoFlows');
+const flowSrc = read('../src/quests/GameQuestFlow.tsx');
+// GAME BEFORE QUIZ is a POLICY: a fresh entry mounts the game (never the
+// quiz), the lesson gate is credited ONLY by the game's completion
+// callback, and Continue stays disabled until the gate is earned. The
+// game rules themselves are covered by scripts/rightwrong.smoke.ts.
+assert(
+  flowSrc.includes('<RightWrongGame') &&
+    flowSrc.includes('onComplete={() => progressStore.markVideoWatched(flow.videoId)}'),
+  'the game credits the lesson gate through its completion callback (the ONE write site)',
+);
+// ...and it STAYS the one production write site: enumerate every src file
+// that mentions markVideoWatched( — only the store (definition) and the
+// castle flow (the callback) may. A future bypass (debug button, second
+// caller) grows this set and fails loudly. The ?zone&watched= DEV seam in
+// main.tsx deliberately writes the videosWatched map directly, so it does
+// not appear here.
 {
-  const full = createWatchTracker();
-  let done = false;
-  for (let tSec = 0; tSec <= 120 && !done; tSec += 0.25) done = full.onTime(tSec, 120);
-  assert(done, 'watch tracker: uninterrupted real playback earns completion');
-
-  const skipper = createWatchTracker();
-  skipper.onTime(0, 120);
-  skipper.onTime(0.5, 120);
-  skipper.onSeek(119.5);
+  const srcRoot = join(here, '../src');
+  const gateFiles: string[] = [];
+  const walk = (dir: string): void => {
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const p = join(dir, entry.name);
+      if (entry.isDirectory()) walk(p);
+      else if (/\.tsx?$/.test(entry.name) && readFileSync(p, 'utf8').includes('markVideoWatched('))
+        gateFiles.push(p.slice(srcRoot.length + 1));
+    }
+  };
+  walk(srcRoot);
   assert(
-    !skipper.onTime(119.9, 120) && !skipper.onTime(120, 120),
-    'watch tracker: seek-to-end + onEnded does NOT count as watched',
+    gateFiles.sort().join(',') === 'data/progressStore.ts,quests/GameQuestFlow.tsx',
+    `markVideoWatched( appears ONLY in the store + the castle flow (got: ${gateFiles.join(', ') || 'none'})`,
   );
-  assert(skipper.watchedSeconds() < 2, 'watch tracker: a jump credits no watch time');
-
-  const jumper = createWatchTracker();
-  jumper.onTime(1, 120);
-  assert(
-    !jumper.onTime(119, 120) && !jumper.onTime(120, 120),
-    'watch tracker: a swallowed seeking event still cannot smuggle credit (tick cap)',
-  );
-
-  const nan = createWatchTracker();
-  assert(!nan.onTime(5, Number.NaN), 'watch tracker: broken metadata (NaN duration) never completes');
 }
 assert(
-  flowSrc.includes('createWatchTracker()') &&
-    flowSrc.includes('onTimeUpdate={(e) => creditTime(e.currentTarget)}') &&
-    flowSrc.includes("onSeeking={(e) => trackerRef.current.onSeek(e.currentTarget.currentTime)}") &&
-    flowSrc.includes('onRateChange=') &&
-    flowSrc.includes('e.currentTarget.playbackRate = 1') &&
-    !flowSrc.includes('onEnded={() => progressStore.markVideoWatched'),
-  'video stage wires the credit tracker (timeupdate + seeking + 1x rate lock; no naive onEnded-only write)',
+  flowSrc.includes('!progressStore.getState().videosWatched[flow.videoId]'),
+  'a fresh entry (gate unearned) drops straight into the game — game FIRST',
+);
+assert(
+  !flowSrc.includes('<video') && !/createWatchTracker|zoneVideoUrl/.test(flowSrc),
+  'no video element or watch-tracker remains anywhere in the castle flow',
 );
 assert(
   flowSrc.includes('<QuestPlayer') && flowSrc.includes("l.kind === 'quiz'"),
   'the SAME final quiz runs through QuestPlayer, found by KIND (questions untouched)',
 );
 assert(
-  flowSrc.includes('disabled={!watched'),
-  'Continue stays disabled until the video is watched (video BEFORE quiz, enforced)',
+  flowSrc.includes('disabled={!gameDone'),
+  'Continue stays disabled until the game is completed (game BEFORE quiz, enforced)',
 );
 assert(
   flowSrc.includes('practice: quizPassed'),
@@ -505,7 +506,7 @@ assert(
 );
 assert(
   !/fetch\(|@workspace\/api-client|GoogleGenAI|genai|openai/i.test(flowSrc),
-  'video flow is deterministic — the mp4 is fixed user content, never AI/fetched',
+  'game flow is deterministic — hard-coded game content, never AI/fetched',
 );
 
 // --- Chrome strings: EN/HI parity, Devanagari, no emojis ----------------------
@@ -538,9 +539,9 @@ const CHROME_KEYS = [
   'storyVoiceReplay',
   'storyVoiceRetry',
   'storyVoicePreparing',
-  // Video-first castle flow chrome (video screen + unlock celebration).
-  'videoWatchFirst',
-  'videoWatchedTag',
+  // Game-first castle flow chrome (landing card + unlock celebration).
+  'gamePlayFirst',
+  'gameCompletedTag',
   'storyUnlockedHeading',
   'openStoryAdventure',
 ] as const;

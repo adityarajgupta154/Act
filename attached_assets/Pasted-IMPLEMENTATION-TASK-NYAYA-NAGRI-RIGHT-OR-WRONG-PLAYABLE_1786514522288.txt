@@ -1,0 +1,581 @@
+IMPLEMENTATION TASK — NYAYA NAGRI: “RIGHT OR WRONG?” PLAYABLE MINI-GAME
+
+I want to add a new interactive mini-game to my existing Nyaya Nagri project.
+
+IMPORTANT CONTEXT:
+The jury feedback was:
+“The project has gamification, but it is basically just a quiz. There is no actual game.”
+
+So this feature must feel like a REAL SIMPLE GAME, not another quiz screen.
+
+The game should teach children about their fundamental rights / Right to Childhood through visual decision-making.
+
+CORE GAME CONCEPT:
+Show TWO visual situations/scenes side-by-side.
+
+The player must choose:
+“Which one shows the RIGHT thing?”
+
+Example:
+LEFT IMAGE:
+Children studying in a classroom → RIGHT
+
+RIGHT IMAGE:
+A child working in a dangerous factory → WRONG
+
+The player clicks/taps one of the two scenes.
+
+The game immediately gives feedback:
+- Correct → positive animation, points/reward, cheerful feedback
+- Wrong → gentle correction, explanation, and opportunity to continue
+- Never make the child feel punished or embarrassed.
+
+--------------------------------------------------
+1. GAME SCREEN
+--------------------------------------------------
+
+Create a dedicated game screen called:
+
+“Right or Wrong?”
+
+Top section:
+- Score
+- Progress indicator
+- Sound toggle
+- Home/Back button
+
+Main heading:
+
+“Which one is RIGHT?”
+
+Subheading:
+
+“Choose the picture that shows a right every child has.”
+
+Main game area:
+A large rounded game board/card.
+
+Inside it:
+
+             [ IMAGE A ]     OR     [ IMAGE B ]
+
+Each image must be a large clickable game card.
+
+Do NOT make them look like normal multiple-choice buttons.
+
+They should feel like two objects/scenes inside a game.
+
+Each card should contain:
+- Large illustration
+- Short scenario title
+- Optional small description
+
+Example:
+
+IMAGE A
+Children Learning
+“Every child has the right to education.”
+
+IMAGE B
+Child Labour
+“A child is forced to work.”
+
+--------------------------------------------------
+2. ACTUAL GAME INTERACTION
+--------------------------------------------------
+
+The interaction is the most important part.
+
+When the user hovers over a card:
+- Slight scale-up
+- Small lift animation
+- Soft shadow
+- Cursor becomes pointer
+- Image/card gets a subtle highlight
+
+When the user clicks a card:
+
+CORRECT:
+- Card gets a green border
+- Large animated check mark appears
+- Small celebration particles/confetti
+- Score increases
+- Show “Great choice!”
+- Show the related right in simple language
+- Play a short positive animation/sound if sound is enabled
+
+WRONG:
+- Card briefly shakes
+- Card gets a red/orange border
+- Show a gentle “Try again!” feedback
+- Explain why this situation is not protecting the child’s right
+- Do NOT immediately end the game
+- Allow the player to select the other card
+
+After the correct answer:
+- Disable both cards temporarily
+- Show feedback for around 1–1.5 seconds
+- Then automatically transition to the next round.
+
+This makes it an actual GAME LOOP rather than a static quiz.
+
+--------------------------------------------------
+3. GAME LOOP
+--------------------------------------------------
+
+Create approximately 5–10 rounds.
+
+Each round contains:
+- One RIGHT situation
+- One WRONG situation
+
+Randomize:
+- Which side contains the correct answer
+- Image ordering
+- Scenario pairing
+
+Example rounds:
+
+ROUND 1:
+Right to Education
+RIGHT:
+Children attending school
+
+WRONG:
+Child working at a construction site
+
+ROUND 2:
+Right to Play
+RIGHT:
+Children playing safely in a playground
+
+WRONG:
+Child being forced to work instead of playing
+
+ROUND 3:
+Right to Protection
+RIGHT:
+Child being protected by a trusted adult
+
+WRONG:
+Child being exposed to violence
+
+ROUND 4:
+Right to Health
+RIGHT:
+Child receiving medical care
+
+WRONG:
+Child being denied basic healthcare
+
+ROUND 5:
+Right to Family and Care
+RIGHT:
+Child living in a safe and caring environment
+
+WRONG:
+Child being neglected or abandoned
+
+IMPORTANT:
+Keep illustrations age-appropriate.
+Do not use graphic violence, disturbing imagery, or traumatic visuals.
+
+--------------------------------------------------
+4. GAME PROGRESSION
+--------------------------------------------------
+
+Use:
+
+Round 1 / 5
+Round 2 / 5
+Round 3 / 5
+...
+
+Progress should visually advance after every successful round.
+
+Example:
+
+● ━ ● ━ ● ━ ○ ━ ○
+
+or a playful progress path.
+
+At the end:
+
+“YOU DID IT! 🎉”
+
+Show:
+- Final score
+- Rights learned
+- Stars earned
+- Number of correct choices
+
+Example:
+
+⭐⭐⭐⭐⭐
+
+5 / 5 Rights Protected!
+
+“You know your rights!”
+
+Buttons:
+[Play Again]
+[Back to Nyaya Nagri]
+
+--------------------------------------------------
+5. SCORING
+--------------------------------------------------
+
+Create a simple scoring system.
+
+Correct answer:
++100 points
+
+Wrong attempt:
+0 points
+
+Optional:
+Streak bonus:
+3 correct in a row → +50
+
+Do not make scoring too complicated.
+
+Persist the score using the project's existing state management/localStorage architecture if appropriate.
+
+Do NOT introduce a new backend/database just for this feature.
+
+--------------------------------------------------
+6. VISUAL DESIGN
+--------------------------------------------------
+
+Use the existing Nyaya Nagri visual identity.
+
+The game should feel:
+
+- Child-friendly
+- Colorful
+- Playful
+- Educational
+- Cartoon/illustrated
+- Warm
+- Safe
+- Interactive
+
+Use the provided reference image as inspiration for the overall visual language.
+
+IMPORTANT:
+Do not simply copy the reference image.
+
+Create an original Nyaya Nagri design.
+
+Background:
+Use a colorful illustrated environment instead of the current very pale empty background.
+
+Recommended:
+- Purple/blue/pink sky gradient
+- Soft clouds
+- Trees
+- Grass
+- Small stars
+- Books
+- Educational elements
+- Playful decorative objects
+
+Keep the background visually rich but ensure the game cards remain the main focus.
+
+--------------------------------------------------
+7. CHARACTER / MASCOT
+--------------------------------------------------
+
+Reuse the existing Nyaya Nagri mascot if one already exists.
+
+Place the mascot near the game area.
+
+The mascot can react to the player's answer.
+
+Correct:
+- Happy expression
+- Thumbs up / celebration
+
+Wrong:
+- Friendly thinking expression
+- “Try again!” style reaction
+
+Do NOT create a completely different mascot if the project already has one.
+
+--------------------------------------------------
+8. IMAGE-BASED GAME CARDS
+--------------------------------------------------
+
+This is extremely important.
+
+The two choices must be visually understandable BEFORE reading the text.
+
+For example:
+
+RIGHT:
+A bright classroom
+Children sitting together
+Teacher teaching
+Books and school supplies
+Happy environment
+
+WRONG:
+Child doing hazardous/manual labour
+Dark or unsafe environment
+No graphic content
+
+The player should be able to understand the difference visually.
+
+Use image/illustration assets rather than text-only cards.
+
+If the project already has an image generation/asset system, integrate with it.
+
+Otherwise create placeholder asset paths/components so the images can easily be replaced later.
+
+--------------------------------------------------
+9. ANIMATIONS
+--------------------------------------------------
+
+Use the project's existing animation library if available.
+
+If Framer Motion is already installed, use Framer Motion.
+
+Animations:
+
+Card hover:
+scale: 1 → 1.03
+
+Correct:
+scale + checkmark + particles
+
+Wrong:
+horizontal shake
+
+Next round:
+slide/fade transition
+
+Score:
+small number pop animation
+
+Progress:
+smooth progress animation
+
+Keep animations short and responsive.
+
+Do not over-animate the interface.
+
+--------------------------------------------------
+10. SOUND
+--------------------------------------------------
+
+If the project already supports sound:
+
+Correct:
+soft success sound
+
+Wrong:
+soft error/try-again sound
+
+Completion:
+celebration sound
+
+Add a sound toggle.
+
+If there is no sound system, create the UI toggle but keep sound implementation modular so it can be added later.
+
+Do NOT add external dependencies unnecessarily.
+
+--------------------------------------------------
+11. RESPONSIVE DESIGN
+--------------------------------------------------
+
+Desktop:
+Two cards side-by-side.
+
+Tablet:
+Two cards side-by-side if space allows.
+
+Mobile:
+Stack cards vertically.
+
+Example:
+
+[ IMAGE A ]
+
+        OR
+
+[ IMAGE B ]
+
+The game must remain playable on touch devices.
+
+Minimum clickable/touch target:
+44px+
+
+--------------------------------------------------
+12. COMPONENT STRUCTURE
+--------------------------------------------------
+
+Keep the implementation clean and modular.
+
+Suggested structure:
+
+RightOrWrongGame/
+    RightOrWrongGame.jsx
+    GameHeader.jsx
+    GameProgress.jsx
+    ScenarioCard.jsx
+    GameFeedback.jsx
+    GameComplete.jsx
+    gameData.js
+
+If the project uses TypeScript:
+
+RightOrWrongGame.tsx
+etc.
+
+Do not blindly create duplicate components if equivalent components already exist.
+
+First inspect the existing project structure and reuse existing:
+- Button
+- Card
+- Modal
+- Animation
+- Mascot
+- Layout
+- Theme
+- State management
+
+--------------------------------------------------
+13. DATA STRUCTURE
+--------------------------------------------------
+
+Keep game content separate from UI.
+
+Example:
+
+const gameRounds = [
+  {
+    id: 1,
+    right: {
+      title: "Right to Education",
+      description: "Every child has the right to learn.",
+      image: "/assets/rights/education-right.png"
+    },
+    wrong: {
+      title: "Child Labour",
+      description: "Children should not be forced into harmful work.",
+      image: "/assets/rights/child-labour.png"
+    }
+  }
+];
+
+Randomize which scenario appears on the left/right.
+
+--------------------------------------------------
+14. IMPORTANT UX RULE
+--------------------------------------------------
+
+DO NOT call this experience simply:
+
+“Quiz”
+
+The UI should communicate:
+
+GAME
+PLAY
+CHOOSE
+EARN
+PROGRESS
+UNLOCK
+REWARD
+
+Use terminology such as:
+
+“Round”
+“Score”
+“Streak”
+“Stars”
+“Choose”
+“Great choice!”
+“Level complete!”
+
+This is specifically intended to demonstrate to the jury that Nyaya Nagri contains an actual playable game mechanic.
+
+--------------------------------------------------
+15. NAVIGATION
+--------------------------------------------------
+
+Add this game to the existing Nyaya Nagri navigation.
+
+For example:
+
+Home
+↓
+Learn / Rights
+↓
+“Play & Learn”
+↓
+Right or Wrong Game
+
+Also provide:
+
+[Back to Home]
+
+Do not break any existing routes.
+
+--------------------------------------------------
+16. IMPORTANT IMPLEMENTATION RULES
+--------------------------------------------------
+
+Before coding:
+
+1. Inspect the existing project structure.
+2. Identify the current routing system.
+3. Identify existing UI components.
+4. Identify existing mascot/assets.
+5. Identify existing state management.
+6. Identify existing animation library.
+7. Reuse existing design tokens/styles wherever possible.
+
+Do NOT rewrite the whole application.
+
+Do NOT create a separate standalone application.
+
+Integrate this feature into the current Nyaya Nagri application.
+
+Do NOT remove existing features.
+
+Do NOT break existing routes.
+
+Do NOT replace the existing design system globally.
+
+Only create/modify the components necessary for this game.
+
+--------------------------------------------------
+17. FINAL QUALITY CHECK
+--------------------------------------------------
+
+After implementation verify:
+
+✓ Game is actually playable
+✓ User chooses between two visual scenarios
+✓ Correct/wrong logic works
+✓ Score updates
+✓ Progress updates
+✓ Wrong answer gives feedback
+✓ Correct answer advances the game
+✓ 5+ rounds work
+✓ Random left/right positioning works
+✓ Game completion screen works
+✓ Play Again works
+✓ Home/Back works
+✓ Mobile layout works
+✓ Animations work
+✓ Existing application still works
+✓ No console errors
+✓ No broken images
+✓ No broken routes
+
+Most importantly:
+
+When I demonstrate this to a jury, it should immediately look and feel like a small educational GAME, not a normal quiz with gamification layered on top.

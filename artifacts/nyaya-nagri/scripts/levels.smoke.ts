@@ -72,7 +72,7 @@ async function main() {
   type QuestSession = import('../src/quests/engine').QuestSession;
   const { getLevelStatuses, isLevelUnlocked, getPriorPreAnswers, getReplayCount } =
     await import('../src/quests/levels');
-  const { isZoneUnlocked } = await import('../src/world/zones');
+  const { isZoneUnlocked, ZONES } = await import('../src/world/zones');
   const { getStrings } = await import('../src/i18n/strings');
   const { getLevelGreeting } = await import('../src/i18n/greetings');
   const { validateLevels, validateTranslationParity } = await import('../src/quests/schema');
@@ -196,8 +196,21 @@ async function main() {
     const quest = resolveQuest(zoneId, band, lang)!;
     const next = ZONES_SEQ[zi + 1];
 
+    // Explicit-prerequisite aware (Aug 2026): a zone with `unlockAfter`
+    // opens as soon as THAT zone is complete — zone2 unlocks right after
+    // zone0, before zone1 is played. Every other zone keeps the
+    // previous-in-order fallback (mirrors isZoneUnlockedIn, the ONE rule).
+    const nextPrereq = next ? ZONES.find((z) => z.id === next)?.unlockAfter ?? zoneId : '';
+    const nextOpensEarly = !!next && !!progressStore.getState().completedZones[nextPrereq];
+
     assert(isZoneUnlocked(zoneId), `${zoneId} unlocked when its turn comes`);
-    if (next) assert(!isZoneUnlocked(next), `${next} locked before ${zoneId} done`);
+    if (next) {
+      if (nextOpensEarly) {
+        assert(isZoneUnlocked(next), `${next} already unlocked (prereq ${nextPrereq} done)`);
+      } else {
+        assert(!isZoneUnlocked(next), `${next} locked before ${nextPrereq} done`);
+      }
+    }
 
     const nLevels = quest.levels.length; // 3, or 4 where an activity level is wired
     assert(
@@ -254,7 +267,9 @@ async function main() {
     r = finalizeLevel(s);
     assert(r.recorded && !r.zoneCompleted && !progressStore.getState().completedZones[zoneId],
       `${zoneId} still not complete after L2`);
-    if (next) assert(!isZoneUnlocked(next), `${next} STILL locked before the quiz level`);
+    if (next && !nextOpensEarly) {
+      assert(!isZoneUnlocked(next), `${next} STILL locked before the quiz level`);
+    }
 
     // --- Task 18: any activity level between the decision and the quiz ---
     for (let li = 2; li < nLevels - 1; li++) {
@@ -268,7 +283,9 @@ async function main() {
       const rec = progressStore.getState().activityScores[levelKey(zoneId, lvl.levelId)];
       assert(rec?.score === activityTotal(lvl) && rec?.total === activityTotal(lvl),
         `${zoneId}/L${li + 1} activity score recorded`);
-      if (next) assert(!isZoneUnlocked(next), `${next} still locked before the quiz level`);
+      if (next && !nextOpensEarly) {
+        assert(!isZoneUnlocked(next), `${next} still locked before the quiz level`);
+      }
     }
 
     // --- Final level (quiz): the ONLY quiz UI, completes the zone ---
@@ -286,7 +303,11 @@ async function main() {
       st3.quizScores[quest.questId]?.post === quest.quizQuestions.length,
       `${zoneId}: recorded scores pre=null (no fake 0), post=full`);
     assert(st3.completedZones[zoneId] === true, `${zoneId} complete after final level`);
-    if (next) assert(isZoneUnlocked(next), `${next} unlocks ONLY now (Task 1 rules intact)`);
+    if (next) {
+      assert(isZoneUnlocked(next), nextOpensEarly
+        ? `${next} (opened early via ${nextPrereq}) still unlocked after ${zoneId} done`
+        : `${next} unlocks ONLY now (Task 1 rules intact)`);
+    }
     assert(
       JSON.stringify(getLevelStatuses(quest)) === JSON.stringify(Array(nLevels).fill('completed')),
       `${zoneId}: all levels completed`,
@@ -554,8 +575,13 @@ async function main() {
     progressStore.update({ completedZones: { zone1: true } });
     assert(isZoneUnlocked('zone0'), 'legacy save: zone0 (new first zone) is open');
     assert(isZoneUnlocked('zone1'), 'legacy save: completed zone1 stays replayable without zone0');
-    assert(isZoneUnlocked('zone2'), 'legacy save: zone2 still unlocked by completed zone1');
+    // Aug 2026: zone2's explicit prerequisite is zone0 — a legacy zone1-only
+    // save no longer opens it; the child plays the new first zone first.
+    assert(!isZoneUnlocked('zone2'), 'legacy save: zone2 waits for zone0 (explicit prereq), zone1 alone no longer opens it');
     assert(!isZoneUnlocked('zone3'), 'legacy save: zone3 still locked (zone2 not done)');
+    progressStore.update({ completedZones: { zone0: true, zone1: true } });
+    assert(isZoneUnlocked('zone2'), 'legacy save: zone2 opens once zone0 (explicit prereq) is done');
+    assert(!isZoneUnlocked('zone3'), 'legacy save: zone3 STILL locked (zone2 not done)');
     resetProgress();
   }
 

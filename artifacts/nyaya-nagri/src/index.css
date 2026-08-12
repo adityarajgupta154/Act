@@ -252,3 +252,48 @@ select {
 @media (prefers-reduced-motion: reduce) {
   .nyaya-voice-ring { animation: none; }
 }
+
+/* ---------------------------------------------------------------------
+   "Right or Wrong?" mini-game (Aug 2026) — playful game-feel motion.
+   All pure CSS so prefers-reduced-motion can switch everything off below. */
+@keyframes rw-shake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-6px); }
+  40%, 60% { transform: translateX(6px); }
+}
+.rw-shake { animation: rw-shake 0.5s ease-in-out; }
+
+@keyframes rw-pop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.rw-pop { animation: rw-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@keyframes rw-confetti {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
+  100% {
+    transform: translate(var(--rw-dx, 0px), var(--rw-dy, -60px)) scale(0.4) rotate(var(--rw-rot, 180deg));
+    opacity: 0;
+  }
+}
+.rw-confetti { animation: rw-confetti 0.9s ease-out forwards; }
+
+@keyframes rw-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.rw-float { animation: rw-float 3.2s ease-in-out infinite; }
+
+@keyframes rw-star-pop {
+  0% { transform: scale(0) rotate(-30deg); opacity: 0; }
+  60% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.rw-star-pop { animation: rw-star-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rw-shake, .rw-pop, .rw-confetti, .rw-star-pop { animation: none; }
+  .rw-float { animation: none; }
+}
