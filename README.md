@@ -28,7 +28,6 @@ Built for **Smart India Hackathon — Problem Statement SIH1281** (Gamified Plat
 ## 📚 Table of Contents
 
 - [What is Nyaya Nagri?](#-what-is-nyaya-nagri)
-- [Screenshots](#-screenshots)
 - [Feature Tour](#-feature-tour)
 - [System Architecture](#-system-architecture)
 - [How the Game Works (Player Workflow)](#-how-the-game-works-player-workflow)
@@ -56,14 +55,6 @@ The design promise, in one line:
 > **Play first, learn by doing, and always know who to call in real life** — Childline **1098** and Cyber Crime Helpline **155260** are one tap away on every single screen.
 
 It is an **awareness and confidence-building tool** — it never replaces real reporting systems; it *teaches* them and deep-links to them.
-
----
-
-## 📸 Screenshots
-
-| The Rights City (Home) | Game intro — Safe Path Adventure | Level complete |
-|---|---|---|
-| ![Home city](docs/readme/home.jpg) | ![Safe Path intro](docs/readme/safepath-intro.jpg) | ![Completion screen](docs/readme/safepath-success.jpg) |
 
 ---
 
