@@ -19,8 +19,6 @@ Built for **Smart India Hackathon — Problem Statement SIH1281** (Gamified Plat
 ![Sarvam AI](https://img.shields.io/badge/Voice-Sarvam%20AI-FF6B35)
 ![i18n](https://img.shields.io/badge/Languages-English%20%2B%20%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A5%80-green)
 
-<img src="docs/readme/home.jpg" alt="Nyaya Nagri — the rights city home screen" width="850"/>
-
 </div>
 
 ---
@@ -344,7 +342,6 @@ workspace/
 ├── lib/
 │   ├── api-zod/              # Shared Zod schemas (single source of truth)
 │   └── api-client-react/     # Generated typed hooks for the client
-└── docs/readme/              # Screenshots used by this README
 ```
 
 ---
