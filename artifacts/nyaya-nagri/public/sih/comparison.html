@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Nyaya Nagri — Comparison with Existing System</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1400px; height: 1080px; overflow: hidden; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 60%, #fff8f2 100%);
+    color: #1e293b; padding: 30px 36px 26px;
+    display: flex; flex-direction: column;
+  }
+  h1 { text-align: center; font-size: 38px; font-weight: 800; color: #0f172a; margin-bottom: 20px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; flex: 1; }
+  th {
+    color: #fff; font-size: 20px; font-weight: 800; letter-spacing: 0.5px;
+    padding: 14px 16px; text-align: center; text-transform: uppercase;
+  }
+  th.f { background: #1e3a8a; border-radius: 14px 0 0 0; width: 27%; }
+  th.t { background: #7c3aed; width: 33%; }
+  th.n { background: #16a34a; border-radius: 0 14px 0 0; width: 40%; }
+  td { padding: 12px 16px; font-size: 17.5px; vertical-align: middle; border-bottom: 1px solid #e2e8f0; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  td.f { font-weight: 700; color: #0f172a; font-size: 18px; }
+  td.f .ic { font-size: 22px; margin-right: 9px; }
+  td.t { color: #64748b; text-align: center; font-weight: 500; }
+  td.n { background: #f0fdf4 !important; color: #14532d; font-weight: 600; border-left: 3px solid #16a34a; }
+  td.n b { color: #052e16; }
+  td.n::before { content: '✓  '; color: #16a34a; font-weight: 800; }
+  tr:last-child td.f { border-radius: 0 0 0 14px; }
+  tr:last-child td.n { border-radius: 0 0 14px 0; }
+  .foot {
+    margin-top: 16px; text-align: center; font-size: 17px; font-weight: 700; color: #475569;
+    background: #f1f5f9; border-radius: 12px; padding: 11px 18px;
+  }
+  .foot b { color: #ea580c; }
+</style>
+</head>
+<body>
+  <h1>Comparison with Existing System</h1>
+  <table>
+    <tr><th class="f">Feature</th><th class="t">Traditional Awareness</th><th class="n">Nyaya Nagri</th></tr>
+    <tr>
+      <td class="f"><span class="ic">🎮</span>Learning Method</td>
+      <td class="t">Textbooks · lectures · seminars</td>
+      <td class="n">Gamified city — quests, stories, XP <b>(working prototype)</b></td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">⚖️</span>Legal Accuracy</td>
+      <td class="t">Static notes, often outdated</td>
+      <td class="n">Expert-fixed curriculum — AI <b>cites real acts, never invents law</b></td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">🧒</span>Personalization</td>
+      <td class="t">One-size-fits-all</td>
+      <td class="n">Age bands 8–11 / 12–15 / 16–18 · English + हिंदी</td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">✅</span>Progress</td>
+      <td class="t">Attendance / marks</td>
+      <td class="n"><b>Verified learning</b> — seek-proof videos, quiz-gated unlocks</td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">🤖</span>AI Mentor</td>
+      <td class="t">Not available</td>
+      <td class="n">Text + <b>Hindi-first voice</b>, honest "not sure"</td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">🛡️</span>AI Safety</td>
+      <td class="t">— (no AI involved)</td>
+      <td class="n"><b>Fail-closed gates on every reply</b> — distress + PII checks before the child sees it</td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">🆘</span>Emergency Support</td>
+      <td class="t">Separate posters / assemblies</td>
+      <td class="n">1098 · 155260 · POCSO e-Box built in — <b>"Get Help Now" on every screen</b></td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">👪</span>Guardian Visibility</td>
+      <td class="t">Annual report card</td>
+      <td class="n">PIN-gated on-device insights — evidence, not surveillance</td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">🔒</span>Privacy</td>
+      <td class="t">School records hold PII</td>
+      <td class="n"><b>No accounts, no PII</b> — DPDP Act 2023 aligned</td>
+    </tr>
+    <tr>
+      <td class="f"><span class="ic">🗣️</span>Inclusion</td>
+      <td class="t">Mostly English, text-heavy</td>
+      <td class="n">Voice-first Hindi for low-literacy children</td>
+    </tr>
+  </table>
+  <div class="foot">Traditional methods <b>inform</b> children · Nyaya Nagri makes them <b>practise</b> — recognise, refuse, report — safely</div>
+</body>
+</html>

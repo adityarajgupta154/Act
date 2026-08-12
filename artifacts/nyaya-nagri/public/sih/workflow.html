@@ -8,62 +8,66 @@
   html, body { width: 1920px; height: 1080px; overflow: hidden; }
   body {
     font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
-    background: linear-gradient(180deg, #f8fbff 0%, #ffffff 45%, #fff8f2 100%);
+    background:
+      radial-gradient(900px 400px at 8% -5%, rgba(37, 99, 235, 0.07), transparent 60%),
+      radial-gradient(900px 400px at 92% -5%, rgba(234, 88, 12, 0.07), transparent 60%),
+      linear-gradient(180deg, #f8fbff 0%, #ffffff 50%, #fff8f2 100%);
     color: #1e293b;
     display: flex; flex-direction: column;
-    padding: 34px 46px 28px;
+    padding: 30px 44px 26px;
   }
-  .head { text-align: center; margin-bottom: 22px; }
-  .head h1 {
-    font-size: 46px; font-weight: 800; letter-spacing: 0.5px; color: #0f172a;
-  }
+  .head { text-align: center; margin-bottom: 14px; }
+  .head h1 { font-size: 46px; font-weight: 800; letter-spacing: 0.5px; color: #0f172a; }
   .head h1 .brand { color: #ea580c; }
-  .head p { font-size: 22px; font-weight: 600; color: #2563eb; margin-top: 6px; }
-  .rows { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; gap: 0; }
-  .row { display: flex; align-items: stretch; gap: 0; }
+  .head p { font-size: 22px; font-weight: 600; color: #2563eb; margin-top: 4px; }
+  .rows { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; }
+  .row { display: flex; align-items: stretch; }
   .card {
-    flex: 1; background: #ffffff; border: 2px solid var(--c, #cbd5e1);
-    border-radius: 18px; padding: 22px 20px 20px;
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.07);
-    display: flex; flex-direction: column; position: relative;
+    flex: 1; background: #ffffff; border: 2.5px solid var(--c, #cbd5e1);
+    border-radius: 20px; padding: 16px 18px 16px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.09);
+    display: flex; flex-direction: column;
   }
-  .card .top { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .top { display: flex; align-items: center; gap: 12px; }
   .num {
-    width: 46px; height: 46px; border-radius: 50%; background: var(--c);
-    color: #fff; font-size: 25px; font-weight: 800;
+    width: 44px; height: 44px; border-radius: 50%; background: var(--c);
+    color: #fff; font-size: 24px; font-weight: 800;
     display: flex; align-items: center; justify-content: center; flex: none;
+    box-shadow: 0 3px 8px rgba(15, 23, 42, 0.25);
   }
-  .ico {
-    width: 54px; height: 54px; border-radius: 14px; background: var(--tint);
-    font-size: 32px; display: flex; align-items: center; justify-content: center; flex: none;
+  .card h3 { font-size: 23px; font-weight: 800; line-height: 1.12; color: #0f172a; }
+  .art {
+    height: 84px; border-radius: 14px; background: var(--tint);
+    font-size: 52px; display: flex; align-items: center; justify-content: center;
+    margin: 12px 0 10px; letter-spacing: 6px;
   }
-  .card h3 { font-size: 24px; font-weight: 800; line-height: 1.15; color: #0f172a; }
-  .card ul { list-style: none; margin-top: 2px; }
+  .card ul { list-style: none; }
   .card li {
-    font-size: 17.5px; font-weight: 500; color: #475569; line-height: 1.38;
-    padding-left: 17px; position: relative; margin-top: 9px;
+    font-size: 16.5px; font-weight: 500; color: #475569; line-height: 1.32;
+    padding-left: 16px; position: relative; margin-top: 7px;
   }
   .card li::before { content: '▸'; position: absolute; left: 0; color: var(--c); font-weight: 800; }
   .card li b { color: #1e293b; }
   .arrow {
-    width: 44px; flex: none; display: flex; align-items: center; justify-content: center;
-    font-size: 30px; color: #2563eb; font-weight: 800;
+    width: 46px; flex: none; display: flex; align-items: center; justify-content: center;
+    font-size: 32px; color: #2563eb; font-weight: 800;
   }
   .wrap-note {
-    text-align: right; font-size: 18px; font-weight: 700; color: #2563eb;
-    margin: 0 12px;
+    display: flex; justify-content: flex-end; align-items: center; gap: 10px;
+    font-size: 19px; font-weight: 700; color: #2563eb; margin: 2px 14px;
   }
+  .wrap-note .curve { font-size: 30px; }
   .ribbon {
-    margin-top: 10px; background: #0f172a; border-radius: 14px;
-    padding: 14px 26px; display: flex; align-items: center; gap: 18px;
+    margin-top: 8px; background: #0f172a; border-radius: 16px;
+    padding: 15px 26px; display: flex; align-items: center; gap: 20px;
   }
   .ribbon .shield {
-    background: #dc2626; color: #fff; font-weight: 800; font-size: 17px;
-    border-radius: 999px; padding: 8px 18px; flex: none;
+    background: #dc2626; color: #fff; font-weight: 800; font-size: 17.5px;
+    border-radius: 999px; padding: 9px 20px; flex: none;
   }
-  .ribbon .txt { color: #e2e8f0; font-size: 19px; font-weight: 600; line-height: 1.3; }
+  .ribbon .txt { color: #e2e8f0; font-size: 19px; font-weight: 600; line-height: 1.32; }
   .ribbon .txt b { color: #fbbf24; }
-  .ribbon .right { margin-left: auto; text-align: right; color: #7dd3fc; font-size: 15.5px; font-weight: 700; flex: none; }
+  .ribbon .right { margin-left: auto; text-align: right; color: #7dd3fc; font-size: 16px; font-weight: 700; flex: none; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -75,78 +79,86 @@
   <div class="rows">
     <div class="row">
       <div class="card" style="--c:#2563eb; --tint:#dbeafe;">
-        <div class="top"><div class="num">1</div><div class="ico">🏙️</div><h3>Child Enters<br/>the City</h3></div>
+        <div class="top"><div class="num">1</div><h3>Child Enters<br/>the City</h3></div>
+        <div class="art">🏙️👧👦</div>
         <ul>
-          <li><b>No login, no PII</b> — DPDP-aligned data minimization</li>
-          <li>Picks avatar, language (EN/हिंदी) &amp; age band 8–11 / 12–15 / 16–18</li>
-          <li>Guardian consent–friendly by design</li>
+          <li><b>No login, no PII</b> — DPDP-aligned</li>
+          <li>Avatar, English/हिंदी, age band 8–11 / 12–15 / 16–18</li>
+          <li>Guardian-consent friendly</li>
         </ul>
       </div>
       <div class="arrow">➜</div>
       <div class="card" style="--c:#16a34a; --tint:#dcfce7;">
-        <div class="top"><div class="num">2</div><div class="ico">🏛️</div><h3>Explores<br/>Rights Zones</h3></div>
+        <div class="top"><div class="num">2</div><h3>Explores<br/>Rights Zones</h3></div>
+        <div class="art">🗺️🏛️</div>
         <ul>
-          <li>Every monument = one right (POCSO, RTE, JJ Act, Child Labour, Digital Safety)</li>
-          <li>Locked progression = guided learning path</li>
-          <li>Free exploration, zero ads / real money</li>
+          <li><b>Every monument = one right</b></li>
+          <li>POCSO · RTE · JJ Act · Child Labour · Digital Safety</li>
+          <li>Locked path = guided journey, zero ads</li>
         </ul>
       </div>
       <div class="arrow">➜</div>
       <div class="card" style="--c:#ea580c; --tint:#ffedd5;">
-        <div class="top"><div class="num">3</div><div class="ico">🎬</div><h3>Watches Curated<br/>Lesson Video</h3></div>
+        <div class="top"><div class="num">3</div><h3>Watches Curated<br/>Lesson Video</h3></div>
+        <div class="art">🎬📜</div>
         <ul>
-          <li>Content is <b>expert-fixed, never AI-generated</b> — legal facts stay accurate</li>
+          <li><b>Expert-fixed content</b> — never AI-generated</li>
           <li><b>Seek-proof watch credit</b> — skipping earns nothing</li>
-          <li>Trauma-sensitive storytelling per age band</li>
+          <li>Trauma-sensitive per age band</li>
         </ul>
       </div>
       <div class="arrow">➜</div>
       <div class="card" style="--c:#7c3aed; --tint:#ede9fe;">
-        <div class="top"><div class="num">4</div><div class="ico">🧩</div><h3>Quiz &amp;<br/>Challenges</h3></div>
+        <div class="top"><div class="num">4</div><h3>Quiz &amp;<br/>Challenges</h3></div>
+        <div class="art">🧩✅</div>
         <ul>
-          <li>Age-band adapted questions, instant feedback</li>
-          <li>XP, coins &amp; badges — <b>no pay-to-win, no streak guilt</b></li>
-          <li>Real understanding gates progress</li>
+          <li>Age-band adapted, instant feedback</li>
+          <li>XP, coins &amp; badges — <b>no pay-to-win</b></li>
+          <li><b>Understanding gates progress</b></li>
         </ul>
       </div>
     </div>
 
-    <div class="wrap-note">⤵ learning verified — adventure unlocks</div>
+    <div class="wrap-note"><span>learning verified — adventure unlocks</span><span class="curve">⤵</span></div>
 
     <div class="row">
       <div class="card" style="--c:#0d9488; --tint:#ccfbf1;">
-        <div class="top"><div class="num">5</div><div class="ico">📖</div><h3>Story Adventure<br/>Unlocks</h3></div>
+        <div class="top"><div class="num">5</div><h3>Story Adventure<br/>Unlocks</h3></div>
+        <div class="art">📖🗝️</div>
         <ul>
-          <li>Unlock is <b>derived from video + quiz</b> — tamper-proof, survives refresh</li>
-          <li>Voice-guided interactive rights stories</li>
-          <li>Choices teach; <b>legal facts stay read-only</b></li>
+          <li>Unlock <b>derived from video + quiz</b> — tamper-proof</li>
+          <li>Voice-guided rights stories</li>
+          <li><b>Legal facts stay read-only</b></li>
         </ul>
       </div>
       <div class="arrow">➜</div>
       <div class="card" style="--c:#0284c7; --tint:#e0f2fe;">
-        <div class="top"><div class="num">6</div><div class="ico">🤖</div><h3>Asks Nyaya AI —<br/>Text + Voice</h3></div>
+        <div class="top"><div class="num">6</div><h3>Asks Nyaya AI —<br/>Text + Voice</h3></div>
+        <div class="art">🤖🎙️</div>
         <ul>
-          <li><b>Hindi-first voice</b> (Sarvam STT/TTS) for low-literacy inclusion</li>
-          <li>Every reply <b>safety-gated BEFORE it is spoken</b></li>
-          <li>Cites real Indian acts (India Code); honest “not sure” — no hallucinated law</li>
+          <li><b>Hindi-first voice</b> for low-literacy inclusion</li>
+          <li><b>Safety-gated BEFORE it speaks</b></li>
+          <li>Cites real acts — honest "not sure", no invented law</li>
         </ul>
       </div>
       <div class="arrow">➜</div>
       <div class="card" style="--c:#dc2626; --tint:#fee2e2;">
-        <div class="top"><div class="num">7</div><div class="ico">🆘</div><h3>Distress →<br/>Real Help</h3></div>
+        <div class="top"><div class="num">7</div><h3>Distress →<br/>Real Help</h3></div>
+        <div class="art">🆘📞</div>
         <ul>
-          <li><b>Deterministic escalation</b> — AI can never rewrite helpline guidance</li>
-          <li>CHILDLINE 1098 · Cyber 155260 · POCSO e-Box deep-links</li>
-          <li>“Get Help Now” visible on <b>every screen</b></li>
+          <li><b>Deterministic escalation</b> — AI can't rewrite it</li>
+          <li>CHILDLINE 1098 · Cyber 155260 · POCSO e-Box</li>
+          <li>"Get Help Now" on <b>every screen</b></li>
         </ul>
       </div>
       <div class="arrow">➜</div>
       <div class="card" style="--c:#d97706; --tint:#fef3c7;">
-        <div class="top"><div class="num">8</div><div class="ico">🏅</div><h3>Becomes a<br/>Legal Hero</h3></div>
+        <div class="top"><div class="num">8</div><h3>Becomes a<br/>Legal Hero</h3></div>
+        <div class="art">🏅🏆</div>
         <ul>
-          <li>Bilingual certificates &amp; badge collection</li>
-          <li><b>PIN-gated guardian insights</b> — evidence-based, on-device</li>
-          <li>Confidence to recognise, refuse &amp; report</li>
+          <li>Bilingual certificates &amp; badges</li>
+          <li><b>PIN-gated guardian insights</b> — on-device</li>
+          <li>Recognise · Refuse · Report</li>
         </ul>
       </div>
     </div>
@@ -155,7 +167,8 @@
   <div class="ribbon">
     <div class="shield">FAIL-CLOSED SAFETY CORE</div>
     <div class="txt">
-      One safety module gates <b>every</b> AI reply — text &amp; voice: distress detection → PII redaction (both directions) → verified-helpline escalation. Awareness tool, <b>not</b> legal advice — it educates and deep-links to real authorities (CWC · JJB · SJPU · NCPCR).
+      One safety module gates <b>every</b> AI reply — text &amp; voice: distress detection → PII redaction → verified-helpline escalation.<br/>
+      Awareness tool, <b>not</b> legal advice — it educates and deep-links to real authorities (CWC · JJB · SJPU · NCPCR).
     </div>
     <div class="right">No accounts · No PII stored<br/>DPDP Act 2023 aligned</div>
   </div>

@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Nyaya Nagri — Technical Architecture</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1920px; height: 1080px; overflow: hidden; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+    background:
+      radial-gradient(900px 400px at 8% -5%, rgba(37, 99, 235, 0.07), transparent 60%),
+      radial-gradient(900px 400px at 92% -5%, rgba(234, 88, 12, 0.07), transparent 60%),
+      linear-gradient(180deg, #f8fbff 0%, #ffffff 50%, #fff8f2 100%);
+    color: #1e293b;
+    display: flex; flex-direction: column;
+    padding: 26px 42px 22px;
+  }
+  .head { text-align: center; margin-bottom: 10px; }
+  .head h1 { font-size: 42px; font-weight: 800; letter-spacing: 0.5px; color: #0f172a; }
+  .head h1 .brand { color: #ea580c; }
+  .head p { font-size: 20px; font-weight: 600; color: #2563eb; margin-top: 3px; }
+  .rows { flex: 1; display: flex; flex-direction: column; justify-content: space-evenly; }
+  .row { display: flex; align-items: stretch; }
+  .rlabel {
+    writing-mode: vertical-rl; transform: rotate(180deg);
+    font-size: 15px; font-weight: 800; letter-spacing: 2px; color: #94a3b8;
+    display: flex; align-items: center; justify-content: center;
+    width: 30px; flex: none; text-transform: uppercase;
+  }
+  .card {
+    flex: 1; background: #ffffff; border: 2.5px solid var(--c, #cbd5e1);
+    border-radius: 16px; padding: 12px 14px 12px;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+    display: flex; flex-direction: column;
+  }
+  .top { display: flex; align-items: center; gap: 10px; }
+  .ico {
+    width: 44px; height: 44px; border-radius: 12px; background: var(--tint);
+    font-size: 26px; display: flex; align-items: center; justify-content: center; flex: none;
+  }
+  .card h3 { font-size: 19.5px; font-weight: 800; line-height: 1.1; color: #0f172a; }
+  .tech {
+    margin-top: 8px; align-self: flex-start;
+    background: var(--tint); color: #0f172a; border: 1.5px solid var(--c);
+    font-size: 14.5px; font-weight: 700; border-radius: 999px; padding: 3px 12px;
+  }
+  .card ul { list-style: none; margin-top: 7px; }
+  .card li {
+    font-size: 15px; font-weight: 500; color: #475569; line-height: 1.3;
+    padding-left: 14px; position: relative; margin-top: 5px;
+  }
+  .card li::before { content: '▸'; position: absolute; left: 0; color: var(--c); font-weight: 800; }
+  .card li b { color: #1e293b; }
+  .arrow {
+    width: 36px; flex: none; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: #2563eb; font-weight: 800;
+  }
+  .mini {
+    flex: 1; background: #ffffff; border: 2px solid var(--c);
+    border-radius: 14px; padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, 0.07);
+  }
+  .mini .mico { font-size: 30px; flex: none; }
+  .mini .mtxt b { display: block; font-size: 16.5px; color: #0f172a; line-height: 1.15; }
+  .mini .mtxt span { font-size: 13.5px; color: #64748b; font-weight: 600; line-height: 1.2; display: block; margin-top: 2px; }
+  .marrow { width: 30px; flex: none; display: flex; align-items: center; justify-content: center; font-size: 22px; color: #16a34a; font-weight: 800; }
+  .foot {
+    margin-top: 8px; display: flex; align-items: center; gap: 16px;
+    background: #0f172a; border-radius: 14px; padding: 12px 24px;
+  }
+  .foot .tag {
+    background: #16a34a; color: #fff; font-weight: 800; font-size: 15.5px;
+    border-radius: 999px; padding: 7px 16px; flex: none;
+  }
+  .foot .txt { color: #e2e8f0; font-size: 17px; font-weight: 600; }
+  .foot .txt b { color: #fbbf24; }
+  .foot .right { margin-left: auto; color: #7dd3fc; font-size: 14.5px; font-weight: 700; text-align: right; line-height: 1.35; flex: none; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1><span class="brand">NYAYA NAGRI</span> — TECHNICAL ARCHITECTURE</h1>
+    <p>Working prototype · every AI reply passes ONE fail-closed safety module before reaching the child</p>
+  </div>
+
+  <div class="rows">
+    <div class="row">
+      <div class="rlabel">Request path</div>
+      <div class="card" style="--c:#2563eb; --tint:#dbeafe;">
+        <div class="top"><div class="ico">🧒</div><h3>CHILD</h3></div>
+        <div class="tech">Any browser · no app install</div>
+        <ul>
+          <li><b>No login, no PII</b> (DPDP-aligned)</li>
+          <li>English/हिंदी · age band 8–11/12–15/16–18</li>
+        </ul>
+      </div>
+      <div class="arrow">➜</div>
+      <div class="card" style="--c:#16a34a; --tint:#dcfce7;">
+        <div class="top"><div class="ico">🖥️</div><h3>GAME FRONTEND</h3></div>
+        <div class="tech">React 18 + Vite + Phaser 3 (TypeScript)</div>
+        <ul>
+          <li>Explorable city map, quizzes, story engine</li>
+          <li>Seek-proof video credit · bilingual certificates</li>
+        </ul>
+      </div>
+      <div class="arrow">➜</div>
+      <div class="card" style="--c:#7c3aed; --tint:#ede9fe;">
+        <div class="top"><div class="ico">⚙️</div><h3>API SERVER</h3></div>
+        <div class="tech">Node.js + Express (TypeScript)</div>
+        <ul>
+          <li>Single entry for every AI call</li>
+          <li>Rate-limited · strict input bounds · no PII stored</li>
+        </ul>
+      </div>
+      <div class="arrow">➜</div>
+      <div class="card" style="--c:#dc2626; --tint:#fee2e2;">
+        <div class="top"><div class="ico">🛡️</div><h3>SAFETY MODULE</h3></div>
+        <div class="tech">Fail-closed · gates BOTH directions</div>
+        <ul>
+          <li>Distress detection → deterministic escalation</li>
+          <li>PII redaction in &amp; out · blocks unsafe replies</li>
+        </ul>
+      </div>
+      <div class="arrow">➜</div>
+      <div class="card" style="--c:#0284c7; --tint:#e0f2fe;">
+        <div class="top"><div class="ico">🤖</div><h3>NYAYA AI</h3></div>
+        <div class="tech">Google Gemini Flash</div>
+        <ul>
+          <li>Curated India Code corpus — <b>cites real acts</b></li>
+          <li>Legal facts read-only · honest "not sure"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="rlabel">Engines</div>
+      <div class="card" style="--c:#0d9488; --tint:#ccfbf1;">
+        <div class="top"><div class="ico">🎙️</div><h3>HINDI VOICE PIPELINE</h3></div>
+        <div class="tech">Sarvam saarika:v2.5 STT · bulbul:v2 TTS</div>
+        <ul>
+          <li>Speech → text → <b>safety gate</b> → answer → speech</li>
+          <li>Gated <b>before</b> a single word is spoken</li>
+        </ul>
+      </div>
+      <div class="arrow" style="color:#0d9488;">⇄</div>
+      <div class="card" style="--c:#d97706; --tint:#fef3c7;">
+        <div class="top"><div class="ico">🔊</div><h3>STORY NARRATION</h3></div>
+        <div class="tech">Gemini TTS (Hindi + English)</div>
+        <ul>
+          <li>Voice-guided story adventures</li>
+          <li>Fixed scripts — narration only, never new law</li>
+        </ul>
+      </div>
+      <div class="arrow" style="color:#d97706;">⇄</div>
+      <div class="card" style="--c:#dc2626; --tint:#fee2e2;">
+        <div class="top"><div class="ico">🆘</div><h3>EMERGENCY HELP</h3></div>
+        <div class="tech">Hard-coded — AI can never alter</div>
+        <ul>
+          <li>CHILDLINE 1098 · Cyber 155260 · POCSO e-Box</li>
+          <li>"Get Help Now" on every screen</li>
+        </ul>
+      </div>
+      <div class="arrow" style="color:#dc2626;">⇄</div>
+      <div class="card" style="--c:#64748b; --tint:#f1f5f9;">
+        <div class="top"><div class="ico">🔒</div><h3>ON-DEVICE DATA</h3></div>
+        <div class="tech">Local-first · zero server database</div>
+        <ul>
+          <li>Progress, XP &amp; badges stay in the browser</li>
+          <li>Guardian insights behind a <b>local PIN</b></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="rlabel">Learning loop</div>
+      <div class="mini" style="--c:#ea580c;">
+        <div class="mico">🎬</div>
+        <div class="mtxt"><b>Lesson Video</b><span>seek-proof watch credit</span></div>
+      </div>
+      <div class="marrow">➜</div>
+      <div class="mini" style="--c:#7c3aed;">
+        <div class="mico">🧩</div>
+        <div class="mtxt"><b>Quiz Gate</b><span>age-band adapted</span></div>
+      </div>
+      <div class="marrow">➜</div>
+      <div class="mini" style="--c:#0d9488;">
+        <div class="mico">📖</div>
+        <div class="mtxt"><b>Story Unlock</b><span>derived, tamper-proof</span></div>
+      </div>
+      <div class="marrow">➜</div>
+      <div class="mini" style="--c:#2563eb;">
+        <div class="mico">🏅</div>
+        <div class="mtxt"><b>XP · Badges · Certificates</b><span>bilingual, no pay-to-win</span></div>
+      </div>
+      <div class="marrow">➜</div>
+      <div class="mini" style="--c:#16a34a;">
+        <div class="mico">🦸</div>
+        <div class="mtxt"><b>Legal Hero</b><span>recognise · refuse · report</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="tag">ZERO SPECIAL HARDWARE</div>
+    <div class="txt">Runs on any smartphone / school computer browser — <b>low-cost, instantly scalable</b> · pnpm monorepo · TypeScript end-to-end</div>
+    <div class="right">Working prototype live<br/>DPDP Act 2023 aligned</div>
+  </div>
+</body>
+</html>

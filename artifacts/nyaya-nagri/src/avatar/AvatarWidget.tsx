@@ -850,15 +850,16 @@ export function AvatarWidget({ faceSize }: { faceSize?: string } = {}) {
 
       {/* Bubble Toggle — full waving mascot (transparent art), so the button
           adds no background/border chrome; the drop-shadow follows the alpha.
-          Subtle idle float keeps it friendly without neon/glow effects. */}
+          Idle robot is STATIC — the nyaya-float idle animation was removed on
+          user order (Aug 12 2026, "floating animation remove kr do"); do not
+          re-add it. The keyframes stay in index.css for map-node-float. */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           className={cn(
             'rounded-3xl transition-all hover:scale-105 active:scale-95 animate-in zoom-in duration-300 touch-manipulation [filter:drop-shadow(0_6px_12px_rgba(30,41,59,0.35))]',
-            storyNarration.speaking
-              ? 'ring-4 ring-sky-300/70 shadow-[0_0_24px_rgba(125,211,252,0.8)]'
-              : 'motion-safe:animate-[nyaya-float_4s_ease-in-out_infinite]',
+            storyNarration.speaking &&
+              'ring-4 ring-sky-300/70 shadow-[0_0_24px_rgba(125,211,252,0.8)]',
           )}
           aria-label={t.openGuide}
         >

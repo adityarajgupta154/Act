@@ -22,6 +22,12 @@ export interface ZoneDef {
   theme: string;
   /** World position [x, z] of the zone marker on the map. */
   position: [number, number];
+  /**
+   * Optional explicit prerequisite zone id. When set, this zone unlocks as
+   * soon as THAT zone is complete, instead of the previous zone by order.
+   * (e.g. zone2 "Right to Childhood" opens right after zone0 "Know Yourself".)
+   */
+  unlockAfter?: string;
 }
 
 export const ZONES: ZoneDef[] = [
@@ -45,6 +51,7 @@ export const ZONES: ZoneDef[] = [
     name: 'Right to Childhood',
     theme: 'Every child has the right to learn, play, and rest (child labour awareness)',
     position: [-12, -24],
+    unlockAfter: 'zone0',
   },
   {
     id: 'zone3',
@@ -82,8 +89,10 @@ export function getZone(zoneId: string): ZoneDef | undefined {
 
 /**
  * The first zone in the sequence (Zone 0, "Know Yourself") is unlocked by
- * default; each later zone unlocks only when the previous zone's quest is
- * complete in the progress store — so Zone 1 now requires Zone 0 first.
+ * default; each later zone unlocks only when its prerequisite zone's quest is
+ * complete in the progress store. The prerequisite is the previous zone by
+ * order, unless the zone declares an explicit `unlockAfter` override (zone2
+ * "Right to Childhood" unlocks as soon as Zone 0 is complete).
  *
  * A zone that is itself complete is always unlocked: completing it proves
  * the child had access, and replay/practice of finished zones must never be
@@ -103,9 +112,11 @@ export function isZoneUnlockedIn(
   if (!zone) return false;
   if (completedZones[zoneId] === true) return true;
   if (zone.order === 1) return true;
-  const previous = ZONES.find((z) => z.order === zone.order - 1);
-  if (!previous) return true;
-  return completedZones[previous.id] === true;
+  const prerequisite = zone.unlockAfter
+    ? getZone(zone.unlockAfter)
+    : ZONES.find((z) => z.order === zone.order - 1);
+  if (!prerequisite) return true;
+  return completedZones[prerequisite.id] === true;
 }
 
 export function isZoneUnlocked(zoneId: string): boolean {

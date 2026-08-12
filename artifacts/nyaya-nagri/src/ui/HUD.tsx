@@ -450,7 +450,10 @@ export function HUD() {
       {/* Floating Action Controls (z-50) - Always visible, never fades.
           The guide needs an age band, so it appears after onboarding;
           the Get Help Now button is there from the very first screen. */}
-      <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-4 pointer-events-none">
+      {/* Compact assistant + Get Help group — same 8–10px gap spec as Home
+          (Aug 12 2026: in-game gap-4 read as a weird hole between the robot
+          and the card; matched to the Home compact-group spacing). */}
+      <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 z-50 flex flex-col items-end gap-2 md:gap-2.5 pointer-events-none">
         {/* Nyaya AI — the game's ONE assistant (robot guide, Gemini brain). */}
         {onboarded && <AvatarWidget />}
         {/* Reference redesign: during onboarding the trigger is the card

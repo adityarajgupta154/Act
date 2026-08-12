@@ -12,7 +12,8 @@
  *   for returning users ({!onboarded && <OnboardingFlow/>} is untouched).
  * - Aug 2026 simplification (user reference image): the journey chip and
  *   both secondary buttons (explore / how-it-works) are REMOVED from
- *   Home — ENTER is the single CTA, centred over the plaza at ~67dvh.
+ *   Home — ENTER is the single CTA, centred below the statue at ~80dvh
+ *   (Aug 12 2026: smaller + shifted under the fountain on user request).
  *   The how-it-works content still exists inside the onboarding flow,
  *   which is untouched.
  * - Settings reuses the existing SettingsPanel + ui store (accessibility
@@ -47,23 +48,25 @@ export function HomeScreen({ onEnter }: { onEnter: () => void }) {
       <BrandHeader />
       <TopControls onAbout={() => setAboutOpen(true)} />
 
-      {/* Single primary CTA, horizontally centred in front of the central
-          building entrance. Button CENTRE pinned to ~67dvh (Aug 2026
-          CTA-shrink task: ~15–20% smaller button, centre dropped ~5dvh =
-          roughly 38–54px lower on normal viewports — inside the task's
-          35–60px band; dvh, never a fixed pixel offset, so every
-          breakpoint scales proportionally and stays centred). The painted
-          sign band ends ~48vh on wide screens, so moving DOWN only adds
-          clearance to the central building art. The min() clamp is a
-          DELIBERATE exception for short landscape phones, where a strict
-          dvh centre would geometrically collide with the floating
-          bottom-right assistant + Get Help group (~11rem tall incl.
-          padding) — the 13rem cap is intentionally UNCHANGED: those tiny
-          viewports keep the proven safe placement, and the compact group
-          simply gains clear air there. pointer-events are
-          scoped to the button so the full-width centring strip can never
-          swallow clicks. */}
-      <div className="pointer-events-none absolute inset-x-0 top-[min(67dvh,calc(100dvh_-_13rem))] z-20 flex -translate-y-1/2 justify-center px-3">
+      {/* Single primary CTA, horizontally centred BELOW the Lady Justice
+          statue + fountain (Aug 12 2026 user request: "chhota + statue ke
+          niche"). Plate math (home-city.webp 1537×1023, object-[50%_12%]
+          cover): the fountain's painted bottom edge lands ≈76vh on common
+          wide aspects, so the centre is pinned to 80dvh — the button sits
+          in/under the lower fountain bowl, keeping the statue fully clear.
+          dvh, never fixed pixels, so every breakpoint scales. The min()
+          clamps protect short viewports from the floating bottom-right
+          assistant + Get Help group (~11rem tall incl. padding):
+          - below lg the proven 13rem cap is UNCHANGED (landscape phones /
+            small tablets can overlap the group horizontally, so the button
+            must stay fully above its band — placement there is identical
+            to the previous design by construction);
+          - lg+ (≥1024px wide) can never overlap the right-aligned group
+            horizontally, so a tighter 10rem cap lets mid-height laptops
+            (~660–900px tall) actually reach below the statue.
+          pointer-events are scoped to the button so the full-width
+          centring strip can never swallow clicks. */}
+      <div className="pointer-events-none absolute inset-x-0 top-[min(80dvh,calc(100dvh_-_13rem))] lg:top-[min(80dvh,calc(100dvh_-_10rem))] z-20 flex -translate-y-1/2 justify-center px-3">
         <div className="pointer-events-auto">
           <PrimaryCta onEnter={onEnter} />
         </div>

@@ -7,3 +7,24 @@ uri = "file://attached_assets/generated_audio/music_nyaya_nagri_ambient_loop.mp3
 type = "audio"
 title = "nyaya nagri ambient loop"
 description = "Generated music: Gentle, warm ambient background loop for a children's educational game set in a friendly Indian town. Soft acoustic guitar, light marimba/glockenspiel, warm pads, a hint of bansuri f…"
+
+[[outputs]]
+id = "Rv1D10wkyjbbl7tWF9pfC"
+uri = "file://screenshots/nyaya-nagri-sih-workflow.jpg"
+type = "image"
+title = "Nyaya Nagri — How It Works (SIH, v2)"
+description = "Redesigned 8-step workflow diagram in the SIH template style — illustration bands per card, trimmed bullets, fail-closed safety ribbon. 1920×1080, drops straight into the PPT."
+
+[[outputs]]
+id = "hj_CXEr9GxfOoNtsRGyWk"
+uri = "file://screenshots/nyaya-nagri-sih-architecture.jpg"
+type = "image"
+title = "Nyaya Nagri — Technical Architecture (SIH)"
+description = "Reference-style technical architecture: request path (Child → React/Vite/Phaser frontend → Express API → fail-closed safety module → Gemini), engines row (Sarvam Hindi voice, Gemini TTS narration, hard-coded emergency help, on-device data) and the verified learning loop. 1920×1080."
+
+[[outputs]]
+id = "3JpWQ5qHOFORsejZYhBGs"
+uri = "file://screenshots/nyaya-nagri-sih-comparison.jpg"
+type = "image"
+title = "Nyaya Nagri — Comparison with Existing System (SIH)"
+description = "Reference-style comparison table: 10 features — learning method, legal accuracy, verified progress, AI safety, emergency support, privacy, inclusion — Traditional Awareness vs Nyaya Nagri. 1400×1080, fits the right half of the Impact & Benefits slide."
