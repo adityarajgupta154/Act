@@ -376,19 +376,6 @@ export function RightToChildhoodGame({
       {/* Play area */}
       <div className="flex-1 min-h-0 overflow-y-auto px-3 pb-2">
         <div className="relative w-full max-w-4xl mx-auto flex flex-col gap-3">
-          {/* Mascot — lg+ only, floats beside the board */}
-          <div className="hidden lg:flex absolute -left-40 top-8 w-36 flex-col items-center gap-2 z-10">
-            <div className="bg-white rounded-2xl px-3 py-2 shadow-lg border border-slate-100 text-center">
-              <p className="text-xs font-bold text-slate-700 leading-snug">{mascotLine}</p>
-            </div>
-            <img
-              src={guideBoyUrl}
-              alt=""
-              className="w-28 object-contain drop-shadow-lg ch-float"
-              aria-hidden
-            />
-          </div>
-
           {/* Game board — the 3 drop slots */}
           <div className="bg-[#fff8ec]/95 border border-amber-100 rounded-3xl shadow-xl p-3 md:p-5">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-4">
