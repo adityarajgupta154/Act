@@ -240,17 +240,22 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
   const zoneStrings = t.zones[zoneId];
 
   if (playing && quest) {
+    // QuestPlayer renders centred cards/boards (quiz shell, completion,
+    // activity), so its mount provides the centred full-screen stage the
+    // overlay used to own — same classes as the pre-redesign overlay.
     return (
-      <QuestPlayer
-        key={`${quest.questId}:${playing.levelIndex}:${playing.practice}`}
-        quest={quest}
-        levelIndex={playing.levelIndex}
-        practice={playing.practice}
-        onExit={() => {
-          clearLevel();
-          setPlaying(null);
-        }}
-      />
+      <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+        <QuestPlayer
+          key={`${quest.questId}:${playing.levelIndex}:${playing.practice}`}
+          quest={quest}
+          levelIndex={playing.levelIndex}
+          practice={playing.practice}
+          onExit={() => {
+            clearLevel();
+            setPlaying(null);
+          }}
+        />
+      </div>
     );
   }
 
@@ -416,9 +421,10 @@ export function HUD() {
 
       {/* Interior View Overlay — doodle-scene backdrop behind every level
           select / quiz / game screen (bg-sky-100 shows while it loads).
-          No flex-centering: LevelSelect / QuestPlayer / GameQuestFlow each
-          manage their own full-screen layout; the "no quest" fallback adds
-          centering inside ZoneInterior. */}
+          No flex-centering HERE: LevelSelect / GameQuestFlow manage their
+          own full-screen layouts. QuestPlayer instead gets a centred stage
+          from each of its mounts (ZoneInterior below + GameQuestFlow's quiz
+          stage), matching the "no quest" fallback. */}
       {activeZoneId && (
         <div
           className="absolute inset-0 z-30 pointer-events-auto bg-sky-100 bg-cover bg-center"

@@ -121,7 +121,6 @@ export interface UIStrings {
   chMascotIntro: string;
   chMascotWrong: string;
   chMascotDistractor: string;
-  chEncourage: string;
   questComplete: string;
   youGotXofY: (score: number, total: number) => string;
   unlockedNext: (zoneName: string) => string;
@@ -793,7 +792,6 @@ const EN: UIStrings = {
   chMascotIntro: 'Drag each picture to its right place!',
   chMascotWrong: 'Think again — where does it truly belong?',
   chMascotDistractor: 'That one does not belong anywhere here.',
-  chEncourage: 'Think carefully! Choose what every child truly has a right to.',
   questComplete: 'Quest Complete!',
   youGotXofY: (score, total) => `You got ${score} out of ${total}!`,
   unlockedNext: (zoneName) => `You unlocked the next area: ${zoneName}`,
@@ -1544,7 +1542,6 @@ const HI: UIStrings = {
   chMascotIntro: 'हर तस्वीर को उसकी सही जगह खींचो!',
   chMascotWrong: 'फिर से सोचो — यह सच में कहाँ आती है?',
   chMascotDistractor: 'वह तस्वीर यहाँ किसी जगह नहीं आती।',
-  chEncourage: 'ध्यान से सोचो! वही चुनो जो हर बच्चे का सच्चा हक है।',
   questComplete: 'क्वेस्ट पूरी हुई!',
   youGotXofY: (score, total) => `तुमने ${total} में से ${score} सही किए!`,
   unlockedNext: (zoneName) => `नया इलाका खुल गया: ${zoneName}`,

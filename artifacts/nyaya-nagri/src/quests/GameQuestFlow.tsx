@@ -109,26 +109,30 @@ export function GameQuestFlow({
 
   /* ----------------------------- quiz stage ----------------------------- */
   if (quizRun && quizLevel) {
+    // Same centred stage as ZoneInterior's QuestPlayer mount: the quiz
+    // board / completion cards centre themselves inside it on desktop.
     return (
-      <QuestPlayer
-        key={`${quest.questId}:${quizIndex}:${quizRun.practice}`}
-        quest={quest}
-        levelIndex={quizIndex}
-        practice={quizRun.practice}
-        onExit={() => {
-          clearLevel();
-          const now = progressStore.getState();
-          const passedNow =
-            !!now.completedZones[quest.zoneId] ||
-            !!now.levelProgress[levelKey(quest.zoneId, quizLevel.levelId)];
-          // The celebration card fires only on a FRESH pass (not replays),
-          // mirroring the map cinematic's fresh-completion-only rule.
-          const freshUnlock =
-            !quizRun.practice && passedNow && !!now.videosWatched[flow.videoId];
-          setQuizRun(null);
-          if (freshUnlock) setJustUnlocked(true);
-        }}
-      />
+      <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+        <QuestPlayer
+          key={`${quest.questId}:${quizIndex}:${quizRun.practice}`}
+          quest={quest}
+          levelIndex={quizIndex}
+          practice={quizRun.practice}
+          onExit={() => {
+            clearLevel();
+            const now = progressStore.getState();
+            const passedNow =
+              !!now.completedZones[quest.zoneId] ||
+              !!now.levelProgress[levelKey(quest.zoneId, quizLevel.levelId)];
+            // The celebration card fires only on a FRESH pass (not replays),
+            // mirroring the map cinematic's fresh-completion-only rule.
+            const freshUnlock =
+              !quizRun.practice && passedNow && !!now.videosWatched[flow.videoId];
+            setQuizRun(null);
+            if (freshUnlock) setJustUnlocked(true);
+          }}
+        />
+      </div>
     );
   }
 

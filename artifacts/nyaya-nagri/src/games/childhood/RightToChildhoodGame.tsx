@@ -346,20 +346,40 @@ export function RightToChildhoodGame({
             ))}
           </span>
         </div>
-        <div className="relative flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white font-bold text-xs md:text-sm rounded-full px-3.5 py-1.5">
-          <Star className="w-4 h-4 text-amber-300 fill-amber-300" aria-hidden />
-          <span>
-            {t.chScoreLabel} {session.score}
-          </span>
-          {fb?.kind === 'correct' && (
-            <span
-              key={session.score}
-              className="absolute -top-4 right-2 text-amber-300 font-extrabold text-sm ch-score-pop pointer-events-none"
-              aria-hidden
-            >
-              +{fb.gained}
+        <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white font-bold text-xs md:text-sm rounded-full px-3.5 py-1.5">
+            <Star className="w-4 h-4 text-amber-300 fill-amber-300" aria-hidden />
+            <span>
+              {t.chScoreLabel} {session.score}
             </span>
-          )}
+            {fb?.kind === 'correct' && (
+              <span
+                key={session.score}
+                className="absolute -top-4 right-2 text-amber-300 font-extrabold text-sm ch-score-pop pointer-events-none"
+                aria-hidden
+              >
+                +{fb.gained}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={() => dispatch({ type: 'hint' })}
+            disabled={!playing || session.hintsLeft <= 0}
+            aria-label={t.chHintAria(session.hintsLeft)}
+            className={[
+              'relative flex items-center gap-1.5 rounded-full px-3 py-1.5 font-bold text-xs md:text-sm shadow-md transition-all touch-manipulation shrink-0',
+              playing && session.hintsLeft > 0
+                ? 'bg-violet-600 hover:bg-violet-500 active:scale-95 text-white'
+                : 'bg-white/20 text-white/50 cursor-not-allowed',
+            ].join(' ')}
+          >
+            <Lightbulb className="w-4 h-4" aria-hidden />
+            {t.chHint}
+            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow">
+              {session.hintsLeft}
+            </span>
+          </button>
         </div>
       </div>
 
@@ -583,31 +603,6 @@ export function RightToChildhoodGame({
         </div>
       </div>
 
-      {/* Bottom bar: hint + encouragement */}
-      <div className="shrink-0 px-3 pb-2.5 flex items-center justify-center gap-2">
-        <button
-          type="button"
-          onClick={() => dispatch({ type: 'hint' })}
-          disabled={!playing || session.hintsLeft <= 0}
-          aria-label={t.chHintAria(session.hintsLeft)}
-          className={[
-            'relative flex items-center gap-1.5 rounded-full px-4 py-2 font-bold text-sm shadow-md transition-all touch-manipulation shrink-0',
-            playing && session.hintsLeft > 0
-              ? 'bg-violet-600 hover:bg-violet-500 active:scale-95 text-white'
-              : 'bg-white/20 text-white/50 cursor-not-allowed',
-          ].join(' ')}
-        >
-          <Lightbulb className="w-4 h-4" aria-hidden />
-          {t.chHint}
-          <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-rose-500 text-white text-[10px] font-extrabold flex items-center justify-center shadow">
-            {session.hintsLeft}
-          </span>
-        </button>
-        <span className="hidden sm:inline-flex items-center gap-2 bg-amber-50/95 border border-amber-200 text-amber-800 text-xs md:text-sm font-semibold rounded-full px-4 py-2 shadow-md min-w-0">
-          <Star className="w-4 h-4 text-amber-400 fill-amber-400 shrink-0" aria-hidden />
-          <span className="truncate">{t.chEncourage}</span>
-        </span>
-      </div>
     </Shell>
   );
 }
