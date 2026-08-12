@@ -36,3 +36,5 @@ Detail lives in [nyaya-sarvam-voice.md](nyaya-sarvam-voice.md). Rules that belon
 - **Lesson:** a voice-engine swap rots greps in EVERY smoke (nyayaai voice/latency sections, onboarding camera-ban exemption) — sweep all smokes for old-engine literals the moment the swap lands, not when they fail.
 
 - Zone-entry greetings must NEVER force-open the chat panel (user order Aug 2026: "by default off rahe"): greeting appends quietly like level greetings; the ONLY setIsOpen(true) is the launcher button click. Do not "restore" auto-open when touching greeting UX.
+
+- /persona/chat runs on Anthropic Claude via the AI_INTEGRATIONS_ANTHROPIC_* env pair; that integration module THROWS AT SERVER BOOT if either var is missing (not a graceful degrade) — remember for env docs and api-server startup debugging.
