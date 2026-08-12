@@ -195,6 +195,21 @@ export function isStoryLevelUnlockedIn(
 }
 
 /**
+ * Story Adventure ENTRANCE lock (user order, Aug 2026): the world house
+ * is LOCKED until the adventure has something for the child — a level
+ * already done (replay is never blocked, mirroring the zone rule) or a
+ * newly playable one. On a fresh save the first level is castle-gated
+ * behind the zone2 flow, so the door starts locked. Every surface (world
+ * house padlock, HUD prompt, openStoryMap guard) derives from THIS rule
+ * so entrance-lock logic can never drift between views.
+ */
+export function isStoryAdventureUnlockedIn(progress: StoryUnlockProgress): boolean {
+  return STORY_LEVELS.some(
+    (l) => !!progress.storyProgress[l.id] || isStoryLevelUnlockedIn(progress, l.id),
+  );
+}
+
+/**
  * World entrance: the EXISTING blue-roof decor house east of the plaza
  * (WorldScene HOUSES) — kept exactly where the reference art placed it,
  * only made interactive. The door opens the LEVEL MAP (not a level);

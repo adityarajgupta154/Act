@@ -25,9 +25,15 @@ export interface ZoneDef {
   /**
    * Optional explicit prerequisite zone id. When set, this zone unlocks as
    * soon as THAT zone is complete, instead of the previous zone by order.
-   * (e.g. zone2 "Right to Childhood" opens right after zone0 "Know Yourself".)
    */
   unlockAfter?: string;
+  /**
+   * Always open: the zone ignores the unlock sequence and is playable from
+   * the very first boot. (User order, Aug 2026: zone2 "Right to Childhood"
+   * — the Right-or-Wrong game castle — must never be locked. Zones after
+   * it by order still wait for its COMPLETION, so the chain is unchanged.)
+   */
+  alwaysUnlocked?: boolean;
 }
 
 export const ZONES: ZoneDef[] = [
@@ -51,7 +57,7 @@ export const ZONES: ZoneDef[] = [
     name: 'Right to Childhood',
     theme: 'Every child has the right to learn, play, and rest (child labour awareness)',
     position: [-12, -24],
-    unlockAfter: 'zone0',
+    alwaysUnlocked: true,
   },
   {
     id: 'zone3',
@@ -89,10 +95,11 @@ export function getZone(zoneId: string): ZoneDef | undefined {
 
 /**
  * The first zone in the sequence (Zone 0, "Know Yourself") is unlocked by
- * default; each later zone unlocks only when its prerequisite zone's quest is
- * complete in the progress store. The prerequisite is the previous zone by
- * order, unless the zone declares an explicit `unlockAfter` override (zone2
- * "Right to Childhood" unlocks as soon as Zone 0 is complete).
+ * default, and `alwaysUnlocked` zones are open from the very first boot
+ * (zone2 "Right to Childhood" — user order, Aug 2026). Each other zone
+ * unlocks only when its prerequisite zone's quest is complete in the
+ * progress store. The prerequisite is the previous zone by order, unless
+ * the zone declares an explicit `unlockAfter` override.
  *
  * A zone that is itself complete is always unlocked: completing it proves
  * the child had access, and replay/practice of finished zones must never be
@@ -110,6 +117,7 @@ export function isZoneUnlockedIn(
 ): boolean {
   const zone = getZone(zoneId);
   if (!zone) return false;
+  if (zone.alwaysUnlocked === true) return true;
   if (completedZones[zoneId] === true) return true;
   if (zone.order === 1) return true;
   const prerequisite = zone.unlockAfter

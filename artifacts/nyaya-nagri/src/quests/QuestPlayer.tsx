@@ -168,46 +168,35 @@ export function QuestPlayer({
   }, [session]);
 
   // Task 10: audio narration (PRD §6.4) — read the currently visible block
-  // (narration + choices / question + options / recap / feedback) aloud in
-  // the quest's language whenever it changes and narration is enabled.
+  // (scene narration + choices / activity intro / completion) aloud in the
+  // quest's language whenever it changes and narration is enabled.
   useEffect(() => {
     if (!settings.narration) {
       stopSpeaking();
       return;
     }
+    // User fix (Aug 2026): question surfaces are SILENT. Auto-reading the
+    // question + options aloud the moment a quiz starts was reported as a
+    // bug, so pre/post quiz and the recap review never speak — question,
+    // options, and answer feedback included. stopSpeaking() also cuts any
+    // speech carried over from a previous phase (the classic flow runs
+    // scenes -> post-quiz inside one session). Story scenes, activity
+    // intros, and completion messages still narrate under the toggle.
+    if (
+      session.phase === 'pre-quiz' ||
+      session.phase === 'post-quiz' ||
+      session.phase === 'recap'
+    ) {
+      stopSpeaking();
+      return;
+    }
     const parts: string[] = [];
-    if (session.phase === 'pre-quiz' || session.phase === 'post-quiz') {
-      const q = quest.quizQuestions[session.quizIndex];
-      if (session.lastQuizFeedback) {
-        parts.push(
-          session.lastQuizFeedback.correct ? t.correct : t.notQuite,
-          session.lastQuizFeedback.explanation,
-        );
-        if (!session.lastQuizFeedback.correct && q) {
-          parts.push(t.correctAnswerWas, q.options[q.correctIndex]);
-        }
-      } else if (q) {
-        parts.push(q.question, ...q.options);
-      }
-    } else if (session.phase === 'scenes') {
+    if (session.phase === 'scenes') {
       const scene = getCurrentScene(session);
       if (session.pendingFeedback) {
         parts.push(session.pendingFeedback.feedback);
       } else if (scene) {
         parts.push(scene.narration, ...scene.choices.map((c) => c.text));
-      }
-    } else if (session.phase === 'recap') {
-      const item = getActiveRecap(session);
-      if (session.recapFeedback) {
-        parts.push(
-          session.recapFeedback.correct ? t.recapGotIt : t.recapTryAgainIntro,
-          session.recapFeedback.explanation,
-        );
-        if (!session.recapFeedback.correct && item) {
-          parts.push(t.correctAnswerWas, item.options[item.correctIndex]);
-        }
-      } else if (item) {
-        parts.push(item.summary, item.question, ...item.options);
       }
     } else if (session.phase === 'activity') {
       // Task 18: narrate the activity's own intro/prompt once on entry.

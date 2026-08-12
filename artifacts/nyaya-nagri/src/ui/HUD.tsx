@@ -20,7 +20,6 @@ import { ProgressOverlay } from './ProgressScreen';
 import { MapOverlay } from './MapScreen';
 import { StoryOverlay } from '@/story/StoryOverlay';
 import { StoryAdventureMap } from '@/story/StoryAdventureMap';
-import { STORY_LEVELS, isStoryLevelUnlockedIn } from '@/story/storyData';
 import { CertificateOverlay } from '@/certificates/CertificateModal';
 import { SettingsPanel } from './SettingsPanel';
 import { CommunityOverlay } from './CommunityScreen';
@@ -44,6 +43,7 @@ import { getLevelStatuses } from '@/quests/levels';
 // pencil, lightbulb, hills) — replaces the plain frosted slate backdrop so
 // every level/quiz surface sits in a playful classroom-sky world.
 import quizDoodleBgUrl from '@/assets/ui/quiz-doodle-bg.webp';
+import { STORY_LEVELS, isStoryLevelUnlockedIn, isStoryAdventureUnlockedIn } from '@/story/storyData';
 
 /** Task 13: has the onboarding (intro, age band, guardian consent) run? */
 function useOnboarded(): boolean {
@@ -168,6 +168,22 @@ function StoryPrompt() {
     ? (t.zones[firstLocked.unlockRequires.zoneId]?.name ?? '')
     : '';
 
+  // Entrance lock (user order, Aug 2026): same locked-card language as
+  // ProximityPrompt — name, Locked chip, what opens it — and NO enter CTA.
+  if (!isStoryAdventureUnlockedIn(progress)) {
+    return (
+      <div className="bg-white px-6 py-4 rounded-3xl shadow-lg border border-slate-100 flex flex-col items-center gap-2 pointer-events-auto opacity-95 animate-in slide-in-from-bottom-4 duration-200">
+        <h3 className="font-display font-bold text-xl text-slate-500">{t.storyAdventure}</h3>
+        <div className="bg-slate-100 text-slate-600 px-4 py-2 rounded-full text-sm font-bold flex items-center gap-2">
+          {t.locked}
+        </div>
+        {lockedZoneName && (
+          <p className="text-sm font-medium text-slate-500">{t.completeFirst(lockedZoneName)}</p>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white px-6 py-4 rounded-3xl shadow-xl border border-slate-100 flex flex-col items-center gap-3 pointer-events-auto animate-in slide-in-from-bottom-4 duration-200">
       <div className="flex items-center gap-3">
@@ -242,7 +258,7 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
     // No content registered for this zone yet — plain centred card with exit.
     return (
       <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
-        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full mx-auto text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
           <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
             <MapIcon className="w-8 h-8 text-orange-500" />
           </div>

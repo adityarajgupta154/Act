@@ -132,7 +132,8 @@ export function GameQuestFlow({
   /* ------------------------ story-unlocked stage ------------------------ */
   if (justUnlocked && storyLevel) {
     return (
-      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
+      <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full mx-auto text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
         <div className="mx-auto bg-violet-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
           <BookOpen className="w-8 h-8 text-violet-500" />
         </div>
@@ -158,6 +159,7 @@ export function GameQuestFlow({
           </button>
         </div>
       </div>
+      </div>
     );
   }
 
@@ -165,7 +167,8 @@ export function GameQuestFlow({
   // Re-entry surface (the fresh path skips it — see playingGame's initial
   // value): replay the game, continue to the quiz, or hop to the story.
   return (
-    <div className="bg-white p-5 md:p-8 rounded-3xl shadow-xl max-w-2xl w-full border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto flex flex-col gap-4 md:gap-5 max-h-full overflow-y-auto">
+    <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+    <div className="bg-white p-5 md:p-8 rounded-3xl shadow-xl max-w-2xl w-full mx-auto border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto flex flex-col gap-4 md:gap-5 max-h-full overflow-y-auto">
       <div className="text-center">
         <h2 className="font-display font-bold text-2xl md:text-4xl text-slate-800">
           {zoneName}
@@ -247,6 +250,7 @@ export function GameQuestFlow({
           </button>
         )}
       </div>
+    </div>
     </div>
   );
 }

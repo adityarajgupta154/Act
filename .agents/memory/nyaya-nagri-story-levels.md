@@ -21,3 +21,9 @@ description: Level-map progression for Story Adventure — data-driven rules, ce
 - Shared spoken pools (reminders etc.) must stay option-COUNT-neutral ("dono" bug: a 2-option phrasing leaked into 3-option levels). Changing a shared line invalidates its cached clips for ALL levels — old WAVs become harmless orphans, new ids regenerate lazily.
 
 **Lock rule:** `isStoryLevelUnlockedIn(snapshot, id)` is the ONLY gate — pure function over `{storyProgress, completedZones?, videosWatched?}` (progressStore state satisfies it structurally); `openStory` re-checks it AND refuses slide-less levels, so URL seams can't bypass either gate. `celebrateStoryCompletion` deliberately bypasses the map-open guard chain (story is closing at that instant) — keep it that way.
+
+## Entrance door is LOCKED too (user order, Aug 2026)
+The world's Story Adventure house starts locked and is not a free surface.
+**Rule:** one pure predicate in the story data module — "some level done OR some level playable" — decides the entrance; on a fresh save the castle-gated first level keeps it false, so the door shows the monuments' red padlock (shared baked texture) and the HUD prompt renders the ProximityPrompt-style locked card (no CTA).
+**Why:** user order ("story adventure ko lock kr do") right after they made zone2 always-unlocked — the intended first stop is the Right to Childhood castle, not the story house.
+**How to apply:** enforcement lives in the story-map opener (same boundary role as enterZone) so house tap, E key, HUD button AND dev seams all fail closed; the castle-exit CTA re-checks at reveal time and falls back to a plain world exit. Screenshot seams must seed `&zones=zone2&watched=right-to-childhood` to photograph the open map. Never add a second lock check UI-side that could drift — derive.

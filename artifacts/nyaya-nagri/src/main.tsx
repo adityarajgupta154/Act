@@ -55,9 +55,9 @@ if (import.meta.env.DEV && new URLSearchParams(window.location.search).get('stor
   const zoneIds = (new URLSearchParams(window.location.search).get('zones') ?? '')
     .split(',')
     .filter(Boolean);
-  const watchedIds = (new URLSearchParams(window.location.search).get('watched') ?? '')
-    .split(',')
-    .filter(Boolean);
+    const watchedIds = (new URLSearchParams(window.location.search).get('watched') ?? '')
+      .split(',')
+      .filter(Boolean);
   progressStore.update({
     onboarded: true,
     ageBand: '12-15',

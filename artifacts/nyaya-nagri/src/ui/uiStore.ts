@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from 'react';
 import { getZone, isZoneUnlocked } from '@/world/zones';
-import { getStoryLevel, isStoryLevelUnlockedIn } from '@/story/storyData';
+import { getStoryLevel, isStoryLevelUnlockedIn, isStoryAdventureUnlockedIn } from '@/story/storyData';
 import { primeStoryAudioInGesture } from '@/story/storyAdventureVoice';
 import { progressStore } from '@/data/progressStore';
 import type { LevelKind } from '@/quests/schema';
@@ -157,7 +157,14 @@ export function exitZoneToStoryMap() {
   uiStore.set({ isTransitioning: true, fadeOpacity: 1, activeLevel: null });
 
   setTimeout(() => {
-    uiStore.set({ activeZoneId: null, fadeOpacity: 0, storyMapOpen: true });
+    // Entrance lock re-checked at reveal time: the castle CTA fires after
+    // the unlock write, but if anything ever calls this earlier the child
+    // still exits cleanly to the world instead of a locked map flashing.
+    uiStore.set({
+      activeZoneId: null,
+      fadeOpacity: 0,
+      storyMapOpen: isStoryAdventureUnlockedIn(progressStore.getState()),
+    });
     setTimeout(() => {
       uiStore.set({ isTransitioning: false });
     }, 300);
@@ -193,6 +200,10 @@ export function closeStory() {
  */
 export function openStoryMap() {
   if (state.isTransitioning || state.activeZoneId || state.activeStory) return;
+  // Entrance lock (user order, Aug 2026): enforced HERE — exactly like
+  // enterZone — so no UI path or dev seam can open a locked Story
+  // Adventure. The door stays shut until the castle flow frees a level.
+  if (!isStoryAdventureUnlockedIn(progressStore.getState())) return;
   uiStore.set({ storyMapOpen: true });
 }
 

@@ -196,12 +196,16 @@ async function main() {
     const quest = resolveQuest(zoneId, band, lang)!;
     const next = ZONES_SEQ[zi + 1];
 
-    // Explicit-prerequisite aware (Aug 2026): a zone with `unlockAfter`
-    // opens as soon as THAT zone is complete — zone2 unlocks right after
-    // zone0, before zone1 is played. Every other zone keeps the
-    // previous-in-order fallback (mirrors isZoneUnlockedIn, the ONE rule).
-    const nextPrereq = next ? ZONES.find((z) => z.id === next)?.unlockAfter ?? zoneId : '';
-    const nextOpensEarly = !!next && !!progressStore.getState().completedZones[nextPrereq];
+    // Mirrors isZoneUnlockedIn (the ONE rule), Aug 2026: `alwaysUnlocked`
+    // zones are open from boot (zone2 "Right to Childhood" — user order);
+    // a zone with `unlockAfter` opens as soon as THAT zone is complete;
+    // every other zone keeps the previous-in-order fallback.
+    const nextDef = next ? ZONES.find((z) => z.id === next) : undefined;
+    const nextPrereq = next ? nextDef?.unlockAfter ?? zoneId : '';
+    const nextOpensEarly =
+      !!next &&
+      (nextDef?.alwaysUnlocked === true ||
+        !!progressStore.getState().completedZones[nextPrereq]);
 
     assert(isZoneUnlocked(zoneId), `${zoneId} unlocked when its turn comes`);
     if (next) {
@@ -575,12 +579,13 @@ async function main() {
     progressStore.update({ completedZones: { zone1: true } });
     assert(isZoneUnlocked('zone0'), 'legacy save: zone0 (new first zone) is open');
     assert(isZoneUnlocked('zone1'), 'legacy save: completed zone1 stays replayable without zone0');
-    // Aug 2026: zone2's explicit prerequisite is zone0 — a legacy zone1-only
-    // save no longer opens it; the child plays the new first zone first.
-    assert(!isZoneUnlocked('zone2'), 'legacy save: zone2 waits for zone0 (explicit prereq), zone1 alone no longer opens it');
+    // Aug 2026 user order: zone2 "Right to Childhood" is alwaysUnlocked —
+    // open on EVERY save, fresh or legacy; zone3 still waits for zone2's
+    // COMPLETION (the chain after it is unchanged).
+    assert(isZoneUnlocked('zone2'), 'zone2 (Right to Childhood) is never locked — alwaysUnlocked');
     assert(!isZoneUnlocked('zone3'), 'legacy save: zone3 still locked (zone2 not done)');
     progressStore.update({ completedZones: { zone0: true, zone1: true } });
-    assert(isZoneUnlocked('zone2'), 'legacy save: zone2 opens once zone0 (explicit prereq) is done');
+    assert(isZoneUnlocked('zone2'), 'zone2 stays open after zone0 too (alwaysUnlocked)');
     assert(!isZoneUnlocked('zone3'), 'legacy save: zone3 STILL locked (zone2 not done)');
     resetProgress();
   }

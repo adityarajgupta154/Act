@@ -1,8 +1,10 @@
 /**
  * Nyaya Nagri — Audio narration via the Web Speech API (Task 10, PRD §6.4)
  *
- * Reads quest narration, choices, and quiz text aloud in the selected
- * language so non-readers and visually impaired children can play by ear.
+ * Reads quest narration and choices aloud in the selected language so
+ * non-readers and visually impaired children can play by ear. Quiz
+ * question surfaces are deliberately silent (user-reported fix, Aug 2026:
+ * the voice reading the question at quiz start was experienced as a bug).
  * Fully client-side, nothing is recorded or sent anywhere.
  *
  * Voice availability differs by browser/OS: hi-IN speech uses the device's

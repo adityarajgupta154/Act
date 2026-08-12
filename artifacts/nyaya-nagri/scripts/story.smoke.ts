@@ -50,6 +50,7 @@ import {
   STORY_REMINDERS,
   getStoryLevel,
   isStoryLevelUnlockedIn,
+  isStoryAdventureUnlockedIn,
 } from '../src/story/storyData';
 import { ZONE_GAME_FLOWS, getZoneGameFlow } from '../src/quests/gameFlows';
 import { setNarrationSuspended } from '../src/story/storyNarrationState';
@@ -176,6 +177,28 @@ assert(
 assert(
   !isStoryLevelUnlockedIn({ storyProgress: {} }, 'no-such-story'),
   'unknown story id is never unlocked',
+);
+
+// --- Entrance lock (user order, Aug 2026): the world door derives from levels
+assert(
+  !isStoryAdventureUnlockedIn({ storyProgress: {} }),
+  'entrance LOCKED on a fresh save (first level castle-gated)',
+);
+assert(
+  !isStoryAdventureUnlockedIn({ storyProgress: {}, completedZones: { zone2: true } }),
+  'entrance stays locked on half a gate (fail-closed like the level rule)',
+);
+assert(
+  isStoryAdventureUnlockedIn({
+    storyProgress: {},
+    completedZones: { zone2: true },
+    videosWatched: { 'right-to-childhood': true },
+  }),
+  'entrance opens the moment the first level becomes playable',
+);
+assert(
+  isStoryAdventureUnlockedIn({ storyProgress: { 'right-to-childhood': true } }),
+  'a save with story progress keeps the door open (replay never blocked)',
 );
 
 // --- openStory guard chain (uiStore) + persistence ----------------------------

@@ -115,7 +115,7 @@ function drawLabelPill(
 
 /** Padlock badge (locked state) in the reference style: white shackle,
  * red rounded body, small keyhole. Baked once. */
-function ensureLockTexture(scene: Phaser.Scene): string {
+export function ensureLockTexture(scene: Phaser.Scene): string {
   const key = 'lock-icon';
   if (scene.textures.exists(key)) return key;
   const tex = scene.textures.createCanvas(key, 48, 58);

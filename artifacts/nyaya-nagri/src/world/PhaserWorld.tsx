@@ -31,7 +31,6 @@ import decorFlowersAUrl from '@/assets/world/decor-flowers-a.png';
 import decorFlowersBUrl from '@/assets/world/decor-flowers-b.png';
 import riverCornerUrl from '@/assets/world/river-corner.png';
 import decorRocksUrl from '@/assets/world/decor-rocks.png';
-import decorLogUrl from '@/assets/world/decor-log.png';
 import decorMushroomUrl from '@/assets/world/decor-mushroom.png';
 import decorFenceUrl from '@/assets/world/decor-fence.png';
 // Terrain-polish task (Aug 2026): seamless meadow tile + scatter cutouts.
@@ -83,7 +82,6 @@ export function PhaserWorld() {
         'decor-flowers-b': decorFlowersBUrl,
         'river-corner': riverCornerUrl,
         'decor-rocks': decorRocksUrl,
-        'decor-log': decorLogUrl,
         'decor-mushroom': decorMushroomUrl,
         'decor-fence': decorFenceUrl,
         'grass-tile': grassTileUrl,

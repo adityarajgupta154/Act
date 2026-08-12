@@ -26,7 +26,8 @@ export type TextSize = 'small' | 'medium' | 'large';
 
 export interface SettingsState {
   language: Language;
-  /** Read narration, choices, and quiz text aloud via the Web Speech API. */
+  /** Read story narration and choices aloud via the Web Speech API.
+   * Quiz question surfaces stay silent (user-reported fix, Aug 2026). */
   narration: boolean;
   dyslexiaFont: boolean;
   highContrast: boolean;

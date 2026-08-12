@@ -19,7 +19,7 @@
 import Phaser from 'phaser';
 import { ZONES, getZoneStates } from '../zones';
 import { uiStore, playerPosition, enterZone, openStoryMap } from '@/ui/uiStore';
-import { STORY_ENTRANCE, STORY_PROXIMITY_SQ } from '@/story/storyData';
+import { STORY_ENTRANCE, STORY_PROXIMITY_SQ, isStoryAdventureUnlockedIn } from '@/story/storyData';
 import { progressStore } from '@/data/progressStore';
 import {
   GRASS_BASE,
@@ -46,6 +46,7 @@ import {
   applyMonumentState,
   createMonument,
   setMonumentLabel,
+  ensureLockTexture,
 } from './monuments';
 import { buildRoads, laneSegments } from './roads';
 import { buildScatter } from './scatter';
@@ -151,6 +152,7 @@ export class WorldScene extends Phaser.Scene {
   private storyLabelG: Phaser.GameObjects.Graphics | null = null;
   private storyLabelText: Phaser.GameObjects.Text | null = null;
   private storyTick: Phaser.GameObjects.Image | null = null;
+  private storyLock: Phaser.GameObjects.Image | null = null;
   private storyLabelY = 0;
 
   constructor() {
@@ -340,17 +342,18 @@ export class WorldScene extends Phaser.Scene {
     BORDER_TREES.forEach(plantTree);
     INNER_TREES.forEach(plantTree);
 
-    // Small reference props: rocks, stacked logs, mushrooms, flower fences.
+    // Small reference props: rocks, mushrooms, flower fences. (The log
+    // cutout was removed Aug 2026: its soft oval alpha baked in foreign
+    // grass + a bush, so it read as a mismatched sticker on the meadow —
+    // the seamless tile + scatter reclaim its two spots automatically.)
     // Aug 2026 map redesign: a few more of the SAME cutouts fill the
-    // reference's denser corners (rocks top-left, log + fence by the help
+    // reference's denser corners (rocks top-left, fence by the help
     // house, rocks bottom-right) — never on a lane.
     const props: Array<[string, number, number, number, boolean]> = [
       ['decor-rocks', -11, -28.2, 1.35, false],
       ['decor-rocks', 18, -8, 1.1, true],
       ['decor-rocks', -26, -28, 1.2, true],
       ['decor-rocks', 24, 6, 1.0, false],
-      ['decor-log', 16, -2.5, 1.35, false],
-      ['decor-log', -25, 9, 1.2, true],
       ['decor-mushroom', 14.6, -0.2, 1.35, false],
       ['decor-mushroom', -3.4, 5.2, 1.05, true],
       ['decor-fence', 12.8, -3.6, 1.35, false],
@@ -368,7 +371,6 @@ export class WorldScene extends Phaser.Scene {
     // Chunky props block movement; mushrooms and fences stay walk-through.
     this.addStaticCircle(px(-11), px(-28.4), 1.3 * U);
     this.addStaticCircle(px(18), px(-8.2), 1.1 * U);
-    this.addStaticCircle(px(16), px(-2.7), 1.2 * U);
 
     FLOWER_PATCHES.forEach(([ux, uz], i) => {
       this.add
@@ -455,6 +457,22 @@ export class WorldScene extends Phaser.Scene {
       .image(hx + house.displayWidth * 0.3, hy - house.displayHeight * 0.82, tickKey)
       .setDepth(10 + hy * 0.01 + 0.07)
       .setVisible(false);
+
+    // Entrance padlock (user order, Aug 2026): the SAME reference-style
+    // badge + bob as zone monuments, toggled by the ONE entrance rule
+    // (isStoryAdventureUnlockedIn) in applyStoryState.
+    this.storyLock = this.add
+      .image(hx, hy - 10, ensureLockTexture(this))
+      .setDepth(10 + hy * 0.01 + 0.06)
+      .setVisible(false);
+    this.tweens.add({
+      targets: this.storyLock,
+      y: this.storyLock.y + 4,
+      duration: 900,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.easeInOut',
+    });
     this.applyStoryState();
   }
 
@@ -499,11 +517,14 @@ export class WorldScene extends Phaser.Scene {
     return key;
   }
 
-  /** Show/hide the done-tick from progress (subscribed in create()). */
+  /** Done-tick + entrance padlock from progress (subscribed in create()). */
   private applyStoryState() {
     if (!this.storyTick) return;
-    const done = !!progressStore.getState().storyProgress[STORY_ENTRANCE.storyId];
-    this.storyTick.setVisible(done);
+    const s = progressStore.getState();
+    this.storyTick.setVisible(!!s.storyProgress[STORY_ENTRANCE.storyId]);
+    // Locked door = monuments' padlock; unlocking hides it (a done story
+    // implies unlocked, so tick and lock can never show together).
+    this.storyLock?.setVisible(!isStoryAdventureUnlockedIn(s));
   }
 
   private buildMonuments() {
