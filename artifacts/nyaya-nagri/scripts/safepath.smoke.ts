@@ -420,6 +420,50 @@ check(
   strings.includes("spTitle: 'Safe Path Adventure'") && strings.includes('सुरक्षित राह का सफ़र'),
 );
 
+/* ── completion screen (reference-image recreation, Aug 2026) ──────────── */
+const game = read('../src/games/safepath/SafePathGame.tsx');
+check(
+  'completion screen: chrome copy is wired through i18n, never pasted inline',
+  game.includes('t.spDidIt') &&
+    game.includes('t.spTagline') &&
+    game.includes('t.spAwarenessTag') &&
+    game.includes('t.spYouAreChampion') &&
+    game.includes('t.spGameCompleted'),
+);
+check(
+  'completion screen: three REAL actions — Back to Map exits, Continue opens the quiz, Play Again restarts',
+  game.includes('t.spBackToMap') &&
+    game.includes("setPhase('quiz')") &&
+    game.includes('t.chPlayAgain') &&
+    game.includes('startMaze') &&
+    game.includes('resetRun(levelIdx)'),
+);
+check(
+  'completion screen: stats bind LIVE session values (score / safe choices / time), no pasted demo numbers',
+  game.includes('session.score') &&
+    game.includes('session.safeDecisions') &&
+    game.includes('session.wrongDecisions') &&
+    game.includes('fmtTime(elapsedSec)') &&
+    !game.includes('03:25') &&
+    !game.includes('450'),
+);
+check(
+  'completion screen: &spphase preview seam stays DEV-gated (prod must never skip the maze into the quiz)',
+  /import\.meta\.env\.DEV[^]{0,300}spphase/.test(game) && game.includes("get('spphase')"),
+);
+check(
+  'strings.ts: completion-screen strings exist in EN and HI',
+  strings.includes("spDidIt: 'You did it!'") &&
+    strings.includes('तुमने कर दिखाया') &&
+    strings.includes("spBackToMap: 'Back to Map'") &&
+    strings.includes('नक्शे पर वापस'),
+);
+check(
+  'spDidItSub keeps exactly one |SZ| marker per language (the component splits on it)',
+  (strings.match(/spDidItSub: '[^']*'/g) ?? []).length === 2 &&
+    (strings.match(/spDidItSub: '[^']*'/g) ?? []).every((l) => (l.match(/\|SZ\|/g) ?? []).length === 1),
+);
+
 /* ── report ──────────────────────────────────────────────────────────── */
 if (fails.length) {
   console.error(`✗ safepath smoke: ${fails.length} FAILED (of ${passed + fails.length})`);

@@ -23,12 +23,19 @@ import trustedAdultUrl from '@/assets/games/safepath/sp-trusted-adult.webp';
 import safePlaceUrl from '@/assets/games/safepath/sp-safe-place.webp';
 import passwordUrl from '@/assets/games/safepath/sp-password.webp';
 import teacherUrl from '@/assets/games/safepath/sp-teacher.webp';
+import guideBoyUrl from '@/assets/home/guide-boy.webp';
+import assistantRobotUrl from '@/assets/ui/assistant-robot.webp';
 
 export const SP_BG_URL = bgUrl;
 export const SP_TILE_URL = tileUrl;
 export const SP_PLAYER_URL = playerUrl;
 export const SP_GOAL_URL = goalUrl;
 export const SP_BANNER_URL = bannerUrl;
+/** Completion screen: the home-screen guide boy celebrates and the Nyaya
+ *  assistant robot waves — the SAME characters the app already uses
+ *  everywhere (no new cast, reference-image recreation Aug 2026). */
+export const SP_HERO_URL = guideBoyUrl;
+export const SP_MASCOT_URL = assistantRobotUrl;
 
 /** Obstacle id → card illustration. */
 export const SP_ART: Record<string, string> = {

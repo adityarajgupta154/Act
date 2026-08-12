@@ -153,8 +153,21 @@ export interface UIStrings {
   spLivesOut: string;
   spLivesOutSub: string;
   spTryAgain: string;
-  spReached: string;
-  spReachedSub: string;
+  spDidIt: string;
+  /** '|SZ|' marks where the green Safe Zone word drops in (word order differs in HI). */
+  spDidItSub: string;
+  spSafeZoneWord: string;
+  spStatChoices: string;
+  spStatTime: string;
+  spPointsUnit: string;
+  spCorrectUnit: string;
+  spMinutesUnit: string;
+  spYouAreChampion: string;
+  spGameCompleted: string;
+  spBackToMap: string;
+  spSignLine1: string;
+  spSignLine2: string;
+  spSignLine3: string;
   spQuizTitle: string;
   spQuizProgress: (n: number, total: number) => string;
   spChampion: string;
@@ -866,8 +879,20 @@ const EN: UIStrings = {
   spLivesOut: "Let's try that path again!",
   spLivesOutSub: 'Every hero practices. Start from your checkpoint.',
   spTryAgain: 'Try again',
-  spReached: 'You reached the Safe Zone!',
-  spReachedSub: 'You made safe choices all the way.',
+  spDidIt: 'You did it!',
+  spDidItSub: 'Great job! You made safe choices and reached the |SZ|!',
+  spSafeZoneWord: 'Safe Zone',
+  spStatChoices: 'Safe Choices',
+  spStatTime: 'Time Taken',
+  spPointsUnit: 'Points',
+  spCorrectUnit: 'Correct',
+  spMinutesUnit: 'Minutes',
+  spYouAreChampion: 'You are a Safety Champion!',
+  spGameCompleted: 'Game completed',
+  spBackToMap: 'Back to Map',
+  spSignLine1: 'Stay Aware',
+  spSignLine2: 'Stay Safe',
+  spSignLine3: 'Speak Up!',
   spQuizTitle: 'Safety Check',
   spQuizProgress: (n, total) => `Question ${n} of ${total}`,
   spChampion: 'Safety Champion!',
@@ -1658,8 +1683,20 @@ const HI: UIStrings = {
   spLivesOut: 'चलो, वह राह फिर से आज़माएँ!',
   spLivesOutSub: 'हर हीरो अभ्यास करता है। अपने पड़ाव से शुरू करो।',
   spTryAgain: 'फिर कोशिश करो',
-  spReached: 'तुम सेफ ज़ोन पहुँच गए!',
-  spReachedSub: 'तुमने पूरे रास्ते सुरक्षित चुनाव किए।',
+  spDidIt: 'तुमने कर दिखाया!',
+  spDidItSub: 'शाबाश! तुमने सुरक्षित चुनाव किए और |SZ| तक पहुँच गए!',
+  spSafeZoneWord: 'सेफ ज़ोन',
+  spStatChoices: 'सुरक्षित चुनाव',
+  spStatTime: 'लगा समय',
+  spPointsUnit: 'अंक',
+  spCorrectUnit: 'सही',
+  spMinutesUnit: 'मिनट',
+  spYouAreChampion: 'तुम सुरक्षा चैंपियन हो!',
+  spGameCompleted: 'खेल पूरा हुआ',
+  spBackToMap: 'नक्शे पर वापस',
+  spSignLine1: 'जागरूक रहो',
+  spSignLine2: 'सुरक्षित रहो',
+  spSignLine3: 'बोल दो!',
   spQuizTitle: 'सुरक्षा जाँच',
   spQuizProgress: (n, total) => `सवाल ${n} / ${total}`,
   spChampion: 'सुरक्षा चैंपियन!',

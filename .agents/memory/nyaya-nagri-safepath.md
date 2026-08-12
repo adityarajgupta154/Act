@@ -14,5 +14,12 @@ Questions and answer OPTIONS must never use scared/scary/blame/trouble/fault lan
 **Why:** child-facing POCSO copy must not model threat or self-blame; architect review FAILED the first version on this.
 **How to apply:** "never your fault" reassurance is RETAINED but only in explanations/learnings (2 spots in content.ts). Sweep grep before shipping copy: `scared|scary|blame|trouble|मुसीबत|दोष|डर` must return nothing in `src/games/safepath/`.
 
+## Completion screen (success phase — reference-image recreation, 2026-08-12)
+- Pure DOM/CSS scene (clouds/bunting/balloon/school/sign built in CSS+SVG) over the SAME app cast: park bg + home guide-boy + assistant robot (re-exported as SP_HERO/SP_MASCOT in data.ts). No screenshot-as-bg, no new art — same-cast rule holds.
+- Safe Choices stat is ATTEMPT-based BY DESIGN: `safeDecisions/(safe+wrong)`. Architect suggested level-total-obstacles denominator — REJECTED, do not "fix".
+  **Why:** the label means "of choices MADE, how many safe"; a level-total denominator under-reports whenever an obstacle isn't on the taken path, and attempt-based can never show a false perfect.
+- `spDidItSub` carries ONE `|SZ|` marker per language; component splits on it to color the Safe Zone word (HI word order differs). Smoke pins exactly-one-marker — translators must keep it.
+- DEV seam `?zone=zone1&spphase=success`: import.meta.env.DEV-gated (ungated = prod shortcut past the game into the quiz). Seeds a display-only demo session (NOT a fully valid terminal SpSession — success view reads only score/safe/wrong; keep it that way or build a real terminal state).
+
 ## Asset state (as of 2026-08-12)
 Only 3 of 13 webps are real art (path tile, park bg, trusted-adult card); other 10 are styled placeholder gradients that pass smokes. Gemini image quota was exhausted across 3 waves; retry-once protocol done — regenerate remaining 10 when quota recovers. Convert recipes: cards `-resize 640x640^ -gravity center -extent 640x640 -quality 82`; player/safezone `-fuzz 6% -transparent white -trim +repage -resize 420x560`/`640`; banner `-resize 1600x -gravity center -extent 1600x600`; bg `-resize 1600x`. L2 card ids reuse L1 art via SP_ART map.

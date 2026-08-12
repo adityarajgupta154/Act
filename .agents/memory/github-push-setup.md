@@ -10,7 +10,7 @@ H='!f() { echo username=x-access-token; echo password=$GITHUB_PERSONAL_ACCESS_TO
 git -c credential.helper= -c credential.helper="$H" push origin main
 ```
 
-`$ACT` is a known-good backup secret if the primary ever 403s.
+`$ACT` is a known-good backup secret if the primary ever 403s. As of 2026-08-12 the primary `$GITHUB_PERSONAL_ACCESS_TOKEN` 403s (authenticates but can't push — expired or read-only scope); `$ACT` worked. Try `$ACT` first now.
 
 **Why:**
 - The Replit GitHub *connection* is linked to a different account than the repo owner, and that connected account has no write access to this repo — so the platform `gitPush` callback fails with an opaque `CLI_ERROR ... UNKNOWN`. Do not use `gitPush` here; the user chose the token route over adding the connected account as a collaborator.

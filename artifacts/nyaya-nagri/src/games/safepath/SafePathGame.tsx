@@ -33,9 +33,11 @@ import {
   Flag,
   Heart,
   Lightbulb,
+  Map as MapIcon,
   Play,
   RefreshCw,
   Shield,
+  ShieldCheck,
   Star,
   Trophy,
   Volume2,
@@ -46,8 +48,8 @@ import {
   newSpSession,
   spAckSafe,
   spDecide,
+  spMaxScore,
   spMove,
-  spStars,
   spTryAgain,
   spUseHint,
   obstacleByCh,
@@ -58,7 +60,15 @@ import {
   type SpSession,
 } from './logic';
 import { SP_LEARNINGS, SP_LEVELS, type SpText } from './content';
-import { SP_ART, SP_BG_URL, SP_GOAL_URL, SP_PLAYER_URL, SP_TILE_URL } from './data';
+import {
+  SP_ART,
+  SP_BG_URL,
+  SP_GOAL_URL,
+  SP_HERO_URL,
+  SP_MASCOT_URL,
+  SP_PLAYER_URL,
+  SP_TILE_URL,
+} from './data';
 // Generic WebAudio chimes — deliberately shared with the childhood game
 // (no assets, no per-game tuning needed).
 import { playCorrect, playWrong, playComplete } from '../childhood/sfx';
@@ -96,6 +106,12 @@ const KEY_DIRS: Record<string, SpDir> = {
   D: 'right',
 };
 
+/** mm:ss (leading zeros) for the completion screen's Time Taken card. */
+const fmtTime = (sec: number) => {
+  const s = Math.max(0, Math.round(sec));
+  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+};
+
 export function SafePathGame({
   onComplete,
   onContinue,
@@ -112,10 +128,25 @@ export function SafePathGame({
   const { language } = useSettings();
   const tx = useCallback((x: SpText) => x[language === 'hi' ? 'hi' : 'en'], [language]);
 
+  // DEV-only preview seam (house style, like ?zone= / &watched=):
+  // &spphase=success opens the completion screen with a demo perfect-run
+  // session so the screen can be reviewed without a full maze run.
+  // DEV-gated on purpose — ungated this would be a prod shortcut past
+  // the game straight into the quiz (and the lesson gate behind it).
+  const devSuccessSeam =
+    import.meta.env.DEV &&
+    typeof window !== 'undefined' &&
+    new URLSearchParams(window.location.search).get('spphase') === 'success';
+
   const [levelIdx, setLevelIdx] = useState(0);
   const level = SP_LEVELS[levelIdx];
-  const [phase, setPhase] = useState<Phase>('intro');
-  const [session, setSession] = useState<SpSession>(() => newSpSession(SP_LEVELS[0]));
+  const [phase, setPhase] = useState<Phase>(devSuccessSeam ? 'success' : 'intro');
+  const [session, setSession] = useState<SpSession>(() => {
+    const s = newSpSession(SP_LEVELS[0]);
+    if (!devSuccessSeam) return s;
+    const unsafeCount = SP_LEVELS[0].obstacles.filter((o) => o.kind === 'unsafe').length;
+    return { ...s, score: spMaxScore(SP_LEVELS[0]), safeDecisions: unsafeCount, reachedGoal: true };
+  });
   const [card, setCard] = useState<Card>(null);
   const [showTips, setShowTips] = useState(false);
   const [muted, setMuted] = useState(false);
@@ -125,6 +156,8 @@ export function SafePathGame({
   const [quizI, setQuizI] = useState(0);
   const [quizPicked, setQuizPicked] = useState<string | null>(null);
   const [quizCorrect, setQuizCorrect] = useState(0);
+  /** Frozen at the moment the goal is reached (demo value under the seam). */
+  const [elapsedSec, setElapsedSec] = useState(devSuccessSeam ? 3 * 60 + 25 : 0);
 
   const sessionRef = useRef(session);
   sessionRef.current = session;
@@ -137,6 +170,13 @@ export function SafePathGame({
   const hintTimer = useRef<number | null>(null);
   const timersRef = useRef<number[]>([]);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  /** Wall-clock anchor for the run timer (set on every maze (re)start). */
+  const runStartRef = useRef<number>(Date.now());
+
+  const startMaze = useCallback(() => {
+    runStartRef.current = Date.now();
+    setPhase('maze');
+  }, []);
 
   const R = level.grid.length;
   const C = level.grid[0]?.length ?? 1;
@@ -158,6 +198,7 @@ export function SafePathGame({
 
   const resetRun = useCallback((idx: number) => {
     setSession(newSpSession(SP_LEVELS[idx]));
+    setElapsedSec(0);
     setCard(null);
     setHintCells([]);
     setPops([]);
@@ -188,6 +229,7 @@ export function SafePathGame({
         case 'goal':
           chime('done');
           addPop('+200', s.pos);
+          setElapsedSec(Math.round((Date.now() - runStartRef.current) / 1000));
           timersRef.current.push(window.setTimeout(() => setPhase('success'), 700));
           break;
         default:
@@ -278,7 +320,6 @@ export function SafePathGame({
   };
 
   const nextPlayable = SP_LEVELS[levelIdx + 1];
-  const stars = spStars(session);
 
   const cellStyle = (r: number, c: number): React.CSSProperties => ({
     left: `${(c * 100) / C}%`,
@@ -394,7 +435,7 @@ export function SafePathGame({
             </p>
             <button
               type="button"
-              onClick={() => setPhase('maze')}
+              onClick={startMaze}
               className="mt-4 w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-extrabold text-lg px-6 py-3.5 rounded-full shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-transform active:scale-95 touch-manipulation"
             >
               <Play className="w-5 h-5 fill-current" aria-hidden />
@@ -407,8 +448,86 @@ export function SafePathGame({
   }
 
   if (phase === 'success') {
+    // Completion screen — recreation of the user's reference image
+    // (Aug 2026). Every element is real DOM: layered CSS scenery, the
+    // park art the game already plays on, and the app's own cast (guide
+    // boy + Nyaya robot). Stats bind the LIVE session — nothing pasted.
+    const choicesTotal = Math.max(1, session.safeDecisions + session.wrongDecisions);
+    const [didItSubA, didItSubB] = t.spDidItSub.split('|SZ|');
+    const titleWords = t.spTitle.split(' ');
+    const titleColor = (i: number) =>
+      i === 0 ? 'text-violet-600' : i === titleWords.length - 1 ? 'text-emerald-600' : 'text-orange-500';
+    const statCards = [
+      {
+        label: t.chScoreLabel,
+        value: String(session.score),
+        unit: t.spPointsUnit,
+        icon: <Star className="w-3.5 h-3.5 md:w-4 md:h-4 text-amber-500 fill-amber-400" aria-hidden />,
+        border: 'border-amber-200',
+        labelColor: 'text-amber-700',
+      },
+      {
+        label: t.spStatChoices,
+        value: `${session.safeDecisions}/${choicesTotal}`,
+        unit: t.spCorrectUnit,
+        icon: <Heart className="w-3.5 h-3.5 md:w-4 md:h-4 text-rose-500 fill-rose-400" aria-hidden />,
+        border: 'border-rose-200',
+        labelColor: 'text-rose-700',
+      },
+      {
+        label: t.spStatTime,
+        value: fmtTime(elapsedSec),
+        unit: t.spMinutesUnit,
+        icon: <ShieldCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-emerald-600" aria-hidden />,
+        border: 'border-emerald-200',
+        labelColor: 'text-emerald-700',
+      },
+    ];
     return (
-      <div className="fixed inset-0 z-30 overflow-hidden bg-gradient-to-b from-amber-100 via-orange-50 to-emerald-50">
+      <div className="fixed inset-0 z-30 overflow-hidden">
+        {/* ---- layered illustrated backdrop (PRD §9.5 — gentle cartoon) ---- */}
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-b from-sky-300 via-sky-200 to-emerald-100" />
+        <img
+          src={SP_BG_URL}
+          alt=""
+          aria-hidden
+          draggable={false}
+          className="absolute bottom-0 inset-x-0 h-[58%] w-full object-cover select-none [mask-image:linear-gradient(to_top,black_62%,transparent)]"
+        />
+        {/* clouds */}
+        <div aria-hidden className="absolute top-[6%] left-[8%] w-28 h-10 md:w-40 md:h-14 bg-white/90 rounded-full blur-[1px] sp-float" />
+        <div aria-hidden className="absolute top-[13%] right-[15%] w-24 h-8 md:w-36 md:h-12 bg-white/80 rounded-full blur-[1px] sp-float" style={{ animationDelay: '1.2s' }} />
+        <div aria-hidden className="absolute top-[3%] right-[38%] w-16 h-6 md:w-24 md:h-9 bg-white/70 rounded-full blur-[1px] sp-float" style={{ animationDelay: '0.6s' }} />
+        {/* bunting — both top corners */}
+        <svg aria-hidden className="absolute top-0 left-0 w-40 md:w-64" viewBox="0 0 220 60">
+          <path d="M0 6 Q 110 30 220 6" fill="none" stroke="#c4b5fd" strokeWidth="3" />
+          {[8, 44, 80, 116, 152, 188].map((x, i) => (
+            <polygon
+              key={x}
+              points={`${x},${10 + (i % 3) * 4} ${x + 22},${8 + (i % 3) * 4} ${x + 11},${32 + (i % 3) * 4}`}
+              fill={['#a78bfa', '#fbbf24', '#34d399', '#fb923c', '#38bdf8', '#f472b6'][i]}
+            />
+          ))}
+        </svg>
+        <svg aria-hidden className="absolute top-0 right-0 w-40 md:w-64 -scale-x-100" viewBox="0 0 220 60">
+          <path d="M0 6 Q 110 30 220 6" fill="none" stroke="#c4b5fd" strokeWidth="3" />
+          {[8, 44, 80, 116, 152, 188].map((x, i) => (
+            <polygon
+              key={x}
+              points={`${x},${10 + (i % 3) * 4} ${x + 22},${8 + (i % 3) * 4} ${x + 11},${32 + (i % 3) * 4}`}
+              fill={['#f472b6', '#38bdf8', '#fb923c', '#34d399', '#fbbf24', '#a78bfa'][i]}
+            />
+          ))}
+        </svg>
+        {/* hot-air balloon */}
+        <svg aria-hidden className="absolute top-[7%] right-[5%] w-12 md:w-16 sp-float" style={{ animationDelay: '0.9s' }} viewBox="0 0 60 84">
+          <ellipse cx="30" cy="27" rx="21" ry="25" fill="#a78bfa" />
+          <ellipse cx="30" cy="27" rx="12" ry="25" fill="#ddd6fe" />
+          <ellipse cx="30" cy="27" rx="5" ry="25" fill="#a78bfa" />
+          <path d="M18 47 L30 62 M42 47 L30 62" stroke="#7c3aed" strokeWidth="1.5" fill="none" />
+          <rect x="24" y="60" width="12" height="10" rx="2" fill="#b45309" />
+        </svg>
+        {/* confetti */}
         {CONFETTI.map((cf, i) => (
           <span
             key={i}
@@ -423,36 +542,188 @@ export function SafePathGame({
             }}
           />
         ))}
-        <div className="absolute inset-0 flex items-center justify-center p-4">
-          <div className="bg-white/95 rounded-[2rem] shadow-2xl border border-orange-100 max-w-md w-full px-6 py-7 md:px-8 md:py-9 text-center animate-in zoom-in-95 duration-300">
-            <img src={SP_GOAL_URL} alt="" aria-hidden className="w-32 md:w-40 mx-auto sp-pop select-none" draggable={false} />
-            <h2 className="font-display font-extrabold text-2xl md:text-3xl text-emerald-600 mt-3">{t.spReached}</h2>
-            <p className="text-sm md:text-base text-slate-600 font-semibold mt-1.5">{t.spReachedSub}</p>
-            <div className="flex items-center justify-center gap-2 mt-4" role="img" aria-label={`${stars}/3`}>
-              {[1, 2, 3].map((i) => (
-                <Star
-                  key={i}
-                  aria-hidden
-                  style={{ animationDelay: `${i * 0.15}s` }}
-                  className={cn(
-                    'w-9 h-9 md:w-11 md:h-11 sp-star-pop',
-                    i <= stars ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-100',
-                  )}
-                />
-              ))}
+        {/* school (decorative, desktop) */}
+        <div aria-hidden className="hidden lg:block absolute left-[4%] top-[15%] w-36 opacity-95">
+          <div className="mx-auto w-0 h-0 border-l-[72px] border-r-[72px] border-b-[32px] border-l-transparent border-r-transparent border-b-rose-400" />
+          <div className="bg-amber-50 border-2 border-amber-200 rounded-b-lg px-3 pt-2 pb-3 -mt-px shadow-md">
+            <div className="mx-auto w-6 h-6 rounded-full bg-white border-2 border-amber-300 flex items-center justify-center">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
             </div>
-            <p className="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-800 font-extrabold px-4 py-1.5 rounded-full mt-4">
-              <Star className="w-4 h-4 fill-current" aria-hidden />
-              {t.chScoreLabel}: {session.score}
+            <p className="text-center font-display font-extrabold text-[10px] text-amber-700 tracking-widest mt-1">SCHOOL</p>
+            <div className="flex justify-center gap-1.5 mt-1">
+              <span className="w-3.5 h-5 bg-sky-200 border border-sky-300 rounded-sm" />
+              <span className="w-4 h-6 bg-amber-700 rounded-t-md" />
+              <span className="w-3.5 h-5 bg-sky-200 border border-sky-300 rounded-sm" />
+            </div>
+          </div>
+        </div>
+        {/* wooden signboard (decorative, desktop) */}
+        <div aria-hidden className="hidden lg:flex absolute left-[3%] bottom-[14%] flex-col items-center -rotate-3">
+          <div className="bg-amber-800 border-4 border-amber-900/70 rounded-xl px-4 py-3 shadow-lg text-center">
+            <p className="text-amber-50 font-display font-extrabold text-sm leading-snug">
+              {t.spSignLine1}
+              <br />
+              {t.spSignLine2}
+              <br />
+              {t.spSignLine3}
             </p>
-            <button
-              type="button"
-              onClick={() => setPhase('quiz')}
-              className="mt-5 w-full bg-orange-500 hover:bg-orange-600 active:bg-orange-700 text-white font-extrabold text-lg px-6 py-3.5 rounded-full shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-transform active:scale-95 touch-manipulation"
-            >
-              {t.continueLabel}
-              <ArrowRight className="w-5 h-5" aria-hidden />
-            </button>
+            <Heart className="w-3.5 h-3.5 text-rose-300 fill-rose-300 mx-auto mt-1" aria-hidden />
+          </div>
+          <div className="w-2.5 h-14 bg-amber-900 rounded-b-sm" />
+        </div>
+        {/* Nyaya robot mascot — waves over the panel edge (kept below the
+            global Get Help Now pill, which lives at z-50) */}
+        <img
+          src={SP_MASCOT_URL}
+          alt=""
+          aria-hidden
+          draggable={false}
+          className="hidden md:block absolute bottom-3 right-3 lg:right-[3%] w-36 lg:w-48 z-20 sp-wave drop-shadow-xl select-none pointer-events-none"
+        />
+
+        {/* ---- scrollable content ---- */}
+        <div className="absolute inset-0 overflow-y-auto">
+          <div className="min-h-full flex flex-col items-center justify-center px-3 py-6 md:py-8 md:pb-14">
+            {/* shield + heart emblem */}
+            <div className="relative sp-pop">
+              <div className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-2xl shadow-lg border border-violet-100 flex items-center justify-center">
+                <div className="relative">
+                  <Shield className="w-8 h-8 md:w-9 md:h-9 text-violet-600 fill-violet-500" aria-hidden />
+                  <Heart className="w-3.5 h-3.5 text-amber-300 fill-amber-300 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%]" aria-hidden />
+                </div>
+              </div>
+              <Star className="absolute -left-6 top-1 w-4 h-4 text-amber-400 fill-amber-300" aria-hidden />
+              <Star className="absolute -right-6 top-3 w-3 h-3 text-amber-400 fill-amber-300" aria-hidden />
+            </div>
+
+            {/* multicolor outlined title */}
+            <h1 className="font-display font-extrabold text-4xl md:text-6xl text-center leading-tight mt-2 sp-title-stroke">
+              {titleWords.map((w, i) => (
+                <span key={i} className={titleColor(i)}>
+                  {w}
+                  {i < titleWords.length - 1 ? ' ' : ''}
+                </span>
+              ))}
+            </h1>
+            <p className="font-display font-bold text-slate-800 text-base md:text-xl text-center mt-1.5">{t.spTagline}</p>
+            <p className="font-bold text-violet-700 text-xs md:text-sm text-center mt-0.5">({t.spAwarenessTag})</p>
+
+            {/* ---- central completion panel ---- */}
+            <div className="relative bg-[#FFFDF6]/95 rounded-[2rem] md:rounded-[2.5rem] border border-orange-100 shadow-2xl w-full max-w-3xl mt-4 md:mt-5 px-3 py-4 md:px-7 md:py-6 animate-in zoom-in-95 duration-300">
+              {/* achievement scene */}
+              <div className="relative overflow-hidden rounded-[1.4rem] md:rounded-[1.8rem] border-2 border-emerald-100 shadow-sm">
+                <img
+                  src={SP_BG_URL}
+                  alt=""
+                  aria-hidden
+                  draggable={false}
+                  className="absolute inset-0 w-full h-full object-cover select-none"
+                />
+                <div aria-hidden className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/75 to-white/35" />
+                <div className="relative grid md:grid-cols-[1fr_auto] gap-3 md:gap-5 p-4 md:p-6 pb-7 md:pb-9">
+                  <div>
+                    <h2 className="font-display font-extrabold text-2xl md:text-4xl text-violet-700 sp-pop">
+                      {t.spDidIt} <span aria-hidden>🎉</span>
+                    </h2>
+                    <p className="font-semibold text-slate-700 text-sm md:text-base mt-1.5 max-w-md">
+                      {didItSubA}
+                      <span className="font-extrabold text-emerald-600">{t.spSafeZoneWord}</span>
+                      {didItSubB}
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-4 max-w-md">
+                      {statCards.map((sc, i) => (
+                        <div
+                          key={sc.label}
+                          className={cn('bg-white/95 border-2 rounded-2xl px-3 py-2.5 text-center shadow-sm sp-pop', sc.border)}
+                          style={{ animationDelay: `${0.15 + i * 0.12}s` }}
+                        >
+                          <p className={cn('flex items-center justify-center gap-1 text-[10px] md:text-xs font-extrabold uppercase tracking-wide', sc.labelColor)}>
+                            {sc.icon}
+                            {sc.label}
+                          </p>
+                          <p className="font-display font-extrabold text-xl md:text-2xl text-slate-800 tabular-nums mt-0.5">{sc.value}</p>
+                          <p className="text-[10px] md:text-xs font-bold text-slate-400">{sc.unit}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  {/* victorious kid + glowing Safe Zone sign */}
+                  <div className="flex md:flex-col items-center justify-center gap-3 md:gap-1.5 md:self-end md:pr-1">
+                    <div className="flex flex-col items-center">
+                      <div className="bg-gradient-to-b from-emerald-500 to-emerald-700 text-white font-display font-extrabold text-xs md:text-sm px-3 py-1 rounded-lg shadow-md border-2 border-emerald-300/60 rotate-2 whitespace-nowrap">
+                        {t.spSafeZone}
+                      </div>
+                      <div className="relative mt-1.5">
+                        <div aria-hidden className="absolute inset-0 m-auto w-10 h-10 md:w-12 md:h-12 rounded-full bg-emerald-300/70 blur-md sp-glow" />
+                        <div className="relative w-9 h-9 md:w-11 md:h-11 rounded-full bg-white/90 border-2 border-emerald-300 shadow flex items-center justify-center">
+                          <ShieldCheck className="w-5 h-5 md:w-6 md:h-6 text-emerald-600" aria-hidden />
+                        </div>
+                      </div>
+                    </div>
+                    <img
+                      src={SP_HERO_URL}
+                      alt=""
+                      aria-hidden
+                      draggable={false}
+                      className="h-32 md:h-48 object-contain drop-shadow-lg select-none sp-pop"
+                      style={{ animationDelay: '0.25s' }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Safety Champion ribbon (overlaps the scene's bottom edge) */}
+              <div className="relative z-10 flex justify-center -mt-4 md:-mt-5">
+                <div className="relative">
+                  <div aria-hidden className="absolute -left-4 top-2 bottom-1 w-6 bg-violet-800 [clip-path:polygon(100%_0,100%_100%,0_100%,35%_50%,0_0)]" />
+                  <div aria-hidden className="absolute -right-4 top-2 bottom-1 w-6 bg-violet-800 [clip-path:polygon(0_0,0_100%,100%_100%,65%_50%,100%_0)]" />
+                  <p className="relative inline-flex items-center gap-2 bg-gradient-to-b from-violet-500 to-violet-700 text-white font-display font-extrabold text-sm md:text-lg px-5 md:px-7 py-1.5 md:py-2 rounded-xl shadow-lg border-2 border-violet-300/50">
+                    <Star className="w-4 h-4 text-amber-300 fill-amber-300" aria-hidden />
+                    {t.spYouAreChampion}
+                    <Star className="w-4 h-4 text-amber-300 fill-amber-300" aria-hidden />
+                  </p>
+                </div>
+              </div>
+
+              {/* completion badge (status, not a button) */}
+              <div className="flex justify-center mt-3 md:mt-4">
+                <p role="status" className="inline-flex items-center gap-1.5 bg-emerald-50 border-2 border-emerald-300 text-emerald-700 font-bold text-sm md:text-base px-4 py-1.5 rounded-full">
+                  <CheckCircle2 className="w-4 h-4" aria-hidden />
+                  {t.spGameCompleted}
+                </p>
+              </div>
+
+              {/* actions — Continue leads on mobile, centered row on desktop */}
+              <div className="flex flex-col md:flex-row items-stretch md:items-center md:justify-center gap-2.5 md:gap-4 mt-4 md:mt-5">
+                <button
+                  type="button"
+                  onClick={onExit}
+                  className="order-2 md:order-1 inline-flex items-center justify-center gap-2 bg-white hover:bg-sky-50 active:bg-sky-100 text-sky-600 border-2 border-sky-300 font-extrabold text-sm md:text-base px-5 py-3 rounded-full shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95 touch-manipulation focus-visible:ring-2 focus-visible:ring-sky-400 focus-visible:ring-offset-2"
+                >
+                  <MapIcon className="w-4 h-4 md:w-5 md:h-5" aria-hidden />
+                  {t.spBackToMap}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPhase('quiz')}
+                  className="order-1 md:order-2 inline-flex items-center justify-center gap-2 bg-gradient-to-b from-orange-400 to-orange-600 hover:from-orange-500 hover:to-orange-600 text-white font-extrabold text-base md:text-lg px-8 py-3.5 rounded-full shadow-lg shadow-orange-500/30 transition-all duration-200 hover:scale-[1.03] hover:shadow-xl active:scale-95 touch-manipulation focus-visible:ring-2 focus-visible:ring-orange-400 focus-visible:ring-offset-2"
+                >
+                  {t.continueLabel}
+                  <ArrowRight className="w-5 h-5" aria-hidden />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    resetRun(levelIdx);
+                    startMaze();
+                  }}
+                  className="order-3 inline-flex items-center justify-center gap-2 bg-white hover:bg-violet-50 active:bg-violet-100 text-violet-600 border-2 border-violet-300 font-extrabold text-sm md:text-base px-5 py-3 rounded-full shadow-sm transition-all duration-200 hover:scale-[1.02] hover:shadow-md active:scale-95 touch-manipulation focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2"
+                >
+                  <RefreshCw className="w-4 h-4 md:w-5 md:h-5" aria-hidden />
+                  {t.chPlayAgain}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -601,7 +872,7 @@ export function SafePathGame({
                 type="button"
                 onClick={() => {
                   resetRun(levelIdx);
-                  setPhase('maze');
+                  startMaze();
                 }}
                 className="inline-flex items-center gap-2 bg-white hover:bg-orange-50 active:bg-orange-100 text-orange-600 border-2 border-orange-200 font-bold px-5 py-3 rounded-full shadow-sm transition-transform active:scale-95 touch-manipulation"
               >
