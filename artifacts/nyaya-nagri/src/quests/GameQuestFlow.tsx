@@ -34,6 +34,7 @@ import type { Quest } from './schema';
 import type { ZoneGameFlow } from './gameFlows';
 import { RightToChildhoodGame } from '@/games/childhood/RightToChildhoodGame';
 import { SafePathGame } from '@/games/safepath/SafePathGame';
+import { SpCompletionPanel, type SpRunStats } from '@/games/safepath/SpCompletionPanel';
 import landingBgUrl from '@/assets/games/childhood/ch-landing-bg.webp';
 import landingBannerUrl from '@/assets/games/childhood/ch-complete-banner.webp';
 import spLandingBgUrl from '@/assets/games/safepath/sp-park-bg.webp';
@@ -62,6 +63,32 @@ const TITLE_WORD_COLORS = [
   'text-orange-500',
   'text-emerald-600',
 ];
+
+/**
+ * Last finished Safe Path maze run on THIS device — the zone1 landing card
+ * renders the completion panel from it. Device-local mirror follows the
+ * house pattern (consent/PIN are plain localStorage too); a missing or
+ * malformed entry just hides the panel's stat row — never blocks the card.
+ */
+const SP_LAST_RUN_KEY = 'nyaya.sp.lastRun.v1';
+const readSpLastRun = (): SpRunStats | null => {
+  try {
+    if (typeof localStorage === 'undefined') return null;
+    const raw = localStorage.getItem(SP_LAST_RUN_KEY);
+    if (!raw) return null;
+    const p = JSON.parse(raw) as Partial<SpRunStats>;
+    const nums = [p.score, p.safeDecisions, p.wrongDecisions, p.elapsedSec];
+    if (nums.some((n) => typeof n !== 'number' || !Number.isFinite(n) || n < 0)) return null;
+    return {
+      score: p.score as number,
+      safeDecisions: p.safeDecisions as number,
+      wrongDecisions: p.wrongDecisions as number,
+      elapsedSec: p.elapsedSec as number,
+    };
+  } catch {
+    return null;
+  }
+};
 
 export function GameQuestFlow({
   flow,
@@ -107,6 +134,16 @@ export function GameQuestFlow({
   const [playingGame, setPlayingGame] = useState(
     () => !progressStore.getState().videosWatched[flow.videoId],
   );
+  // Last finished maze run (device-local) → landing card completion panel.
+  const [spLastRun, setSpLastRun] = useState<SpRunStats | null>(readSpLastRun);
+  const rememberSpRun = (runStats: SpRunStats) => {
+    setSpLastRun(runStats);
+    try {
+      localStorage.setItem(SP_LAST_RUN_KEY, JSON.stringify(runStats));
+    } catch {
+      /* storage unavailable — session state still shows this run */
+    }
+  };
 
   const startQuiz = () => {
     // Read the gate from the STORE (not the subscribed snapshot): Continue
@@ -169,6 +206,7 @@ export function GameQuestFlow({
       return (
         <SafePathGame
           onComplete={() => progressStore.markVideoWatched(flow.videoId)}
+          onRunStats={rememberSpRun}
           onContinue={() => {
             setPlayingGame(false);
             if (flow.continueTo === 'levels') setShowLevels(true);
@@ -301,6 +339,21 @@ export function GameQuestFlow({
               </p>
             </div>
 
+            {isSafePath && gameDone ? (
+              /* zone1, gate earned: the landing card renders the SAME
+                 completion panel as the in-game success screen (the user's
+                 reference design) — scene + live run stats + champion
+                 ribbon + the three actions. It replaces the old banner,
+                 status pill and button row wholesale. stats may be null on
+                 a fresh device (run recorded from the goal moment on). */
+              <SpCompletionPanel
+                stats={spLastRun}
+                onBackToMap={exitZone}
+                onContinue={() => (flow.continueTo === 'levels' ? openLevels() : startQuiz())}
+                onPlayAgain={() => setPlayingGame(true)}
+              />
+            ) : (
+              <>
             {/* Game panel — step 1. Tapping it (re)opens the game. */}
             <button
               type="button"
@@ -381,6 +434,8 @@ export function GameQuestFlow({
                 </button>
               )}
             </div>
+              </>
+            )}
           </div>
         </div>
       </div>

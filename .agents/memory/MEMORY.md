@@ -1,7 +1,7 @@
 - [Nyaya Nagri build protocol](nyaya-nagri-build-protocol.md) — Tasks 0-24 one at a time; re-read PRD §9 (+§4 legal) before EVERY task; hard safety rules forever; obey bans SILENTLY (no markers in chat).
 - [Nyaya Nagri dev testing](nyaya-nagri-dev-testing.md) — THIRTEEN client smokes (*.smoke.ts* glob; 2 are .tsx renders) + FOUR api; ?zone/&zones/&watched + map/story/help/profile seams; own-PORT curls; engine swaps rot greps; HI JSON language:'hi'.
 - [Right to Childhood game](nyaya-nagri-childhood-game.md) — castle-ONLY framer-motion drag-drop game (replaced Right or Wrong?); game-FIRST zone2 gate; distractor never locks; pure content.ts; smoke bans /rightwrong/i resurrection.
-- [Safe Path Adventure](nyaya-nagri-safepath.md) — zone1 POCSO maze, game-first gate continueTo:'levels'; copy NEVER scared/blame/trouble; completion stats attempt-based BY DESIGN; 10/13 webps placeholders.
+- [Safe Path Adventure](nyaya-nagri-safepath.md) — zone1 POCSO maze, game-first gate; copy never scared/blame; stats attempt-based BY DESIGN; ONE shared completion panel + ONE scenery layer (never fork); 10/13 webps placeholders.
 - [Nyaya Nagri AI safety gates](nyaya-nagri-safety-gates.md) — all AI chat routes share one safety module; PII redaction digit threshold (8+) is deliberate to spare helplines/section numbers.
 - [Quiz game-board chrome](nyaya-nagri-quiz-board.md) — GameQuizShell = ONE chrome for pre/post/recap/scenes; activity phase still old card; no fixed min-h; quiz phases SILENT (no auto-TTS, user order).
 - [Nyaya Nagri home artwork](nyaya-nagri-home-plates.md) — ORIGINAL home-city.webp + boy sprite + blimp restored after TWO same-day rollbacks; v2/v3/map1 + extra home chrome DEAD, never resurrect unasked.

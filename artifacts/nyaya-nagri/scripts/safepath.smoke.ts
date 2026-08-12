@@ -20,7 +20,7 @@
  *     game, and the safepath module NEVER touches progressStore (the
  *     lesson gate has exactly one write site — story.smoke enumerates it).
  */
-import { readFileSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { SP_LEARNINGS, SP_LEVELS, type SpText } from '../src/games/safepath/content';
@@ -398,6 +398,7 @@ for (const rel of [
   '../src/games/safepath/logic.ts',
   '../src/games/safepath/data.ts',
   '../src/games/safepath/SafePathGame.tsx',
+  '../src/games/safepath/SpCompletionPanel.tsx',
 ]) {
   const src = read(rel);
   check(
@@ -421,31 +422,50 @@ check(
 );
 
 /* ── completion screen (reference-image recreation, Aug 2026) ──────────── */
+// ONE shared panel (SpCompletionPanel) renders the reference design on BOTH
+// surfaces: the in-game success phase AND zone1's completed landing card.
 const game = read('../src/games/safepath/SafePathGame.tsx');
+const panel = read('../src/games/safepath/SpCompletionPanel.tsx');
 check(
-  'completion screen: chrome copy is wired through i18n, never pasted inline',
-  game.includes('t.spDidIt') &&
+  'completion panel: chrome copy is wired through i18n, never pasted inline',
+  panel.includes('t.spDidIt') &&
+    panel.includes('t.spYouAreChampion') &&
+    panel.includes('t.spGameCompleted') &&
+    panel.includes('t.spBackToMap') &&
+    panel.includes('t.chPlayAgain') &&
     game.includes('t.spTagline') &&
-    game.includes('t.spAwarenessTag') &&
-    game.includes('t.spYouAreChampion') &&
-    game.includes('t.spGameCompleted'),
+    game.includes('t.spAwarenessTag'),
 );
 check(
-  'completion screen: three REAL actions — Back to Map exits, Continue opens the quiz, Play Again restarts',
-  game.includes('t.spBackToMap') &&
+  'in-game success: shared panel with three REAL actions — exit, quiz Continue, restart',
+  game.includes('<SpCompletionPanel') &&
     game.includes("setPhase('quiz')") &&
-    game.includes('t.chPlayAgain') &&
     game.includes('startMaze') &&
     game.includes('resetRun(levelIdx)'),
 );
 check(
-  'completion screen: stats bind LIVE session values (score / safe choices / time), no pasted demo numbers',
+  "landing card: zone1's completed state renders the SAME panel from the maze's real last run",
+  gqf.includes('isSafePath && gameDone ? (') &&
+    gqf.includes('<SpCompletionPanel') &&
+    gqf.includes('onRunStats={rememberSpRun}') &&
+    gqf.includes('stats={spLastRun}') &&
+    gqf.includes('setPlayingGame(true)') &&
+    gqf.includes('t.chRibbonDone') &&
+    game.includes('onRunStats?.('),
+);
+check(
+  'completion panel: stats bind LIVE run values (score / safe choices / time), no pasted demo numbers',
   game.includes('session.score') &&
     game.includes('session.safeDecisions') &&
     game.includes('session.wrongDecisions') &&
-    game.includes('fmtTime(elapsedSec)') &&
+    panel.includes('stats.score') &&
+    panel.includes('stats.safeDecisions') &&
+    panel.includes('stats.wrongDecisions') &&
+    panel.includes('fmtTime(stats.elapsedSec)') &&
     !game.includes('03:25') &&
-    !game.includes('450'),
+    !panel.includes('03:25') &&
+    !game.includes('450') &&
+    !panel.includes('450'),
 );
 check(
   'completion screen: &spphase preview seam stays DEV-gated (prod must never skip the maze into the quiz)',
@@ -463,6 +483,46 @@ check(
   (strings.match(/spDidItSub: '[^']*'/g) ?? []).length === 2 &&
     (strings.match(/spDidItSub: '[^']*'/g) ?? []).every((l) => (l.match(/\|SZ\|/g) ?? []).length === 1),
 );
+
+/* ── intro screen (reference-image recreation, Aug 2026) ───────────────── */
+check(
+  'intro + success share ONE scenery component (no forked backdrop markup)',
+  game.includes('function SpSceneryLayers') && (game.match(/<SpSceneryLayers/g) ?? []).length >= 2,
+);
+check(
+  'intro: live level data + i18n — badge, mission, 3 how-to rows, kbd hint, Start CTA wired to the maze',
+  game.includes('t.spLevelLabel(level.n, SP_LEVELS.length)') &&
+    game.includes('tx(level.mission)') &&
+    game.includes('t.spMission1') &&
+    game.includes('t.spMission2') &&
+    game.includes('t.spMission3') &&
+    game.includes('t.spMoveKeys') &&
+    game.includes('t.spStartCta') &&
+    game.includes('onClick={startMaze}'),
+);
+{
+  // scope hero/icon assertions to the intro branch itself so maze-phase
+  // usage can never satisfy them (architect-review hardening)
+  const iStart = game.indexOf("if (phase === 'intro')");
+  const iEnd = game.indexOf("if (phase === 'success')");
+  const intro = iStart >= 0 && iEnd > iStart ? game.slice(iStart, iEnd) : '';
+  check(
+    'intro branch itself renders scenery + guide-boy hero + the 3 lucide chips (not the placeholder player blob)',
+    intro.includes('<SpSceneryLayers') &&
+      intro.includes('SP_HERO_URL') &&
+      intro.includes('<Footprints') &&
+      intro.includes('<MessageCircleQuestionMark') &&
+      intro.includes('<ShieldCheck') &&
+      !intro.includes('SP_PLAYER_URL'),
+  );
+  check(
+    'safepath art set is exactly the 13 known sp-*.webp files (intro added NO new art)',
+    (() => {
+      const files = readdirSync(join(here, '../src/assets/games/safepath')).filter((f) => f.endsWith('.webp'));
+      return files.length === 13 && files.every((f) => f.startsWith('sp-'));
+    })(),
+  );
+}
 
 /* ── report ──────────────────────────────────────────────────────────── */
 if (fails.length) {

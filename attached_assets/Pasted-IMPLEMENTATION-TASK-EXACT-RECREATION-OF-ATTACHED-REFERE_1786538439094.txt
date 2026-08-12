@@ -1,0 +1,584 @@
+IMPLEMENTATION TASK — EXACT RECREATION OF ATTACHED REFERENCE IMAGE
+
+I am attaching a reference image for the Safe Path Adventure game intro/start screen.
+
+IMPORTANT — READ THIS FIRST:
+
+The attached reference image is the EXACT design target.
+
+I do NOT want a new image generated.
+
+I do NOT want an AI-generated replacement.
+
+I do NOT want a redesigned version.
+
+I do NOT want an approximation.
+
+I want the existing Replit application UI to be implemented to look as close to the attached reference image as technically possible — effectively 100% visually accurate.
+
+The reference image must be treated as the source of truth for the visual design.
+
+Build the UI using REAL React/HTML/CSS components.
+
+Do NOT use the reference image itself as the entire UI/background.
+
+Do NOT create a single <img> that contains the whole interface.
+
+All text, buttons, cards, spacing, layout and interactions must be actual HTML/React elements.
+
+==================================================
+1. SCREEN
+==================================================
+
+This is the INTRO / START SCREEN for:
+
+SAFE PATH ADVENTURE
+
+It is the first screen shown before the player enters the POCSO safety maze game.
+
+The flow is:
+
+Safe Path Adventure Intro
+        ↓
+START THE ADVENTURE
+        ↓
+Playable Safe Path Maze
+        ↓
+Safe Zone
+        ↓
+POCSO Awareness Quiz
+
+==================================================
+2. REFERENCE IMAGE REQUIREMENT
+==================================================
+
+Use the attached reference image as the PRIMARY visual source.
+
+Before coding, carefully inspect the reference image.
+
+Analyze:
+
+- exact layout
+- relative proportions
+- alignment
+- spacing
+- typography
+- font weight
+- colors
+- shadows
+- border radius
+- illustration positioning
+- button size
+- icon positioning
+- background composition
+- card dimensions
+- visual hierarchy
+
+Then reproduce it in the application.
+
+DO NOT interpret the image creatively.
+
+DO NOT make your own alternative design.
+
+The implementation should visually match the reference image as closely as possible.
+
+==================================================
+3. DO NOT GENERATE A NEW IMAGE
+==================================================
+
+THIS IS VERY IMPORTANT.
+
+Do NOT call any image generation API.
+
+Do NOT generate a new background illustration.
+
+Do NOT replace the reference artwork with another AI-generated artwork.
+
+Use the existing reference assets/project assets wherever available.
+
+If an illustration from the reference is already available in the project, reuse it.
+
+If individual assets are required and already exist, use those assets.
+
+The goal is to reproduce the reference UI, NOT generate another image that looks similar.
+
+==================================================
+4. OVERALL PAGE
+==================================================
+
+The screen should occupy the full viewport.
+
+Use approximately the same aspect ratio/composition as the reference.
+
+The main visual structure:
+
+--------------------------------------------------
+                SAFE PATH ADVENTURE
+
+             Level 1 of 5 • Warning Signs
+
+       Spot the warning signs and reach
+                 the Safe Zone.
+
+       ✓ Walk the path and watch for signs
+
+       ✓ Answer safety questions
+         to clear the way
+
+       ✓ Reach the glowing Safe Zone
+
+              Move: arrow keys or WASD
+
+          [ ▶ START THE ADVENTURE ]
+--------------------------------------------------
+
+The exact positioning must follow the attached image.
+
+==================================================
+5. BACKGROUND
+==================================================
+
+The reference has a soft, warm educational-game background.
+
+Reproduce the same visual feeling and composition.
+
+Use the same existing background/illustration assets if they exist.
+
+The background should contain the same type of:
+
+- soft cream environment
+- colorful educational/game elements
+- subtle decorative environment
+- child-friendly atmosphere
+
+Do NOT introduce a completely different background.
+
+Do NOT use a generic gradient just because it is easier.
+
+==================================================
+6. TOP SAFETY ICON
+==================================================
+
+At the top center of the screen:
+
+Place the small safety/shield icon shown in the reference.
+
+It should appear:
+
+- centered
+- above the main title
+- inside the small circular/rounded area
+- with subtle shadow
+
+Reuse the existing Nyaya Nagri safety icon if available.
+
+==================================================
+7. MAIN TITLE
+
+Exact text:
+
+SAFE PATH ADVENTURE
+
+The title must:
+
+- be centered
+- use the same playful rounded typography
+- have approximately the same font size
+- use the same purple/orange/green visual treatment if present in the reference
+- have the same visual weight
+- have similar spacing
+
+Do NOT replace this with a standard heading.
+
+If the project already has the same font used elsewhere in Nyaya Nagri, reuse it.
+
+==================================================
+8. LEVEL BADGE
+
+Under the title, create the rounded yellow/orange badge.
+
+Exact text:
+
+Level 1 of 5 · Warning Signs
+
+The badge should:
+
+- be centered
+- have the same yellow/orange background
+- rounded pill shape
+- similar padding
+- similar font size
+- similar shadow/border treatment
+
+The level should be dynamic.
+
+Example:
+
+Level 2 of 5 · Online Safety
+
+But for this screen initially:
+
+Level 1 of 5 · Warning Signs
+
+==================================================
+9. DESCRIPTION
+
+Exact text:
+
+Spot the warning signs and reach the Safe Zone.
+
+Center it below the level badge.
+
+Use the same dark blue typography from the reference.
+
+==================================================
+10. INSTRUCTION LIST
+
+Create exactly three instruction rows.
+
+ROW 1:
+
+✓ Walk the path and watch for signs
+
+ROW 2:
+
+✓ Answer safety questions to clear the way
+
+ROW 3:
+
+✓ Reach the glowing Safe Zone
+
+Use the same green circular check icons shown in the reference.
+
+Each row must be real HTML.
+
+Do NOT flatten the entire instruction section into an image.
+
+Maintain:
+
+- same left alignment
+- same vertical spacing
+- same font size
+- same line height
+
+==================================================
+11. CONTROL INSTRUCTION
+
+Below the instruction list:
+
+Exact text:
+
+Move: arrow keys or WASD
+
+Use a lighter blue/gray color.
+
+Center it.
+
+The position should match the reference.
+
+==================================================
+12. START BUTTON
+
+At the bottom:
+
+Large orange button.
+
+Exact text:
+
+▶ Start the adventure
+
+The button must be approximately the same:
+
+- width
+- height
+- border radius
+- orange color
+- shadow
+- font size
+- icon size
+
+as the reference image.
+
+Use a real <button>.
+
+Hover:
+
+- subtle scale
+- slightly stronger shadow
+
+Active:
+
+- subtle press-down animation
+
+==================================================
+13. START BUTTON FUNCTIONALITY
+
+This is critical.
+
+When the user clicks:
+
+START THE ADVENTURE
+
+the intro screen must disappear and the actual Safe Path Adventure game must begin.
+
+Flow:
+
+INTRO SCREEN
+    ↓
+Start button
+    ↓
+PLAYABLE MAZE
+
+Do NOT leave the button as a visual-only element.
+
+Use the existing router/state architecture of the project.
+
+==================================================
+14. GAME STATE
+
+If the Safe Path Adventure game already exists in the project:
+
+Connect this intro screen directly to it.
+
+Do not create a duplicate game.
+
+If the game is represented by a component such as:
+
+SafePathGame
+
+then:
+
+Start button → SafePathGame
+
+Use the existing component/state.
+
+==================================================
+15. RESPONSIVE DESIGN
+
+The desktop version should match the reference image extremely closely.
+
+For mobile:
+
+- preserve the same visual hierarchy
+- keep title centered
+- keep badge visible
+- keep instructions readable
+- keep start button large
+- avoid horizontal scrolling
+
+Do not change the desktop design unnecessarily just to make mobile easier.
+
+==================================================
+16. TYPOGRAPHY
+
+First inspect the existing project.
+
+Check whether it already uses:
+
+- Google Fonts
+- custom font
+- rounded display font
+- existing Nyaya Nagri typography
+
+Reuse the existing typography system.
+
+If the exact font is already present, use it.
+
+Do NOT randomly introduce a different font.
+
+The title font is especially important for visual accuracy.
+
+==================================================
+17. COLORS
+
+Match the reference image.
+
+Important visual colors include approximately:
+
+Title:
+Purple / Orange / Green
+
+Level badge:
+Warm yellow/orange
+
+Primary text:
+Dark navy/blue
+
+Check icons:
+Green
+
+Start button:
+Bright orange
+
+Background:
+Warm cream/light educational environment
+
+Do not invent a new color palette.
+
+==================================================
+18. SPACING AND SIZING
+
+Do NOT use arbitrary spacing.
+
+Compare the implementation against the reference.
+
+Pay special attention to:
+
+- distance between icon and title
+- title and level badge
+- badge and description
+- description and instructions
+- instruction row spacing
+- instructions and keyboard hint
+- keyboard hint and button
+- button bottom spacing
+
+The vertical rhythm should visually match the reference.
+
+==================================================
+19. NO UNNECESSARY UI
+
+Do NOT add:
+
+- extra cards
+- extra buttons
+- navigation bars
+- sidebars
+- unnecessary statistics
+- additional text
+- extra game controls
+
+Only implement what is visible/required in the reference.
+
+==================================================
+20. EXISTING NYAYA NAGRI DESIGN SYSTEM
+
+Before coding:
+
+Inspect the existing project.
+
+Find:
+
+- existing colors
+- typography
+- button components
+- icons
+- mascot
+- routing
+- game components
+- CSS variables
+- Tailwind configuration
+- existing animation library
+
+Reuse them where appropriate.
+
+Do NOT rewrite the application.
+
+Do NOT replace the global design system.
+
+Do NOT break existing pages.
+
+==================================================
+21. COMPONENT STRUCTURE
+
+Use clean reusable React components.
+
+For example:
+
+SafePathIntro.jsx
+
+or:
+
+SafePathIntro/
+    SafePathIntro.jsx
+    SafetyIcon.jsx
+    LevelBadge.jsx
+    Instructions.jsx
+    StartAdventureButton.jsx
+
+However, if equivalent components already exist, reuse them.
+
+Do not create unnecessary duplicate components.
+
+==================================================
+22. IMPORTANT IMAGE RULE
+
+The attached reference image is a DESIGN REFERENCE.
+
+It is NOT a background image to simply display.
+
+The final page must be composed from:
+
+- HTML
+- React
+- CSS/Tailwind
+- existing image assets
+- existing icons
+
+The result must remain interactive and responsive.
+
+==================================================
+23. VISUAL ACCURACY CHECK
+
+After implementation, compare the browser result with the attached reference image.
+
+Perform a visual comparison for:
+
+✓ Overall dimensions
+✓ Title position
+✓ Title size
+✓ Title colors
+✓ Shield icon position
+✓ Level badge
+✓ Description
+✓ Three instruction rows
+✓ Check icons
+✓ Keyboard hint
+✓ Start button
+✓ Background
+✓ Margins
+✓ Padding
+✓ Vertical spacing
+✓ Border radius
+✓ Shadows
+✓ Typography
+✓ Alignment
+
+If something is noticeably different, fix it.
+
+Do not stop at the first working implementation.
+
+Iterate until the implementation is visually as close as possible to the reference.
+
+==================================================
+24. FUNCTIONAL TEST
+
+After implementation:
+
+1. Start the application.
+2. Open Safe Path Adventure.
+3. Verify the intro screen matches the reference.
+4. Click Start the adventure.
+5. Verify the actual maze opens.
+6. Verify no console errors.
+7. Verify no broken assets.
+8. Verify no layout overflow.
+9. Verify desktop layout.
+10. Verify mobile layout.
+
+==================================================
+FINAL REQUIREMENT
+
+I want the attached reference image to be treated as the EXACT DESIGN TARGET.
+
+DO NOT generate a new image.
+
+DO NOT redesign it.
+
+DO NOT make an alternative version.
+
+DO NOT approximate the visual style unnecessarily.
+
+RECREATE THE ATTACHED REFERENCE UI AS ACCURATELY AS POSSIBLE USING REAL REACT/HTML/CSS.
+
+The final browser output should visually resemble the attached reference image at approximately 100% accuracy while remaining a fully functional, responsive web interface.

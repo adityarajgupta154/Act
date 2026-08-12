@@ -1,0 +1,438 @@
+IMPORTANT CORRECTION — DO NOT IMPLEMENT THE WRONG SCREEN
+
+The image I am attaching is the EXACT reference for the
+SAFE PATH ADVENTURE INTRO / START SCREEN.
+
+The image currently being generated/implemented is WRONG because
+it is showing:
+
+“You did it!”
+“Game completed!”
+“Safety Champion!”
+“Game completed”
+“Continue”
+“Play Again”
+
+THAT IS NOT WHAT I WANT.
+
+I DO NOT WANT THE GAME COMPLETION SCREEN.
+
+I WANT THE START / INTRO SCREEN FROM THE ATTACHED REFERENCE IMAGE.
+
+========================================================
+REFERENCE IMAGE IS THE SOURCE OF TRUTH
+========================================================
+
+Treat the attached reference image as the exact visual target.
+
+Do NOT generate a new image.
+
+Do NOT redesign the screen.
+
+Do NOT create an alternative illustration.
+
+Do NOT invent additional UI.
+
+Do NOT turn this into a completion screen.
+
+Do NOT use a generated screenshot as the UI.
+
+Recreate the reference using actual React + HTML + CSS.
+
+The attached image should only be used as a visual reference.
+
+========================================================
+EXACT SCREEN I WANT
+========================================================
+
+This screen appears BEFORE the player starts the Safe Path Adventure.
+
+The screen must communicate:
+
+SAFE PATH ADVENTURE
+
+Level 1 of 5 · Warning Signs
+
+Spot the warning signs and reach the Safe Zone.
+
+✓ Walk the path and watch for signs
+
+✓ Answer safety questions to clear the way
+
+✓ Reach the glowing Safe Zone
+
+Move: arrow keys or WASD
+
+[ ▶ Start the adventure ]
+
+========================================================
+VERY IMPORTANT — NO COMPLETION UI
+========================================================
+
+DO NOT SHOW ANY OF THESE:
+
+❌ “You did it!”
+
+❌ “Game completed!”
+
+❌ “You are a Safety Champion!”
+
+❌ Score
+
+❌ Safe Choices 3/3
+
+❌ Time Taken
+
+❌ Continue button
+
+❌ Play Again button
+
+❌ Completion badge
+
+❌ Completion banner
+
+❌ Final score
+
+❌ Safe Zone achievement screen
+
+These belong to the POST-GAME completion screen.
+
+This task is ONLY for the INTRO / START SCREEN.
+
+========================================================
+EXPECTED VISUAL STRUCTURE
+========================================================
+
+The page should look like this:
+
+                 🛡️
+
+          SAFE PATH ADVENTURE
+
+     Find the safe path and reach
+             the Safe Zone!
+
+        (POCSO safety awareness)
+
+
+     ┌─────────────────────────────┐
+
+        Level 1 of 5 · Warning Signs
+
+        Spot the warning signs and
+        reach the Safe Zone.
+
+        ✓ Walk the path and watch
+          for signs
+
+        ✓ Answer safety questions
+          to clear the way
+
+        ✓ Reach the glowing
+          Safe Zone
+
+        Move: arrow keys or WASD
+
+     ┌─────────────────────────────┐
+     │ ▶  Start the adventure      │
+     └─────────────────────────────┘
+
+========================================================
+BACKGROUND
+========================================================
+
+Use the SAME TYPE OF BACKGROUND shown in the reference.
+
+It should be a bright, playful children's educational
+environment.
+
+Use existing project assets if available.
+
+The background should include the same visual language as
+the reference:
+
+- colorful trees
+- green grass
+- flowers
+- school/playground environment
+- blue sky
+- playful educational atmosphere
+- soft cartoon illustration
+
+IMPORTANT:
+
+Do NOT generate a new background image.
+
+Do NOT replace it with a different AI-generated park.
+
+If the existing project already has the required background
+assets, reuse them.
+
+========================================================
+CENTER PANEL
+========================================================
+
+Create the large cream/white rounded panel shown in the reference.
+
+It must have:
+
+- large rounded corners
+- subtle shadow
+- soft border
+- centered positioning
+- same approximate dimensions
+- same visual proportions
+
+The panel should be the main focus.
+
+========================================================
+TOP SHIELD ICON
+========================================================
+
+Place the small purple shield/heart icon above the title,
+exactly like the reference.
+
+Reuse the existing Nyaya Nagri safety icon if available.
+
+Do NOT generate a new icon.
+
+========================================================
+TITLE
+========================================================
+
+Exact text:
+
+Safe Path Adventure
+
+Use the same playful rounded typography.
+
+Color treatment should match the reference:
+
+Safe → Purple
+
+Path → Orange
+
+Adventure → Green
+
+Use:
+
+- white outline
+- subtle shadow
+- bold rounded font
+
+The title must be centered.
+
+========================================================
+LEVEL BADGE
+========================================================
+
+Create the yellow/orange rounded pill.
+
+Exact text:
+
+Level 1 of 5 · Warning Signs
+
+Match the reference:
+
+- same approximate width
+- same height
+- same rounded corners
+- same yellow/orange color
+- same font weight
+- same position
+
+========================================================
+DESCRIPTION
+========================================================
+
+Exact text:
+
+Spot the warning signs and reach the Safe Zone.
+
+Center align it.
+
+Use dark blue text.
+
+========================================================
+THREE INSTRUCTIONS
+========================================================
+
+Create exactly three rows.
+
+1.
+
+✓ Walk the path and watch for signs
+
+2.
+
+✓ Answer safety questions to clear the way
+
+3.
+
+✓ Reach the glowing Safe Zone
+
+Use green circular check icons.
+
+Do NOT convert these into buttons.
+
+Do NOT add additional instructions.
+
+========================================================
+CONTROL HINT
+========================================================
+
+Below the instructions:
+
+Move: arrow keys or WASD
+
+Use light blue/gray text.
+
+Center aligned.
+
+========================================================
+START BUTTON
+========================================================
+
+At the bottom of the panel create ONE primary button:
+
+▶ Start the adventure
+
+Large orange rounded button.
+
+It must look like the reference:
+
+- orange background
+- white text
+- rounded pill
+- subtle shadow
+- large clickable area
+
+Hover:
+
+slight scale + stronger shadow
+
+Click:
+
+small press animation
+
+========================================================
+FUNCTIONAL BEHAVIOUR
+========================================================
+
+When the user clicks:
+
+START THE ADVENTURE
+
+open the actual Safe Path Adventure maze.
+
+Flow:
+
+INTRO SCREEN
+      ↓
+START THE ADVENTURE
+      ↓
+PLAYABLE SAFE PATH MAZE
+      ↓
+SAFE ZONE
+      ↓
+GAME COMPLETION SCREEN
+      ↓
+POCSO QUIZ
+
+The completion screen must NOT appear before the player starts the game.
+
+========================================================
+IMPORTANT EXISTING PROJECT RULE
+========================================================
+
+Inspect the existing project first.
+
+Find:
+
+- current Safe Path Adventure component
+- current maze/game component
+- existing routing
+- existing mascot
+- existing background assets
+- existing shield icon
+- existing fonts
+- existing button components
+- existing theme
+
+Reuse them.
+
+Do NOT rebuild the whole project.
+
+Do NOT create another separate game.
+
+Do NOT modify unrelated screens.
+
+========================================================
+IMAGE GENERATION RULE
+========================================================
+
+DO NOT GENERATE ANY NEW IMAGE.
+
+This is a UI IMPLEMENTATION task.
+
+The attached image is only a REFERENCE.
+
+Recreate its visual layout using:
+
+React
+HTML
+CSS/Tailwind
+Existing assets
+Existing icons
+
+Do NOT use an AI-generated screenshot as the final UI.
+
+========================================================
+FINAL VALIDATION
+========================================================
+
+Before finishing, compare the browser implementation with the
+attached reference image.
+
+Verify:
+
+✓ Same START screen
+✓ Same title
+✓ Same shield icon
+✓ Same level badge
+✓ Same description
+✓ Same 3 instructions
+✓ Same keyboard hint
+✓ Same orange Start button
+✓ Same background style
+✓ Same panel proportions
+✓ Same spacing
+✓ Same typography
+✓ Same colors
+✓ Same alignment
+
+MOST IMPORTANT:
+
+The result must be the START / INTRO SCREEN.
+
+It must NOT be:
+
+“Game Completed”
+
+It must NOT be:
+
+“You did it!”
+
+It must NOT be:
+
+“Safety Champion”
+
+It must NOT show score/result cards.
+
+It must NOT show Continue / Play Again.
+
+The only primary action on this screen should be:
+
+▶ START THE ADVENTURE
+
+Recreate the attached reference as accurately as possible.

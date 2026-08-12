@@ -374,12 +374,6 @@ select {
 }
 .sp-bob { animation: sp-bob 1.6s ease-in-out infinite; }
 
-@keyframes sp-wave {
-  0%, 100% { transform: rotate(-2deg) translateY(0); }
-  50% { transform: rotate(3deg) translateY(-6px); }
-}
-.sp-wave { animation: sp-wave 2.8s ease-in-out infinite; transform-origin: 50% 100%; }
-
 @keyframes sp-glow {
   0%, 100% { opacity: 0.5; transform: scale(1); }
   50% { opacity: 0.9; transform: scale(1.15); }
@@ -396,5 +390,5 @@ select {
 
 @media (prefers-reduced-motion: reduce) {
   .sp-shake, .sp-pop, .sp-star-pop, .sp-score-pop, .sp-hint-pulse, .sp-confetti { animation: none; }
-  .sp-float, .sp-goal-glow, .sp-bob, .sp-wave, .sp-glow { animation: none; }
+  .sp-float, .sp-goal-glow, .sp-bob, .sp-glow { animation: none; }
 }
