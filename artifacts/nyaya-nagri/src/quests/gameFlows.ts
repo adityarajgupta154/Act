@@ -1,6 +1,6 @@
 /**
  * Game-first zone flows (Aug 2026) — data-driven registry, one entry per
- * zone whose interior runs the "Right or Wrong?" MINI-GAME → final quiz
+ * zone whose interior runs the "Right to Childhood" DRAG-AND-DROP GAME → final quiz
  * instead of the level-select screen (the Right to Childhood castle). The
  * old learning-video stage is DELETED (user order, Aug 2026) — the game IS
  * the lesson now. Adding a future zone's game lesson is data here — no UI
@@ -12,7 +12,7 @@
  * level's unlockRequires; the story smoke cross-checks the two registries
  * so they can never drift apart. Since Aug 2026 the flag is EARNED by
  * completing one full game run. Game content is hard-coded in
- * src/games/rightwrong/data.ts (PRD §9.8 — never AI-generated at runtime).
+ * src/games/childhood/content.ts (PRD §9.8 — never AI-generated at runtime).
  */
 export interface ZoneGameFlow {
   /** Zone whose interior runs the game-first flow. */

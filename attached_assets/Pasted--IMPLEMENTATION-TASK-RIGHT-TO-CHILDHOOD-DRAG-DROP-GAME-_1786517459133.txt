@@ -1,0 +1,803 @@
+## IMPLEMENTATION TASK — RIGHT TO CHILDHOOD DRAG & DROP GAME
+
+Implement a new **fully playable drag-and-drop educational game** inside my existing **Nyaya Nagri** application.
+
+The purpose of this feature is to address jury feedback that the project currently feels like a quiz/gamified quiz rather than a real game.
+
+This feature MUST feel like an actual game because the core mechanic is:
+
+**OBSERVE → DRAG → DROP → MATCH → FEEDBACK → SCORE → COMPLETE**
+
+Do NOT implement this as a normal multiple-choice quiz.
+
+---
+
+# 1. CORE GAME CONCEPT
+
+Game title:
+
+**Right to Childhood**
+
+Subtitle:
+
+**Build a happy, safe and equal childhood!**
+
+The game screen contains:
+
+### TOP SECTION — 3 EMPTY TARGET SLOTS
+
+There are exactly **3 rights**:
+
+1. Right to Education
+2. Right to Play
+3. Right to Protection
+
+Each right has an empty visual drop zone.
+
+Example:
+
+┌────────────────┐   ┌────────────────┐   ┌────────────────┐
+│       1        │   │       2        │   │       3        │
+│                │   │                │   │                │
+│ Right to       │   │ Right to       │   │ Right to       │
+│ Education      │   │ Play           │   │ Protection     │
+│                │   │                │   │                │
+│   DROP HERE    │   │   DROP HERE    │   │   DROP HERE    │
+└────────────────┘   └────────────────┘   └────────────────┘
+
+These slots must be actual drag-and-drop targets.
+
+---
+
+# 2. BOTTOM SECTION — 4 IMAGE OPTIONS
+
+At the bottom, display exactly **4 illustrated scenario cards**.
+
+There will always be:
+
+### 3 CORRECT IMAGES
+
+Example:
+
+IMAGE 1:
+A child studying in a classroom.
+
+Correct destination:
+→ Right to Education
+
+IMAGE 2:
+Children playing in a playground.
+
+Correct destination:
+→ Right to Play
+
+IMAGE 3:
+A child being cared for and protected by a trusted adult.
+
+Correct destination:
+→ Right to Protection
+
+### 1 DISTRACTOR IMAGE
+
+Example:
+
+IMAGE 4:
+A child doing labour instead of going to school.
+
+This image does NOT belong in any of the three slots.
+
+This is extremely important.
+
+The fourth image should act as a **distractor**, forcing the player to understand the situation rather than simply matching everything.
+
+---
+
+# 3. DRAG & DROP BEHAVIOUR
+
+The player must be able to:
+
+1. Click/touch and hold an image.
+2. Drag the image.
+3. Move it over one of the three target slots.
+4. Release it.
+5. Game checks whether the placement is correct.
+
+Support both:
+
+* Mouse drag
+* Touch drag
+
+Do NOT rely only on HTML desktop drag behaviour.
+
+If the existing project uses React, implement the interaction using the project's existing interaction/animation system.
+
+If Framer Motion is already installed, prefer using it.
+
+---
+
+# 4. CORRECT DROP
+
+If the image belongs to the selected right:
+
+Example:
+
+Child studying
+→ dropped into
+Right to Education
+
+Then:
+
+1. Target slot gets a green glow.
+2. Image smoothly snaps into the slot.
+3. Show animated ✓.
+4. Play a small success animation.
+5. Award points.
+
+Example:
+
+**+100 ⭐**
+
+6. Lock the placed image so it cannot be dragged again.
+7. Mark that target as completed.
+
+Example visual:
+
+✓ RIGHT TO EDUCATION
+[child studying image]
+
+Use a subtle celebration effect such as:
+
+* small stars
+* particles
+* sparkle
+* gentle scale animation
+
+Do NOT use excessive confetti.
+
+---
+
+# 5. WRONG DROP
+
+If a correct image is dragged to the wrong target:
+
+Example:
+
+Child playing
+→ dropped into
+Right to Education
+
+Then:
+
+1. Target briefly shakes.
+2. Target gets a subtle red/orange warning state.
+3. Show:
+
+**"Not quite! Try another place."**
+
+4. Image smoothly returns to its original position.
+5. Do NOT remove the image.
+6. Do NOT reduce the score heavily.
+7. Allow the player to try again.
+
+The game should be encouraging and child-friendly.
+
+---
+
+# 6. DISTRACTOR IMAGE BEHAVIOUR
+
+The fourth image is intentionally NOT a correct answer.
+
+Example:
+
+Child labour image.
+
+If the user tries to place it into ANY of the three slots:
+
+Show:
+
+**"This doesn't belong here."**
+
+Then:
+
+* Brief red/orange feedback
+* Small shake
+* Return image to bottom tray
+
+The distractor must NEVER become locked into a target.
+
+This is a critical part of the gameplay.
+
+---
+
+# 7. GAME COMPLETION
+
+The game is complete ONLY when:
+
+* Right to Education has the correct image
+* Right to Play has the correct image
+* Right to Protection has the correct image
+
+The distractor remains unused.
+
+Then trigger a completion animation.
+
+Show:
+
+# 🎉 Childhood Rights Protected!
+
+Subtext:
+
+**You matched all the rights correctly!**
+
+Show:
+
+⭐⭐⭐
+
+**300 Points**
+
+Then:
+
+[ Play Again ]
+
+[ Continue ]
+
+---
+
+# 8. SCORING
+
+Use a simple scoring system.
+
+Correct placement:
+
+**+100 points**
+
+Wrong placement:
+
+**0 points**
+
+Successfully completing all 3:
+
+**+100 bonus**
+
+Maximum score:
+
+**400 points**
+
+Show score in the top-left/top-right area.
+
+Animate the score whenever points are earned.
+
+Example:
+
+350 → +100 → 450
+
+Use a small number-pop animation.
+
+---
+
+# 9. GAME PROGRESS
+
+Show a small progress indicator.
+
+Example:
+
+**LEVEL 2 OF 5**
+
+and:
+
+● ━ ● ━ ○ ━ ○ ━ ○
+
+The current level should be highlighted.
+
+If the existing Nyaya Nagri project already has a level/progress system, integrate with it instead of creating a second independent system.
+
+---
+
+# 10. VISUAL DESIGN
+
+Use the provided reference design as the visual direction.
+
+Maintain:
+
+* colorful cartoon environment
+* purple/blue sky
+* green park
+* soft clouds
+* playful educational environment
+* rounded game panels
+* colorful icons
+* child-friendly illustrations
+* friendly mascot
+
+The design should feel like:
+
+**A children's educational adventure game**
+
+NOT:
+
+* a SaaS dashboard
+* a standard MCQ quiz
+* a boring form
+* a generic card grid
+
+---
+
+# 11. GAME BOARD
+
+Use a large central cream/off-white game board.
+
+Inside:
+
+### Header
+
+Right to Childhood
+
+Build a happy, safe and equal childhood!
+
+### Instruction
+
+"Drag the correct pictures below and place them in the right slots."
+
+### Three targets
+
+Each target should have:
+
+* Number
+* Right title
+* Icon
+* Empty dashed drop area
+* "Drop here" placeholder
+
+Use different subtle accent colors:
+
+Education → Purple
+Play → Green
+Protection → Orange
+
+---
+
+# 12. IMAGE TRAY
+
+At the bottom create a dedicated purple/lavender tray.
+
+Header:
+
+**Drag from here**
+
+Inside:
+
+4 image cards.
+
+Each card should contain:
+
+* Large illustration
+* Short scenario description
+* Small drag indicator
+* Hover interaction
+
+Example:
+
+[ IMAGE ]
+A boy studying
+in a classroom
+
+[ IMAGE ]
+Children playing
+in a park
+
+[ IMAGE ]
+A child being cared
+for by an adult
+
+[ IMAGE ]
+A boy working instead
+of going to school
+
+The cards must look draggable.
+
+---
+
+# 13. DRAGGING ANIMATION
+
+When user starts dragging:
+
+* card slightly scales up
+* shadow increases
+* card follows cursor/finger smoothly
+* original position leaves a subtle placeholder
+* target slots highlight when the card approaches them
+
+When hovering over a valid target:
+
+Target should visually react.
+
+For example:
+
+Normal:
+dashed border
+
+Hover:
+bright border + soft glow
+
+Correct:
+green glow
+
+Wrong:
+orange/red shake
+
+---
+
+# 14. MASCOT
+
+Reuse the existing Nyaya Nagri mascot if available.
+
+Place mascot on the left side of the game board.
+
+Mascot can display:
+
+**"These are things every child has the right to!"**
+
+During gameplay, mascot can react:
+
+Before playing:
+"Drag each picture to the right place!"
+
+Correct:
+"Great match!"
+
+Wrong:
+"Think again!"
+
+Distractor:
+"That one doesn't belong here."
+
+Do NOT create a completely new mascot if an existing project mascot already exists.
+
+---
+
+# 15. HINT SYSTEM
+
+If the existing project already has a hint system, integrate with it.
+
+Otherwise create a simple:
+
+💡 Hint
+
+button.
+
+When clicked:
+
+* Highlight the correct target very subtly.
+* Do NOT automatically place the image.
+* Reduce one hint counter.
+
+Example:
+
+**Hint × 2**
+
+This keeps the game interactive.
+
+---
+
+# 16. GAME DATA
+
+Keep the game content separate from UI components.
+
+Create something similar to:
+
+```js
+const rounds = [
+  {
+    id: 1,
+    rights: [
+      {
+        id: "education",
+        title: "Right to Education",
+        icon: "book"
+      },
+      {
+        id: "play",
+        title: "Right to Play",
+        icon: "ball"
+      },
+      {
+        id: "protection",
+        title: "Right to Protection",
+        icon: "shield"
+      }
+    ],
+    options: [
+      {
+        id: "school",
+        title: "A boy studying in a classroom",
+        correctRight: "education",
+        image: "/assets/rights/school.png"
+      },
+      {
+        id: "playing",
+        title: "Children playing in a park",
+        correctRight: "play",
+        image: "/assets/rights/play.png"
+      },
+      {
+        id: "care",
+        title: "A child being cared for and protected",
+        correctRight: "protection",
+        image: "/assets/rights/care.png"
+      },
+      {
+        id: "labour",
+        title: "A boy working instead of going to school",
+        correctRight: null,
+        image: "/assets/rights/labour.png"
+      }
+    ]
+  }
+];
+```
+
+The distractor should have:
+
+```js
+correctRight: null
+```
+
+---
+
+# 17. MULTIPLE ROUNDS
+
+Do not make the entire game permanently use the same four images.
+
+Create multiple rounds.
+
+For example:
+
+ROUND 1
+Education / Play / Protection / Child Labour
+
+ROUND 2
+Health / Family Care / Recreation / Unsafe Work
+
+ROUND 3
+Safety / Education / Nutrition / Exploitation
+
+Each round should contain:
+
+3 valid matches + 1 distractor.
+
+Randomize the position of the four image options.
+
+Also randomize which target appears first/left/right when appropriate.
+
+---
+
+# 18. RESPONSIVE DESIGN
+
+Desktop:
+
+3 target slots horizontally.
+
+4 option cards horizontally.
+
+Mobile:
+
+Targets can become:
+
+1
+↓
+2
+↓
+3
+
+Options can become:
+
+2 × 2 grid.
+
+Support touch interactions.
+
+The game must remain completely playable on:
+
+* Desktop
+* Tablet
+* Mobile
+
+---
+
+# 19. COMPONENT ARCHITECTURE
+
+First inspect the existing project.
+
+Reuse existing components wherever possible.
+
+Suggested structure:
+
+```text
+RightToChildhoodGame/
+│
+├── RightToChildhoodGame.jsx
+├── GameHeader.jsx
+├── RightsDropZone.jsx
+├── DraggableScenarioCard.jsx
+├── ScenarioTray.jsx
+├── GameFeedback.jsx
+├── GameCompletion.jsx
+└── gameData.js
+```
+
+If TypeScript is used, use `.tsx`.
+
+Do NOT duplicate existing Button/Card/Modal/Mascot components.
+
+---
+
+# 20. STATE
+
+Track at minimum:
+
+```js
+score
+currentRound
+placedItems
+completedRights
+attempts
+hints
+gameCompleted
+feedback
+draggedItem
+```
+
+Example:
+
+```js
+placedItems = {
+  education: "school",
+  play: "playing",
+  protection: "care"
+}
+```
+
+The distractor should never appear in `placedItems`.
+
+---
+
+# 21. IMPORTANT: DO NOT BREAK EXISTING PROJECT
+
+Before implementation:
+
+1. Inspect the project structure.
+2. Find the existing routing.
+3. Find the current Nyaya Nagri level system.
+4. Find existing game/quiz components.
+5. Find existing mascot.
+6. Find existing theme/colors.
+7. Find existing animation library.
+8. Find existing state management.
+9. Reuse existing components where possible.
+
+Do NOT rewrite the whole project.
+
+Do NOT create a separate application.
+
+Do NOT remove existing features.
+
+Do NOT break existing routes.
+
+Integrate this as a new playable game/level inside the current Nyaya Nagri experience.
+
+---
+
+# 22. ROUTING
+
+Add this game to the existing level flow.
+
+Suggested flow:
+
+Home
+→ Know Yourself
+→ Right to Childhood
+→ Play Game
+→ Drag & Drop Game
+
+Use the existing routing architecture.
+
+Do not invent a completely separate navigation system.
+
+---
+
+# 23. JURY DEMO REQUIREMENT
+
+This is extremely important.
+
+When the jury sees the feature, they should immediately understand:
+
+"This is an actual game."
+
+The gameplay loop must be visually obvious:
+
+**4 picture cards**
+
+↓
+
+**Drag one**
+
+↓
+
+**Drop into a right**
+
+↓
+
+**Correct / Wrong feedback**
+
+↓
+
+**Earn points**
+
+↓
+
+**Fill all 3 rights**
+
+↓
+
+**Complete the level**
+
+This should NOT feel like:
+
+"Here are four MCQ answers. Pick one."
+
+It should feel like:
+
+**"I am solving a visual puzzle by dragging real-world situations into the correct rights."**
+
+---
+
+# 24. FINAL TESTING
+
+After implementation verify all of the following:
+
+✓ Exactly 3 target slots are visible.
+
+✓ Exactly 4 draggable image cards are visible.
+
+✓ Exactly 3 cards have valid destinations.
+
+✓ Exactly 1 card is a distractor.
+
+✓ Correct drag/drop works.
+
+✓ Wrong drag/drop works.
+
+✓ Distractor cannot be placed.
+
+✓ Correct card snaps into target.
+
+✓ Correct card becomes locked.
+
+✓ Wrong card returns to tray.
+
+✓ Score updates.
+
+✓ Progress updates.
+
+✓ Hint works.
+
+✓ Mascot feedback works.
+
+✓ Completion animation works.
+
+✓ Play Again resets the round.
+
+✓ Multiple rounds work.
+
+✓ Randomized option order works.
+
+✓ Desktop works.
+
+✓ Touch/mobile works.
+
+✓ No console errors.
+
+✓ No broken image paths.
+
+✓ Existing Nyaya Nagri functionality remains intact.
+
+Most importantly, the result must be a **real playable drag-and-drop learning game**, not a quiz disguised as a game.

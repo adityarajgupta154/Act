@@ -101,13 +101,6 @@ export interface ProgressState {
    */
   activityScores: Record<string, { score: number; total: number }>;
   /**
-   * "Right or Wrong?" mini-game personal best (Aug 2026). Game-local score
-   * kept deliberately OUTSIDE the XP/Coins economy (reconcileEconomy never
-   * sees it), so the game can never inflate currencies. Null until the game
-   * is completed once.
-   */
-  rightWrongBest: { score: number; stars: number } | null;
-  /**
    * Task 16 economy (PRD §7.3) — ADDITIVE to badges/stars, never replaces
    * them. XP/Coins are earned in-game only; no real-money path exists.
    */
@@ -164,7 +157,6 @@ function defaultState(): ProgressState {
     replayCounts: {},
     preAnswersByQuest: {},
     activityScores: {},
-    rightWrongBest: null,
     xp: 0,
     coins: 0,
     ownedAccessories: [],
@@ -198,21 +190,6 @@ const isCount = (v: unknown): v is number =>
 const isAnswerList = (v: unknown): v is number[] =>
   Array.isArray(v) && v.every((n) => typeof n === 'number' && Number.isInteger(n));
 /** Task 18: a stored activity score must be a sane {score, total} pair. */
-/** "Right or Wrong?" best must be a sane {score, stars} pair (else dropped). */
-const isRwBest = (v: unknown): v is { score: number; stars: number } => {
-  if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
-  const p = v as { score?: unknown; stars?: unknown };
-  return (
-    typeof p.score === 'number' &&
-    Number.isInteger(p.score) &&
-    p.score >= 0 &&
-    p.score <= 2000 &&
-    typeof p.stars === 'number' &&
-    Number.isInteger(p.stars) &&
-    p.stars >= 0 &&
-    p.stars <= 10
-  );
-};
 /** Task 18: a stored activity score must be a sane {score, total} pair. */
 const isScorePair = (v: unknown): v is { score: number; total: number } => {
   if (!v || typeof v !== 'object' || Array.isArray(v)) return false;
@@ -319,7 +296,6 @@ class LocalStorageAdapter implements StorageAdapter {
         replayCounts: sanitizeRecord(parsed.replayCounts, isCount),
         preAnswersByQuest: sanitizeRecord(parsed.preAnswersByQuest, isAnswerList),
         activityScores: sanitizeRecord(parsed.activityScores, isScorePair),
-        rightWrongBest: isRwBest(parsed.rightWrongBest) ? parsed.rightWrongBest : null,
         xp: economy.xp,
         coins: economy.coins,
         ownedAccessories: economy.ownedAccessories,

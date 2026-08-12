@@ -1,6 +1,6 @@
 /**
- * Tiny WebAudio chimes for "Right or Wrong?" — no audio assets, no external
- * dependencies (task spec: keep sound modular / add none unnecessarily).
+ * Tiny WebAudio chimes for the "Right to Childhood" drag-and-drop game —
+ * no audio assets, no external dependencies (keep sound modular).
  *
  * Every call is a silent no-op when audio is unavailable; sound must never
  * block or break gameplay. The context is created lazily INSIDE a user

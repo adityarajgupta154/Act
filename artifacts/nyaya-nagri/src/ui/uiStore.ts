@@ -67,12 +67,6 @@ export type UIState = {
    * same viewer.
    */
   certificateZoneId: string | null;
-  /**
-   * "Right or Wrong?" playable mini-game overlay (Aug 2026 — jury feedback:
-   * the app needed a REAL game loop, not another quiz). Pure 2D DOM overlay;
-   * mounts above the Map overlay so it can be launched from the map.
-   */
-  rightWrongOpen: boolean;
 };
 
 let state: UIState = {
@@ -94,7 +88,6 @@ let state: UIState = {
   activeStory: null,
   activeLevel: null,
   certificateZoneId: null,
-  rightWrongOpen: false,
 };
 
 const listeners = new Set<() => void>();
@@ -266,19 +259,6 @@ export function openMap() {
 
 export function closeMap() {
   uiStore.set({ mapOpen: false });
-}
-
-/**
- * "Right or Wrong?" mini-game. Same guard chain as openStoryMap so no seam
- * or button can stack it over a zone interior or an open story.
- */
-export function openRightWrong() {
-  if (state.isTransitioning || state.activeZoneId || state.activeStory) return;
-  uiStore.set({ rightWrongOpen: true });
-}
-
-export function closeRightWrong() {
-  uiStore.set({ rightWrongOpen: false });
 }
 
 export function openShop() {

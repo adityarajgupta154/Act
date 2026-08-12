@@ -447,9 +447,9 @@ const flowSrc = read('../src/quests/GameQuestFlow.tsx');
 // GAME BEFORE QUIZ is a POLICY: a fresh entry mounts the game (never the
 // quiz), the lesson gate is credited ONLY by the game's completion
 // callback, and Continue stays disabled until the gate is earned. The
-// game rules themselves are covered by scripts/rightwrong.smoke.ts.
+// game rules themselves are covered by scripts/childhood.smoke.ts.
 assert(
-  flowSrc.includes('<RightWrongGame') &&
+  flowSrc.includes('<RightToChildhoodGame') &&
     flowSrc.includes('onComplete={() => progressStore.markVideoWatched(flow.videoId)}'),
   'the game credits the lesson gate through its completion callback (the ONE write site)',
 );

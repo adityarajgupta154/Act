@@ -16,7 +16,6 @@ import {
   BadgeCheck,
 } from 'lucide-react';
 import { useUIStore, enterZone, exitZone, openProgress, openSettings, openCommunity, openStoryMap, enterLevel, clearLevel } from './uiStore';
-import { RightWrongGame } from '@/games/rightwrong/RightWrongGame';
 import { ProgressOverlay } from './ProgressScreen';
 import { MapOverlay } from './MapScreen';
 import { StoryOverlay } from '@/story/StoryOverlay';
@@ -240,20 +239,22 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
   }
 
   if (!quest) {
-    // No content registered for this zone yet — plain card with exit.
+    // No content registered for this zone yet — plain centred card with exit.
     return (
-      <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
-        <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
-          <MapIcon className="w-8 h-8 text-orange-500" />
+      <div className="absolute inset-0 flex items-center justify-center p-4 md:p-6">
+        <div className="bg-white p-8 md:p-12 rounded-3xl shadow-xl max-w-2xl w-full text-center border border-slate-100 animate-in zoom-in-95 duration-300 pointer-events-auto">
+          <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-6">
+            <MapIcon className="w-8 h-8 text-orange-500" />
+          </div>
+          <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zoneStrings?.name ?? zone.name}</h2>
+          <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zoneStrings?.theme ?? zone.theme}</p>
+          <button
+            onClick={exitZone}
+            className="bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-sm border border-sky-200 mx-auto touch-manipulation"
+          >
+            {t.backToMap}
+          </button>
         </div>
-        <h2 className="font-display font-bold text-3xl md:text-4xl text-slate-800 mb-4">{zoneStrings?.name ?? zone.name}</h2>
-        <p className="text-lg md:text-xl text-slate-600 mb-10 font-medium">{zoneStrings?.theme ?? zone.theme}</p>
-        <button
-          onClick={exitZone}
-          className="bg-sky-50 hover:bg-sky-100 active:bg-sky-200 text-sky-700 px-8 py-4 rounded-full font-bold text-lg transition-transform active:scale-95 shadow-sm border border-sky-200 mx-auto touch-manipulation"
-        >
-          {t.backToMap}
-        </button>
       </div>
     );
   }
@@ -295,7 +296,7 @@ function ZoneInterior({ zoneId }: { zoneId: string }) {
 }
 
 export function HUD() {
-  const { activeZoneId, fadeOpacity, rightWrongOpen } = useUIStore();
+  const { activeZoneId, fadeOpacity } = useUIStore();
   const t = useStrings();
   const onboarded = useOnboarded();
 
@@ -398,10 +399,13 @@ export function HUD() {
       )}
 
       {/* Interior View Overlay — doodle-scene backdrop behind every level
-          select / quiz / game screen (bg-sky-100 shows while it loads). */}
+          select / quiz / game screen (bg-sky-100 shows while it loads).
+          No flex-centering: LevelSelect / QuestPlayer / GameQuestFlow each
+          manage their own full-screen layout; the "no quest" fallback adds
+          centering inside ZoneInterior. */}
       {activeZoneId && (
         <div
-          className="absolute inset-0 z-30 pointer-events-auto bg-sky-100 bg-cover bg-center flex items-center justify-center p-4 md:p-6"
+          className="absolute inset-0 z-30 pointer-events-auto bg-sky-100 bg-cover bg-center"
           style={{ backgroundImage: `url(${quizDoodleBgUrl})` }}
         >
           <ZoneInterior zoneId={activeZoneId} />
@@ -446,13 +450,6 @@ export function HUD() {
       {/* Story Adventure overlay (z-30, Aug 2026) — the house slide-show;
           fully deterministic content. Get Help Now (z-50) stays on top */}
       <StoryOverlay />
-
-      {/* "Right or Wrong?" playable mini-game (z-30, Aug 2026) — pure DOM
-          overlay, no WebGL; the headless capture browser can screenshot it.
-          Mounted after StoryOverlay so it paints above if both are ever true
-          (guard in openRightWrong ensures they can't be, but belt+braces).
-          Get Help Now (z-50) stays on top always. */}
-      {rightWrongOpen && <RightWrongGame />}
 
       {/* Onboarding (z-20, Task 13) — covers the world until the guardian
           consent step completes; Get Help Now (z-50) stays on top even here */}

@@ -26,13 +26,12 @@ import {
   MapPin,
   Scale,
   School,
-  Play,
   Sparkles,
   Users,
   X,
   type LucideIcon,
 } from 'lucide-react';
-import { useUIStore, closeMap, openMap, enterZone, openRightWrong } from './uiStore';
+import { useUIStore, closeMap, openMap, enterZone } from './uiStore';
 import { getZoneStates } from '@/world/zones';
 import { progressStore } from '@/data/progressStore';
 import { useStrings } from '@/i18n/strings';
@@ -423,19 +422,6 @@ export function MapOverlay() {
               <span className="text-xs md:text-sm font-semibold text-slate-600">{lockedHint}</span>
             </div>
           )}
-        </div>
-
-        {/* "Right or Wrong?" mini-game entry — lives on the map card so it
-            feels part of the city, not a random floating button. */}
-        <div className="shrink-0 mt-2 md:mt-3 flex justify-center">
-          <button
-            type="button"
-            onClick={() => { closeMap(); openRightWrong(); }}
-            className="flex items-center gap-2.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-400 hover:to-purple-500 active:scale-95 text-white font-display font-bold text-sm md:text-base rounded-2xl px-5 py-2.5 shadow-lg transition-all touch-manipulation focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-violet-300"
-          >
-            <Play className="w-4 h-4 md:w-5 md:h-5 fill-white" />
-            {t.rwTitle} — {t.rwPlayCta}
-          </button>
         </div>
 
         {/* Legend */}

@@ -254,46 +254,60 @@ select {
 }
 
 /* ---------------------------------------------------------------------
-   "Right or Wrong?" mini-game (Aug 2026) — playful game-feel motion.
-   All pure CSS so prefers-reduced-motion can switch everything off below. */
-@keyframes rw-shake {
+   "Right to Childhood" drag-and-drop game (Aug 2026) — playful game-feel
+   motion. All pure CSS so prefers-reduced-motion can switch everything
+   off below (framer-motion drag springs respect the OS setting natively). */
+@keyframes ch-shake {
   10%, 90% { transform: translateX(-2px); }
   20%, 80% { transform: translateX(4px); }
   30%, 50%, 70% { transform: translateX(-6px); }
   40%, 60% { transform: translateX(6px); }
 }
-.rw-shake { animation: rw-shake 0.5s ease-in-out; }
+.ch-shake { animation: ch-shake 0.5s ease-in-out; }
 
-@keyframes rw-pop {
+@keyframes ch-pop {
   0% { transform: scale(0); }
   70% { transform: scale(1.15); }
   100% { transform: scale(1); }
 }
-.rw-pop { animation: rw-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+.ch-pop { animation: ch-pop 0.35s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
 
-@keyframes rw-confetti {
+@keyframes ch-sparkle {
   0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; }
   100% {
-    transform: translate(var(--rw-dx, 0px), var(--rw-dy, -60px)) scale(0.4) rotate(var(--rw-rot, 180deg));
+    transform: translate(var(--ch-dx, 0px), var(--ch-dy, -48px)) scale(0.3) rotate(var(--ch-rot, 160deg));
     opacity: 0;
   }
 }
-.rw-confetti { animation: rw-confetti 0.9s ease-out forwards; }
+.ch-sparkle { animation: ch-sparkle 0.8s ease-out forwards; }
 
-@keyframes rw-float {
+@keyframes ch-float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
 }
-.rw-float { animation: rw-float 3.2s ease-in-out infinite; }
+.ch-float { animation: ch-float 3.2s ease-in-out infinite; }
 
-@keyframes rw-star-pop {
+@keyframes ch-star-pop {
   0% { transform: scale(0) rotate(-30deg); opacity: 0; }
   60% { transform: scale(1.25) rotate(8deg); opacity: 1; }
   100% { transform: scale(1) rotate(0deg); opacity: 1; }
 }
-.rw-star-pop { animation: rw-star-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+.ch-star-pop { animation: ch-star-pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+@keyframes ch-hint-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+  50% { box-shadow: 0 0 0 8px rgba(251, 191, 36, 0.45); }
+}
+.ch-hint-pulse { animation: ch-hint-pulse 0.9s ease-in-out 3; }
+
+@keyframes ch-score-pop {
+  0% { transform: translateY(4px); opacity: 0; }
+  25% { opacity: 1; }
+  100% { transform: translateY(-18px); opacity: 0; }
+}
+.ch-score-pop { animation: ch-score-pop 1s ease-out forwards; }
 
 @media (prefers-reduced-motion: reduce) {
-  .rw-shake, .rw-pop, .rw-confetti, .rw-star-pop { animation: none; }
-  .rw-float { animation: none; }
+  .ch-shake, .ch-pop, .ch-sparkle, .ch-star-pop, .ch-score-pop, .ch-hint-pulse { animation: none; }
+  .ch-float { animation: none; }
 }

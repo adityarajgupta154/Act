@@ -60,6 +60,14 @@ export interface UIStrings {
   practiceComplete: string;
   nextLevelUnlocked: (levelName: string) => string;
   backToLevels: string;
+  /** Short motivating description shown on each level card (kind-specific). */
+  levelKindDescs: Record<LevelKind, string>;
+  /** "Total Points" label next to the XP badge in the zone header. */
+  zoneTotalPoints: string;
+  /** "You're doing amazing!" banner title at the bottom of the level list. */
+  zoneEncouragement: string;
+  /** Sub-line of the bottom encouragement banner. */
+  zoneEncouragementSub: string;
 
   // Zones (names + one-line themes)
   zones: Record<string, ZoneStrings>;
@@ -84,31 +92,33 @@ export interface UIStrings {
    * purpose — Round/Score/Streak/Stars, never "question/quiz" (jury
    * feedback: it must feel like a game, not an assessment).
    */
-  rwTitle: string;
-  rwHeading: string;
-  rwSubheading: string;
-  rwRound: (n: number, total: number) => string;
-  rwScoreLabel: string;
-  rwOr: string;
-  rwGreatChoice: string;
-  rwThatsTheOne: string;
-  rwTryAgain: string;
-  rwStreakBonus: (bonus: number) => string;
-  rwLawChipLabel: string;
-  rwYouDidIt: string;
-  rwRightsProtected: (n: number, total: number) => string;
-  rwKnowRights: string;
-  rwFinalScore: string;
-  rwBestScore: (score: number) => string;
-  rwPlayAgain: string;
-  rwBackHome: string;
-  rwPlayCta: string;
-  rwSoundOn: string;
-  rwSoundOff: string;
-  rwExitLabel: string;
-  rwMascotThink: string;
-  rwMascotCorrect: string;
-  rwTagline: string;
+  chTitle: string;
+  chSubtitle: string;
+  chInstruction: string;
+  chDragFromHere: string;
+  chDropHere: string;
+  chRound: (n: number, total: number) => string;
+  chScoreLabel: string;
+  chGreatMatch: string;
+  chNotQuite: string;
+  chDoesntBelong: string;
+  chLawChipLabel: string;
+  chRoundCleared: string;
+  chBonus: (n: number) => string;
+  chCompleteHeading: string;
+  chCompleteSub: string;
+  chFinalScore: string;
+  chPlayAgain: string;
+  chPlayCta: string;
+  chSoundOn: string;
+  chSoundOff: string;
+  chExitLabel: string;
+  chHint: string;
+  chHintAria: (n: number) => string;
+  chMascotIntro: string;
+  chMascotWrong: string;
+  chMascotDistractor: string;
+  chEncourage: string;
   questComplete: string;
   youGotXofY: (score: number, total: number) => string;
   unlockedNext: (zoneName: string) => string;
@@ -694,6 +704,19 @@ const EN: UIStrings = {
   practiceComplete: 'Practice Complete!',
   nextLevelUnlocked: (levelName) => `Unlocked: ${levelName}`,
   backToLevels: 'Back to Levels',
+  levelKindDescs: {
+    story: "Let's start the journey and learn about rights and dignity.",
+    decision: 'Make smart choices and see how they impact everyone.',
+    quiz: 'Test your knowledge and become a rights champion!',
+    memory: 'Match the pairs and strengthen your memory.',
+    hidden: 'Search for clues hidden in the scene.',
+    sorting: 'Sort each right into the correct group.',
+    scenario: 'Think fast and pick the right action!',
+    authorities: 'Meet the people who protect children\'s rights.',
+  },
+  zoneTotalPoints: 'Total Points',
+  zoneEncouragement: "You're doing amazing!",
+  zoneEncouragementSub: 'Keep learning, keep growing, keep shining!',
 
   zones: {
     zone0: {
@@ -738,31 +761,33 @@ const EN: UIStrings = {
   ribbonQuestion: 'Question',
   ribbonReview: 'Review',
   ribbonRecap: 'Recap',
-  rwTitle: 'Right or Wrong?',
-  rwHeading: 'Which one is RIGHT?',
-  rwSubheading: 'Choose the picture that shows a right every child has.',
-  rwRound: (n, total) => `Round ${n} of ${total}`,
-  rwScoreLabel: 'Score',
-  rwOr: 'or',
-  rwGreatChoice: 'Great choice!',
-  rwThatsTheOne: 'Yes — that is the right one!',
-  rwTryAgain: 'Hmm, look closely and try again!',
-  rwStreakBonus: (bonus) => `Streak bonus +${bonus}!`,
-  rwLawChipLabel: 'The law says',
-  rwYouDidIt: 'You did it!',
-  rwRightsProtected: (n, total) => `${n} of ${total} rights protected!`,
-  rwKnowRights: 'You know your rights!',
-  rwFinalScore: 'Final score',
-  rwBestScore: (score) => `Best: ${score}`,
-  rwPlayAgain: 'Play again',
-  rwBackHome: 'Back to the city',
-  rwPlayCta: 'Play',
-  rwSoundOn: 'Sound on',
-  rwSoundOff: 'Sound off',
-  rwExitLabel: 'Leave the game',
-  rwMascotThink: 'Think carefully — choose what is right for every child.',
-  rwMascotCorrect: 'You are doing great!',
-  rwTagline: 'Learn. Choose. Protect rights!',
+  chTitle: 'Right to Childhood',
+  chSubtitle: 'Build a happy, safe and equal childhood!',
+  chInstruction: 'Drag each picture below into its matching right.',
+  chDragFromHere: 'Drag from here',
+  chDropHere: 'Drop here',
+  chRound: (n, total) => `Round ${n} of ${total}`,
+  chScoreLabel: 'Score',
+  chGreatMatch: 'Great match!',
+  chNotQuite: 'Not quite! Try another place.',
+  chDoesntBelong: 'This one does not belong here.',
+  chLawChipLabel: 'The law says',
+  chRoundCleared: 'Round cleared!',
+  chBonus: (n) => `Bonus +${n}!`,
+  chCompleteHeading: 'Childhood Rights Protected!',
+  chCompleteSub: 'You matched every right correctly!',
+  chFinalScore: 'Final score',
+  chPlayAgain: 'Play again',
+  chPlayCta: 'Play',
+  chSoundOn: 'Sound on',
+  chSoundOff: 'Sound off',
+  chExitLabel: 'Leave the game',
+  chHint: 'Hint',
+  chHintAria: (n) => `Hint — ${n} left`,
+  chMascotIntro: 'Drag each picture to its right place!',
+  chMascotWrong: 'Think again — where does it truly belong?',
+  chMascotDistractor: 'That one does not belong anywhere here.',
+  chEncourage: 'Think carefully! Choose what every child truly has a right to.',
   questComplete: 'Quest Complete!',
   youGotXofY: (score, total) => `You got ${score} out of ${total}!`,
   unlockedNext: (zoneName) => `You unlocked the next area: ${zoneName}`,
@@ -1427,6 +1452,19 @@ const HI: UIStrings = {
   practiceComplete: 'अभ्यास पूरा हुआ!',
   nextLevelUnlocked: (levelName) => `खुल गया: ${levelName}`,
   backToLevels: 'लेवल सूची पर वापस',
+  levelKindDescs: {
+    story: 'सफ़र शुरू करो और अपने अधिकार और सम्मान सीखो।',
+    decision: 'समझदारी से चुनो और देखो इससे सबको कैसे फ़र्क पड़ता है।',
+    quiz: 'अपनी जानकारी परखो और अधिकार चैंपियन बनो!',
+    memory: 'जोड़े मिलाओ और अपनी याददाश्त मज़बूत करो।',
+    hidden: 'दृश्य में छिपे सुराग ढूँढो।',
+    sorting: 'हर अधिकार को सही जगह पर रखो।',
+    scenario: 'जल्दी सोचो और सही काम चुनो!',
+    authorities: 'उन लोगों से मिलो जो बच्चों के अधिकार बचाते हैं।',
+  },
+  zoneTotalPoints: 'कुल अंक',
+  zoneEncouragement: 'तुम बहुत बढ़िया कर रहे हो!',
+  zoneEncouragementSub: 'सीखते रहो, बढ़ते रहो, चमकते रहो!',
 
   zones: {
     zone0: {
@@ -1471,31 +1509,33 @@ const HI: UIStrings = {
   ribbonQuestion: 'सवाल',
   ribbonReview: 'पुनरावृत्ति',
   ribbonRecap: 'दोहराएं',
-  rwTitle: 'सही या गलत?',
-  rwHeading: 'कौन सा सही है?',
-  rwSubheading: 'वह तस्वीर चुनो जो हर बच्चे का हक दिखाती है।',
-  rwRound: (n, total) => `राउंड ${n} / ${total}`,
-  rwScoreLabel: 'स्कोर',
-  rwOr: 'या',
-  rwGreatChoice: 'बहुत बढ़िया!',
-  rwThatsTheOne: 'हाँ — यही सही है!',
-  rwTryAgain: 'ध्यान से देखो और फिर कोशिश करो!',
-  rwStreakBonus: (bonus) => `लगातार सही! बोनस +${bonus}`,
-  rwLawChipLabel: 'कानून कहता है',
-  rwYouDidIt: 'तुमने कर दिखाया!',
-  rwRightsProtected: (n, total) => `${total} में से ${n} हक सुरक्षित!`,
-  rwKnowRights: 'तुम अपने हक जानते हो!',
-  rwFinalScore: 'कुल स्कोर',
-  rwBestScore: (score) => `बेस्ट: ${score}`,
-  rwPlayAgain: 'फिर से खेलो',
-  rwBackHome: 'शहर वापस चलो',
-  rwPlayCta: 'खेलो',
-  rwSoundOn: 'आवाज़ चालू',
-  rwSoundOff: 'आवाज़ बंद',
-  rwExitLabel: 'गेम से बाहर जाओ',
-  rwMascotThink: 'ध्यान से सोचो — वही चुनो जो हर बच्चे के लिए सही है।',
-  rwMascotCorrect: 'तुम बहुत अच्छा कर रहे हो!',
-  rwTagline: 'सीखो। चुनो। हक बचाओ!',
+  chTitle: 'बचपन का अधिकार',
+  chSubtitle: 'खुशहाल, सुरक्षित और बराबरी वाला बचपन बनाओ!',
+  chInstruction: 'नीचे की हर तस्वीर खींचकर उसके सही हक में रखो।',
+  chDragFromHere: 'यहाँ से खींचो',
+  chDropHere: 'यहाँ छोड़ो',
+  chRound: (n, total) => `राउंड ${n} / ${total}`,
+  chScoreLabel: 'स्कोर',
+  chGreatMatch: 'सही जगह!',
+  chNotQuite: 'यहाँ नहीं! किसी और जगह आज़माओ।',
+  chDoesntBelong: 'यह तस्वीर यहाँ नहीं आती।',
+  chLawChipLabel: 'कानून कहता है',
+  chRoundCleared: 'राउंड पूरा!',
+  chBonus: (n) => `बोनस +${n}!`,
+  chCompleteHeading: 'बचपन के अधिकार सुरक्षित!',
+  chCompleteSub: 'तुमने हर हक सही जगह लगाया!',
+  chFinalScore: 'कुल स्कोर',
+  chPlayAgain: 'फिर से खेलो',
+  chPlayCta: 'खेलो',
+  chSoundOn: 'आवाज़ चालू',
+  chSoundOff: 'आवाज़ बंद',
+  chExitLabel: 'गेम से बाहर जाओ',
+  chHint: 'हिंट',
+  chHintAria: (n) => `हिंट — ${n} बाकी`,
+  chMascotIntro: 'हर तस्वीर को उसकी सही जगह खींचो!',
+  chMascotWrong: 'फिर से सोचो — यह सच में कहाँ आती है?',
+  chMascotDistractor: 'वह तस्वीर यहाँ किसी जगह नहीं आती।',
+  chEncourage: 'ध्यान से सोचो! वही चुनो जो हर बच्चे का सच्चा हक है।',
   questComplete: 'क्वेस्ट पूरी हुई!',
   youGotXofY: (score, total) => `तुमने ${total} में से ${score} सही किए!`,
   unlockedNext: (zoneName) => `नया इलाका खुल गया: ${zoneName}`,

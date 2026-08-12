@@ -27,8 +27,8 @@ import { QuestPlayer } from './QuestPlayer';
 import { levelKey } from './engine';
 import type { Quest } from './schema';
 import type { ZoneGameFlow } from './gameFlows';
-import { RightWrongGame } from '@/games/rightwrong/RightWrongGame';
-import { RW_BG_URL } from '@/games/rightwrong/data';
+import { RightToChildhoodGame } from '@/games/childhood/RightToChildhoodGame';
+import { CH_BG_URL } from '@/games/childhood/data';
 import { getStoryLevel } from '@/story/storyData';
 import { progressStore } from '@/data/progressStore';
 import { exitZone, exitZoneToStoryMap, enterLevel, clearLevel } from '@/ui/uiStore';
@@ -118,7 +118,7 @@ export function GameQuestFlow({
   /* ----------------------------- game stage ----------------------------- */
   if (playingGame) {
     return (
-      <RightWrongGame
+      <RightToChildhoodGame
         onComplete={() => progressStore.markVideoWatched(flow.videoId)}
         onContinue={() => {
           setPlayingGame(false);
@@ -177,11 +177,11 @@ export function GameQuestFlow({
       <button
         type="button"
         onClick={() => setPlayingGame(true)}
-        aria-label={t.rwPlayCta}
+        aria-label={t.chPlayCta}
         className="relative w-full rounded-2xl overflow-hidden shadow-inner bg-slate-900 aspect-[16/7] group touch-manipulation"
       >
         <img
-          src={RW_BG_URL}
+          src={CH_BG_URL}
           alt=""
           aria-hidden
           draggable={false}
@@ -190,12 +190,12 @@ export function GameQuestFlow({
         <div className="absolute inset-0 bg-violet-900/40" aria-hidden />
         <div className="relative z-10 h-full flex flex-col items-center justify-center gap-1.5 px-4">
           <span className="font-display font-extrabold text-white text-2xl md:text-3xl drop-shadow-md">
-            {t.rwTitle}
+            {t.chTitle}
           </span>
-          <span className="text-white/85 text-xs md:text-sm font-semibold">{t.rwTagline}</span>
+          <span className="text-white/85 text-xs md:text-sm font-semibold">{t.chSubtitle}</span>
           <span className="mt-1.5 inline-flex items-center gap-2 bg-amber-400 text-amber-900 font-extrabold px-5 py-2.5 rounded-full shadow-md group-active:scale-95 transition-transform">
             <Play className="w-4 h-4 fill-current" aria-hidden />
-            {gameDone ? t.rwPlayAgain : t.rwPlayCta}
+            {gameDone ? t.chPlayAgain : t.chPlayCta}
           </span>
         </div>
       </button>
