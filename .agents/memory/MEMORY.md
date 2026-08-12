@@ -12,7 +12,7 @@
 - [Story level map](nyaya-nagri-story-levels.md) — pure STORY_LEVELS data (id literals smoke-banned); castle-gated level + world-door entrance locks DERIVED (gate = game run; video DELETED); celebration transient vs unlock persistent; 4-option ceiling.
 - [Nyaya AI assistant](nyaya-nagri-nyayaai.md) — ONE assistant; text 3.5-flash; voice = Sarvam turn-based server pipeline (Live client DELETED, token routes legacy-unused); corpus never holds helpline digits.
 - [Nyaya streaming chat](nyaya-nagri-streaming-chat.md) — NDJSON twin route gates the ACCUMULATED reply BEFORE each delta forward; shared prepareChat stops gate drift; client newest-wins epoch+abort; lazy headers.
-- [Agent platform quirks](agent-platform-quirks.md) — no setTimeout in durable scope; zombie testing job wedges 1-slot pool; requestSecrets can no-op on existing secrets (fingerprint-verify; rename=loss risk).
+- [Agent platform quirks](agent-platform-quirks.md) — no setTimeout in durable scope; zombie jobs/portless zombie servers; requestSecrets can no-op; post-merge db push removed (SUPABASE_DATABASE_URL malformed, db unused).
 - [Nyaya insights system](nyaya-nagri-insights.md) — evidence gates count MEASURED sessions only; AI-cache fingerprint covers EVERY summarized input; cache keyed lang:audience; local-PIN gate = user-approved deviation.
 - [Nyaya story voice guide](nyaya-nagri-story-voice.md) — GEMINI-ONLY voice; single shared GEMINI_API_KEY (TTS-key split reverted by user 2026-08-11, never re-add); failure ⇒ silent retry chip, no onDone.
 - [Nyaya Sarvam voice engine](nyaya-sarvam-voice.md) — saarika STT → text-chat safety gates → Gemini → bulbul TTS; gate BEFORE TTS; rate-limited + strict bounds (no auth by design); 5MB body; fail-closed client.

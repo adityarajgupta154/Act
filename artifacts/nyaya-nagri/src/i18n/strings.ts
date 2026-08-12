@@ -94,6 +94,9 @@ export interface UIStrings {
    */
   chTitle: string;
   chSubtitle: string;
+  chTagline: string;
+  chAwarenessTag: string;
+  chRibbonDone: string;
   chInstruction: string;
   chDragFromHere: string;
   chDropHere: string;
@@ -763,6 +766,9 @@ const EN: UIStrings = {
   ribbonRecap: 'Recap',
   chTitle: 'Right to Childhood',
   chSubtitle: 'Build a happy, safe and equal childhood!',
+  chTagline: 'Every child has the right to learn, play, and rest',
+  chAwarenessTag: 'Child labour awareness',
+  chRibbonDone: 'Game Completed!',
   chInstruction: 'Drag each picture below into its matching right.',
   chDragFromHere: 'Drag from here',
   chDropHere: 'Drop here',
@@ -1511,6 +1517,9 @@ const HI: UIStrings = {
   ribbonRecap: 'दोहराएं',
   chTitle: 'बचपन का अधिकार',
   chSubtitle: 'खुशहाल, सुरक्षित और बराबरी वाला बचपन बनाओ!',
+  chTagline: 'हर बच्चे को सीखने, खेलने और आराम करने का अधिकार है',
+  chAwarenessTag: 'बाल श्रम जागरूकता',
+  chRibbonDone: 'गेम पूरा हुआ!',
   chInstruction: 'नीचे की हर तस्वीर खींचकर उसके सही हक में रखो।',
   chDragFromHere: 'यहाँ से खींचो',
   chDropHere: 'यहाँ छोड़ो',
