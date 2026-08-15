@@ -1,8 +1,12 @@
 <div align="center">
 
+<img src="docs/readme/banner.svg" alt="Nyaya Nagri — animated banner" width="100%"/>
+
 # ⚖️ Nyaya Nagri — न्याय नगरी
 
 ### *Know Your Rights. Build Your Future.*
+
+<img src="https://readme-typing-svg.demolab.com/?font=Trebuchet+MS&weight=700&size=22&duration=3000&pause=900&color=F5B700&center=true&vCenter=true&width=820&height=45&lines=Know+Your+Rights.+Build+Your+Future.;7+Themed+Zones+%E2%80%A2+English+%2B+%E0%A4%B9%E0%A4%BF%E0%A4%82%E0%A4%A6%E0%A5%80+%E2%80%A2+Game-First+Learning;AI+Guide+with+Fail-Closed+Safety+Gates;Childline+1098+%E2%80%94+Always+One+Tap+Away" alt="animated tagline"/>
 
 **A gamified legal-literacy city where children (8–18) learn their rights under Indian law — by playing.**
 
@@ -23,7 +27,7 @@ Built for **Smart India Hackathon — Problem Statement SIH1281** (Gamified Plat
 
 </div>
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 📚 Table of Contents
 
@@ -44,7 +48,7 @@ Built for **Smart India Hackathon — Problem Statement SIH1281** (Gamified Plat
 - [Roadmap](#-roadmap)
 - [Disclaimer](#-disclaimer)
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🏙 What is Nyaya Nagri?
 
@@ -56,7 +60,7 @@ The design promise, in one line:
 
 It is an **awareness and confidence-building tool** — it never replaces real reporting systems; it *teaches* them and deep-links to them.
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## ✨ Feature Tour
 
@@ -85,7 +89,7 @@ Complete English + हिंदी content (not machine-translated at runtime �
 ### 📊 Learning insights
 An evidence-gated insights view summarizes real play sessions (locally PIN-gated for guardians/teachers); AI summaries are cached and fingerprinted so identical evidence never re-queries the model.
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🏗 System Architecture
 
@@ -155,7 +159,7 @@ flowchart TB
 | Legal facts, quiz answers and helpline text are hard-coded content files | AI may *narrate*, but it can never rewrite the law or a helpline number |
 | Monorepo with typed shared schemas (Zod) | The client and server can't disagree about API shapes — it's one type system end to end |
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🕹 How the Game Works (Player Workflow)
 
@@ -188,7 +192,7 @@ A few deliberate design rules baked into that loop:
 - **Trauma-sensitive copy** — no scary, blaming or graphic language anywhere; danger is shown through implication ("warning signs"), per the 8–11 age band rules.
 - **Celebrations are transient, unlocks are persistent** — confetti today, progress forever (in the browser's local store).
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🔌 API Architecture
 
@@ -268,7 +272,7 @@ sequenceDiagram
 
 The core chat, persona and insights contracts are validated with **Zod schemas shared between client and server** (`lib/api-zod`) and consumed through typed React hooks (`lib/api-client-react`); the voice and story-TTS routes use strict route-local validation instead (size bounds, rate limits, manifest checks).
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🛡 Child Safety & Privacy by Design
 
@@ -284,7 +288,7 @@ Safety is not a feature here — it is the architecture. The concrete guarantees
 8. **Trauma-sensitive narrative.** Sensitive topics are shown through implication and safe narrative distance — never graphic depiction.
 9. **The assistant is always a computer helper.** It introduces itself as one; role-play personas are visibly labelled role-play.
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## ⚖️ The Legal Content Backbone
 
@@ -303,7 +307,7 @@ Every quest, scenario and AI answer traces back to real Indian legal instruments
 
 Supporting institutions taught in-game: **CHILDLINE 1098**, POCSO e-Box (NCPCR), CWC, JJB, SJPU, DCPU, NCPCR/SCPCRs, Cyber Crime portal — always as *real places to go*, never simulated inside the app.
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🧰 Tech Stack
 
@@ -320,7 +324,7 @@ Supporting institutions taught in-game: **CHILDLINE 1098**, POCSO e-Box (NCPCR),
 | Persistence | Browser localStorage (anonymous progress), session-only chat memory |
 | Tooling | pnpm monorepo, TypeScript project references, tsx smoke suites |
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 📁 Monorepo Structure
 
@@ -346,7 +350,7 @@ workspace/
 │   └── api-client-react/     # Generated typed hooks for the client
 ```
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🚀 Getting Started
 
@@ -374,7 +378,7 @@ pnpm --filter @workspace/nyaya-nagri run dev
 
 > On Replit, the project runs out of the box with its configured workflows — one per artifact.
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## ✅ Quality & Testing
 
@@ -388,7 +392,7 @@ npx tsx scripts/safepath.smoke.ts     # one suite
 for f in scripts/*.smoke.ts; do npx tsx "$f"; done   # all suites
 ```
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## 🗺 Roadmap
 
@@ -398,7 +402,7 @@ for f in scripts/*.smoke.ts; do npx tsx "$f"; done   # all suites
 - [ ] More mini-game types for the variety pack
 - [ ] Accessibility deep-pass (screen-reader labels for every interactive element)
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 ## ⚠️ Disclaimer
 
@@ -406,12 +410,15 @@ Nyaya Nagri provides **educational legal information, not professional legal adv
 
 > **📞 CHILDLINE — 1098** (24/7, free) &nbsp;•&nbsp; **💻 Cyber Crime Helpline — 155260** / [cybercrime.gov.in](https://cybercrime.gov.in)
 
----
+<p align="center"><img src="docs/readme/divider.svg" alt="" width="100%"/></p>
 
 <div align="center">
 
 **Made with ❤️ for every child's right to know their rights.**
 
 *Smart India Hackathon — SIH1281*
+
+
+<img src="docs/readme/footer-wave.svg" alt="" width="100%"/>
 
 </div>

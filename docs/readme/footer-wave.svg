@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 110" width="1000" height="110" role="img" aria-label="animated waves">
+  <g fill="none" stroke-linecap="round">
+    <path d="M0,40 Q125,10 250,40 T500,40 T750,40 T1000,40 T1250,40 T1500,40" stroke="#FF9933" stroke-width="5" opacity="0.9">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-500 0" dur="8s" repeatCount="indefinite"/>
+    </path>
+    <path d="M0,58 Q125,32 250,58 T500,58 T750,58 T1000,58 T1250,58 T1500,58" stroke="#4A90D9" stroke-width="4" opacity="0.75">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-500 0" dur="11s" repeatCount="indefinite"/>
+    </path>
+    <path d="M0,76 Q125,54 250,76 T500,76 T750,76 T1000,76 T1250,76 T1500,76" stroke="#35B36B" stroke-width="5" opacity="0.9">
+      <animateTransform attributeName="transform" type="translate" values="0 0;-500 0" dur="14s" repeatCount="indefinite"/>
+    </path>
+  </g>
+
+  <g>
+    <circle cx="500" cy="58" r="14" fill="#F5B700" opacity="0.95">
+      <animate attributeName="r" values="12;16;12" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <text x="500" y="64" text-anchor="middle" font-family="Georgia, serif" font-size="16" font-weight="bold" fill="#0B1E3A">⚖</text>
+  </g>
+</svg>
